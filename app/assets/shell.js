@@ -87,7 +87,7 @@ function topbarHTML() {
   const icones = ['relogio', 'engrenagens', 'play', 'monitor', 'usuario', 'lupa', 'ajuda', 'power'];
   return `
   <header class="topbar">
-    <a href="index.html" title="Início"><img class="marca" src="../uploads/marca-centi.png" alt="Centi"></a>
+    <a href="index.html" title="Início"><img class="marca" src="assets/img/marca-centi.png" alt="Centi"></a>
     <div class="burger" title="Recolher menu"><i></i><i></i><i></i></div>
     <div class="field-group" style="margin-left:30px">
       <span class="lbl">Referência</span>
