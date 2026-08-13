@@ -1,0 +1,451 @@
+/* ==========================================================================
+   Centi — shell e componentes
+   Tokens extraídos do protótipo Figma "Protocolo Digital.fig"
+   ========================================================================== */
+
+:root {
+  /* marca */
+  --g:          #A1BB3E;  /* verde principal (tiles, botões, filete ativo) */
+  --g-dark:     #86A427;  /* texto de aba ativa */
+  --g-mid:      #93A550;  /* títulos de drawer / etapa */
+  --g-olive:    #8BA81D;  /* texto de botão claro */
+  --g-line:     #C7E266;  /* indicador de aba do drawer */
+  --g-soft-bg:  #F5FCD9;  /* fundo de botão claro / ação de campo */
+  --g-soft-bd:  #C9DA86;
+  --g-soft-bd2: #D5E690;
+  --g-stroke:   #7F981D;  /* contorno da etapa ativa */
+
+  /* formulário */
+  --label-bg:   #F1F4E7;  /* rótulo à esquerda */
+  --ro-bg:      #F4F4F6;  /* campo bloqueado */
+  --fld-bd:     #CBCBCB;
+
+  /* texto */
+  --txt:        #747474;
+  --txt-strong: #434343;
+  --txt-mute:   #A8A8A8;
+  --txt-mute2:  #BDBDBD;
+  --ph:         #ACACAC;
+  --side-txt:   #5C5B5A;
+
+  /* superfícies */
+  --app-bg:     #E8EDF1;
+  --tab-off:    #E5E5E5;
+  --tab-bd:     #D4D4D4;
+  --side-item:  #F9FAFC;
+  --side-train: #F1F3FA;
+  --side-line:  #F3F5F5;
+  --panel-1:    #F9F9F9;
+  --panel-2:    #EBECEE;
+  --modal-bg:   #F7FBEE;
+
+  /* métricas */
+  --topbar-h:   50px;
+  --sidebar-w:  250px;
+  --tab-h:      33px;
+  --moldura:    15px;  /* recuo da área de trabalho nos quatro lados */
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  font-family: Verdana, Geneva, sans-serif;
+  font-size: 12px;
+  color: var(--txt);
+  background: #FFFFFF;
+}
+
+button { font-family: inherit; cursor: pointer; }
+input, select, textarea { font-family: inherit; font-size: 12px; }
+a { color: inherit; text-decoration: none; }
+
+/* ============================ layout raiz ============================ */
+
+.app {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  grid-template-rows: var(--topbar-h) 1fr;
+  grid-template-areas: "top top" "side main";
+  height: 100vh;
+}
+
+/* ============================== topbar ============================== */
+
+.topbar {
+  grid-area: top;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 17px 0 20px;
+  background: #FFFFFF;
+  border-bottom: 1px solid var(--g-soft-bd2);
+}
+
+.topbar .marca { height: 23px; width: auto; display: block; }
+
+.topbar .burger {
+  margin-left: 88px;
+  width: 18px;
+  height: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.topbar .burger i { display: block; height: 3px; background: var(--g); border-radius: 1px; }
+
+.topbar .spacer { flex: 1; }
+
+/* grupo rótulo + valor (Referência / Órgão) */
+.field-group { display: flex; align-items: center; height: 32px; }
+.field-group > * {
+  height: 32px;
+  border: 1px solid var(--fld-bd);
+  background: #FFFFFF;
+  color: var(--txt);
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+}
+.field-group > *:first-child { border-radius: 4px 0 0 4px; }
+.field-group > *:last-child  { border-radius: 0 4px 4px 0; }
+.field-group > * + * { margin-left: -1px; }
+.field-group .lbl { background: #F3F6EF; font-weight: bold; }
+.field-group select,
+.field-group input { outline: none; }
+.field-group select { padding-right: 8px; -webkit-appearance: menulist; }
+
+.topbar .user { font-size: 12px; color: var(--txt); white-space: nowrap; }
+
+.topbar .icons { display: flex; align-items: center; gap: 7px; }
+.topbar .icons button {
+  width: 22px; height: 22px;
+  display: grid; place-items: center;
+  border: 0; background: none; padding: 0;
+  color: #6C6C6B;
+  border-radius: 4px;
+}
+.topbar .icons button:hover { background: var(--g-soft-bg); color: var(--g-dark); }
+.topbar .icons svg { width: 16px; height: 16px; }
+
+/* ============================== sidebar ============================== */
+
+.sidebar {
+  grid-area: side;
+  background: var(--side-item);
+  border-right: 1px solid #DCDCDC;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar .busca { padding: 10px; }
+.sidebar .busca input {
+  width: 100%; height: 32px;
+  border: 1px solid var(--fld-bd);
+  border-radius: 4px;
+  padding: 0 16px;
+  color: var(--txt);
+  outline: none;
+}
+.sidebar .busca input::placeholder { color: var(--txt); }
+.sidebar .busca input:focus { border-color: var(--g); }
+
+.sidebar nav { flex: 1; overflow-y: auto; }
+
+.mod {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 51px;
+  padding: 0 10px;
+  background: var(--side-item);
+  border-bottom: 1px solid var(--side-line);
+  cursor: pointer;
+}
+.mod:hover { background: #F1F5E4; }
+
+.mod .tile {
+  width: 31px; height: 30px;
+  flex: 0 0 31px;
+  border-radius: 8px;
+  background: var(--g);
+  display: grid; place-items: center;
+  color: #FFFFFF;
+}
+.mod .tile svg { width: 16px; height: 16px; }
+
+.mod .nome {
+  margin-left: 9px;
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--side-txt);
+}
+
+.mod .chev { margin-left: auto; color: #6C717F; display: flex; }
+.mod .chev svg { width: 7px; height: 12px; }
+
+.mod.ativo::after {
+  content: "";
+  position: absolute;
+  right: 0; top: 0;
+  width: 4px; height: 50px;
+  background: var(--g);
+}
+
+.mod.treinamentos {
+  height: 57px;
+  background: var(--side-train);
+  border-bottom: 0;
+}
+.mod.treinamentos .nome { font-size: 13px; }
+.mod.treinamentos .tile { background: none; color: var(--g); }
+.mod.treinamentos .tile svg { width: 26px; height: 18px; }
+
+/* ================================ main ================================ */
+
+.main {
+  grid-area: main;
+  background: var(--app-bg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  padding: var(--moldura);   /* recuo igual nos quatro lados */
+}
+
+/* abas de documento */
+.doctabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  height: var(--tab-h);
+  flex: 0 0 auto;
+}
+
+.doctab {
+  height: var(--tab-h);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 15px;
+  background: var(--tab-off);
+  border: 1px solid var(--tab-bd);
+  border-radius: 6px 6px 0 0;
+  font-size: 13px;
+  color: var(--txt-mute);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.doctab + .doctab { margin-left: -1px; }
+.doctab svg { width: 15px; height: 15px; flex: 0 0 auto; }
+.doctab.ativa {
+  background: #FFFFFF;
+  color: var(--g-dark);
+  border-bottom-color: #FFFFFF;
+  position: relative;
+  z-index: 2;
+}
+.doctab .fechar {
+  border: 0; background: none; padding: 0;
+  color: var(--txt-mute); font-size: 14px; line-height: 1;
+}
+.doctab .fechar:hover { color: #C62828; }
+
+/* controles à direita da barra de abas */
+.doctabs-controles { margin-left: auto; align-self: center; display: flex; align-items: center; gap: 8px; }
+.doctabs-controles button {
+  width: 24px; height: 24px;
+  display: grid; place-items: center;
+  border: 0; background: none; padding: 0;
+  color: #5C5B5A; border-radius: 4px;
+}
+.doctabs-controles button:hover { background: var(--g-soft-bg); color: var(--g-dark); }
+.doctabs-controles svg { width: 19px; height: 19px; }
+
+/* corpo da tela (abas verticais + conteúdo) */
+.tela {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  gap: 0;
+}
+
+/* abas verticais Pesquisa / Cadastro / Notas / ViCenti */
+.vtabs {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 0 0 30px;
+  padding-top: 6px;
+}
+
+.vtab {
+  width: 30px;
+  padding: 14px 0 10px;
+  background: var(--app-bg);
+  border: 1px solid var(--tab-bd);
+  border-right: 0;
+  border-radius: 6px 0 0 6px;
+  color: var(--txt-mute);
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.vtab svg { width: 12px; height: 12px; flex: 0 0 auto; }
+/* rótulo girado -90° (lê de baixo para cima), como no protótipo */
+.vtab span { writing-mode: vertical-rl; transform: rotate(180deg); }
+.vtab.ativa { background: #FFFFFF; color: var(--g-dark); }
+.vtab.ativa svg { color: var(--g); }
+
+.conteudo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 6px;
+}
+
+/* painéis */
+.painel {
+  background: #FFFFFF;
+  border: 1px solid var(--tab-bd);
+  border-radius: 5px;
+}
+.painel.filtros   { background: var(--panel-1); flex: 0 0 auto; }
+.painel.resultado { background: var(--panel-2); flex: 1; min-height: 0; display: flex; flex-direction: column; }
+
+/* ============================== campos ============================== */
+
+/* linha de formulário: rótulo colado ao campo */
+.campo { display: flex; align-items: stretch; min-height: 32px; }
+
+.campo > .rot {
+  flex: 0 0 130px;
+  background: var(--label-bg);
+  border: 1px solid var(--fld-bd);
+  border-radius: 4px 0 0 4px;
+  padding: 8px 15px;
+  font-weight: bold;
+  color: var(--txt);
+  line-height: 15px;
+}
+.campo > .rot .req { color: inherit; }
+
+.campo > .val {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: stretch;
+  margin-left: -1px;
+}
+
+.campo .cx {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--fld-bd);
+  background: #FFFFFF;
+  color: var(--txt-strong);
+  padding: 8px 16px;
+  line-height: 15px;
+  outline: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.campo .cx:last-child { border-radius: 0 4px 4px 0; }
+.campo .cx + .cx { margin-left: -1px; }
+.campo .cx.ro { background: var(--ro-bg); color: var(--txt); }
+.campo .cx.cod { flex: 0 0 42px; text-align: left; padding-left: 16px; }
+.campo .cx.cod-l { flex: 0 0 71px; }
+.campo textarea.cx { resize: none; white-space: normal; font-size: 12px; }
+.campo .cx::placeholder { color: var(--ph); }
+.campo .cx:focus { border-color: var(--g); box-shadow: 0 0 0 2px rgba(161,187,62,.18); position: relative; z-index: 1; }
+
+/* botãozinho de ação anexo ao campo (lupa, editar, calendário) */
+.campo .act {
+  flex: 0 0 32px;
+  border: 1px solid var(--g-soft-bd);
+  background: var(--g-soft-bg);
+  color: var(--g-olive);
+  display: grid; place-items: center;
+  margin-left: -1px;
+  padding: 0;
+}
+.campo .act:last-child { border-radius: 0 4px 4px 0; }
+.campo .act:hover { background: var(--g); color: #FFFFFF; border-color: var(--g); }
+.campo .act svg { width: 13px; height: 13px; }
+
+/* ============================== botões ============================== */
+
+.btn {
+  height: 29px;
+  padding: 0 15px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.btn svg { width: 12px; height: 12px; }
+
+.btn-primario { background: var(--g); color: #FFFFFF; }
+.btn-primario:hover { background: #8FAA31; }
+
+.btn-claro { background: var(--g-soft-bg); color: var(--g-olive); border-color: var(--g-soft-bd); }
+.btn-claro:hover { background: var(--g); color: #FFFFFF; border-color: var(--g); }
+
+.btn-neutro { background: #EAEAEA; color: #A0A0A0; border-color: #CFCFCD; }
+.btn-neutro:disabled { cursor: default; }
+
+.btn-mini { height: 20px; padding: 0 12px; font-size: 11px; }
+
+/* ============================== tabela ============================== */
+
+.tabela { width: 100%; border-collapse: collapse; }
+.tabela th {
+  background: var(--panel-2);
+  border: 1px solid var(--tab-bd);
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--txt);
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+  position: sticky; top: 0; z-index: 1;
+}
+.tabela td {
+  border: 1px solid #E3E4E6;
+  padding: 7px 10px;
+  font-size: 12px;
+  color: var(--txt);
+  background: #FFFFFF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 190px;
+}
+.tabela tbody tr:nth-child(even) td { background: #FAFAFB; }
+.tabela tbody tr:hover td { background: #F1F5E4; cursor: pointer; }
+.tabela tbody tr.sel td { background: #DDEBAF; }
+.tabela .num { text-align: right; }
+
+/* ============================ utilitários ============================ */
+
+.scroll { overflow: auto; }
+.scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+.scroll::-webkit-scrollbar-track { background: #F0F0F0; }
+.scroll::-webkit-scrollbar-thumb { background: #D5D5D5; border-radius: 10px; }
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }

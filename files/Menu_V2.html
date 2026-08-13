@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo Protocolo</title>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Cores Oficiais CENTI conforme Manual da Marca */
+            --centi-green-primary: #9BBF2E;    /* Verde principal CENTI */
+            --centi-green-dark: #5D6A38;       /* Verde escuro CENTI */
+            --centi-gray-light: #848688;       /* Cinza claro CENTI */
+            --centi-gray-dark: #606062;        /* Cinza escuro CENTI */
+
+            /* Tons derivados para interface */
+            --centi-green-light: #B5D146;      /* Verde mais claro para hover */
+            --centi-green-muted: #A9C63A;      /* Verde médio */
+
+            /* Cores neutras para UI */
+            --neutral-50: #f8fafc;
+            --neutral-100: #f1f5f9;
+            --neutral-200: #e2e8f0;
+            --neutral-300: #cbd5e1;
+            --neutral-400: #94a3b8;
+            --neutral-500: #64748b;
+            --neutral-600: #475569;
+            --neutral-700: #334155;
+            --neutral-800: #1e293b;
+            --neutral-900: #0f172a;
+
+            /* Cores de status */
+            --success: var(--centi-green-primary);
+            --warning: #f59e0b;
+            --error: #dc2626;
+            --info: var(--centi-green-dark);
+
+            /* Aplicações da marca CENTI */
+            --primary-gradient: linear-gradient(135deg, var(--centi-green-primary) 0%, var(--centi-green-dark) 100%);
+            --header-gradient: linear-gradient(135deg, var(--centi-gray-dark), var(--centi-green-primary));
+            --bg-color: white;
+            --text-color: var(--centi-gray-dark);
+            --text-muted: var(--centi-gray-light);
+            --card-bg: var(--neutral-50);
+            --border-color: var(--neutral-200);
+            --hover-bg: var(--neutral-100);
+            --shadow: 0 20px 40px rgba(96, 96, 98, 0.08);
+            --card-shadow: 0 4px 12px rgba(96, 96, 98, 0.05);
+
+            /* ÍCONES PADRONIZADOS - TODOS NO MESMO TOM */
+            --icon-color: var(--centi-gray-light);         /* Cor padrão dos ícones */
+            --icon-color-hover: var(--centi-green-primary);/* Cor no hover */
+            --icon-color-active: var(--centi-green-dark);  /* Cor ativo */
+        }
+
+        body {
+            font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            padding: 5px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--bg-color);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: var(--header-gradient);
+            color: white;
+            padding: 8px 12px;
+            display: grid;
+            grid-template-columns: 420px 1fr auto;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .header-main {
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            margin-bottom: 6px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .header-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--icon-color);
+        }
+
+        .header-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 6px 40px 6px 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            background: rgba(255,255,255,0.95);
+            color: var(--text-color);
+            outline: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .search-input:focus {
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--icon-color);
+            font-size: 16px;
+        }
+
+        /* Centi Cast Section */
+        .centi-cast-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 8px;
+            border: 1px solid rgba(255,255,255,0.15);
+            position: relative;
+            backdrop-filter: blur(8px);
+        }
+
+        .centi-cast-badge {
+            position: absolute;
+            top: -8px;
+            left: 16px;
+            background: var(--warning);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .webcast-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .webcast-item {
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .webcast-item:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+        }
+
+        .webcast-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .webcast-details {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Header Controls */
+        .header-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .notification-btn, .icon-toggle {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 6px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-btn:hover, .icon-toggle:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--error);
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 0.625rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: -36px;
+            right: 0;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification-btn:hover .tooltip,
+        .icon-toggle:hover .tooltip {
+            opacity: 1;
+        }
+
+        /* ===== MENU PROTOCOLO ===== */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 4px;
+            padding: 6px;
+        }
+
+        .module {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 6px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            border-left: 4px solid;
+            position: relative;
+        }
+
+        .module:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(96, 96, 98, 0.12);
+        }
+
+        /* Cores dos módulos usando paleta CENTI */
+        .module.protocolo { border-left-color: var(--centi-green-primary); }
+        .module.cubo { border-left-color: var(--centi-green-dark); }
+        .module.documentos { border-left-color: var(--centi-green-muted); }
+        .module.operacoes { border-left-color: var(--centi-gray-dark); }
+        .module.relatorios { border-left-color: var(--warning); }
+        .module.configuracoes { border-left-color: var(--centi-gray-light); }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .module-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--neutral-100);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            color: var(--icon-color);
+            transition: all 0.3s ease;
+        }
+
+        .module-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .module-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-color);
+            flex: 1;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 4px 6px;
+            margin-bottom: 3px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .menu-item:hover {
+            background: var(--hover-bg);
+            transform: translateX(4px);
+            border-color: var(--centi-green-primary);
+        }
+
+        .menu-item-favorite {
+            color: var(--neutral-400);
+            margin-right: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+        }
+
+        .menu-item-favorite:hover {
+            transform: scale(1.2);
+            color: var(--warning);
+        }
+
+        .menu-item-favorite.active {
+            color: var(--warning);
+        }
+
+        /* ÍCONES PADRONIZADOS - TODOS NO MESMO TOM */
+        .menu-item-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--neutral-100);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: var(--icon-color);
+            transition: all 0.3s ease;
+        }
+
+        .menu-item-icon svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .menu-item:hover .menu-item-icon {
+            background: var(--centi-green-primary);
+            color: white;
+        }
+
+        .menu-item-text {
+            flex: 1;
+            font-size: 0.875rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .menu-item-code {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: var(--neutral-100);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-weight: 600;
+        }
+
+        /* Hide icons when class is applied */
+        .hide-icons .menu-item-icon,
+        .hide-icons .module-icon {
+            display: none;
+        }
+
+        /* Badges especiais */
+        .menu-item.video::before {
+            content: "VÍDEO";
+            position: absolute;
+            top: -6px;
+            right: 8px;
+            background: var(--error);
+            color: white;
+            font-size: 0.625rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .menu-item.novo::before {
+            content: "NOVO";
+            position: absolute;
+            top: -6px;
+            right: 8px;
+            background: var(--warning);
+            color: white;
+            font-size: 0.625rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .menu-item.training::before {
+            content: "TREINO";
+            position: absolute;
+            top: -6px;
+            right: 8px;
+            background: var(--centi-green-dark);
+            color: white;
+            font-size: 0.625rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* ===== CENTRAL DE TREINAMENTOS ===== */
+        .training-section {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 12px;
+        }
+
+        .training-header {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .training-title {
+            font-size: 1.875rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .training-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .training-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 8px;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .training-track:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+
+        .track-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .track-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            color: var(--icon-color);
+        }
+
+        .track-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .track-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .track-completion-badge {
+            background: var(--success);
+            color: white;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .track-completion-badge.partial {
+            background: var(--warning);
+        }
+
+        .track-completion-badge.not-started {
+            background: var(--centi-gray-light);
+        }
+
+        .track-description {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .track-progress-container {
+            margin-bottom: 16px;
+        }
+
+        .track-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .track-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--centi-green-light));
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .track-progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.75rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .track-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: var(--bg-color);
+            margin: 3% auto;
+            padding: 12px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-title {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            color: var(--neutral-400);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: var(--text-color);
+        }
+
+        /* ===== MENU FLUTUANTE ===== */
+        .floating-menu {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            z-index: 500;
+        }
+
+        .floating-menu-button {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 64px;
+            height: 64px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(155, 191, 46, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floating-menu-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 32px rgba(155, 191, 46, 0.4);
+        }
+
+        .floating-menu-options {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            background: var(--bg-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 8px;
+            min-width: 280px;
+            opacity: 0;
+            transform: translateY(20px);
+            visibility: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .floating-menu.active .floating-menu-options {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+        }
+
+        .floating-menu-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .floating-menu-item {
+            display: flex;
+            align-items: center;
+            padding: 6px;
+            margin-bottom: 3px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .floating-menu-item:hover {
+            background: var(--hover-bg);
+            transform: translateX(4px);
+        }
+
+        /* ÍCONES PADRONIZADOS - TODOS NO MESMO TOM */
+        .floating-menu-item-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--neutral-100);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: var(--icon-color);
+        }
+
+        .floating-menu-item-icon svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .floating-menu-item-text {
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        /* Responsividade */
+        @media (max-width: 1200px) {
+            .header {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .webcast-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .training-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                margin: 3px;
+                border-radius: 12px;
+            }
+
+            body {
+                padding: 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ===== HEADER ===== -->
+        <div class="header">
+            <!-- BLOCO 1: Módulo + Pesquisa -->
+            <div class="header-main">
+                <h1>
+                    <div class="header-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H2v5h7V5z"></path><path d="M15 5h7v5h-7V5z"></path><path d="M9 14H2v5h7v-5z"></path><path d="M15 14h7v5h-7v-5z"></path></svg>
+                    </div>
+                    Módulo Protocolo
+                </h1>
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Buscar funcionalidades..."
+                           oninput="searchModules(this.value)">
+                    <span class="search-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+                    </span>
+                </div>
+            </div>
+
+            <!-- BLOCO 2: Centi Cast -->
+            <div class="centi-cast-section">
+                <div class="centi-cast-badge">
+                    📹 Centi Cast
+                </div>
+                <div class="webcast-list">
+                    <div class="webcast-item" onclick="playWebcast('protocolo-basico')">
+                        <div class="webcast-title">
+                            <span class="webcast-icon">▶️</span>
+                            Protocolo Básico
+                        </div>
+                        <div class="webcast-details">
+                            <span>15min</span>
+                            <span>João Silva</span>
+                        </div>
+                    </div>
+
+                    <div class="webcast-item" onclick="playWebcast('remessas-avancadas')">
+                        <div class="webcast-title">
+                            <span class="webcast-icon">▶️</span>
+                            Remessas Avançadas
+                        </div>
+                        <div class="webcast-details">
+                            <span>22min</span>
+                            <span>Ana Costa</span>
+                        </div>
+                    </div>
+
+                    <div class="webcast-item" onclick="playWebcast('cubo-interface')">
+                        <div class="webcast-title">
+                            <span class="webcast-icon">▶️</span>
+                            Interface do Cubo
+                        </div>
+                        <div class="webcast-details">
+                            <span>18min</span>
+                            <span>Carlos Lima</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOCO 3: Ícones -->
+            <div class="header-controls">
+                <button class="notification-btn" onclick="toggleNotifications()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="m13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    <span class="notification-badge">3</span>
+                    <div class="tooltip">Notificações</div>
+                </button>
+                <button class="icon-toggle" onclick="toggleIcons()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <div class="tooltip">Ocultar Ícones</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== MENU PROTOCOLO ===== -->
+        <div class="menu-grid">
+            <!-- Módulo Protocolo e Remessa -->
+            <div class="module protocolo">
+                <div class="module-header">
+                    <div class="module-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14,2 14,8 20,8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10,9 9,9 8,9"></polyline></svg>
+                    </div>
+                    <div class="module-title">Protocolo e Remessa</div>
+                </div>
+                <div class="menu-item video" onclick="openModule('PO011', 'Tela Protocolo')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="10,8 16,12 10,16 10,8"></polygon></svg>
+                    </span>
+                    <span class="menu-item-text">Tela Protocolo</span>
+                    <span class="menu-item-code">PO011</span>
+                </div>
+                <div class="menu-item" onclick="openModule('PO002', 'Criar Protocolo')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14,2 14,8 20,8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10,9 9,9 8,9"></polyline></svg>
+                    </span>
+                    <span class="menu-item-text">Protocolo</span>
+                    <span class="menu-item-code">PO002</span>
+                </div>
+                <div class="menu-item novo" onclick="openModule('PO003', 'Remessas de Saída')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7,7 17,7 17,17"></polyline></svg>
+                    </span>
+                    <span class="menu-item-text">Remessas de saída</span>
+                    <span class="menu-item-code">PO003</span>
+                </div>
+                <div class="menu-item training" onclick="openModule('PO004', 'Entrada de Remessas')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="17" x2="7" y2="7"></line><polyline points="17,7 7,7 7,17"></polyline></svg>
+                    </span>
+                    <span class="menu-item-text">Entrada de remessas</span>
+                    <span class="menu-item-code">PO004</span>
+                </div>
+                <div class="menu-item" onclick="openModule('PO005', 'Cancelamento de Remessa')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                    </span>
+                    <span class="menu-item-text">Cancelamento de remessa</span>
+                    <span class="menu-item-code">PO005</span>
+                </div>
+                <div class="menu-item" onclick="openModule('PO008', 'Remessa')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    </span>
+                    <span class="menu-item-text">Remessa</span>
+                    <span class="menu-item-code">PO008</span>
+                </div>
+                <div class="menu-item" onclick="openModule('PO009', 'Arquivar/Desarquivar')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    </span>
+                    <span class="menu-item-text">Arquivar/desarquivar</span>
+                    <span class="menu-item-code">PO009</span>
+                </div>
+            </div>
+
+            <!-- Módulo Cubo -->
+            <div class="module cubo">
+                <div class="module-header">
+                    <div class="module-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    </div>
+                    <div class="module-title">Cubo</div>
+                </div>
+                <div class="menu-item" onclick="openModule('PO014', 'Cubo - Protocolo')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"></path></svg>
+                    </span>
+                    <span class="menu-item-text">Protocolo</span>
+                    <span class="menu-item-code">PO014</span>
+                </div>
+                <div class="menu-item" onclick="openModule('PO015', 'Andamentos')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z"></path><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"></path></svg>
+                    </span>
+                    <span class="menu-item-text">Andamentos</span>
+                    <span class="menu-item-code">PO015</span>
+                </div>
+                <div class="menu-item" onclick="openModule('PO016', 'Documentos do Cubo')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2Z"></path><path d="M9 9h6"></path><path d="M9 15h6"></path></svg>
+                    </span>
+                    <span class="menu-item-text">Documentos</span>
+                    <span class="menu-item-code">PO016</span>
+                </div>
+                <div class="menu-item training" onclick="openModule('PO020', 'Criação de Protocolo')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </span>
+                    <span class="menu-item-text">Criação protocolo</span>
+                    <span class="menu-item-code">PO020</span>
+                </div>
+                <div class="menu-item training" onclick="openModule('PO096', 'Assinaturas do Usuário')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19 7-7 3 3-7 7-3-3z"></path><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="m2 2 7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
+                    </span>
+                    <span class="menu-item-text">Documentos - assinaturas do usuário</span>
+                    <span class="menu-item-code">PO096</span>
+                </div>
+            </div>
+
+            <!-- Módulo Documentos -->
+            <div class="module documentos">
+                <div class="module-header">
+                    <div class="module-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H2v5h7V5z"></path><path d="M15 5h7v5h-7V5z"></path><path d="M9 14H2v5h7v-5z"></path><path d="M15 14h7v5h-7v-5z"></path></svg>
+                    </div>
+                    <div class="module-title">Documentos</div>
+                </div>
+                <div class="menu-item novo" onclick="openModule('PO024', 'Aprovar/Reprovar Documentos')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">👍</span>
+                    <span class="menu-item-text">Aprovar/reprovar</span>
+                    <span class="menu-item-code">PO024</span>
+                </div>
+                <div class="menu-item" onclick="openModule('PO017', 'Inserir Documentos')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">📥</span>
+                    <span class="menu-item-text">Inserir documentos</span>
+                    <span class="menu-item-code">PO017</span>
+                </div>
+            </div>
+
+            <!-- Módulo Operações em Massa -->
+            <div class="module operacoes">
+                <div class="module-header">
+                    <div class="module-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"></polygon></svg>
+                    </div>
+                    <div class="module-title">Operações em Massa</div>
+                </div>
+                <div class="menu-item" onclick="openModule('PO021', 'Capa de Processo')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">📃</span>
+                    <span class="menu-item-text">Capa de processo</span>
+                    <span class="menu-item-code">PO021</span>
+                </div>
+                <div class="menu-item training" onclick="openModule('PO019', 'Atestar Documentos')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">📝</span>
+                    <span class="menu-item-text">Atestar</span>
+                    <span class="menu-item-code">PO019</span>
+                </div>
+            </div>
+
+            <!-- Módulo Relatórios -->
+            <div class="module relatorios">
+                <div class="module-header">
+                    <div class="module-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>
+                    </div>
+                    <div class="module-title">Relatórios</div>
+                </div>
+                <div class="menu-item" onclick="openModule('PO006', 'Listagem de Protocolos')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">📋</span>
+                    <span class="menu-item-text">Listagem</span>
+                    <span class="menu-item-code">PO006</span>
+                </div>
+                <div class="menu-item" onclick="openModule('PO007', 'Protocolos por Repartição')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">🏢</span>
+                    <span class="menu-item-text">Protocolos por repartição</span>
+                    <span class="menu-item-code">PO007</span>
+                </div>
+                <div class="menu-item video" onclick="openModule('PO012', 'Status de Remessas')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">🚚</span>
+                    <span class="menu-item-text">Remessa status</span>
+                    <span class="menu-item-code">PO012</span>
+                </div>
+                <div class="menu-item" onclick="openModule('PO025', 'Emitir Etiquetas')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">🏷️</span>
+                    <span class="menu-item-text">Emitir etiqueta</span>
+                    <span class="menu-item-code">PO025</span>
+                </div>
+            </div>
+
+            <!-- Módulo Configurações -->
+            <div class="module configuracoes">
+                <div class="module-header">
+                    <div class="module-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </div>
+                    <div class="module-title">Configurações</div>
+                </div>
+                <div class="menu-item" onclick="openModule('PO023', 'Configurações do Sistema')">
+                    <span class="menu-item-favorite" onclick="event.stopPropagation(); toggleFavorite(this)">⭐</span>
+                    <span class="menu-item-icon">🔧</span>
+                    <span class="menu-item-text">Configuração</span>
+                    <span class="menu-item-code">PO023</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CENTRAL DE TREINAMENTOS ===== -->
+        <div class="training-section">
+            <div class="training-header">
+                <h2 class="training-title">
+                    <div class="header-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="1"></circle><path d="m14 20.24c-.64.6-1.84 1.56-3.48 1.68a1.5 1.5 0 0 1-1.04-.68c-.62-.88-.8-2.14-.8-3.24v-8c0-1.1.18-2.36.8-3.24a1.5 1.5 0 0 1 1.04-.68C12.16 5.56 13.36 6.52 14 7.12"></path><path d="M9 7.2A7.1 7.1 0 0 0 6.11 3.06"></path><path d="M10.57 22.94A7.1 7.1 0 0 0 6.11 20.88"></path><path d="M15 7.2a7.1 7.1 0 0 1 2.89-4.14"></path><path d="M13.43 22.94A7.1 7.1 0 0 1 17.89 20.88"></path></svg>
+                    </div>
+                    Central de Treinamentos
+                </h2>
+            </div>
+
+            <div class="training-grid">
+                <!-- Trilha: Cadastro e Tramitação -->
+                <div class="training-track" onclick="openTrainingTrack('cadastro-tramitacao')">
+                    <div class="track-header">
+                        <div class="track-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H2v5h7V5z"></path><path d="M15 5h7v5h-7V5z"></path><path d="M9 14H2v5h7v-5z"></path><path d="M15 14h7v5h-7v-5z"></path></svg>
+                        </div>
+                        <div class="track-title">Cadastro e Tramitação</div>
+                        <div class="track-completion-badge partial">65%</div>
+                    </div>
+                    <div class="track-description">
+                        Aprenda a criar, gerenciar e tramitar protocolos de forma eficiente no sistema.
+                    </div>
+                    <div class="track-progress-container">
+                        <div class="track-progress-bar">
+                            <div class="track-progress-fill" style="width: 65%"></div>
+                        </div>
+                        <div class="track-progress-text">
+                            <span>Progresso</span>
+                            <span>13/20 lições</span>
+                        </div>
+                    </div>
+                    <div class="track-stats">
+                        <span>⏱️ 4h restantes</span>
+                        <span>🏆 85% dos usuários</span>
+                    </div>
+                </div>
+
+                <!-- Trilha: Parametrização -->
+                <div class="training-track" onclick="openTrainingTrack('parametrizacao')">
+                    <div class="track-header">
+                        <div class="track-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </div>
+                        <div class="track-title">Parametrização</div>
+                        <div class="track-completion-badge not-started">0%</div>
+                    </div>
+                    <div class="track-description">
+                        Configure o sistema conforme as necessidades da sua organização.
+                    </div>
+                    <div class="track-progress-container">
+                        <div class="track-progress-bar">
+                            <div class="track-progress-fill" style="width: 0%"></div>
+                        </div>
+                        <div class="track-progress-text">
+                            <span>Progresso</span>
+                            <span>0/15 lições</span>
+                        </div>
+                    </div>
+                    <div class="track-stats">
+                        <span>⏱️ 3h estimadas</span>
+                        <span>🔧 Configuração</span>
+                    </div>
+                </div>
+
+                <!-- Trilha: Trabalhando de Forma Digital -->
+                <div class="training-track" onclick="openTrainingTrack('digital')">
+                    <div class="track-header">
+                        <div class="track-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect><path d="M12 18h.01"></path></svg>
+                        </div>
+                        <div class="track-title">Trabalhando de Forma Digital</div>
+                        <div class="track-completion-badge">100%</div>
+                    </div>
+                    <div class="track-description">
+                        Domine as ferramentas digitais para um trabalho mais eficiente e sustentável.
+                    </div>
+                    <div class="track-progress-container">
+                        <div class="track-progress-bar">
+                            <div class="track-progress-fill" style="width: 100%"></div>
+                        </div>
+                        <div class="track-progress-text">
+                            <span>Progresso</span>
+                            <span>12/12 lições</span>
+                        </div>
+                    </div>
+                    <div class="track-stats">
+                        <span>✅ Concluída</span>
+                        <span>🏆 Certificado obtido</span>
+                    </div>
+                </div>
+
+                <!-- Trilha: Emissão de Relatórios -->
+                <div class="training-track" onclick="openTrainingTrack('relatorios')">
+                    <div class="track-header">
+                        <div class="track-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>
+                        </div>
+                        <div class="track-title">Emissão de Relatórios</div>
+                        <div class="track-completion-badge partial">45%</div>
+                    </div>
+                    <div class="track-description">
+                        Crie relatórios detalhados e análises para tomada de decisões.
+                    </div>
+                    <div class="track-progress-container">
+                        <div class="track-progress-bar">
+                            <div class="track-progress-fill" style="width: 45%"></div>
+                        </div>
+                        <div class="track-progress-text">
+                            <span>Progresso</span>
+                            <span>9/20 lições</span>
+                        </div>
+                    </div>
+                    <div class="track-stats">
+                        <span>⏱️ 2h 30min restantes</span>
+                        <span>📈 Análise avançada</span>
+                    </div>
+                </div>
+
+                <!-- Trilha: Emissão de Cubos -->
+                <div class="training-track" onclick="openTrainingTrack('cubos')">
+                    <div class="track-header">
+                        <div class="track-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                        </div>
+                        <div class="track-title">Emissão de Cubos</div>
+                        <div class="track-completion-badge partial">30%</div>
+                    </div>
+                    <div class="track-description">
+                        Utilize a interface avançada do Cubo para gestão otimizada de protocolos.
+                    </div>
+                    <div class="track-progress-container">
+                        <div class="track-progress-bar">
+                            <div class="track-progress-fill" style="width: 30%"></div>
+                        </div>
+                        <div class="track-progress-text">
+                            <span>Progresso</span>
+                            <span>3/10 lições</span>
+                        </div>
+                    </div>
+                    <div class="track-stats">
+                        <span>⏱️ 1h 45min restantes</span>
+                        <span>🎯 Interface avançada</span>
+                    </div>
+                </div>
+
+                <!-- Trilha: Documentos -->
+                <div class="training-track" onclick="openTrainingTrack('documentos')">
+                    <div class="track-header">
+                        <div class="track-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14,2 14,8 20,8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10,9 9,9 8,9"></polyline></svg>
+                        </div>
+                        <div class="track-title">Documentos</div>
+                        <div class="track-completion-badge partial">80%</div>
+                    </div>
+                    <div class="track-description">
+                        Gerencie documentos, aprovações e assinaturas digitais de forma eficiente.
+                    </div>
+                    <div class="track-progress-container">
+                        <div class="track-progress-bar">
+                            <div class="track-progress-fill" style="width: 80%"></div>
+                        </div>
+                        <div class="track-progress-text">
+                            <span>Progresso</span>
+                            <span>12/15 lições</span>
+                        </div>
+                    </div>
+                    <div class="track-stats">
+                        <span>⏱️ 45min restantes</span>
+                        <span>✍️ Assinaturas digitais</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MENU FLUTUANTE ===== -->
+    <div class="floating-menu" id="floatingMenu">
+        <button class="floating-menu-button" onclick="toggleFloatingMenu()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path></svg>
+        </button>
+        <div class="floating-menu-options">
+            <div class="floating-menu-title">
+                🎯 Menu Rápido
+            </div>
+            <div class="floating-menu-item" onclick="showNovidades()">
+                <span class="floating-menu-item-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path><path d="M20 3v4"></path><path d="M22 5h-4"></path><path d="M4 17v2"></path><path d="M5 18H3"></path></svg>
+                </span>
+                <span class="floating-menu-item-text">Listar todas as novidades</span>
+            </div>
+            <div class="floating-menu-item" onclick="showVideos()">
+                <span class="floating-menu-item-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="10,8 16,12 10,16 10,8"></polygon></svg>
+                </span>
+                <span class="floating-menu-item-text">Listar todos os vídeos</span>
+            </div>
+            <div class="floating-menu-item" onclick="showCentiCast()">
+                <span class="floating-menu-item-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"></path><rect x="2" y="6" width="14" height="12" rx="2"></rect></svg>
+                </span>
+                <span class="floating-menu-item-text">Listar todos os Centi Cast</span>
+            </div>
+            <div class="floating-menu-item" onclick="showTreinamentos()">
+                <span class="floating-menu-item-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="1"></circle><path d="m14 20.24c-.64.6-1.84 1.56-3.48 1.68a1.5 1.5 0 0 1-1.04-.68c-.62-.88-.8-2.14-.8-3.24v-8c0-1.1.18-2.36.8-3.24a1.5 1.5 0 0 1 1.04-.68C12.16 5.56 13.36 6.52 14 7.12"></path><path d="M9 7.2A7.1 7.1 0 0 0 6.11 3.06"></path><path d="M10.57 22.94A7.1 7.1 0 0 0 6.11 20.88"></path><path d="M15 7.2a7.1 7.1 0 0 1 2.89-4.14"></path><path d="M13.43 22.94A7.1 7.1 0 0 1 17.89 20.88"></path></svg>
+                </span>
+                <span class="floating-menu-item-text">Listar e demonstrar treinamentos</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="moduleModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 class="modal-title" id="modalTitle"></h2>
+            <div id="modalBody">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle Icons
+        function toggleIcons() {
+            const container = document.querySelector('.container');
+            const button = document.querySelector('.icon-toggle');
+
+            if (container.classList.contains('hide-icons')) {
+                container.classList.remove('hide-icons');
+                button.innerHTML = '👁️<div class="tooltip">Ocultar Ícones</div>';
+            } else {
+                container.classList.add('hide-icons');
+                button.innerHTML = '🙈<div class="tooltip">Mostrar Ícones</div>';
+            }
+        }
+
+        // Floating Menu
+        function toggleFloatingMenu() {
+            const menu = document.getElementById('floatingMenu');
+            menu.classList.toggle('active');
+        }
+
+        // Close floating menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('floatingMenu');
+            const button = menu.querySelector('.floating-menu-button');
+
+            if (!menu.contains(event.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // Novidades
+        function showNovidades() {
+            document.getElementById('modalTitle').textContent = '✨ Todas as Novidades';
+            document.getElementById('modalBody').innerHTML = `
+                <div style="padding: 20px;">
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: var(--text-color); margin-bottom: 15px;">🆕 Últimas Atualizações do Sistema</h3>
+
+                        <div style="background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 16px; border-left: 4px solid var(--warning);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <strong style="color: var(--text-color); font-size: 1.1rem;">🔥 NOVO - Remessas de Saída Aprimoradas</strong>
+                                <span style="background: var(--warning); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">HOJE</span>
+                            </div>
+                            <p style="color: var(--text-muted); margin-bottom: 8px; line-height: 1.5;">Interface completamente reformulada com novo fluxo de trabalho e validações automáticas.</p>
+                            <div style="font-size: 0.875rem; color: var(--centi-gray-light);">📍 Módulo: PO003 | 👤 Equipe de Desenvolvimento</div>
+                        </div>
+
+                        <div style="background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 16px; border-left: 4px solid var(--centi-green-dark);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <strong style="color: var(--text-color); font-size: 1.1rem;">📋 Aprovar/Reprovar Documentos</strong>
+                                <span style="background: var(--centi-green-dark); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">2 DIAS</span>
+                            </div>
+                            <p style="color: var(--text-muted); margin-bottom: 8px; line-height: 1.5;">Nova funcionalidade para aprovação em lote e comentários estruturados.</p>
+                            <div style="font-size: 0.875rem; color: var(--centi-gray-light);">📍 Módulo: PO024 | 👤 Ana Costa</div>
+                        </div>
+
+                        <div style="background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 16px; border-left: 4px solid var(--centi-green-primary);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <strong style="color: var(--text-color); font-size: 1.1rem;">🎯 Melhorias na Interface do Cubo</strong>
+                                <span style="background: var(--centi-green-primary); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">1 SEM</span>
+                            </div>
+                            <p style="color: var(--text-muted); margin-bottom: 8px; line-height: 1.5;">Navegação otimizada e novos filtros avançados para busca de protocolos.</p>
+                            <div style="font-size: 0.875rem; color: var(--centi-gray-light);">📍 Módulo: PO014-PO016 | 👤 Carlos Lima</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <button onclick="closeModal()" style="background: var(--centi-green-primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600;">Fechar</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('moduleModal').style.display = 'block';
+            toggleFloatingMenu();
+        }
+
+        // Videos
+        function showVideos() {
+            document.getElementById('modalTitle').textContent = '📺 Todos os Vídeos';
+            document.getElementById('modalBody').innerHTML = `
+                <div style="padding: 20px;">
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: var(--text-color); margin-bottom: 15px;">🎬 Biblioteca de Vídeos Tutoriais</h3>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+                            <div style="background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                                    <span style="font-size: 1.5em; margin-right: 12px;">📺</span>
+                                    <strong style="color: var(--text-color);">Tela Protocolo - Visão Geral</strong>
+                                </div>
+                                <p style="color: var(--text-muted); margin-bottom: 12px; font-size: 0.875rem; line-height: 1.4;">Navegação completa pela interface principal do módulo protocolo.</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.875rem; color: var(--centi-gray-light);">⏱️ 15:30 | 👤 João Silva</span>
+                                    <span style="background: var(--error); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">PO011</span>
+                                </div>
+                            </div>
+
+                            <div style="background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                                    <span style="font-size: 1.5em; margin-right: 12px;">📺</span>
+                                    <strong style="color: var(--text-color);">Status de Remessas</strong>
+                                </div>
+                                <p style="color: var(--text-muted); margin-bottom: 12px; font-size: 0.875rem; line-height: 1.4;">Como acompanhar e gerenciar o status das remessas em tempo real.</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.875rem; color: var(--centi-gray-light);">⏱️ 12:45 | 👤 Ana Costa</span>
+                                    <span style="background: var(--error); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">PO012</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <button onclick="closeModal()" style="background: var(--centi-green-primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600;">Fechar</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('moduleModal').style.display = 'block';
+            toggleFloatingMenu();
+        }
+
+        // Centi Cast
+        function showCentiCast() {
+            document.getElementById('modalTitle').textContent = '📹 Todos os Centi Cast';
+            document.getElementById('modalBody').innerHTML = `
+                <div style="padding: 20px;">
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: var(--text-color); margin-bottom: 15px;">🎥 Centi Cast - Aprendizado Interativo</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 20px; line-height: 1.5;">Conteúdos rápidos e práticos para dominar o Módulo Protocolo</p>
+
+                        <div style="display: grid; gap: 16px;">
+                            <div style="background: var(--primary-gradient); padding: 24px; border-radius: 12px; color: white;">
+                                <div style="display: flex; align-items: center; margin-bottom: 16px;">
+                                    <span style="font-size: 1.8em; margin-right: 16px;">📹</span>
+                                    <div>
+                                        <strong style="font-size: 1.125rem;">Protocolo Básico</strong>
+                                        <div style="opacity: 0.9; font-size: 0.875rem;">Fundamentos essenciais do sistema</div>
+                                    </div>
+                                    <div style="margin-left: auto; text-align: right;">
+                                        <div style="font-size: 0.875rem;">⏱️ 15min</div>
+                                        <div style="font-size: 0.75rem; opacity: 0.8;">👤 João Silva</div>
+                                    </div>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.2); padding: 12px; border-radius: 8px; font-size: 0.875rem;">
+                                    ▶️ Introdução ao módulo • Navegação básica • Conceitos fundamentais
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <button onclick="closeModal()" style="background: var(--centi-green-primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600;">Fechar</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('moduleModal').style.display = 'block';
+            toggleFloatingMenu();
+        }
+
+        // Treinamentos
+        function showTreinamentos() {
+            document.getElementById('modalTitle').textContent = '🎓 Central de Treinamentos Completa';
+            document.getElementById('modalBody').innerHTML = `
+                <div style="padding: 20px;">
+                    <div style="margin-bottom: 25px;">
+                        <h3 style="color: var(--text-color); margin-bottom: 15px;">📚 Todas as Trilhas de Aprendizado</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 20px; line-height: 1.5;">Desenvolva suas habilidades de forma estruturada e progressiva</p>
+
+                        <div style="display: grid; gap: 16px;">
+                            <div style="background: var(--card-bg); padding: 24px; border-radius: 12px; border-left: 4px solid var(--centi-green-primary);">
+                                <div style="display: flex; align-items: center; margin-bottom: 16px;">
+                                    <span style="font-size: 2em; margin-right: 16px;">📋</span>
+                                    <div style="flex: 1;">
+                                        <strong style="color: var(--text-color); font-size: 1.125rem;">Cadastro e Tramitação</strong>
+                                        <div style="color: var(--text-muted); margin-top: 4px;">Domine a criação e gerenciamento de protocolos</div>
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <div style="background: var(--centi-green-primary); color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-bottom: 4px;">65%</div>
+                                        <div style="font-size: 0.75rem; color: var(--text-muted);">13/20 lições</div>
+                                    </div>
+                                </div>
+                                <div style="background: var(--neutral-200); height: 6px; border-radius: 3px; margin-bottom: 12px;">
+                                    <div style="background: var(--centi-green-primary); height: 100%; width: 65%; border-radius: 3px;"></div>
+                                </div>
+                                <div style="font-size: 0.875rem; color: var(--text-muted);">⏱️ 4h restantes • 🏆 85% dos usuários completaram</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <button onclick="closeModal()" style="background: var(--centi-green-primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600;">Fechar</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('moduleModal').style.display = 'block';
+            toggleFloatingMenu();
+        }
+
+        // Notifications
+        function toggleNotifications() {
+            alert('📋 Notificações:\n• Novo protocolo recebido\n• Remessa pendente\n• Sistema atualizado');
+        }
+
+        // WebCast Player
+        function playWebcast(webcastId) {
+            const webcastTitles = {
+                'protocolo-basico': 'Protocolo Básico',
+                'remessas-avancadas': 'Remessas Avançadas',
+                'cubo-interface': 'Interface do Cubo'
+            };
+
+            alert(`📹 Reproduzindo: ${webcastTitles[webcastId]}\n\n▶️ WebCast iniciado!\n🎯 Aprenda de forma prática e objetiva.`);
+        }
+
+        // Search functionality
+        function searchModules(searchTerm) {
+            const modules = document.querySelectorAll('.module');
+            searchTerm = searchTerm.toLowerCase().trim();
+
+            modules.forEach(module => {
+                const moduleText = module.textContent.toLowerCase();
+                const isVisible = searchTerm === '' || moduleText.includes(searchTerm);
+                module.style.display = isVisible ? 'block' : 'none';
+            });
+        }
+
+        // Module functions
+        function openModule(code, title) {
+            document.getElementById('modalTitle').textContent = `${code} - ${title}`;
+            document.getElementById('modalBody').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="font-size: 3em; margin-bottom: 20px;">🚀</div>
+                    <h3 style="color: var(--text-color); margin-bottom: 16px;">${title}</h3>
+                    <p style="margin: 16px 0; color: var(--text-muted); line-height: 1.5;">
+                        Interface do módulo <strong>${code}</strong> seria carregada aqui.
+                    </p>
+                    <button onclick="closeModal()" style="background: var(--centi-green-primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 20px;">Fechar</button>
+                </div>
+            `;
+            document.getElementById('moduleModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('moduleModal').style.display = 'none';
+        }
+
+        // Favorites system
+        function toggleFavorite(element) {
+            element.classList.toggle('active');
+            const code = element.parentElement.querySelector('.menu-item-code').textContent;
+
+            if (element.classList.contains('active')) {
+                alert(`⭐ ${code} adicionado aos favoritos!`);
+            } else {
+                alert(`❌ ${code} removido dos favoritos!`);
+            }
+        }
+
+        // Training system
+        function openTrainingTrack(trackId) {
+            const trackTitles = {
+                'cadastro-tramitacao': 'Cadastro e Tramitação',
+                'parametrizacao': 'Parametrização',
+                'digital': 'Trabalhando de Forma Digital',
+                'relatorios': 'Emissão de Relatórios',
+                'cubos': 'Emissão de Cubos',
+                'documentos': 'Documentos'
+            };
+
+            const trackDescriptions = {
+                'cadastro-tramitacao': 'Trilha completa para dominar a criação e tramitação de protocolos. Inclui exercícios práticos e casos reais.',
+                'parametrizacao': 'Aprenda a configurar e personalizar o sistema conforme as necessidades da sua organização.',
+                'digital': 'Domine as ferramentas digitais para trabalhar de forma mais eficiente e sustentável.',
+                'relatorios': 'Crie relatórios avançados e dashboards para análise e tomada de decisões.',
+                'cubos': 'Utilize a interface avançada do Cubo para otimizar a gestão de protocolos.',
+                'documentos': 'Gerencie documentos digitais, aprovações e assinaturas eletrônicas.'
+            };
+
+            document.getElementById('modalTitle').textContent = `🎓 ${trackTitles[trackId]}`;
+            document.getElementById('modalBody').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <div style="font-size: 3em; margin-bottom: 20px;">📚</div>
+                    <h3 style="color: var(--text-color); margin-bottom: 16px;">${trackTitles[trackId]}</h3>
+                    <p style="margin: 20px 0; color: var(--text-muted); line-height: 1.6;">
+                        ${trackDescriptions[trackId]}
+                    </p>
+                    <div style="background: var(--card-bg); padding: 24px; border-radius: 12px; margin: 24px 0; text-align: left;">
+                        <h4 style="color: var(--text-color); margin-bottom: 16px;">📋 O que você vai aprender:</h4>
+                        <ul style="margin-top: 16px; line-height: 1.6; color: var(--text-muted);">
+                            <li>Conceitos fundamentais e melhores práticas</li>
+                            <li>Exercícios práticos com casos reais</li>
+                            <li>Dicas e truques de usuários experientes</li>
+                            <li>Certificado de conclusão</li>
+                        </ul>
+                    </div>
+                    <div style="margin-top: 32px;">
+                        <button onclick="startTraining('${trackId}')" style="background: var(--centi-green-primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-right: 12px; font-size: 1em; font-weight: 600;">🚀 Iniciar Trilha</button>
+                        <button onclick="closeModal()" style="background: var(--centi-gray-light); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: 600;">🔙 Voltar</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('moduleModal').style.display = 'block';
+        }
+
+        function startTraining(trackId) {
+            const trackTitles = {
+                'cadastro-tramitacao': 'Cadastro e Tramitação',
+                'parametrizacao': 'Parametrização',
+                'digital': 'Trabalhando de Forma Digital',
+                'relatorios': 'Emissão de Relatórios',
+                'cubos': 'Emissão de Cubos',
+                'documentos': 'Documentos'
+            };
+
+            alert(`🎯 Iniciando trilha: ${trackTitles[trackId]}\n\n📚 Carregando primeira lição...\n✨ Boa sorte nos estudos!`);
+            closeModal();
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('moduleModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

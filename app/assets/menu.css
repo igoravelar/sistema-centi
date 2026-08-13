@@ -1,0 +1,217 @@
+/* ==========================================================================
+   Centi — tela de aterrissagem do módulo (Menu Protocolo)
+   Estilos derivados de files/Menu_V2.html, com a paleta do protótipo Figma
+   ========================================================================== */
+
+.menu {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  border: 1px solid var(--tab-bd);
+  border-radius: 5px;
+  overflow: hidden;
+  font-family: 'Open Sans', 'Segoe UI', Verdana, sans-serif;
+}
+
+/* =============================== header =============================== */
+
+.menu-header {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #6B7A3F 0%, #5D6A38 100%);
+  color: #FFFFFF;
+  flex: 0 0 auto;
+}
+
+.menu-header h1 {
+  margin: 0 0 10px;
+  font-size: 28px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,.2);
+  border-radius: 8px;
+  display: grid; place-items: center;
+}
+.header-icon svg { width: 20px; height: 20px; }
+
+.search-container { position: relative; }
+.search-input {
+  width: 100%;
+  padding: 10px 40px 10px 16px;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-family: inherit;
+  background: rgba(255,255,255,.95);
+  color: var(--txt);
+  outline: none;
+}
+.search-input:focus { background: #FFFFFF; box-shadow: 0 4px 12px rgba(0,0,0,.12); }
+.search-icon {
+  position: absolute; right: 16px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--txt-mute); pointer-events: none;
+}
+.search-icon svg { width: 16px; height: 16px; display: block; }
+
+/* ----------------------------- Centi Cast ----------------------------- */
+
+.centi-cast {
+  position: relative;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.centi-cast-badge {
+  position: absolute; top: -10px; left: 16px;
+  background: #F5A623; color: #FFFFFF;
+  padding: 3px 12px;
+  border-radius: 12px;
+  font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; gap: 6px;
+}
+
+.webcast-list {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.webcast-list::-webkit-scrollbar { height: 5px; }
+.webcast-list::-webkit-scrollbar-track { background: rgba(255,255,255,.12); border-radius: 4px; }
+.webcast-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,.45); border-radius: 4px; }
+
+.webcast-item {
+  flex: 0 0 300px;
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: background .2s ease, transform .2s ease;
+}
+.webcast-item:hover { background: rgba(255,255,255,.25); transform: translateY(-2px); }
+
+.webcast-title {
+  font-size: 14px; font-weight: 600;
+  display: flex; align-items: flex-start; gap: 8px;
+  margin-bottom: 8px;
+}
+.webcast-title svg { width: 15px; height: 15px; flex: 0 0 auto; margin-top: 2px; }
+.webcast-details { font-size: 12px; opacity: .9; text-align: right; }
+
+/* =============================== grid =============================== */
+
+.menu-grid {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  align-content: start;
+  gap: 12px;
+  padding: 14px;
+  background: #FFFFFF;
+}
+
+.module {
+  background: #FAFBFC;
+  border: 1px solid #EDEFF2;
+  border-left: 4px solid var(--g);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(96,96,98,.05);
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+.module:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(96,96,98,.12); }
+
+.module.remessa       { border-left-color: var(--g); }
+.module.massa         { border-left-color: #5D6A38; }
+.module.documentos    { border-left-color: #A9C63A; }
+.module.relatorios    { border-left-color: #F5A623; }
+.module.cubo          { border-left-color: #606062; }
+.module.configuracoes { border-left-color: #848688; }
+
+.module-header {
+  display: flex; align-items: center; gap: 14px;
+  padding-bottom: 10px; margin-bottom: 10px;
+  border-bottom: 1px solid #E4E7EA;
+}
+.module-icon {
+  width: 44px; height: 44px;
+  background: #F1F3F5;
+  border-radius: 10px;
+  display: grid; place-items: center;
+  color: var(--g);
+}
+.module-icon svg { width: 20px; height: 20px; }
+.module-title { font-size: 18px; font-weight: 600; color: #5C5B5A; }
+
+.menu-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 10px;
+  margin-bottom: 5px;
+  background: #FFFFFF;
+  border: 1px solid #E4E7EA;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  transition: transform .15s ease, border-color .15s ease, background .15s ease;
+}
+.menu-item:last-child { margin-bottom: 0; }
+.menu-item:hover { background: #F5F7F2; border-color: var(--g); transform: translateX(4px); }
+
+.menu-item-favorite { color: #B7BCC2; font-size: 15px; line-height: 1; }
+.menu-item-favorite:hover { color: #F5A623; transform: scale(1.15); }
+.menu-item-favorite.ativo { color: #F5A623; }
+
+.menu-item-icon {
+  width: 30px; height: 30px;
+  flex: 0 0 30px;
+  background: #F1F3F5;
+  border-radius: 6px;
+  display: grid; place-items: center;
+  color: #848688;
+  transition: background .15s ease, color .15s ease;
+}
+.menu-item-icon svg { width: 15px; height: 15px; }
+.menu-item:hover .menu-item-icon { background: var(--g); color: #FFFFFF; }
+
+.menu-item-text { flex: 1; font-size: 14px; color: #5C5B5A; }
+
+.menu-item-code {
+  font-size: 12px;
+  color: #848688;
+  background: #F1F3F5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-weight: 600;
+}
+
+.menu-item .tag {
+  position: absolute; top: -8px; right: 10px;
+  color: #FFFFFF;
+  font-size: 9px; font-weight: 600;
+  line-height: 12px;
+  padding: 0 5px;
+  border-radius: 3px;
+}
+.menu-item .tag.video  { background: #DC2626; }
+.menu-item .tag.novo   { background: #F5A623; }
+.menu-item .tag.treino { background: #5D6A38; }
+
+.menu-item[hidden] { display: none; }

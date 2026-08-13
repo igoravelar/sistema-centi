@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+  body { margin:0; background:#F2F3EF; font-family:system-ui,-apple-system,'Segoe UI',sans-serif; color:#4A4A4A; overflow:hidden; }
+  a { color:#7DA82B; text-decoration:none; }
+  a:hover { color:#5C6A35; }
+  ::placeholder { color:#B4B8AC; }
+  .btn-ct:hover, .btn-ct:hover i { color:#FFFFFF !important; }
+  input, select, textarea { font-family:Verdana,Geneva,sans-serif; }
+</style>
+</helmet>
+
+<div style="height:100vh; min-width:1500px; display:flex; flex-direction:column; overflow:hidden">
+  <!-- Topbar -->
+  <div style="height:64px; background:#fff; border-bottom:1px solid #E2E5DA; display:flex; align-items:center; gap:18px; padding:0 20px; flex-shrink:0" data-screen-label="Topbar">
+    <img src="uploads/marca-centi.png" alt="Centi" style="height:30px; width:auto">
+    <i class="fas fa-bars" style="font-size:18px; color:#5C5A5B; cursor:pointer"></i>
+    <div style="flex:1; display:flex; align-items:center; gap:12px; justify-content:center">
+      <span style="font-size:16px; font-weight:700; color:#4A4A4A">Referência</span>
+      <select style="border:1px solid #C9CDC0; border-radius:5px; padding:9px 10px; font-size:14px; background:#fff; outline:none; width:150px"><option>Agosto</option></select>
+      <input value="2026" style="width:70px; border:1px solid #C9CDC0; border-radius:5px; padding:9px 10px; font-size:14px; outline:none">
+      <select style="border:1px solid #C9CDC0; border-radius:5px; padding:9px 10px; font-size:14px; font-weight:600; background:#fff; outline:none; width:420px"><option>01 - CAMARA MUNICIPAL DE RIO VERDE</option></select>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px; color:#5C5A5B; font-size:13px">
+      <span>admin | 3.0.209.53</span>
+      <i class="fas fa-download" style="cursor:pointer"></i>
+      <i class="fas fa-cogs" style="cursor:pointer"></i>
+      <i class="fas fa-play-circle" style="cursor:pointer"></i>
+      <i class="fas fa-clipboard-list" style="cursor:pointer"></i>
+      <i class="fas fa-user" style="cursor:pointer"></i>
+      <i class="fas fa-search" style="cursor:pointer"></i>
+      <i class="fas fa-question-circle" style="cursor:pointer"></i>
+      <i class="fas fa-power-off" style="cursor:pointer"></i>
+    </div>
+  </div>
+
+  <div style="flex:1; display:flex; overflow:hidden">
+    <!-- Sidebar módulos -->
+    <div style="width:250px; background:#fff; border-right:1px solid #E2E5DA; display:flex; flex-direction:column; flex-shrink:0" data-screen-label="Sidebar">
+      <div style="padding:14px 14px 10px"><input placeholder="Pesquisar..." style="width:100%; box-sizing:border-box; border:1px solid #C9CDC0; border-radius:6px; padding:9px 14px; font-size:13px; outline:none"></div>
+      <div style="flex:1; overflow-y:auto">
+        <sc-for list="{{ modulos }}" as="m" hint-placeholder-count="8">
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 14px; cursor:pointer; border-right:4px solid {{ m.border }}; background:{{ m.bg }}" style-hover="background:#F4F7EC">
+            <span style="width:26px; height:26px; border-radius:6px; background:#9CC13C; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0"><i class="{{ m.icon }}"></i></span>
+            <span style="flex:1; font-size:13px; font-weight:700; color:#5C5A5B">{{ m.nome }}</span>
+            <sc-if value="{{ m.chev }}" hint-placeholder-val="{{ false }}"><i class="fas fa-chevron-right" style="color:#C9CDC0; font-size:12px"></i></sc-if>
+          </div>
+        </sc-for>
+        <div style="display:flex; align-items:center; gap:12px; padding:14px 16px; cursor:pointer; border-top:1px solid #EFF0EA" style-hover="background:#F4F7EC">
+          <i class="fas fa-graduation-cap" style="color:#5C5A5B; font-size:16px"></i>
+          <span style="font-size:13px; font-weight:700; color:#5C5A5B">Central de Treinamentos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Área de trabalho -->
+    <div style="flex:1; display:flex; flex-direction:column; overflow:hidden; background:#F2F3EF">
+      <!-- Abas de documento -->
+      <div style="display:flex; align-items:flex-end; gap:4px; padding:8px 12px 0 64px; border-bottom:1px solid #C9CDC0; flex-shrink:0">
+        <div style="background:#E9EBE3; border:1px solid #C9CDC0; border-bottom:none; border-radius:6px 6px 0 0; padding:8px 16px; font-size:14px; color:#8A8F82; cursor:pointer"><i class="fas fa-home"></i></div>
+        <div style="background:#E9EBE3; border:1px solid #C9CDC0; border-bottom:none; border-radius:6px 6px 0 0; padding:8px 16px; font-size:14px; color:#8A8F82; cursor:pointer">Notificações</div>
+        <div style="background:#fff; border:1px solid #C9CDC0; border-bottom:1px solid #fff; margin-bottom:-1px; border-radius:6px 6px 0 0; padding:8px 16px; font-size:14px; font-weight:600; color:#7DA82B; display:flex; align-items:center; gap:8px"><i class="fas fa-star" style="font-size:11px; color:#5C5A5B"></i><i class="fas fa-thumbtack" style="font-size:11px; color:#5C5A5B"></i> PO002 - Protocolo <i class="fas fa-times" style="color:#8A8F82; cursor:pointer; font-size:12px"></i></div>
+        <div style="flex:1"></div>
+        <div style="display:flex; gap:14px; color:#5C6A35; font-size:17px; padding:0 8px 8px 0"><i class="fas fa-adjust" style="cursor:pointer"></i><i class="fas fa-columns" style="cursor:pointer"></i><i class="fas fa-chevron-circle-down" style="cursor:pointer"></i></div>
+      </div>
+
+      <div style="flex:1; display:flex; overflow:hidden">
+        <!-- Abas verticais -->
+        <div style="display:flex; flex-direction:column; gap:6px; padding:24px 0 0 12px; flex-shrink:0">
+          <div onClick="{{ goPesquisa }}" style="writing-mode:vertical-rl; transform:rotate(180deg); background:{{ tabPesqBg }}; border:1px solid #C9CDC0; border-right:none; border-radius:0 6px 6px 0; padding:14px 7px; font-size:13px; font-weight:600; color:{{ tabPesqColor }}; cursor:pointer; display:flex; align-items:center; gap:8px"><i class="fas fa-search" style="transform:rotate(90deg)"></i> Pesquisa</div>
+          <div onClick="{{ goCadastro }}" style="writing-mode:vertical-rl; transform:rotate(180deg); background:{{ tabCadBg }}; border:1px solid #C9CDC0; border-right:none; border-radius:0 6px 6px 0; padding:14px 7px; font-size:13px; font-weight:600; color:{{ tabCadColor }}; cursor:pointer; display:flex; align-items:center; gap:8px"><i class="fas fa-edit" style="transform:rotate(90deg)"></i> Cadastro</div>
+          <div style="writing-mode:vertical-rl; transform:rotate(180deg); background:#E9EBE3; border:1px solid #C9CDC0; border-right:none; border-radius:0 6px 6px 0; padding:14px 7px; font-size:13px; color:#8A8F82; cursor:pointer; display:flex; align-items:center; gap:8px"><i class="fas fa-exclamation" style="transform:rotate(90deg)"></i> Notas</div>
+          <div style="writing-mode:vertical-rl; transform:rotate(180deg); background:#E9EBE3; border:1px solid #C9CDC0; border-right:none; border-radius:0 6px 6px 0; padding:14px 7px; font-size:13px; color:#8A8F82; cursor:pointer; display:flex; align-items:center; gap:8px"><i class="fas fa-headset" style="transform:rotate(90deg)"></i> ViCenti</div>
+        </div>
+
+        <!-- ================= CADASTRO ================= -->
+        <sc-if value="{{ isCadastro }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1; display:flex; background:#fff; border:1px solid #C9CDC0; border-radius:0 6px 0 0; overflow:hidden" data-screen-label="Cadastro">
+          <!-- Árvore -->
+          <div style="width:310px; border-right:1px solid #E2E5DA; overflow-y:auto; flex-shrink:0; padding:10px 0">
+            <div style="display:flex; align-items:center; gap:9px; padding:7px 14px; font-size:14px; font-weight:700; color:#3E4630; border-bottom:1px solid #EFF0EA; margin-bottom:6px">
+              <i class="fas fa-chevron-circle-down" style="color:#8FBE2F; font-size:13px"></i>
+              <sc-if value="{{ isNovo }}" hint-placeholder-val="{{ false }}"><i class="fas fa-plus-circle" style="color:#4FC3F7"></i></sc-if>
+              <sc-if value="{{ isEdicao }}" hint-placeholder-val="{{ true }}"><i class="fas fa-check-circle" style="color:#8FBE2F"></i></sc-if>
+              {{ treeTitle }}
+            </div>
+            <div style="display:flex; align-items:center; gap:9px; padding:7px 14px; font-size:13px; color:#4A4A4A; cursor:pointer" style-hover="background:#F4F7EC"><i class="fas fa-chevron-circle-right" style="color:#8FBE2F; font-size:13px"></i><i class="fas fa-folder-open" style="color:#8FBE2F"></i> Andamentos</div>
+            <sc-if value="{{ isEdicao }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex; align-items:center; gap:9px; padding:7px 14px 7px 44px; font-size:13px; color:#4A4A4A; cursor:pointer" style-hover="background:#F4F7EC"><i class="fas fa-check" style="color:#5C6A35"></i> Entrada 07/08/2026 15:40:02</div>
+            </sc-if>
+            <sc-for list="{{ pastas }}" as="p" hint-placeholder-count="5">
+              <div style="display:flex; align-items:center; gap:9px; padding:7px 14px 7px {{ p.pad }}; font-size:13px; color:#4A4A4A; cursor:pointer" style-hover="background:#F4F7EC"><sc-if value="{{ p.chev }}" hint-placeholder-val="{{ false }}"><i class="fas fa-chevron-circle-right" style="color:#8FBE2F; font-size:13px"></i></sc-if><i class="fas {{ p.icon }}" style="color:{{ p.cor }}"></i> {{ p.nome }}</div>
+            </sc-for>
+          </div>
+          <!-- Formulário -->
+          <div style="flex:1; overflow-y:auto; padding:12px 16px; position:relative">
+            <div style="display:flex; gap:8px; margin-bottom:12px; align-items:center">
+              <button onClick="{{ doNovo }}" class="btn-ct" style="background:#E6E6E5; color:#4A4A4A; border:1px solid #D4D4D2; border-radius:5px; padding:7px 20px; font-size:13px; font-weight:600; font-family:system-ui,sans-serif; cursor:pointer; display:flex; align-items:center; gap:9px; transition:background .15s,color .15s" style-hover="background:#80CAE8; border-color:#80CAE8"><i class="fas fa-plus-circle" style="color:#4FC3F7"></i> Novo</button>
+              <button class="btn-ct" style="background:#E6E6E5; color:#4A4A4A; border:1px solid #D4D4D2; border-radius:5px; padding:7px 20px; font-size:13px; font-weight:600; font-family:system-ui,sans-serif; cursor:pointer; display:flex; align-items:center; gap:9px; transition:background .15s,color .15s" style-hover="background:#BE5B5A; border-color:#BE5B5A"><i class="fas fa-trash-alt" style="color:#C62828"></i> Excluir</button>
+              <button onClick="{{ doSalvar }}" class="btn-ct" style="background:{{ salvarBg }}; color:{{ salvarColor }}; border:1px solid #D4D4D2; border-radius:5px; padding:7px 20px; font-size:13px; font-weight:600; font-family:system-ui,sans-serif; cursor:pointer; display:flex; align-items:center; gap:9px; transition:background .15s,color .15s" style-hover="background:#AFC571; border-color:#AFC571"><i class="fas fa-save" style="color:{{ salvarIconColor }}"></i> {{ salvarLabel }}</button>
+              <div style="flex:1"></div>
+              <button title="Sigiloso" class="btn-ct" style="background:#E6E6E5; color:#9AA0A6; border:1px solid #D4D4D2; border-radius:5px; padding:7px 26px; font-size:14px; font-family:system-ui,sans-serif; cursor:pointer; transition:background .15s,color .15s" style-hover="background:#AAB1B3; border-color:#AAB1B3"><i class="fas fa-eye-slash"></i></button>
+              <button class="btn-ct" style="background:#E6E6E5; color:#4A4A4A; border:1px solid #D4D4D2; border-radius:5px; padding:7px 16px; font-size:13px; font-weight:600; font-family:system-ui,sans-serif; cursor:pointer; display:flex; align-items:center; gap:8px; transition:background .15s,color .15s" style-hover="background:#AAB1B3; border-color:#AAB1B3"><i class="fas fa-undo" style="color:#5C5A5B"></i> Desfazer</button>
+              <button onClick="{{ toggleOps }}" style="background:#8FBE2F; color:#fff; border:1px solid #7DA82B; border-radius:5px; padding:7px 16px; font-size:13px; font-weight:600; font-family:system-ui,sans-serif; cursor:pointer; display:flex; align-items:center; gap:8px; transition:background .15s" style-hover="background:#B5C373; border-color:#B5C373"><i class="fas fa-cogs"></i> Operações</button>
+            </div>
+            <div style="display:flex; gap:26px; align-items:flex-start">
+              <!-- Coluna principal -->
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:5px">
+                <div style="display:grid; grid-template-columns:180px 1fr; gap:0"><div style="background:#E4E6E9; padding:8px 12px; font-size:13px; border-radius:4px 0 0 4px">Id</div><input value="{{ f.id }}" readOnly style="border:1px solid #E4E6E9; background:#F4F5F5; border-radius:0 4px 4px 0; padding:7px 10px; font-size:13px; color:#5C5A5B; outline:none"></div>
+                <div style="display:grid; grid-template-columns:180px 1fr; gap:0"><div style="background:#E4E6E9; padding:8px 12px; font-size:13px; border-radius:4px 0 0 4px">Protocolo <span style="color:#E53935">*</span></div><input value="{{ f.protocolo }}" readOnly style="border:1px solid #E4E6E9; background:#F4F5F5; border-radius:0 4px 4px 0; padding:7px 10px; font-size:13px; color:#5C5A5B; outline:none"></div>
+                <div style="display:grid; grid-template-columns:180px 1fr; gap:0"><div style="background:#E4E6E9; padding:8px 12px; font-size:13px; border-radius:4px 0 0 4px">Ano protocolo <span style="color:#E53935">*</span></div><input value="{{ f.ano }}" readOnly style="border:1px solid #E4E6E9; background:#F4F5F5; border-radius:0 4px 4px 0; padding:7px 10px; font-size:13px; color:#5C5A5B; outline:none"></div>
+                <div style="display:grid; grid-template-columns:180px 1fr; gap:0"><div style="background:#E4E6E9; padding:8px 12px; font-size:13px; border-radius:4px 0 0 4px">Data protocolo</div><input value="{{ f.data }}" readOnly style="border:1px solid #E4E6E9; background:#F4F5F5; border-radius:0 4px 4px 0; padding:7px 10px; font-size:13px; color:#5C5A5B; outline:none"></div>
+                <div style="display:grid; grid-template-columns:180px 130px 1fr auto; gap:0; align-items:stretch"><div style="background:#E4E6E9; padding:8px 12px; font-size:13px; border-radius:4px 0 0 4px">Interessado/Beneficiário <span style="color:#E53935">*</span></div><input value="{{ f.intCod }}" style="border:1px solid #E4E6E9; border-radius:0; padding:7px 10px; font-size:13px; text-align:right; outline:none"><input value="{{ f.interessado }}" placeholder="Pesquisar" style="border:1px solid #E4E6E9; border-left:none; border-radius:0 4px 4px 0; padding:7px 10px; font-size:13px; outline:none"><div style="display:flex; align-items:center; gap:10px; padding:0 10px; color:#5C6A35; font-size:16px"><i class="fas fa-edit" style="cursor:pointer"></i><i class="fas fa-search" style="cursor:pointer"></i><i class="fas fa-eye-slash" style="cursor:pointer"></i></div></div>
+                <div style="display:grid; grid-template-columns:180px 130px 1fr auto; gap:0"><div style="background:#E4E6E9; padding:8px 12px; font-size:13px; border-radius:4px 0 0 4px">Solicitante/Requerente</div><input style="border:1px solid #E4E6E9; border-radius:0; padding:7px 10px; font-size:13px; text-align:right; outline:none"><input placeholder="Pesquisar" style="border:1px solid #E4E6E9; border-left:none; border-radius:0 4px 4px 0; padding:7px 10px; font-size:13px; outline:none"><div style="display:flex; align-items:center; gap:10px; padding:0 10px; color:#5C6A35; font-size:16px"><i class="fas fa-search" style="cursor:pointer"></i></div></div>
+                <div style="display:grid; grid-template-columns:180px 130px 1fr auto; gap:0"><div style="background:#E4E6E9; padding:8px 12px; font-size:13px; border-radius:4px 0 0 4px">Natureza <span style="color:#E53935">*</span></div><input value="{{ f.natCod }}" style="border:1px solid #E4E6E9; border-radius:0; padding:7px 10px; font-size:13px; text-align:right; outline:none"><input value="{{ f.natureza }}" placeholder="Pesquisar" style="border:1px solid #E4E6E9; border-left:none; border-radius:0 4px 4px 0; padding:7px 10px; font-size:13px; outline:none"><div style="display:flex; align-items:center; gap:10px; padding:0 10px; color:#5C6A35; font-size:16px"><i class="fas fa-edit" style="cursor:pointer"></i><i class="fas fa-search" style="cursor:pointer"></i></div></div>
+                <div style="display:grid; grid-template-columns:180px 130px 1fr auto; gap:0"><div style="background:#E4E6E9; padding:8px 12px; font-size:13px; border-radius:4px 0 0 4px">Protocolo origem</div><input style="border:1px solid #E4E6E9; border-radius:0; padding:7px 10px; font-size:13px; text-align:right; outline:none"><input placeholder="Pesquisar" style="border:1px solid #E4E6E9; border-left:none; border-radius:0 4px 4px 0; padding:7px 10px; font-size:13px; outline:none"><div style="display:flex; align-items:center; gap:10px; padding:0 10px; color:#5C6A35; font-size:16px"><i class="fas fa-search" style="cursor:pointer"></i></div></div>
+                <div style="display:grid; grid-template-columns:180px 1fr auto; gap:0"><div style="background:#E4E6E9; padding:8px 12px; font-size:13px; border-radius:4px 0 0 4px">Observação <span style="color:#E53935">*</span></div><textarea rows="3" value="{{ obsVal }}" readOnly style="border:1px solid #E4E6E9; border-radius:0 4px 4px 0; padding:7px 10px; font-size:13px; outline:none; resize:vertical"></textarea><div style="display:flex; align-items:flex-start; padding:10px; color:#5C6A35; font-size:16px"><i class="fas fa-search" style="cursor:pointer"></i></div></div>
+                <div style="display:grid; grid-template-columns:180px 1fr auto; gap:0"><div style="background:#E4E6E9; padding:8px 12px; font-size:13px; border-radius:4px 0 0 4px">Data do documento</div><input placeholder="dd/mm/yyyy" style="border:1px solid #E4E6E9; border-radius:0 4px 4px 0; padding:7px 10px; font-size:13px; outline:none"><div style="display:flex; align-items:center; padding:0 10px; color:#5C6A35; font-size:16px"><i class="far fa-calendar-alt" style="cursor:pointer"></i></div></div>
+                <div style="display:grid; grid-template-columns:180px 1fr; gap:0"><div style="background:#E4E6E9; padding:8px 12px; font-size:13px; border-radius:4px 0 0 4px">Valor</div><input value="{{ f.valor }}" style="border:1px solid #E4E6E9; border-radius:0 4px 4px 0; padding:7px 10px; font-size:13px; outline:none"></div>
+                <div style="display:grid; grid-template-columns:180px 1fr; gap:0"><div style="background:#E4E6E9; padding:8px 12px; font-size:13px; border-radius:4px 0 0 4px">Número documento</div><input style="border:1px solid #E4E6E9; border-radius:0 4px 4px 0; padding:7px 10px; font-size:13px; outline:none"></div>
+                <div style="display:grid; grid-template-columns:180px 1fr; gap:0"><div style="background:#E4E6E9; padding:8px 12px; font-size:13px; border-radius:4px 0 0 4px">Repartição</div><input value="{{ f.reparticao }}" readOnly style="border:1px solid #E4E6E9; background:#F4F5F5; border-radius:0 4px 4px 0; padding:7px 10px; font-size:13px; color:#5C5A5B; outline:none"></div>
+                <div style="display:grid; grid-template-columns:180px 1fr; gap:0"><div style="background:#E4E6E9; padding:8px 12px; font-size:13px; border-radius:4px 0 0 4px">Apensar automático? <span style="color:#E53935">*</span></div><select style="border:1px solid #E4E6E9; border-radius:0 4px 4px 0; padding:7px; font-size:13px; background:#fff; outline:none"><option>Não</option><option>Sim</option></select></div>
+                <sc-if value="{{ isNovo }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:grid; grid-template-columns:180px 1fr; gap:0"><div style="background:#E4E6E9; padding:8px 12px; font-size:13px; border-radius:4px 0 0 4px">Escolher repartição <span style="color:#E53935">*</span></div><select style="border:1px solid #E4E6E9; border-radius:0 4px 4px 0; padding:7px; font-size:13px; background:#fff; outline:none"><option>Não</option><option>Sim</option></select></div>
+                </sc-if>
+                <div style="display:grid; grid-template-columns:180px 1fr; gap:0"><div style="background:#E4E6E9; padding:8px 12px; font-size:13px; border-radius:4px 0 0 4px">Sigiloso <span style="color:#E53935">*</span></div><select style="border:1px solid #E4E6E9; border-radius:0 4px 4px 0; padding:7px; font-size:13px; background:#fff; outline:none"><option>Não</option><option>Sim</option></select></div>
+              </div>
+              <!-- Complemento -->
+              <div style="width:360px; flex-shrink:0; border:1px solid #E2E5DA; border-radius:6px; overflow:hidden">
+                <div style="background:#EEF1F4; padding:10px 14px; font-size:15px; font-weight:700; color:#3E4630">Complemento</div>
+                <div style="padding:10px; display:flex; flex-direction:column; gap:6px">
+                  <div style="display:grid; grid-template-columns:140px 1fr; gap:0"><div style="background:#E4E6E9; padding:8px 10px; font-size:12px; border-radius:4px 0 0 4px">Notificar por email/SMS <span style="color:#E53935">*</span></div><select style="border:1px solid #E4E6E9; border-radius:0 4px 4px 0; padding:6px; font-size:12px; background:#fff; outline:none"><option>Não</option><option>Sim</option></select></div>
+                  <div style="display:grid; grid-template-columns:140px 1fr; gap:0"><div style="background:#E4E6E9; padding:8px 10px; font-size:12px; border-radius:4px 0 0 4px">Status controle interno</div><select style="border:1px solid #E4E6E9; background:#F4F5F5; color:#8A8F82; border-radius:0 4px 4px 0; padding:6px; font-size:12px; outline:none"><option>Não atestado</option></select></div>
+                  <div style="display:grid; grid-template-columns:140px 1fr; gap:0"><div style="background:#E4E6E9; padding:8px 10px; font-size:12px; border-radius:4px 0 0 4px">Tipo andamento</div><input value="{{ f.tipoAndamento }}" readOnly style="border:1px solid #E4E6E9; background:#F4F5F5; border-radius:0 4px 4px 0; padding:6px 9px; font-size:12px; color:#4A4A4A; outline:none"></div>
+                  <div style="display:grid; grid-template-columns:140px 1fr; gap:0"><div style="background:#E4E6E9; padding:8px 10px; font-size:12px; border-radius:4px 0 0 4px">Situação</div><input value="{{ f.situacao }}" readOnly style="border:1px solid #E4E6E9; background:#F4F5F5; border-radius:0 4px 4px 0; padding:6px 9px; font-size:12px; color:#4A4A4A; outline:none"></div>
+                  <div style="display:grid; grid-template-columns:140px 1fr; gap:0"><div style="background:#E4E6E9; padding:8px 10px; font-size:12px; border-radius:4px 0 0 4px">Remessa</div><input value="0" readOnly style="border:1px solid #E4E6E9; background:#F4F5F5; border-radius:0 4px 4px 0; padding:6px 9px; font-size:12px; outline:none"></div>
+                  <div style="display:grid; grid-template-columns:140px 1fr; gap:0"><div style="background:#E4E6E9; padding:8px 10px; font-size:12px; border-radius:4px 0 0 4px">Solicitação portal</div><select style="border:1px solid #E4E6E9; background:#F4F5F5; color:#8A8F82; border-radius:0 4px 4px 0; padding:6px; font-size:12px; outline:none"><option>Não</option></select></div>
+                  <div style="display:grid; grid-template-columns:140px 1fr; gap:0"><div style="background:#E4E6E9; padding:8px 10px; font-size:12px; border-radius:4px 0 0 4px">Total páginas docume...</div><input value="0" readOnly style="border:1px solid #E4E6E9; background:#F4F5F5; border-radius:0 4px 4px 0; padding:6px 9px; font-size:12px; outline:none"></div>
+                </div>
+              </div>
+              <!-- Painel Operações -->
+              <sc-if value="{{ opsOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="width:390px; flex-shrink:0; border:1px solid #8FBE2F; border-radius:8px; background:#fff; box-shadow:0 4px 16px rgba(60,70,40,.18); padding:8px; display:flex; flex-direction:column; gap:6px; max-height:calc(100vh - 260px); overflow-y:auto" data-screen-label="Operações">
+                  <sc-for list="{{ operacoes }}" as="op" hint-placeholder-count="6">
+                    <div style="display:flex; align-items:center; gap:12px; border:1px solid #E2E5DA; border-radius:6px; padding:11px 14px; font-size:15px; color:#4A4A4A; cursor:pointer" style-hover="border-color:#8FBE2F; background:#FAFBF6"><i class="far fa-star" style="color:#8FBE2F"></i> {{ op }}</div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ================= PESQUISA ================= -->
+        <sc-if value="{{ isPesquisa }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1; display:flex; flex-direction:column; background:#fff; border:1px solid #C9CDC0; border-radius:0 6px 0 0; overflow:hidden" data-screen-label="Pesquisa">
+          <div style="display:flex; border-bottom:1px solid #E2E5DA">
+            <div style="flex:1; padding:16px 24px">
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr 30px; gap:12px; font-size:15px; font-weight:700; color:#3E4630; margin-bottom:8px"><div>Campo</div><div>Operação</div><div>Valor</div><div></div></div>
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr 30px; gap:12px; margin-bottom:8px">
+                <select style="border:1px solid #C9CDC0; border-radius:5px; padding:9px 10px; font-size:14px; background:#fff; outline:none"><option>Protocolo</option></select>
+                <select style="border:1px solid #C9CDC0; border-radius:5px; padding:9px 10px; font-size:14px; background:#fff; outline:none"><option>Igual</option></select>
+                <input style="border:1px solid #C9CDC0; border-radius:5px; padding:9px 12px; font-size:14px; outline:none">
+                <div></div>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr 30px; gap:12px">
+                <select style="border:1px solid #C9CDC0; border-radius:5px; padding:9px 10px; font-size:14px; background:#fff; outline:none"><option>Somente ano logado?</option></select>
+                <select style="border:1px solid #C9CDC0; border-radius:5px; padding:9px 10px; font-size:14px; background:#fff; outline:none"><option>Igual</option></select>
+                <select style="border:1px solid #C9CDC0; border-radius:5px; padding:9px 10px; font-size:14px; background:#fff; outline:none"><option>Sim</option><option>Não</option></select>
+                <div style="display:flex; align-items:center"><i class="fas fa-trash-alt" style="color:#E53935; cursor:pointer; font-size:15px"></i></div>
+              </div>
+              <div style="display:flex; align-items:center; gap:24px; margin-top:16px">
+                <a href="#" style="font-size:14px; font-weight:600; color:#7DA82B; display:flex; align-items:center; gap:7px"><i class="fas fa-plus"></i> Adicionar Filtro</a>
+                <a href="#" style="font-size:14px; font-weight:600; color:#4A4A4A; display:flex; align-items:center; gap:7px"><i class="fas fa-eraser"></i> Limpar Filtros</a>
+                <div style="flex:1"></div>
+                <button style="background:#8FBE2F; color:#fff; border:1px solid #7DA82B; border-radius:5px; padding:10px 24px; font-size:14px; font-weight:600; font-family:system-ui,sans-serif; cursor:pointer; display:flex; align-items:center; gap:9px" style-hover="background:#7DA82B"><i class="fas fa-search"></i> Pesquisar</button>
+                <button style="background:linear-gradient(#FDFDFD,#EFEFEC); color:#4A4A4A; border:1px solid #C9CDC0; border-radius:5px; padding:10px 20px; font-size:14px; font-weight:600; font-family:system-ui,sans-serif; cursor:pointer; display:flex; align-items:center; gap:9px" style-hover="background:#EFEFEC"><i class="fas fa-save" style="color:#5C6A35"></i> Salvar Filtros</button>
+              </div>
+            </div>
+            <div style="width:390px; border-left:1px solid #E2E5DA; padding:16px 20px; flex-shrink:0">
+              <div style="display:flex; align-items:center; gap:9px; font-size:16px; font-weight:700; color:#3E4630; margin-bottom:12px"><i class="fas fa-history" style="color:#5C6A35"></i> Últimas Buscas <i class="fas fa-question-circle" style="color:#8FBE2F; font-size:14px"></i></div>
+              <div style="display:flex; flex-direction:column; gap:10px; font-size:13px; color:#5C5A5B">
+                <div style="cursor:pointer" style-hover="color:#7DA82B"><b>10/08/2026 - 17:25:</b> Protocolo - Igual - , Somente ano logado? - I...</div>
+                <div style="cursor:pointer" style-hover="color:#7DA82B"><b>10/08/2026 - 16:21:</b> Data - Igual - 03/08/2026, Somente ano loga...</div>
+                <div style="cursor:pointer" style-hover="color:#7DA82B"><b>10/08/2026 - 16:21:</b> Data - Igual - 10/08/2026, Somente ano loga...</div>
+              </div>
+            </div>
+          </div>
+          <div style="flex:1; overflow:auto; padding:16px 24px">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+              <div style="display:flex; align-items:baseline; gap:10px"><span style="font-size:20px; font-weight:700; color:#3E4630">Resultados</span><span style="font-size:14px; color:#8A8F82">Exibindo 50 de</span><i class="fas fa-question-circle" style="color:#8FBE2F; font-size:14px"></i></div>
+              <div style="display:flex; align-items:center; gap:12px"><span style="font-size:14px; color:#5C5A5B">Mostrar:</span><select style="border:1px solid #C9CDC0; border-radius:5px; padding:7px 10px; font-size:13px; background:#fff; outline:none"><option>50</option><option>100</option></select><button style="background:linear-gradient(#FDFDFD,#EFEFEC); color:#4A4A4A; border:1px solid #C9CDC0; border-radius:5px; padding:8px 16px; font-size:13px; font-weight:600; font-family:system-ui,sans-serif; cursor:pointer; display:flex; align-items:center; gap:8px" style-hover="background:#EFEFEC"><i class="fas fa-download"></i> Exportar</button></div>
+            </div>
+            <table style="width:100%; border-collapse:collapse; font-size:13px; font-family:Verdana,Geneva,sans-serif">
+              <thead><tr>
+                <th style="text-align:right; padding:9px 10px; background:#F4F5F1; border:1px solid #E2E5DA; font-size:11px; font-weight:700; color:#6B6F63; letter-spacing:.5px; text-transform:uppercase; font-family:system-ui,sans-serif">ID</th>
+                <th style="text-align:right; padding:9px 10px; background:#F4F5F1; border:1px solid #E2E5DA; font-size:11px; font-weight:700; color:#6B6F63; letter-spacing:.5px; text-transform:uppercase; font-family:system-ui,sans-serif">Protocolo</th>
+                <th style="text-align:left; padding:9px 10px; background:#F4F5F1; border:1px solid #E2E5DA; font-size:11px; font-weight:700; color:#6B6F63; letter-spacing:.5px; text-transform:uppercase; font-family:system-ui,sans-serif">Data</th>
+                <th style="text-align:left; padding:9px 10px; background:#F4F5F1; border:1px solid #E2E5DA; font-size:11px; font-weight:700; color:#6B6F63; letter-spacing:.5px; text-transform:uppercase; font-family:system-ui,sans-serif">Interessado</th>
+                <th style="text-align:left; padding:9px 10px; background:#F4F5F1; border:1px solid #E2E5DA; font-size:11px; font-weight:700; color:#6B6F63; letter-spacing:.5px; text-transform:uppercase; font-family:system-ui,sans-serif">CPF/CNPJ</th>
+                <th style="text-align:left; padding:9px 10px; background:#F4F5F1; border:1px solid #E2E5DA; font-size:11px; font-weight:700; color:#6B6F63; letter-spacing:.5px; text-transform:uppercase; font-family:system-ui,sans-serif">Processo/Ano</th>
+                <th style="text-align:left; padding:9px 10px; background:#F4F5F1; border:1px solid #E2E5DA; font-size:11px; font-weight:700; color:#6B6F63; letter-spacing:.5px; text-transform:uppercase; font-family:system-ui,sans-serif">Solicitante</th>
+                <th style="text-align:left; padding:9px 10px; background:#F4F5F1; border:1px solid #E2E5DA; font-size:11px; font-weight:700; color:#6B6F63; letter-spacing:.5px; text-transform:uppercase; font-family:system-ui,sans-serif">Assunto</th>
+              </tr></thead>
+              <tbody>
+                <sc-for list="{{ resultados }}" as="r" hint-placeholder-count="8">
+                  <tr onClick="{{ goCadastro }}" style="background:{{ r.bg }}; cursor:pointer">
+                    <td style="padding:8px 10px; border:1px solid #EEF0E8; text-align:right">{{ r.id }}</td>
+                    <td style="padding:8px 10px; border:1px solid #EEF0E8; text-align:right">{{ r.prot }}</td>
+                    <td style="padding:8px 10px; border:1px solid #EEF0E8">{{ r.data }}</td>
+                    <td style="padding:8px 10px; border:1px solid #EEF0E8">{{ r.interessado }}</td>
+                    <td style="padding:8px 10px; border:1px solid #EEF0E8">{{ r.doc }}</td>
+                    <td style="padding:8px 10px; border:1px solid #EEF0E8">{{ r.proc }}</td>
+                    <td style="padding:8px 10px; border:1px solid #EEF0E8">{{ r.solicitante }}</td>
+                    <td style="padding:8px 10px; border:1px solid #EEF0E8; white-space:nowrap">{{ r.assunto }}</td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: &quot;1920px&quot;, &quot;height&quot;: &quot;1080px&quot;}}">
+class Component extends DCLogic {
+  state = { view: 'cadastro', opsOpen: false, novo: false };
+  renderVals() {
+    const { view, opsOpen, novo } = this.state;
+    const filled = {
+      id: '2292414', protocolo: '116489', ano: '2026', data: '07/08/2026',
+      intCod: '807927', interessado: 'DIEGO BORGES SAITO 01185150129',
+      natCod: '968', natureza: 'AQUISIÇÃO - PD', obs: 'TESTE FLUXO DISPENSA',
+      valor: '0,00', reparticao: 'PREFEITURA MUNICIPAL DE RIO VERDE',
+      tipoAndamento: 'Aguardando Saida', situacao: 'Em Andamento'
+    };
+    const vazio = {
+      id: '0', protocolo: '0', ano: '0', data: '10/08/2026',
+      intCod: '', interessado: '', natCod: '', natureza: '', obs: '',
+      valor: '0,0000', reparticao: '', tipoAndamento: '', situacao: ''
+    };
+    const zebra = (i) => i % 2 ? '#FAFBF6' : '#fff';
+    const rows = [
+      ['2292414','116489','07/08/2026','DIEGO BORGES SAITO 01185150129','31.633.623/0001-25','116489/2026','','AQUISIÇÃO - PD'],
+      ['2292413','116488','07/08/2026','DIEGO BORGES SAITO 01185150129','31.633.623/0001-25','116488/2026','','ABERTURA DE LICITAÇÃO'],
+      ['2292412','116487','07/08/2026','MATHEUS CARVALHO GOMES','325.690.648-66','116487/2026','','ABERTURA DE LICITAÇÃO'],
+      ['2292411','116486','06/08/2026','DIEGO BORGES SAITO 01185150129','31.633.623/0001-25','116486/2026','','ABERTURA DE LICITAÇÃO'],
+      ['2292410','116485','06/08/2026','DIEGO BORGES SAITO','011.851.501-29','116485/2026','','ABERTURA DE LICITAÇÃO'],
+      ['2292409','116484','06/08/2026','DIEGO BORGES SAITO','011.851.501-29','116484/2026','','ABERTURA DE LICITAÇÃO'],
+      ['2292408','116483','06/08/2026','','','116483/2026','','ABERTURA DE LICITAÇÃO'],
+      ['2292407','116482','06/08/2026','DIEGO BORGES SAITO','011.851.501-29','116482/2026','JOAO LAZARO DA CUNHA','ABERTURA DE LICITAÇÃO'],
+      ['2292406','116481','04/08/2026','A B DE MORAES GESTAO EMPRESARIAL','','116481/2026','','ALVARA PARA FESTA'],
+      ['2292405','116480','04/08/2026','A B DE MORAES GESTAO EMPRESARIAL','','116480/2026','','ALVARA PARA FESTA'],
+      ['2292398','116473','29/07/2026','A SOLUCAO TRANSPORTES, LOCACAO, E DEMOLICOES LTDA - ME','13.404.184/0002-88','116473/2026','','ADESÃO A ATA DE REG.'],
+      ['2292397','116472','28/07/2026','EMANUELLA','075.930.191-36','116472/2026','EMANUELLA','CANCELAMENTO DE NF'],
+      ['2292396','116471','26/07/2026','WILLIAN JOSE SIQUEIRA','07.033.321/0001-31','116471/2026','SMC - SECRETARIA MUNICIPAL DE COMUNICAÇÃO','LIQUIDAÇÃO - PD'],
+      ['2292395','116470','26/07/2026','WILLIAN JOSE SIQUEIRA','07.033.321/0001-31','116470/2026','SMC - SECRETARIA MUNICIPAL DE COMUNICAÇÃO','LIQUIDAÇÃO - PD'],
+      ['2292394','116469','26/07/2026','WILLIAN JOSE SIQUEIRA','07.033.321/0001-31','116469/2026','SMC - SECRETARIA MUNICIPAL DE COMUNICAÇÃO','LIQUIDAÇÃO - PD'],
+      ['2292392','116467','26/07/2026','ROBSON PEREIRA DA FONSECA','253.732.308-47','116467/2026','LUIS HENRIQUE DA SILVA ARAUJO','APRESENTAÇÃO DE DOC.'],
+      ['2292391','116466','26/07/2026','DIVINO RODRIGUES DA SILVA','991.509.211-34','116466/2026','DIVINO RODRIGUES DA SILVA','RECOLHIMENTO DE M.'],
+      ['2292389','116464','26/07/2026','MARINA DA SILVEIRA LOPES','466.732.881-91','116464/2026','MARINA DA SILVEIRA LOPES','DECLARAÇÃO DE REC.'],
+      ['2292388','116463','26/07/2026','JOSE RAMOS PEREIRA NETO','021.951.711-89','116463/2026','FUNDO MUNICIPAL DE SAUDE DE RIO VERDE','LIQUIDAÇÃO - PD'],
+      ['2292387','116462','26/07/2026','THIAGO BAPTISTA FERREIRA DE CASTRO','030.387.661-19','116462/2026','THIAGO BAPTISTA FERREIRA DE CASTRO','PODA DE ÁRVORE (ÁR.'],
+      ['2292386','116461','26/07/2026','GABRIEL TOMICH MENEZES FERREIRA','015.073.871-48','116461/2026','GABRIEL TOMICH MENEZES FERREIRA','SOLICITAÇÃO DE REC.'],
+      ['2292385','116460','26/07/2026','GABRIEL TOMICH MENEZES FERREIRA','015.073.871-48','116460/2026','GABRIEL TOMICH MENEZES FERREIRA','SOLICITAÇÃO DE REC.']
+    ].map((r, i) => ({ id: r[0], prot: r[1], data: r[2], interessado: r[3], doc: r[4], proc: r[5], solicitante: r[6], assunto: r[7], bg: i === 0 ? '#E4EAC8' : zebra(i) }));
+    return {
+      isCadastro: view === 'cadastro', isPesquisa: view === 'pesquisa',
+      opsOpen, isNovo: novo, isEdicao: !novo,
+      f: novo ? vazio : filled,
+      obsVal: (novo ? vazio : filled).obs,
+      treeTitle: novo ? 'Protocolo' : 'Protocolo - 2292414',
+      salvarLabel: novo ? 'Salvar(1)' : 'Salvar',
+      salvarBg: novo ? '#8FBE2F' : '#E6E6E5',
+      salvarColor: novo ? '#FFFFFF' : '#4A4A4A',
+      salvarIconColor: novo ? '#FFFFFF' : '#8FBE2F',
+      tabPesqBg: view === 'pesquisa' ? '#fff' : '#E9EBE3',
+      tabPesqColor: view === 'pesquisa' ? '#7DA82B' : '#8A8F82',
+      tabCadBg: view === 'cadastro' ? '#fff' : '#E9EBE3',
+      tabCadColor: view === 'cadastro' ? '#7DA82B' : '#8A8F82',
+      goPesquisa: () => this.setState({ view: 'pesquisa', opsOpen: false }),
+      goCadastro: () => this.setState({ view: 'cadastro', novo: false }),
+      toggleOps: () => this.setState(s => ({ opsOpen: !s.opsOpen })),
+      doNovo: () => this.setState({ novo: true, opsOpen: false }),
+      doSalvar: () => this.setState({ novo: false }),
+      modulos: [
+        { nome: 'Gerais', icon: 'fas fa-cogs', chev: true, bg: 'transparent', border: 'transparent' },
+        { nome: 'Protocolo', icon: 'fas fa-file-alt', chev: false, bg: '#F4F7EC', border: '#8FBE2F' },
+        { nome: 'Planejamento e Orçamento', icon: 'fas fa-chart-line', chev: true, bg: 'transparent', border: 'transparent' },
+        { nome: 'Compras/Licitação', icon: 'fas fa-shopping-cart', chev: true, bg: 'transparent', border: 'transparent' },
+        { nome: 'Folha de pagamento', icon: 'fas fa-file-invoice-dollar', chev: true, bg: 'transparent', border: 'transparent' },
+        { nome: 'Arrecadação', icon: 'fas fa-hand-holding-usd', chev: true, bg: 'transparent', border: 'transparent' },
+        { nome: 'Contabilidade', icon: 'fas fa-calculator', chev: true, bg: 'transparent', border: 'transparent' },
+        { nome: 'Financeiro', icon: 'fas fa-university', chev: false, bg: 'transparent', border: 'transparent' },
+        { nome: 'Almoxarifado', icon: 'fas fa-boxes', chev: false, bg: 'transparent', border: 'transparent' },
+        { nome: 'Frotas', icon: 'fas fa-car', chev: false, bg: 'transparent', border: 'transparent' },
+        { nome: 'Patrimônio', icon: 'fas fa-building', chev: false, bg: 'transparent', border: 'transparent' },
+        { nome: 'Educação', icon: 'fas fa-graduation-cap', chev: true, bg: 'transparent', border: 'transparent' },
+        { nome: 'Assistência Social', icon: 'fas fa-hands-helping', chev: false, bg: 'transparent', border: 'transparent' },
+        { nome: 'Controle interno', icon: 'fas fa-shield-alt', chev: false, bg: 'transparent', border: 'transparent' },
+        { nome: 'Prestação de Contas', icon: 'fas fa-file-contract', chev: true, bg: 'transparent', border: 'transparent' },
+        { nome: 'Portal do Cidadão', icon: 'fas fa-globe', chev: false, bg: 'transparent', border: 'transparent' },
+        { nome: 'Ouvidoria/SIC', icon: 'fas fa-headset', chev: false, bg: 'transparent', border: 'transparent' }
+      ],
+      pastas: [
+        { nome: 'Documentos', icon: 'fa-folder-open', cor: '#8FBE2F', chev: false, pad: '14px' },
+        { nome: 'Movimentação', icon: 'fa-folder-open', cor: '#8FBE2F', chev: true, pad: '14px' },
+        { nome: 'Apensar', icon: 'fa-folder-open', cor: '#8FBE2F', chev: false, pad: '34px' },
+        { nome: 'Protocolos relacionados', icon: 'fa-folder-open', cor: '#8FBE2F', chev: false, pad: '34px' },
+        { nome: 'Regularidade', icon: 'fa-folder-open', cor: '#8FBE2F', chev: false, pad: '34px' },
+        { nome: 'Atividade', icon: 'fa-folder-open', cor: '#8FBE2F', chev: false, pad: '34px' },
+        { nome: 'Ateste controle interno', icon: 'fa-folder', cor: '#B8C48E', chev: false, pad: '34px' },
+        { nome: 'Protocolos links download', icon: 'fa-folder', cor: '#B8C48E', chev: false, pad: '34px' },
+        { nome: 'Observador', icon: 'fa-folder-open', cor: '#8FBE2F', chev: false, pad: '34px' },
+        { nome: 'Etapas do fluxo', icon: 'fa-folder', cor: '#B8C48E', chev: false, pad: '34px' },
+        { nome: 'Assinatura eletrônica', icon: 'fa-folder-open', cor: '#8FBE2F', chev: false, pad: '34px' }
+      ],
+      operacoes: ['Adotar execução de fluxo','Alterar dados financeiros','Aprovar/Reprovar','Assinar documentos','Atestar/Desatestar controle interno','Emitir capa processo','Emitir capa processo andamento','Emitir Check List','Emitir comprovante','Emitir documentos','Emitir etiqueta (10 posições)','Emitir etiqueta (4 posições perfurado)','Emitir etiqueta (6 posições)','Emitir etiqueta (8 posições)','Emitir etiqueta (padrão)','Emitir etiqueta (personalizar)','Emitir relatório de acesso','Enviar para assinatura externa','Enviar Remessa'],
+      resultados: rows
+    };
+  }
+}
+</script>
+</body>
+</html>

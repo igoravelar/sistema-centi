@@ -1,0 +1,8 @@
+Fotos dos apresentadores dos cards do Centi Cast (tela de Início).
+
+Esperado por index.html:
+  pamela-souza.png   PNG com fundo transparente, retrato de corpo inteiro
+                     alinhado à direita/base (o card usa background-position:
+                     right bottom, background-size: contain)
+
+Enquanto o arquivo não existir o card renderiza normalmente, apenas sem a foto.

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centi · PO011 - Central de Protocolos</title>
+<link rel="stylesheet" href="assets/centi.css">
+<style>
+  /* fundo: a tela do PO002 esmaecida sob o modal */
+  .fundo { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 6px; }
+  .fundo .painel.filtros   { height: 164px; }
+
+  /* ------------------------------- modal ------------------------------- */
+  /* o inset é medido a partir do padding box do .main, por isso soma a moldura */
+  .modal-overlay {
+    position: absolute;
+    inset: calc(var(--moldura) + var(--tab-h)) var(--moldura) var(--moldura) calc(var(--moldura) + 30px);
+    background: rgba(0,0,0,.4);
+    border-radius: 5px;
+    display: flex; align-items: stretch;
+    padding: 20px;
+    z-index: 10;
+  }
+  .modal {
+    flex: 1; min-width: 0;
+    background: var(--modal-bg);
+    border-radius: 5px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+
+  .modal-topo {
+    flex: 0 0 41px;
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 10px;
+    background: #FFFFFF;
+    border-bottom: 1px solid var(--g-soft-bd2);
+    border-radius: 5px 5px 0 0;
+  }
+  .modal-topo .chip {
+    height: 21px; padding: 0 8px;
+    border: 1px solid var(--tab-bd); border-radius: 4px;
+    background: #FFFFFF;
+    font-size: 11px; font-weight: bold; color: var(--txt);
+    display: grid; place-items: center;
+  }
+  .modal-topo h2 { margin: 0 0 0 6px; font-size: 13px; font-weight: bold; color: var(--txt); }
+  .bt-fechar {
+    width: 20px; height: 20px;
+    border: 1px solid var(--g-soft-bd2); border-radius: 4px;
+    background: var(--g-soft-bg); color: var(--g-olive);
+    display: grid; place-items: center; padding: 0;
+  }
+  .bt-fechar:hover { background: var(--g); color: #FFFFFF; border-color: var(--g); }
+  .bt-fechar svg { width: 11px; height: 11px; }
+
+  .modal-corpo { flex: 1; min-height: 0; display: flex; gap: 0; padding: 6px; }
+
+  /* grade de pontos do protótipo: passo 17,3 x 15,9 px em #E2EACF */
+  .bpmn-wrap {
+    flex: 1; min-width: 0;
+    border-radius: 5px;
+    overflow: auto;
+    padding: 20px;
+    background-image: radial-gradient(#E2EACF 1.45px, transparent 1.45px);
+    background-size: 17.3px 15.9px;
+  }
+  .bpmn { position: relative; width: 594px; height: 690px; margin: 0 auto; }
+  .bpmn svg.conectores { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  /* -------------------------------- etapa -------------------------------- */
+  /* o título ocupa toda a faixa entre o topo do card (onde fica a bolinha) e a
+     régua do DEPTO, e se centraliza nela — daí as distâncias iguais dos dois lados */
+  .etapa {
+    position: absolute;
+    border-radius: 10px;
+    display: flex; flex-direction: column;
+    cursor: pointer;
+    z-index: 2;
+    transform-origin: center;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .etapa .dias {
+    position: absolute; top: 7px; left: 10px;
+    display: flex; align-items: center; gap: 5px;
+    font-size: 9px;
+  }
+  .etapa .dias svg { width: 11px; height: 11px; }
+
+  /* o padding-top desconta os 14px em que a bolinha invade o card, para que a
+     faixa de centralização comece na base dela e não na borda */
+  .etapa .nome {
+    flex: 1;
+    display: grid; place-items: center;
+    padding: 14px 12px 0;
+    font-size: 14px; font-weight: bold; text-align: center; line-height: 16px;
+  }
+
+  .etapa .rodape { flex: 0 0 auto; padding-bottom: 9px; text-align: center; }
+  /* sem recuo lateral: as réguas encostam nas bordas do card */
+  .etapa .depto-lbl {
+    font-size: 7px;
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 4px;
+  }
+  .etapa .depto-lbl::before, .etapa .depto-lbl::after { content: ""; flex: 1; height: 1px; background: currentColor; opacity: .45; }
+  .etapa .depto { font-size: 11px; padding: 0 8px; }
+  .etapa .num {
+    position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+    width: 29px; height: 29px; border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 13px; font-weight: bold;
+  }
+  .etapa .ponto {
+    position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+    width: 7px; height: 7px; border-radius: 50%;
+  }
+
+  .etapa.concluida { background: var(--g-soft-bg); border: 1px solid #CAD69C; }
+  .etapa.concluida .nome { color: var(--g-mid); }
+  .etapa.concluida .depto { color: #A6B56D; }
+  .etapa.concluida .depto-lbl, .etapa.concluida .dias { color: #9A9A9A; }
+  .etapa.concluida .num { background: #DAE5B0; color: var(--g-mid); }
+  .etapa.concluida .ponto { background: #B4C086; }
+
+  .etapa.atual { background: linear-gradient(180deg, #ADC84A 0%, #8FAA31 100%); border: 2px solid var(--g-stroke); }
+  .etapa.atual .nome, .etapa.atual .depto { color: #FFFFFF; }
+  .etapa.atual .depto-lbl, .etapa.atual .dias { color: #DFF19C; }
+  .etapa.atual .num { background: var(--g-stroke); color: #FFFFFF; }
+  .etapa.atual .ponto { background: #7E7F79; }
+
+  .etapa.pendente { background: linear-gradient(180deg, #FFFFFF 0%, #F4F4F4 100%); border: 1px solid var(--fld-bd); }
+  .etapa.pendente .nome, .etapa.pendente .depto { color: var(--txt); }
+  .etapa.pendente .depto-lbl, .etapa.pendente .dias { color: #9A9A9A; }
+  .etapa.pendente .num { background: #7E7F79; color: #FFFFFF; }
+  .etapa.pendente .ponto { background: #7E7F79; }
+
+  /* hover: cresce passando um pouco do alvo e recolhe */
+  @keyframes etapa-bounce {
+    0%   { transform: scale(1); }
+    55%  { transform: scale(1.075); }
+    100% { transform: scale(1.04); }
+  }
+  .etapa:hover {
+    animation: etapa-bounce .3s cubic-bezier(.34, 1.4, .64, 1) forwards;
+    box-shadow: 0 6px 18px rgba(93,106,56,.28);
+    z-index: 3;
+  }
+  .etapa.sel { outline: 2px solid var(--g); outline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .etapa:hover { animation: none; transform: scale(1.04); }
+  }
+
+  /* -------------------------------- drawer -------------------------------- */
+  /* fechado, o drawer fica deslocado para fora e com margem negativa, para que a
+     área do BPMN ocupe toda a largura; `.aberto` desfaz os dois ao mesmo tempo */
+  .drawer {
+    flex: 0 0 450px;
+    background: #FFFFFF;
+    border: 1px solid var(--fld-bd);
+    border-radius: 5px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+
+    margin-left: 6px;
+    margin-right: -456px;
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform .28s ease, margin-right .28s ease, opacity .2s ease;
+  }
+  .drawer.aberto {
+    margin-right: 0;
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .drawer { transition-duration: .01ms; }
+  }
+
+  .drawer-topo { flex: 0 0 auto; padding: 20px 20px 0; position: relative; }
+  .drawer-topo .bt-fechar { position: absolute; top: 11px; right: 11px; background: #FFFFFF; border-color: var(--fld-bd); color: var(--txt); }
+  .drawer-titulo { display: flex; align-items: center; gap: 10px; }
+  .drawer-titulo .num {
+    width: 29px; height: 29px; flex: 0 0 29px; border-radius: 50%;
+    background: var(--g); color: #FFFFFF;
+    display: grid; place-items: center; font-size: 13px; font-weight: bold;
+  }
+  .drawer-titulo h3 { margin: 0; font-size: 14px; font-weight: bold; color: var(--g-mid); }
+
+  .drawer-abas { display: flex; margin-top: 19px; }
+  .drawer-abas button {
+    flex: 1; border: 0; background: none;
+    padding: 0 0 10px;
+    font-size: 12px; font-weight: bold; color: var(--txt-mute2);
+    border-bottom: 1px solid var(--fld-bd);
+  }
+  .drawer-abas button.ativa {
+    color: var(--g-mid);
+    border-bottom: 5px solid var(--g-line);
+    padding-bottom: 6px;
+  }
+
+  .drawer-corpo { flex: 1; min-height: 0; overflow: auto; padding: 14px 20px; display: flex; flex-direction: column; gap: 10px; }
+
+  .drawer-rodape {
+    flex: 0 0 50px;
+    display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+    padding: 0 10px;
+    background: #FFFFFF;
+    border-top: 1px solid #EEEFF1;
+  }
+
+  /* checklist */
+  .checklist { border: 1px solid var(--fld-bd); border-radius: 4px; overflow: hidden; }
+  .checklist .lin {
+    display: grid; grid-template-columns: 38px 58px 1fr; align-items: center;
+    height: 32px; padding: 0 10px; font-size: 12px; color: var(--txt);
+    cursor: pointer; background: #FFFFFF;
+  }
+  .checklist .lin.cab { background: #E4E4E4; font-weight: bold; cursor: default; }
+  .checklist .lin.destaque { background: #E1EEAF; }
+  .checklist .lin.cinza { background: #F7F7F6; }
+  .checklist .lin:not(.cab):hover { background: #F1F5E4; }
+  .checklist input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--g); margin: 0; }
+
+  .vazio { padding: 24px; text-align: center; color: var(--txt-mute); font-size: 12px; }
+</style>
+</head>
+<body>
+
+<div class="app"></div>
+
+<script src="assets/shell.js"></script>
+<script>
+/* ícone "timer" do Lucide (lucide.dev/icons/timer), traçado oficial */
+Object.assign(ICO, {
+  cronometro: '<line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/>',
+});
+
+/* ------------------------------ dados do fluxo ------------------------------ */
+
+const ETAPAS = [
+  { n: 1, nome: 'Início',                       depto: 'Arrecadação',                dias: '1 dia',  estado: 'concluida',
+    x: 232, y: 15,  w: 124, h: 95 },
+  { n: 2, nome: 'Conferência da<br>Solicitação', depto: 'DEPARTAMENTO DE IPTU - PD',  dias: '2 dias', estado: 'concluida',
+    x: 200, y: 157, w: 188, h: 112 },
+  { n: 3, nome: 'Valor exige análise<br>ampliada?', depto: 'TRIBUTAÇÃO',             dias: '1 dia',  estado: 'atual',
+    x: 0,   y: 345, w: 190, h: 112 },
+  { n: 4, nome: 'Parecer do Controle<br>interno', depto: 'Controle Interno',         dias: '1 dia',  estado: 'pendente',
+    x: 396, y: 345, w: 198, h: 112 },
+  { n: 5, nome: 'Declaração de<br>Impacto de ORC', depto: 'Contabilidade',           dias: '5 dias', estado: 'pendente',
+    x: 200, y: 533, w: 198, h: 112 },
+];
+
+/* campos da aba Dados, na ordem do protótipo */
+const DADOS = [
+  { rot: 'Id',                  val: '15',      ro: true },
+  { rot: 'Etapa*',              cod: '3', val: 'Valor exige análise amplia...', ro: true, lupa: true },
+  { rot: 'Geração*',            val: '1',       ro: true },
+  { rot: 'Status*',             val: 'Não iniciada' },
+  { rot: 'Data Início',         val: '01/01/2026 - 00:00:00' },
+  { rot: 'Data Conclusão',      val: '01/01/2026 - 00:00:00' },
+  { rot: 'Data Prevista',       val: '14/03/2026' },
+  { rot: 'Concluído por',       cod: '', val: 'Pesquisar', ro: true, lupa: true },
+  { rot: 'Resultado da decisão', val: '' },
+];
+
+const CHECKLIST = [
+  { id: '21', situacao: 'Concluído',      classe: '' },
+  { id: '22', situacao: 'Não Preenchido', classe: 'destaque' },
+  { id: '23', situacao: 'Não Preenchido', classe: '' },
+  { id: '24', situacao: 'Não Preenchido', classe: 'cinza' },
+];
+
+const ITENS_CHECKLIST = {
+  '21': 'O objeto está devidamente descrito',
+  '22': 'A justificativa da contrata...',
+  '23': 'A dotação orçamentária foi informada',
+  '24': 'O prazo de execução está definido',
+};
+
+/* --------------------------------- estado --------------------------------- */
+
+let etapaSel = null;       // etapa aberta no drawer (null = drawer fechado)
+let abaDrawer = 'dados';   // dados | documentos | checklist | condicoes
+let itemChecklist = null;  // id do item aberto em detalhe
+
+/* --------------------------------- BPMN --------------------------------- */
+
+function etapaHTML(e) {
+  return `
+  <div class="etapa ${e.estado}${e.n === etapaSel ? ' sel' : ''}"
+       style="left:${e.x}px; top:${e.y}px; width:${e.w}px; height:${e.h}px"
+       onclick="abrirEtapa(${e.n})">
+    <span class="num">${e.n}</span>
+    <span class="dias">${svg('cronometro')}${e.dias}</span>
+    <span class="nome">${e.nome}</span>
+    <span class="rodape">
+      <span class="depto-lbl">DEPTO</span>
+      <span class="depto">${e.depto}</span>
+    </span>
+    <span class="ponto"></span>
+  </div>`;
+}
+
+/* as linhas que saem dos cards verde-claro (etapas 1 e 2) usam #B4C086; as que
+   saem dos demais ficam cinza, como no protótipo */
+function conectoresHTML() {
+  const feito = '#B4C086', falta = '#7E7F79';
+  return `
+  <svg class="conectores" viewBox="0 0 594 690" preserveAspectRatio="none">
+    <defs>
+      <marker id="pf" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+        <polygon points="0,0 7,3.5 0,7" fill="${feito}"/>
+      </marker>
+      <marker id="pp" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+        <polygon points="0,0 7,3.5 0,7" fill="${falta}"/>
+      </marker>
+    </defs>
+    <polyline points="294,113 294,157" fill="none" stroke="${feito}" stroke-width="1" marker-end="url(#pf)"/>
+    <polyline points="294,272 294,308 95,308 95,345" fill="none" stroke="${feito}" stroke-width="1" marker-end="url(#pf)"/>
+    <polyline points="294,308 495,308 495,345" fill="none" stroke="${feito}" stroke-width="1" marker-end="url(#pf)"/>
+    <polyline points="95,460 95,500 299,500 299,533" fill="none" stroke="${falta}" stroke-width="1" marker-end="url(#pp)"/>
+    <polyline points="495,460 495,500 299,500" fill="none" stroke="${falta}" stroke-width="1"/>
+  </svg>`;
+}
+
+/* -------------------------------- drawer -------------------------------- */
+
+function campoHTML({ rot, val = '', cod, ro = false, lupa = false, area = false }) {
+  const codBox = cod !== undefined ? `<input class="cx cod ro" value="${cod}" readonly>` : '';
+  const entrada = area
+    ? `<textarea class="cx" rows="4"></textarea>`
+    : `<input class="cx${ro ? ' ro' : ''}" value="${val}" ${ro ? 'readonly' : ''}>`;
+  return `
+    <div class="campo"${area ? ' style="min-height:96px"' : ''}>
+      <div class="rot">${rot}</div>
+      <div class="val">
+        ${codBox}${entrada}
+        ${lupa ? `<button class="act" title="Pesquisar">${svg('lupa')}</button>` : ''}
+      </div>
+    </div>`;
+}
+
+function corpoDados() {
+  return DADOS.map(campoHTML).join('');
+}
+
+function corpoDocumentos() {
+  return campoHTML({ rot: 'Id', val: '15', ro: true }) +
+    `<div class="checklist"><div class="vazio">Nenhum documento vinculado a esta etapa.</div></div>`;
+}
+
+function corpoChecklist() {
+  if (itemChecklist) {
+    const item = CHECKLIST.find(c => c.id === itemChecklist);
+    return `
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="bt-fechar" style="background:#fff;border-color:var(--fld-bd);color:var(--txt)"
+                onclick="itemChecklist=null;atualizarDrawer()" title="Voltar">${svg('voltar')}</button>
+        <span style="font-size:11px">Voltar</span>
+        <div style="flex:1"></div>
+        <button class="btn btn-primario btn-mini">Salvar</button>
+      </div>
+      ${campoHTML({ rot: 'Id', val: item.id, ro: true })}
+      ${campoHTML({ rot: 'Item*', cod: '2', val: ITENS_CHECKLIST[item.id], ro: true, lupa: true })}
+      ${campoHTML({ rot: 'Situação*', val: item.situacao })}
+      ${campoHTML({ rot: 'Anotações', area: true })}`;
+  }
+
+  const linhas = CHECKLIST.map(c => `
+    <div class="lin ${c.classe}" onclick="itemChecklist='${c.id}';atualizarDrawer()">
+      <input type="checkbox" ${c.situacao === 'Concluído' ? 'checked' : ''} onclick="event.stopPropagation()">
+      <span>${c.id}</span><span>${c.situacao}</span>
+    </div>`).join('');
+
+  return `
+    <div class="checklist">
+      <div class="lin cab"><span></span><span>ID</span><span>SITUAÇÃO</span></div>
+      ${linhas}
+    </div>`;
+}
+
+function corpoCondicoes() {
+  return `<div class="checklist"><div class="vazio">Nenhuma condição cadastrada para esta etapa.</div></div>`;
+}
+
+const ABAS_DRAWER = [
+  { id: 'dados',      rot: 'Dados',      corpo: corpoDados },
+  { id: 'documentos', rot: 'Documentos', corpo: corpoDocumentos },
+  { id: 'checklist',  rot: 'Checklist',  corpo: corpoChecklist },
+  { id: 'condicoes',  rot: 'Condições',  corpo: corpoCondicoes },
+];
+
+/**
+ * Conteúdo interno do drawer. O elemento <aside class="drawer"> fica sempre no
+ * DOM — só o que está dentro dele é refeito — para que a classe `.aberto` possa
+ * animar a entrada e a saída.
+ */
+function atualizarDrawer() {
+  const e = ETAPAS.find(x => x.n === etapaSel);
+  if (!e) return;
+
+  const abas = ABAS_DRAWER.map(a => `
+    <button class="${a.id === abaDrawer ? 'ativa' : ''}" onclick="trocarAba('${a.id}')">${a.rot}</button>`).join('');
+  const corpo = ABAS_DRAWER.find(a => a.id === abaDrawer).corpo();
+
+  main.querySelector('.drawer').innerHTML = `
+    <div class="drawer-topo">
+      <button class="bt-fechar" onclick="fecharDrawer()" title="Fechar">${svg('x')}</button>
+      <div class="drawer-titulo">
+        <span class="num">${e.n}</span>
+        <h3>${e.nome.replace(/<br>/g, ' ')}</h3>
+      </div>
+      <div class="drawer-abas">${abas}</div>
+    </div>
+    <div class="drawer-corpo scroll">${corpo}</div>
+    <div class="drawer-rodape">
+      <button class="btn ${e.estado === 'atual' ? 'btn-claro' : 'btn-neutro'}"
+              ${e.estado === 'atual' ? '' : 'disabled'}>${svg('check')} Concluir etapa</button>
+      <button class="btn btn-primario">${svg('camadas')} Operações</button>
+    </div>`;
+}
+
+/* --------------------------------- ações --------------------------------- */
+
+/* deve acompanhar a transição do .drawer no CSS */
+const ANIM_DRAWER = 280;
+let limpezaDrawer = null;
+
+/** Clique numa etapa: preenche o drawer e o faz entrar deslizando pela direita. */
+function abrirEtapa(n) {
+  clearTimeout(limpezaDrawer);
+  etapaSel = n;
+  itemChecklist = null;
+  atualizarDrawer();
+  main.querySelectorAll('.etapa').forEach((el, i) => el.classList.toggle('sel', ETAPAS[i].n === n));
+  main.querySelector('.drawer').classList.add('aberto');
+}
+
+function trocarAba(id) { abaDrawer = id; itemChecklist = null; atualizarDrawer(); }
+
+/** Fecha o drawer com o movimento inverso; só esvazia o conteúdo ao fim da animação. */
+function fecharDrawer() {
+  const drawer = main.querySelector('.drawer');
+  drawer.classList.remove('aberto');
+  main.querySelectorAll('.etapa').forEach(el => el.classList.remove('sel'));
+
+  clearTimeout(limpezaDrawer);
+  limpezaDrawer = setTimeout(() => {
+    if (drawer.classList.contains('aberto')) return;  // reaberto durante a animação
+    etapaSel = null;
+    drawer.innerHTML = '';
+  }, ANIM_DRAWER);
+}
+
+function fecharModal() { location.href = 'po002.html?view=cadastro'; }
+
+/* --------------------------------- render --------------------------------- */
+
+/** Monta a tela uma única vez; depois só o drawer muda. */
+function render() {
+  main.insertAdjacentHTML('beforeend', `
+    <div class="tela">
+      <div class="vtabs">
+        <button class="vtab" onclick="location.href='po002.html'">${svg('lupa')}<span>Pesquisa</span></button>
+        <button class="vtab ativa" onclick="location.href='po002.html?view=cadastro'">${svg('lapis')}<span>Cadastro</span></button>
+        <button class="vtab">${svg('notas')}<span>Notas</span></button>
+        <button class="vtab">${svg('robo')}<span>ViCenti</span></button>
+      </div>
+      <div class="conteudo">
+        <div class="fundo">
+          <div class="painel filtros"></div>
+          <div class="painel resultado"></div>
+        </div>
+      </div>
+
+      <div class="modal-overlay" onclick="if(event.target===this)fecharModal()">
+        <div class="modal">
+          <div class="modal-topo">
+            <span class="chip">2292408</span>
+            <h2>Fluxo de Aquisição de Material</h2>
+            <div style="flex:1"></div>
+            <button class="bt-fechar" onclick="fecharModal()" title="Fechar">${svg('x')}</button>
+          </div>
+          <div class="modal-corpo">
+            <div class="bpmn-wrap scroll">
+              <div class="bpmn">
+                ${conectoresHTML()}
+                ${ETAPAS.map(etapaHTML).join('')}
+              </div>
+            </div>
+            <aside class="drawer"></aside>
+          </div>
+        </div>
+      </div>
+    </div>`);
+}
+
+const main = montarShell('po011', ['protocolo','po002','po011']);
+render();
+
+/* a tela abre sem drawer; ?etapa=3&aba=checklist&item=22 permite entrar direto numa etapa */
+const q = new URLSearchParams(location.search);
+if (ABAS_DRAWER.some(a => a.id === q.get('aba'))) abaDrawer = q.get('aba');
+if (CHECKLIST.some(c => c.id === q.get('item'))) itemChecklist = q.get('item');
+if (q.get('etapa') && ETAPAS.some(e => e.n === +q.get('etapa'))) {
+  const n = +q.get('etapa');
+  abrirEtapa(n);
+  if (CHECKLIST.some(c => c.id === q.get('item'))) { itemChecklist = q.get('item'); atualizarDrawer(); }
+}
+</script>
+</body>
+</html>

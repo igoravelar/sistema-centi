@@ -1,0 +1,154 @@
+/* ==========================================================================
+   Centi — tela de Início (aterrissagem)
+   Cards do Centi Cast: calendário mensal + episódio em destaque
+   ========================================================================== */
+
+.inicio {
+  flex: 1;
+  min-height: 0;
+  background: #EDEDED;
+  border: 1px solid var(--tab-bd);
+  border-radius: 0 5px 5px 5px;
+  overflow: auto;
+  padding: 24px 28px;
+}
+
+.cards { display: flex; flex-wrap: wrap; gap: 26px; align-items: flex-start; }
+
+/* -------------------------------- card base -------------------------------- */
+
+.card {
+  position: relative;
+  width: 380px;
+  height: 445px;
+  border-radius: 16px;
+  overflow: hidden;
+  color: #FFFFFF;
+  font-family: 'Open Sans', 'Segoe UI', Verdana, sans-serif;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
+  /* textura escura de blocos, aproximando a arte do Centi Cast */
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.030) 0 1px, transparent 1px 58px),
+    repeating-linear-gradient(0deg,  rgba(255,255,255,.030) 0 1px, transparent 1px 44px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,.35) 0 2px, transparent 2px 116px),
+    radial-gradient(130% 95% at 28% 8%, #2E2E2E 0%, #191919 42%, #0B0B0B 100%);
+}
+.card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 18px 38px rgba(0,0,0,.38); }
+.card:focus-visible { outline: 2px solid var(--g); outline-offset: 3px; }
+
+/* ------------------------------ logo Centi Cast ------------------------------ */
+
+.centicast { display: flex; align-items: center; gap: 8px; }
+.centicast .mic { width: 26px; height: 34px; color: #A9C63A; flex: 0 0 auto; }
+.centicast .mic svg { width: 100%; height: 100%; }
+.centicast .nome {
+  display: block;
+  font-size: 26px; font-weight: 800; letter-spacing: .5px; line-height: 1;
+}
+.centicast .nome b { font-weight: 800; color: #FFFFFF; }
+.centicast .nome i { font-style: normal; font-weight: 400; color: #E8E8E8; }
+.centicast .tag {
+  display: block;
+  margin-top: 3px;
+  font-size: 5.5px; letter-spacing: 1.4px; color: #A9C63A;
+  border-top: 1px solid #A9C63A;
+  padding-top: 2px;
+  text-align: center;
+}
+
+/* ------------------------- card 1: calendário mensal ------------------------- */
+
+.card-calendario { display: flex; flex-direction: column; padding: 16px 18px 14px; }
+
+.card-calendario .mes {
+  position: absolute; top: 10px; left: 0; right: 0;
+  text-align: center;
+  font-size: 40px; font-weight: 800; letter-spacing: 4px;
+  color: #3C3C3C;
+  text-shadow: 0 1px 0 rgba(255,255,255,.06);
+  pointer-events: none;
+}
+
+.card-calendario .chamada {
+  position: relative;
+  text-align: center;
+  font-size: 13px;
+  color: #C9D96B;
+  margin-top: 24px;
+}
+
+.card-calendario .centicast { justify-content: center; margin: 4px 0 20px; }
+.card-calendario .centicast .nome { font-size: 22px; }
+
+.agenda {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: min-content;
+  gap: 10px 14px;
+  align-content: start;
+}
+
+.agenda .item { border-left: 2px solid #9AA08C; padding-left: 8px; }
+.agenda .data  { display: block; font-size: 9px; font-weight: 700; color: #A9C63A; margin-bottom: 2px; }
+.agenda .tema  { display: block; font-size: 9px; font-weight: 700; line-height: 1.25; color: #FFFFFF; }
+
+.card-calendario .rodape {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin-top: auto; padding-top: 14px;
+}
+.card-calendario .rodape .frase { font-size: 8px; line-height: 1.4; color: #C9D96B; }
+/* as classes de estilo do SVG da marca vêm vazias no arquivo: força o branco */
+.card-calendario .rodape .marca { height: 16px; width: auto; filter: brightness(0) invert(1); }
+
+.yt {
+  display: inline-flex; align-items: center; gap: 3px;
+  vertical-align: -2px; margin-left: 2px;
+}
+.yt .play {
+  width: 15px; height: 11px; border-radius: 3px;
+  background: #FF0000;
+  display: grid; place-items: center;
+}
+.yt .play::after {
+  content: ""; width: 0; height: 0;
+  border-left: 5px solid #FFFFFF;
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  margin-left: 1px;
+}
+.yt .txt { font-size: 8px; font-weight: 700; color: #FFFFFF; }
+
+/* --------------------------- card 2: episódio --------------------------- */
+
+.card-episodio { padding: 18px 20px; }
+
+.card-episodio .conteudo { position: relative; z-index: 2; width: 62%; }
+
+.card-episodio h2 {
+  margin: 62px 0 12px;
+  font-size: 22px; font-weight: 700; line-height: 1.2;
+}
+.card-episodio .linha-fina { font-size: 11px; font-weight: 700; line-height: 1.35; color: #F0F0F0; }
+
+.card-episodio .meta { margin-top: 26px; display: flex; flex-direction: column; gap: 14px; }
+.card-episodio .meta div { display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 600; }
+.card-episodio .meta svg { width: 19px; height: 19px; color: #FFFFFF; flex: 0 0 auto; }
+
+/* faixa do apresentador */
+.card-episodio .apresentador {
+  position: absolute; left: 0; bottom: 46px; z-index: 2;
+  width: 68%; height: 30px;
+  display: flex; align-items: center;
+  padding-left: 20px;
+  font-size: 14px; font-weight: 700;
+  background: linear-gradient(90deg, #46542A 0%, #6E8A2C 55%, #8FAF31 100%);
+}
+
+/* espaço para a foto do apresentador (assets/img/) */
+.card-episodio .retrato {
+  position: absolute; right: 0; bottom: 0; z-index: 1;
+  width: 60%; height: 88%;
+  background: no-repeat right bottom / contain;
+}

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centi · Início</title>
+<link rel="stylesheet" href="assets/centi.css">
+<link rel="stylesheet" href="assets/inicio.css">
+</head>
+<body>
+
+<div class="app"></div>
+
+<script src="assets/shell.js"></script>
+<script>
+/* ícones extras usados só nesta tela */
+Object.assign(ICO, {
+  microfone: '<rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/>',
+});
+
+/* pauta do mês exibida no card de calendário */
+const AGENDA = [
+  { data: '04/08/2026', tema: 'Conferência final da folha' },
+  { data: '18/08/2026', tema: 'Seu inventário patrimonial nunca bate com a realidade física?' },
+  { data: '05/08/2026', tema: 'Esqueceu um lançamento e já fechou a folha?' },
+  { data: '19/08/2026', tema: 'Seus processos de protocolo estão travados?' },
+  { data: '06/08/2026', tema: 'Pendências no eSocial?' },
+  { data: '20/08/2026', tema: 'Professor sem acesso ao Portal?' },
+  { data: '11/08/2026', tema: 'Sua folha de pagamento está sendo rejeitada pelo Colare?' },
+  { data: '25/05/2026', tema: 'Seu estoque nunca bate com a realidade?' },
+  { data: '12/08/2026', tema: 'Seus empenhos e licitações estão travados no Colare?' },
+  { data: '26/05/2026', tema: 'Sua Dispensa de Licitação trava na hora de empenhar?' },
+  { data: '13/08/2026', tema: 'Tudo pronto para o retorno às aulas?' },
+  { data: '27/05/2026', tema: 'Guia sem QR Code PIX?' },
+];
+
+const EPISODIO = {
+  titulo: 'Tudo pronto para<br>o retorno às aulas?',
+  linhaFina: 'Organize matrículas e enturmação<br>sem estresse.',
+  data: '13.08.26',
+  duracao: '14 horas',
+  apresentador: 'Pâmela Souza',
+  foto: 'assets/img/pamela-souza.png',
+};
+
+/** Marca do Centi Cast: microfone + "CENTI CAST" + assinatura. */
+function centicastHTML() {
+  return `
+    <div class="centicast">
+      <span class="mic">${svg('microfone')}</span>
+      <span>
+        <span class="nome"><b>CENTI</b><i>CAST</i></span>
+        <span class="tag">SIMPLIFICANDO A GESTÃO PÚBLICA</span>
+      </span>
+    </div>`;
+}
+
+function cardCalendarioHTML() {
+  const itens = AGENDA.map(a => `
+    <div class="item">
+      <span class="data">${a.data}</span>
+      <span class="tema">${a.tema}</span>
+    </div>`).join('');
+
+  return `
+  <a class="card card-calendario" href="#" title="Calendário mensal do Centi Cast">
+    <span class="mes">AGOSTO</span>
+    <span class="chamada">Calendário mensal</span>
+    ${centicastHTML()}
+    <div class="agenda">${itens}</div>
+    <div class="rodape">
+      <span class="frase">
+        Não fique de fora e acompanhe<br>
+        o nosso canal do
+        <span class="yt"><span class="play"></span><span class="txt">YouTube</span></span>
+      </span>
+      <img class="marca" src="../assets/marca-centi-branca.svg" alt="Centi">
+    </div>
+  </a>`;
+}
+
+function cardEpisodioHTML() {
+  return `
+  <a class="card card-episodio" href="#" title="${EPISODIO.titulo.replace(/<br>/g, ' ')}">
+    <span class="retrato" style="background-image:url('${EPISODIO.foto}')"></span>
+    <div class="conteudo">
+      ${centicastHTML()}
+      <h2>${EPISODIO.titulo}</h2>
+      <p class="linha-fina">${EPISODIO.linhaFina}</p>
+      <div class="meta">
+        <div>${svg('calendario')} ${EPISODIO.data}</div>
+        <div>${svg('relogio')} ${EPISODIO.duracao}</div>
+      </div>
+    </div>
+    <span class="apresentador">${EPISODIO.apresentador}</span>
+  </a>`;
+}
+
+const main = montarShell('home');
+main.insertAdjacentHTML('beforeend', `
+  <div class="tela">
+    <div class="inicio">
+      <div class="cards">
+        ${cardCalendarioHTML()}
+        ${cardEpisodioHTML()}
+      </div>
+    </div>
+  </div>`);
+</script>
+</body>
+</html>

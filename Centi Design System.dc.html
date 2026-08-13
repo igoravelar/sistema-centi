@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+  body { margin:0; background:#F2F3EF; font-family:system-ui,-apple-system,'Segoe UI',sans-serif; color:#4A4A4A; }
+  a { color:#7DA82B; text-decoration:none; }
+  a:hover { color:#5C6A35; text-decoration:underline; }
+  ::placeholder { color:#AAB0A0; }
+  .btn-ct:hover, .btn-ct:hover i { color:#FFFFFF !important; }
+</style>
+</helmet>
+
+<div style="position:fixed; top:0; left:0; right:0; height:104px; background:linear-gradient(90deg,#FAFFE2,#8FBE2F); border-bottom:3px solid #8FBE2F; z-index:30; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; padding:0 32px; box-shadow:0 1px 6px rgba(60,70,40,.08)" data-screen-label="Topo">
+  <div style="display:flex; align-items:center; gap:30px">
+    <img src="uploads/marca-centi.png" alt="Centi" style="height:38px; width:auto; display:block">
+    <h2 style="margin:0; font-size:26px; font-weight:700; color:#404632">Design System Centi v1.0</h2>
+  </div>
+  <div style="background:#F1F5E4; color:#5C6A35; border-radius:12px; padding:3px 12px; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase">Material UI 9 · Font Awesome 5</div>
+</div>
+<div style="position:fixed; top:104px; left:0; bottom:0; width:262px; background:#FFFFFF; border-right:1px solid #DDE2D0; overflow-y:auto; z-index:20; box-sizing:border-box" data-screen-label="Menu">
+  <nav style="display:flex; flex-direction:column">
+    <a onClick="{{ go.cores }}" style="display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid #EFF0EA; cursor:pointer; color:#5C5A5B; font-size:14px; font-weight:700; text-decoration:none" style-hover="background:#F4F7EC; text-decoration:none"><span style="width:30px; height:30px; border-radius:7px; background:#9CC13C; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0"><i class="fas fa-palette"></i></span><span>Paleta de cores</span></a>
+    <a onClick="{{ go.tipografia }}" style="display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid #EFF0EA; cursor:pointer; color:#5C5A5B; font-size:14px; font-weight:700; text-decoration:none" style-hover="background:#F4F7EC; text-decoration:none"><span style="width:30px; height:30px; border-radius:7px; background:#9CC13C; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0"><i class="fas fa-font"></i></span><span>Tipografia</span></a>
+    <a onClick="{{ go.botoes }}" style="display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid #EFF0EA; cursor:pointer; color:#5C5A5B; font-size:14px; font-weight:700; text-decoration:none" style-hover="background:#F4F7EC; text-decoration:none"><span style="width:30px; height:30px; border-radius:7px; background:#9CC13C; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0"><i class="fas fa-hand-pointer"></i></span><span>Botões</span></a>
+    <a onClick="{{ go.inputs }}" style="display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid #EFF0EA; cursor:pointer; color:#5C5A5B; font-size:14px; font-weight:700; text-decoration:none" style-hover="background:#F4F7EC; text-decoration:none"><span style="width:30px; height:30px; border-radius:7px; background:#9CC13C; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0"><i class="fas fa-edit"></i></span><span>Formulários</span></a>
+    <a onClick="{{ go.tabelas }}" style="display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid #EFF0EA; cursor:pointer; color:#5C5A5B; font-size:14px; font-weight:700; text-decoration:none" style-hover="background:#F4F7EC; text-decoration:none"><span style="width:30px; height:30px; border-radius:7px; background:#9CC13C; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0"><i class="fas fa-table"></i></span><span>Tabelas</span></a>
+    <a onClick="{{ go.abas }}" style="display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid #EFF0EA; cursor:pointer; color:#5C5A5B; font-size:14px; font-weight:700; text-decoration:none" style-hover="background:#F4F7EC; text-decoration:none"><span style="width:30px; height:30px; border-radius:7px; background:#9CC13C; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0"><i class="fas fa-window-restore"></i></span><span>Abas</span></a>
+    <a onClick="{{ go.cards }}" style="display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid #EFF0EA; cursor:pointer; color:#5C5A5B; font-size:14px; font-weight:700; text-decoration:none" style-hover="background:#F4F7EC; text-decoration:none"><span style="width:30px; height:30px; border-radius:7px; background:#9CC13C; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0"><i class="fas fa-th-large"></i></span><span>Cards & Painéis</span></a>
+    <a onClick="{{ go.badges }}" style="display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid #EFF0EA; cursor:pointer; color:#5C5A5B; font-size:14px; font-weight:700; text-decoration:none" style-hover="background:#F4F7EC; text-decoration:none"><span style="width:30px; height:30px; border-radius:7px; background:#9CC13C; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0"><i class="fas fa-tag"></i></span><span>Badges</span></a>
+    <a onClick="{{ go.icones }}" style="display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid #EFF0EA; cursor:pointer; color:#5C5A5B; font-size:14px; font-weight:700; text-decoration:none" style-hover="background:#F4F7EC; text-decoration:none"><span style="width:30px; height:30px; border-radius:7px; background:#9CC13C; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0"><i class="fas fa-icons"></i></span><span>Ícones</span></a>
+    <a onClick="{{ go.layout }}" style="display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid #EFF0EA; cursor:pointer; color:#5C5A5B; font-size:14px; font-weight:700; text-decoration:none" style-hover="background:#F4F7EC; text-decoration:none"><span style="width:30px; height:30px; border-radius:7px; background:#9CC13C; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0"><i class="fas fa-th"></i></span><span>Grid & Layout</span></a>
+    <a onClick="{{ go.nav }}" style="display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid #EFF0EA; cursor:pointer; color:#5C5A5B; font-size:14px; font-weight:700; text-decoration:none" style-hover="background:#F4F7EC; text-decoration:none"><span style="width:30px; height:30px; border-radius:7px; background:#9CC13C; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0"><i class="fas fa-compass"></i></span><span>Navegação</span></a>
+      <a onClick="{{ go.stack }}" style="display:flex; align-items:center; gap:12px; padding:10px 18px; border-bottom:1px solid #EFF0EA; cursor:pointer; color:#5C5A5B; font-size:14px; font-weight:700; text-decoration:none" style-hover="background:#F4F7EC; text-decoration:none"><span style="width:30px; height:30px; border-radius:7px; background:#9CC13C; color:#FFFFFF; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0"><i class="fas fa-cubes"></i></span><span>UI Design Stack</span></a>
+  </nav>
+</div>
+<div ref="{{ contentRef }}" style="position:fixed; top:104px; left:262px; right:0; bottom:0; overflow-y:auto; background:#F2F3EF" data-screen-label="Conteúdo">
+  
+
+  <div style="padding:50px 50px 96px; display:flex; flex-direction:column; gap:64px">
+
+    <!-- ============ CORES ============ -->
+    <section id="cores" data-screen-label="Cores">
+      <div style="display:flex; align-items:baseline; gap:12px; border-bottom:2px solid #DDE2D0; padding-bottom:10px; margin-bottom:24px">
+        <span style="font-size:13px; font-weight:800; color:#8FBE2F">01</span>
+        <h2 style="margin:0; font-size:22px; font-weight:800; color:#3E4630">Paleta de cores</h2>
+      </div>
+      <h3 style="font-size:14px; font-weight:700; color:#5C6A35; margin:0 0 12px; text-transform:uppercase; letter-spacing:.5px">Marca &amp; ação</h3>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:14px; margin-bottom:28px">
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; overflow:hidden"><div style="height:72px; background:#8FBE2F"></div><div style="padding:10px 12px"><div style="font-weight:700; font-size:13px">Verde Centi</div><div style="font-size:12px; color:#888; font-family:monospace">#8FBE2F</div><div style="font-size:11px; color:#999; margin-top:4px">Ações primárias, seleção, marca</div></div></div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; overflow:hidden"><div style="height:72px; background:#7DA82B"></div><div style="padding:10px 12px"><div style="font-weight:700; font-size:13px">Verde Hover</div><div style="font-size:12px; color:#888; font-family:monospace">#7DA82B</div><div style="font-size:11px; color:#999; margin-top:4px">Hover de botão primário, links</div></div></div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; overflow:hidden"><div style="height:72px; background:#5C6A35"></div><div style="padding:10px 12px"><div style="font-weight:700; font-size:13px">Oliva Escuro</div><div style="font-size:12px; color:#888; font-family:monospace">#5C6A35</div><div style="font-size:11px; color:#999; margin-top:4px">Painéis de módulo, títulos</div></div></div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; overflow:hidden"><div style="height:72px; background:#6B7A3F"></div><div style="padding:10px 12px"><div style="font-weight:700; font-size:13px">Oliva Médio</div><div style="font-size:12px; color:#888; font-family:monospace">#6B7A3F</div><div style="font-size:11px; color:#999; margin-top:4px">Cabeçalhos de seção, bordas de card</div></div></div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; overflow:hidden"><div style="height:72px; background:#E4EAC8"></div><div style="padding:10px 12px"><div style="font-weight:700; font-size:13px">Verde Claro</div><div style="font-size:12px; color:#888; font-family:monospace">#E4EAC8</div><div style="font-size:11px; color:#999; margin-top:4px">Linha selecionada, destaques suaves</div></div></div>
+      </div>
+      <h3 style="font-size:14px; font-weight:700; color:#5C6A35; margin:0 0 12px; text-transform:uppercase; letter-spacing:.5px">Neutros</h3>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:14px; margin-bottom:28px">
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; overflow:hidden"><div style="height:56px; background:#FFFFFF; border-bottom:1px solid #EEE"></div><div style="padding:8px 12px"><div style="font-weight:700; font-size:13px">Branco</div><div style="font-size:12px; color:#888; font-family:monospace">#FFFFFF</div></div></div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; overflow:hidden"><div style="height:56px; background:#F7F8F4"></div><div style="padding:8px 12px"><div style="font-weight:700; font-size:13px">Fundo Sidebar</div><div style="font-size:12px; color:#888; font-family:monospace">#F7F8F4</div></div></div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; overflow:hidden"><div style="height:56px; background:#F2F3EF"></div><div style="padding:8px 12px"><div style="font-weight:700; font-size:13px">Fundo App</div><div style="font-size:12px; color:#888; font-family:monospace">#F2F3EF</div></div></div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; overflow:hidden"><div style="height:56px; background:#E2E5DA"></div><div style="padding:8px 12px"><div style="font-weight:700; font-size:13px">Borda</div><div style="font-size:12px; color:#888; font-family:monospace">#E2E5DA</div></div></div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; overflow:hidden"><div style="height:56px; background:#8A8F82"></div><div style="padding:8px 12px"><div style="font-weight:700; font-size:13px">Texto Secundário</div><div style="font-size:12px; color:#888; font-family:monospace">#8A8F82</div></div></div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; overflow:hidden"><div style="height:56px; background:#4A4A4A"></div><div style="padding:8px 12px"><div style="font-weight:700; font-size:13px">Texto</div><div style="font-size:12px; color:#888; font-family:monospace">#4A4A4A</div></div></div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; overflow:hidden"><div style="height:56px; background:#3E4630"></div><div style="padding:8px 12px"><div style="font-weight:700; font-size:13px">Título</div><div style="font-size:12px; color:#888; font-family:monospace">#3E4630</div></div></div>
+      </div>
+      <h3 style="font-size:14px; font-weight:700; color:#5C6A35; margin:0 0 12px; text-transform:uppercase; letter-spacing:.5px">Semânticas</h3>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:14px">
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; overflow:hidden"><div style="height:56px; background:#F5A623"></div><div style="padding:8px 12px"><div style="font-weight:700; font-size:13px">Laranja</div><div style="font-size:12px; color:#888; font-family:monospace">#F5A623</div><div style="font-size:11px; color:#999; margin-top:4px">Badge Centi Cast, avisos</div></div></div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; overflow:hidden"><div style="height:56px; background:#E53935"></div><div style="padding:8px 12px"><div style="font-weight:700; font-size:13px">Vermelho</div><div style="font-size:12px; color:#888; font-family:monospace">#E53935</div><div style="font-size:11px; color:#999; margin-top:4px">Erros, exclusão, obrigatórios (*)</div></div></div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; overflow:hidden"><div style="height:56px; background:#4A90D9"></div><div style="padding:8px 12px"><div style="font-weight:700; font-size:13px">Azul Info</div><div style="font-size:12px; color:#888; font-family:monospace">#4A90D9</div><div style="font-size:11px; color:#999; margin-top:4px">Informações, ajuda</div></div></div>
+      </div>
+    </section>
+
+    <!-- ============ TIPOGRAFIA ============ -->
+    <section id="tipografia" data-screen-label="Tipografia">
+      <div style="display:flex; align-items:baseline; gap:12px; border-bottom:2px solid #DDE2D0; padding-bottom:10px; margin-bottom:24px">
+        <span style="font-size:13px; font-weight:800; color:#8FBE2F">02</span>
+        <h2 style="margin:0; font-size:22px; font-weight:800; color:#3E4630">Tipografia</h2>
+      </div>
+      <div style="display:flex; gap:30px; flex-wrap:wrap; align-items:flex-start">
+        <div style="flex:1; min-width:420px; display:flex; flex-direction:column; gap:20px">
+          <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px 28px; display:flex; align-items:center; gap:28px">
+            <div style="font-size:56px; font-weight:800; color:#3E4630; line-height:1; font-family:system-ui,-apple-system,sans-serif">Aa</div>
+            <div>
+              <div style="font-weight:700; font-size:16px; font-family:system-ui,-apple-system,sans-serif">system-ui</div>
+              <div style="font-size:13px; color:#8A8F82; margin-top:2px">Fonte principal — UI e títulos. Pesos: 400 · 600 · 700 · 800. Dados e códigos podem usar <span style="font-family:monospace; background:#F2F3EF; padding:1px 6px; border-radius:3px">monospace</span>.</div>
+            </div>
+          </div>
+          <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; overflow:hidden">
+        <div style="display:grid; grid-template-columns:150px 1fr 90px; gap:12px; padding:14px 20px; border-bottom:1px solid #EEF0E8; align-items:center"><div style="font-size:12px; color:#8A8F82">Título de módulo</div><div style="font-family:system-ui,-apple-system,sans-serif; font-size:28px; font-weight:700; color:#fff; background:#5C6A35; padding:6px 16px; border-radius:6px; width:fit-content">Protocolo</div><div style="font-size:11px; color:#8A8F82; font-family:monospace">28px / 700</div></div>
+        <div style="display:grid; grid-template-columns:150px 1fr 90px; gap:12px; padding:14px 20px; border-bottom:1px solid #EEF0E8; align-items:center"><div style="font-size:12px; color:#8A8F82">Título de página / H1</div><div style="font-family:system-ui,-apple-system,sans-serif; font-size:22px; font-weight:800; color:#3E4630">Resultados da pesquisa</div><div style="font-size:11px; color:#8A8F82; font-family:monospace">22px / 800</div></div>
+        <div style="display:grid; grid-template-columns:150px 1fr 90px; gap:12px; padding:14px 20px; border-bottom:1px solid #EEF0E8; align-items:center"><div style="font-size:12px; color:#8A8F82">Título de card / H2</div><div style="font-family:system-ui,-apple-system,sans-serif; font-size:17px; font-weight:700; color:#4A4A4A">Protocolo e Remessa</div><div style="font-size:11px; color:#8A8F82; font-family:monospace">17px / 700</div></div>
+        <div style="display:grid; grid-template-columns:150px 1fr 90px; gap:12px; padding:14px 20px; border-bottom:1px solid #EEF0E8; align-items:center"><div style="font-size:12px; color:#8A8F82">Item de menu / H3</div><div style="font-family:system-ui,-apple-system,sans-serif; font-size:15px; font-weight:700; color:#4A4A4A">Planejamento e Orçamento</div><div style="font-size:11px; color:#8A8F82; font-family:monospace">15px / 700</div></div>
+        <div style="display:grid; grid-template-columns:150px 1fr 90px; gap:12px; padding:14px 20px; border-bottom:1px solid #EEF0E8; align-items:center"><div style="font-size:12px; color:#8A8F82">Corpo / itens de lista</div><div style="font-family:system-ui,-apple-system,sans-serif; font-size:14px; color:#4A4A4A">Arquivar/desarquivar protocolo</div><div style="font-size:11px; color:#8A8F82; font-family:monospace">14px / 400</div></div>
+        <div style="display:grid; grid-template-columns:150px 1fr 90px; gap:12px; padding:14px 20px; border-bottom:1px solid #EEF0E8; align-items:center"><div style="font-size:12px; color:#8A8F82">Rótulo de campo</div><div style="font-family:system-ui,-apple-system,sans-serif; font-size:13px; font-weight:600; color:#4A4A4A">Interessado/Beneficiário <span style="color:#E53935">*</span></div><div style="font-size:11px; color:#8A8F82; font-family:monospace">13px / 600</div></div>
+        <div style="display:grid; grid-template-columns:150px 1fr 90px; gap:12px; padding:14px 20px; border-bottom:1px solid #EEF0E8; align-items:center"><div style="font-size:12px; color:#8A8F82">Dados de tabela</div><div style="font-family:system-ui,-apple-system,sans-serif; font-size:13px; color:#4A4A4A">JULIO DA SILVA OLIVEIRA — 10/08/2026</div><div style="font-size:11px; color:#8A8F82; font-family:monospace">13px / 400</div></div>
+        <div style="display:grid; grid-template-columns:150px 1fr 90px; gap:12px; padding:14px 20px; align-items:center"><div style="font-size:12px; color:#8A8F82">Cabeçalho de tabela / código</div><div style="font-family:system-ui,-apple-system,sans-serif; font-size:11px; font-weight:700; color:#6B6F63; letter-spacing:.6px; text-transform:uppercase">Interessado · CPF/CNPJ · Processo/Ano</div><div style="font-size:11px; color:#8A8F82; font-family:monospace">11px / 700</div></div>
+          </div>
+        </div>
+        <div style="flex:1; min-width:420px; display:flex; flex-direction:column; gap:20px">
+          <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px 28px; display:flex; align-items:center; gap:28px">
+            <div style="font-size:56px; font-weight:800; color:#3E4630; line-height:1; font-family:Verdana,Geneva,sans-serif">Aa</div>
+            <div>
+              <div style="font-weight:700; font-size:16px; font-family:Verdana,Geneva,sans-serif">Verdana</div>
+              <div style="font-size:13px; color:#8A8F82; margin-top:2px">Fonte de inputs e campos de formulário. Pesos: 400 · 700. Alta legibilidade em tamanhos pequenos.</div>
+            </div>
+          </div>
+          <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; overflow:hidden">
+        <div style="display:grid; grid-template-columns:150px 1fr 90px; gap:12px; padding:14px 20px; border-bottom:1px solid #EEF0E8; align-items:center"><div style="font-size:12px; color:#8A8F82">Título de módulo</div><div style="font-family:Verdana,Geneva,sans-serif; font-size:28px; font-weight:700; color:#fff; background:#5C6A35; padding:6px 16px; border-radius:6px; width:fit-content">Protocolo</div><div style="font-size:11px; color:#8A8F82; font-family:monospace">28px / 700</div></div>
+        <div style="display:grid; grid-template-columns:150px 1fr 90px; gap:12px; padding:14px 20px; border-bottom:1px solid #EEF0E8; align-items:center"><div style="font-size:12px; color:#8A8F82">Título de página / H1</div><div style="font-family:Verdana,Geneva,sans-serif; font-size:22px; font-weight:800; color:#3E4630">Resultados da pesquisa</div><div style="font-size:11px; color:#8A8F82; font-family:monospace">22px / 800</div></div>
+        <div style="display:grid; grid-template-columns:150px 1fr 90px; gap:12px; padding:14px 20px; border-bottom:1px solid #EEF0E8; align-items:center"><div style="font-size:12px; color:#8A8F82">Título de card / H2</div><div style="font-family:Verdana,Geneva,sans-serif; font-size:17px; font-weight:700; color:#4A4A4A">Protocolo e Remessa</div><div style="font-size:11px; color:#8A8F82; font-family:monospace">17px / 700</div></div>
+        <div style="display:grid; grid-template-columns:150px 1fr 90px; gap:12px; padding:14px 20px; border-bottom:1px solid #EEF0E8; align-items:center"><div style="font-size:12px; color:#8A8F82">Item de menu / H3</div><div style="font-family:Verdana,Geneva,sans-serif; font-size:15px; font-weight:700; color:#4A4A4A">Planejamento e Orçamento</div><div style="font-size:11px; color:#8A8F82; font-family:monospace">15px / 700</div></div>
+        <div style="display:grid; grid-template-columns:150px 1fr 90px; gap:12px; padding:14px 20px; border-bottom:1px solid #EEF0E8; align-items:center"><div style="font-size:12px; color:#8A8F82">Corpo / itens de lista</div><div style="font-family:Verdana,Geneva,sans-serif; font-size:14px; color:#4A4A4A">Arquivar/desarquivar protocolo</div><div style="font-size:11px; color:#8A8F82; font-family:monospace">14px / 400</div></div>
+        <div style="display:grid; grid-template-columns:150px 1fr 90px; gap:12px; padding:14px 20px; border-bottom:1px solid #EEF0E8; align-items:center"><div style="font-size:12px; color:#8A8F82">Rótulo de campo</div><div style="font-family:Verdana,Geneva,sans-serif; font-size:13px; font-weight:600; color:#4A4A4A">Interessado/Beneficiário <span style="color:#E53935">*</span></div><div style="font-size:11px; color:#8A8F82; font-family:monospace">13px / 600</div></div>
+        <div style="display:grid; grid-template-columns:150px 1fr 90px; gap:12px; padding:14px 20px; border-bottom:1px solid #EEF0E8; align-items:center"><div style="font-size:12px; color:#8A8F82">Dados de tabela</div><div style="font-family:Verdana,Geneva,sans-serif; font-size:13px; color:#4A4A4A">JULIO DA SILVA OLIVEIRA — 10/08/2026</div><div style="font-size:11px; color:#8A8F82; font-family:monospace">13px / 400</div></div>
+        <div style="display:grid; grid-template-columns:150px 1fr 90px; gap:12px; padding:14px 20px; align-items:center"><div style="font-size:12px; color:#8A8F82">Cabeçalho de tabela / código</div><div style="font-family:Verdana,Geneva,sans-serif; font-size:11px; font-weight:700; color:#6B6F63; letter-spacing:.6px; text-transform:uppercase">Interessado · CPF/CNPJ · Processo/Ano</div><div style="font-size:11px; color:#8A8F82; font-family:monospace">11px / 700</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ BOTÕES ============ -->
+    <section id="botoes" data-screen-label="Botões">
+      <div style="display:flex; align-items:baseline; gap:12px; border-bottom:2px solid #DDE2D0; padding-bottom:10px; margin-bottom:24px">
+        <span style="font-size:13px; font-weight:800; color:#8FBE2F">03</span>
+        <h2 style="margin:0; font-size:22px; font-weight:800; color:#3E4630">Botões</h2>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:20px">
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px">
+          <div style="font-weight:700; font-size:14px; margin-bottom:16px">Primário</div>
+          <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap">
+            <button style="background:#8FBE2F; color:#fff; border:1px solid #7DA82B; border-radius:5px; padding:9px 20px; font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; display:flex; align-items:center; gap:8px" style-hover="background:#7DA82B"><i class="fas fa-search"></i> Pesquisar</button>
+            <button style="background:#8FBE2F; color:#fff; border:1px solid #7DA82B; border-radius:5px; padding:9px 20px; font-size:14px; font-weight:600; font-family:inherit; cursor:pointer" style-hover="background:#7DA82B">Salvar</button>
+          </div>
+          <div style="font-size:12px; color:#8A8F82; margin-top:14px">MUI: <span style="font-family:monospace">&lt;Button variant="contained" color="primary"&gt;</span>. Fundo <span style="font-family:monospace">#8FBE2F</span>, hover <span style="font-family:monospace">#7DA82B</span>, radius 5px, sem uppercase (<span style="font-family:monospace">textTransform: none</span>).</div>
+        </div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px">
+          <div style="font-weight:700; font-size:14px; margin-bottom:16px">Secundário</div>
+          <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap">
+            <button style="background:linear-gradient(#FDFDFD,#EFEFEC); color:#4A4A4A; border:1px solid #C9CDC0; border-radius:5px; padding:9px 20px; font-size:14px; font-weight:600; font-family:inherit; cursor:pointer" style-hover="background:#EFEFEC">Salvar Filtros</button>
+            <button style="background:linear-gradient(#FDFDFD,#EFEFEC); color:#4A4A4A; border:1px solid #C9CDC0; border-radius:5px; padding:9px 20px; font-size:14px; font-weight:600; font-family:inherit; cursor:pointer" style-hover="background:#EFEFEC">Exportar</button>
+            <button disabled style="background:#F4F5F1; color:#B4B8AC; border:1px solid #E2E5DA; border-radius:5px; padding:9px 20px; font-size:14px; font-weight:600; font-family:inherit; cursor:not-allowed">Desabilitado</button>
+          </div>
+          <div style="font-size:12px; color:#8A8F82; margin-top:14px">MUI: <span style="font-family:monospace">&lt;Button variant="outlined"&gt;</span> customizado — gradiente sutil branco→cinza, borda <span style="font-family:monospace">#C9CDC0</span>.</div>
+        </div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px">
+          <div style="font-weight:700; font-size:14px; margin-bottom:16px">Barra de ações (CRUD)</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap">
+            <button style="background:#E6E6E5; color:#4A4A4A; border:1px solid #D4D4D2; border-radius:5px; padding:9px 22px; font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; display:flex; align-items:center; gap:9px; transition:background .15s,color .15s" class="btn-ct" style-hover="background:#80CAE8; border-color:#80CAE8"><i class="fas fa-plus-circle" style="color:#4FC3F7"></i> Novo</button>
+            <button style="background:#E6E6E5; color:#4A4A4A; border:1px solid #D4D4D2; border-radius:5px; padding:9px 22px; font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; display:flex; align-items:center; gap:9px; transition:background .15s,color .15s" class="btn-ct" style-hover="background:#BE5B5A; border-color:#BE5B5A"><i class="fas fa-trash-alt" style="color:#C62828"></i> Excluir</button>
+            <button style="background:#E6E6E5; color:#4A4A4A; border:1px solid #D4D4D2; border-radius:5px; padding:9px 22px; font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; display:flex; align-items:center; gap:9px; transition:background .15s,color .15s" class="btn-ct" style-hover="background:#AFC571; border-color:#AFC571"><i class="fas fa-save" style="color:#8FBE2F"></i> Salvar</button>
+            <button title="Sigiloso" style="background:#E6E6E5; color:#9AA0A6; border:1px solid #D4D4D2; border-radius:5px; padding:9px 16px; font-size:15px; font-family:inherit; cursor:pointer; transition:background .15s,color .15s" class="btn-ct" style-hover="background:#AAB1B3; border-color:#AAB1B3"><i class="fas fa-eye-slash"></i></button>
+            <button style="background:#8FBE2F; color:#fff; border:1px solid #7DA82B; border-radius:5px; padding:9px 22px; font-size:14px; font-weight:600; font-family:inherit; cursor:pointer; display:flex; align-items:center; gap:9px; transition:background .15s" style-hover="background:#B5C373; border-color:#B5C373"><i class="fas fa-cog"></i> Operações</button>
+          </div>
+          <div style="font-size:12px; color:#8A8F82; margin-top:14px">Fundo <span style="font-family:monospace">#E6E6E5</span> com ícone colorido; no hover o botão assume a cor da ação (Novo <span style="font-family:monospace">#80CAE8</span>, Excluir <span style="font-family:monospace">#BE5B5A</span>, Salvar <span style="font-family:monospace">#AFC571</span>) com ícone e texto brancos. Variante apenas ícone (hover <span style="font-family:monospace">#AAB1B3</span>). Operações: primário com hover <span style="font-family:monospace">#B5C373</span>.</div>
+        </div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px">
+          <div style="font-weight:700; font-size:14px; margin-bottom:16px">Botão-link e ícone</div>
+          <div style="display:flex; gap:22px; align-items:center; flex-wrap:wrap">
+            <a href="#botoes" style="font-size:14px; font-weight:600; color:#7DA82B; display:flex; align-items:center; gap:6px"><i class="fas fa-plus" style="color:#8FBE2F"></i> Adicionar Filtro</a>
+            <a href="#botoes" style="font-size:14px; font-weight:600; color:#4A4A4A; display:flex; align-items:center; gap:6px"><i class="fas fa-eraser"></i> Limpar Filtros</a>
+            <button style="background:none; border:none; cursor:pointer; font-size:17px; color:#8A8F82; padding:6px" title="Editar" style-hover="color:#5C6A35"><i class="fas fa-pencil-alt"></i></button>
+            <button style="background:none; border:none; cursor:pointer; font-size:17px; color:#8A8F82; padding:6px" title="Pesquisar" style-hover="color:#5C6A35"><i class="fas fa-search"></i></button>
+            <button style="background:none; border:none; cursor:pointer; font-size:17px; color:#E53935; padding:6px" title="Excluir"><i class="fas fa-trash-alt"></i></button>
+          </div>
+          <div style="font-size:12px; color:#8A8F82; margin-top:14px">MUI: <span style="font-family:monospace">&lt;Button variant="text"&gt;</span> e <span style="font-family:monospace">&lt;IconButton&gt;</span> com ícones Font Awesome (editar, lupa, lixeira).</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FORMULÁRIOS ============ -->
+    <section id="inputs" data-screen-label="Formulários">
+      <div style="display:flex; align-items:baseline; gap:12px; border-bottom:2px solid #DDE2D0; padding-bottom:10px; margin-bottom:24px">
+        <span style="font-size:13px; font-weight:800; color:#8FBE2F">04</span>
+        <h2 style="margin:0; font-size:22px; font-weight:800; color:#3E4630">Formulários &amp; Inputs</h2>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:20px">
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px">
+          <div style="font-weight:700; font-size:14px; margin-bottom:4px">Campos básicos</div><div style="font-size:12px; color:#8A8F82; margin-bottom:14px">MUI: <span style="font-family:monospace">&lt;TextField variant="outlined" size="small"&gt;</span> e <span style="font-family:monospace">&lt;Select&gt;</span></div>
+          <div style="display:flex; flex-direction:column; gap:14px">
+            <div><div style="font-size:13px; font-weight:600; margin-bottom:5px">Campo de texto</div><input placeholder="Digite aqui..." style="width:100%; box-sizing:border-box; border:1px solid #C9CDC0; border-radius:5px; padding:9px 12px; font-size:14px; font-family:Verdana,Geneva,sans-serif; color:#4A4A4A; outline:none" style-focus="border-color:#8FBE2F; box-shadow:0 0 0 2px rgba(143,190,47,.2)"></div>
+            <div><div style="font-size:13px; font-weight:600; margin-bottom:5px">Obrigatório <span style="color:#E53935">*</span></div><input value="125878" style="width:100%; box-sizing:border-box; border:1px solid #C9CDC0; border-radius:5px; padding:9px 12px; font-size:14px; font-family:Verdana,Geneva,sans-serif; color:#4A4A4A; outline:none" style-focus="border-color:#8FBE2F; box-shadow:0 0 0 2px rgba(143,190,47,.2)"></div>
+            <div><div style="font-size:13px; font-weight:600; margin-bottom:5px">Somente leitura</div><input value="2301804" readOnly style="width:100%; box-sizing:border-box; border:1px solid #E2E5DA; border-radius:5px; padding:9px 12px; font-size:14px; font-family:Verdana,Geneva,sans-serif; color:#8A8F82; background:#F4F5F1; outline:none"></div>
+            <div><div style="font-size:13px; font-weight:600; margin-bottom:5px">Seleção</div><select style="width:100%; box-sizing:border-box; border:1px solid #C9CDC0; border-radius:5px; padding:9px 10px; font-size:14px; font-family:Verdana,Geneva,sans-serif; color:#4A4A4A; background:#fff; outline:none"><option>Sim</option><option>Não</option></select></div>
+          </div>
+        </div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px">
+          <div style="font-weight:700; font-size:14px; margin-bottom:16px">Campos compostos</div>
+          <div style="display:flex; flex-direction:column; gap:14px">
+            <div><div style="font-size:13px; font-weight:600; margin-bottom:5px">Data</div><div style="display:flex; gap:8px; align-items:center"><input value="10/08/2026" style="flex:1; border:1px solid #C9CDC0; border-radius:5px; padding:9px 12px; font-size:14px; font-family:Verdana,Geneva,sans-serif; color:#4A4A4A; outline:none"><button style="background:none; border:1px solid #C9CDC0; border-radius:5px; width:38px; height:38px; cursor:pointer; font-size:15px"><i class="far fa-calendar-alt"></i></button></div></div>
+            <div><div style="font-size:13px; font-weight:600; margin-bottom:5px">Lookup (código + descrição)</div><div style="display:flex; gap:8px; align-items:center"><input value="148" style="width:76px; border:1px solid #C9CDC0; border-radius:5px; padding:9px 10px; font-size:14px; font-family:Verdana,Geneva,sans-serif; text-align:right; outline:none"><input value="ALVARÁ DE LICENÇA PARA CONSTRUÇÃO" readOnly style="flex:1; border:1px solid #E2E5DA; border-radius:5px; padding:9px 12px; font-size:13px; font-family:Verdana,Geneva,sans-serif; color:#4A4A4A; background:#FAFBF8; outline:none"><button style="background:none; border:none; cursor:pointer; font-size:16px; color:#8A8F82; padding:2px"><i class="fas fa-pencil-alt"></i></button><button style="background:none; border:none; cursor:pointer; font-size:16px; color:#8A8F82; padding:2px"><i class="fas fa-search"></i></button></div></div>
+            <div><div style="font-size:13px; font-weight:600; margin-bottom:5px">Busca global (pill)</div><input placeholder="Pesquisar..." style="width:100%; box-sizing:border-box; border:1px solid #C9CDC0; border-radius:18px; padding:9px 16px; font-size:14px; font-family:Verdana,Geneva,sans-serif; outline:none" style-focus="border-color:#8FBE2F"></div>
+            <div><div style="font-size:13px; font-weight:600; margin-bottom:5px">Área de texto</div><textarea rows="3" style="width:100%; box-sizing:border-box; border:1px solid #C9CDC0; border-radius:5px; padding:9px 12px; font-size:13px; font-family:Verdana,Geneva,sans-serif; color:#4A4A4A; outline:none; resize:vertical">ARQUIVO INTERNO
+R.CORONEL VAIANO, QD: 0007, LT: 10</textarea></div>
+          </div>
+        </div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px; grid-column:1 / -1">
+          <div style="font-weight:700; font-size:14px; margin-bottom:6px">Linha de formulário (rótulo à esquerda)</div>
+          <div style="font-size:12px; color:#8A8F82; margin-bottom:16px">Padrão das telas de cadastro: rótulo em coluna fixa de 150px sobre fundo <span style="font-family:monospace">#F4F5F1</span>, campo ao lado.</div>
+          <div style="border:1px solid #E2E5DA; border-radius:6px; overflow:hidden; max-width:720px">
+            <div style="display:grid; grid-template-columns:150px 1fr; border-bottom:1px solid #EEF0E8"><div style="background:#F4F5F1; padding:10px 14px; font-size:13px; font-weight:600">Protocolo <span style="color:#E53935">*</span></div><div style="padding:6px 10px"><input value="125878" style="width:100%; box-sizing:border-box; border:1px solid #E2E5DA; border-radius:4px; padding:7px 10px; font-size:14px; font-family:Verdana,Geneva,sans-serif; outline:none" style-focus="border-color:#8FBE2F"></div></div>
+            <div style="display:grid; grid-template-columns:150px 1fr; border-bottom:1px solid #EEF0E8"><div style="background:#F4F5F1; padding:10px 14px; font-size:13px; font-weight:600">Data protocolo</div><div style="padding:6px 10px"><input value="10/08/2026" readOnly style="width:100%; box-sizing:border-box; border:1px solid #E2E5DA; border-radius:4px; padding:7px 10px; font-size:14px; font-family:Verdana,Geneva,sans-serif; color:#8A8F82; background:#FAFBF8; outline:none"></div></div>
+            <div style="display:grid; grid-template-columns:150px 1fr"><div style="background:#F4F5F1; padding:10px 14px; font-size:13px; font-weight:600">Sigiloso <span style="color:#E53935">*</span></div><div style="padding:6px 10px"><select style="width:100%; box-sizing:border-box; border:1px solid #E2E5DA; border-radius:4px; padding:7px 8px; font-size:14px; font-family:Verdana,Geneva,sans-serif; background:#fff; outline:none"><option>Sim</option><option>Não</option></select></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TABELAS ============ -->
+    <section id="tabelas" data-screen-label="Tabelas">
+      <div style="display:flex; align-items:baseline; gap:12px; border-bottom:2px solid #DDE2D0; padding-bottom:10px; margin-bottom:24px">
+        <span style="font-size:13px; font-weight:800; color:#8FBE2F">05</span>
+        <h2 style="margin:0; font-size:22px; font-weight:800; color:#3E4630">Tabelas de dados</h2>
+      </div>
+      <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:12px">
+          <div style="display:flex; align-items:baseline; gap:10px"><span style="font-size:17px; font-weight:700; color:#3E4630">Resultados</span><span style="font-size:13px; color:#8A8F82">Exibindo 50 de 125.882</span></div>
+          <div style="display:flex; align-items:center; gap:10px"><span style="font-size:13px; color:#8A8F82">Mostrar:</span><select style="border:1px solid #C9CDC0; border-radius:5px; padding:6px 8px; font-size:13px; font-family:Verdana,Geneva,sans-serif; background:#fff"><option>50</option><option>100</option></select><button style="background:linear-gradient(#FDFDFD,#EFEFEC); color:#4A4A4A; border:1px solid #C9CDC0; border-radius:5px; padding:7px 14px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer"><i class="fas fa-download"></i> Exportar</button></div>
+        </div>
+        <table style="width:100%; border-collapse:collapse; font-size:13px">
+          <thead><tr>
+            <th style="text-align:right; padding:9px 12px; background:#F4F5F1; border:1px solid #E2E5DA; font-size:11px; font-weight:700; color:#6B6F63; letter-spacing:.5px; text-transform:uppercase">ID</th>
+            <th style="text-align:right; padding:9px 12px; background:#F4F5F1; border:1px solid #E2E5DA; font-size:11px; font-weight:700; color:#6B6F63; letter-spacing:.5px; text-transform:uppercase">Protocolo</th>
+            <th style="text-align:left; padding:9px 12px; background:#F4F5F1; border:1px solid #E2E5DA; font-size:11px; font-weight:700; color:#6B6F63; letter-spacing:.5px; text-transform:uppercase">Data</th>
+            <th style="text-align:left; padding:9px 12px; background:#F4F5F1; border:1px solid #E2E5DA; font-size:11px; font-weight:700; color:#6B6F63; letter-spacing:.5px; text-transform:uppercase">Interessado</th>
+            <th style="text-align:left; padding:9px 12px; background:#F4F5F1; border:1px solid #E2E5DA; font-size:11px; font-weight:700; color:#6B6F63; letter-spacing:.5px; text-transform:uppercase">CPF/CNPJ</th>
+            <th style="text-align:left; padding:9px 12px; background:#F4F5F1; border:1px solid #E2E5DA; font-size:11px; font-weight:700; color:#6B6F63; letter-spacing:.5px; text-transform:uppercase">Assunto</th>
+          </tr></thead>
+          <tbody>
+            <tr><td style="padding:8px 12px; border:1px solid #EEF0E8; text-align:right">2301808</td><td style="padding:8px 12px; border:1px solid #EEF0E8; text-align:right">125882</td><td style="padding:8px 12px; border:1px solid #EEF0E8">10/08/2026</td><td style="padding:8px 12px; border:1px solid #EEF0E8">BLIITZ LOCACOES E BEBIDAS LTDA.</td><td style="padding:8px 12px; border:1px solid #EEF0E8">33.690.668/0001-67</td><td style="padding:8px 12px; border:1px solid #EEF0E8">ALVARÁ SANITÁRIO</td></tr>
+            <tr style="background:#E4EAC8"><td style="padding:8px 12px; border:1px solid #D8E0B6; text-align:right; font-weight:600">2301804</td><td style="padding:8px 12px; border:1px solid #D8E0B6; text-align:right; font-weight:600">125878</td><td style="padding:8px 12px; border:1px solid #D8E0B6; font-weight:600">10/08/2026</td><td style="padding:8px 12px; border:1px solid #D8E0B6; font-weight:600">JULIO DA SILVA OLIVEIRA</td><td style="padding:8px 12px; border:1px solid #D8E0B6; font-weight:600">309.543.981-49</td><td style="padding:8px 12px; border:1px solid #D8E0B6; font-weight:600">ALVARÁ DE LICENÇA</td></tr>
+            <tr style="background:#FAFBF6"><td style="padding:8px 12px; border:1px solid #EEF0E8; text-align:right">2301803</td><td style="padding:8px 12px; border:1px solid #EEF0E8; text-align:right">125877</td><td style="padding:8px 12px; border:1px solid #EEF0E8">10/08/2026</td><td style="padding:8px 12px; border:1px solid #EEF0E8">JULIO MARCIO FERREIRA DO CARMO</td><td style="padding:8px 12px; border:1px solid #EEF0E8">793.658.761-68</td><td style="padding:8px 12px; border:1px solid #EEF0E8">TERMO DE HABITE-SE</td></tr>
+            <tr><td style="padding:8px 12px; border:1px solid #EEF0E8; text-align:right">2301801</td><td style="padding:8px 12px; border:1px solid #EEF0E8; text-align:right">125875</td><td style="padding:8px 12px; border:1px solid #EEF0E8">10/08/2026</td><td style="padding:8px 12px; border:1px solid #EEF0E8">NAYANNE RODRIGUES DE OLIVEIRA</td><td style="padding:8px 12px; border:1px solid #EEF0E8">045.795.251-24</td><td style="padding:8px 12px; border:1px solid #EEF0E8">EXONERAÇÃO - PD</td></tr>
+            <tr style="background:#FAFBF6"><td style="padding:8px 12px; border:1px solid #EEF0E8; text-align:right">2301799</td><td style="padding:8px 12px; border:1px solid #EEF0E8; text-align:right">125873</td><td style="padding:8px 12px; border:1px solid #EEF0E8">10/08/2026</td><td style="padding:8px 12px; border:1px solid #EEF0E8">LEONARDO GONZAGA</td><td style="padding:8px 12px; border:1px solid #EEF0E8">405.308.568-32</td><td style="padding:8px 12px; border:1px solid #EEF0E8">DESOBRIGAÇÃO DE ATO</td></tr>
+          </tbody>
+        </table>
+        <div style="font-size:12px; color:#8A8F82; margin-top:14px">MUI: <span style="font-family:monospace">&lt;Table size="small"&gt;</span> / DataGrid. Cabeçalho <span style="font-family:monospace">#F4F5F1</span> em caixa alta 11px · zebra <span style="font-family:monospace">#FAFBF6</span> · linha selecionada <span style="font-family:monospace">#E4EAC8</span> · números alinhados à direita · grade completa 1px.</div>
+      </div>
+    </section>
+
+    <!-- ============ ABAS ============ -->
+    <section id="abas" data-screen-label="Abas">
+      <div style="display:flex; align-items:baseline; gap:12px; border-bottom:2px solid #DDE2D0; padding-bottom:10px; margin-bottom:24px">
+        <span style="font-size:13px; font-weight:800; color:#8FBE2F">06</span>
+        <h2 style="margin:0; font-size:22px; font-weight:800; color:#3E4630">Abas</h2>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:20px">
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px">
+          <div style="font-weight:700; font-size:14px; margin-bottom:16px">Abas de documento (horizontais)</div>
+          <div style="display:flex; align-items:flex-end; gap:4px; border-bottom:2px solid #C9CDC0; padding:0 8px">
+            <div style="background:#E9EBE3; border:1px solid #C9CDC0; border-bottom:none; border-radius:6px 6px 0 0; padding:8px 14px; font-size:13px; color:#8A8F82"><i class="fas fa-home"></i></div>
+            <div style="background:#E9EBE3; border:1px solid #C9CDC0; border-bottom:none; border-radius:6px 6px 0 0; padding:8px 14px; font-size:13px; color:#8A8F82">Notificações</div>
+            <div style="background:#fff; border:1px solid #C9CDC0; border-bottom:2px solid #fff; margin-bottom:-2px; border-radius:6px 6px 0 0; padding:8px 14px; font-size:13px; font-weight:600; color:#4A4A4A; display:flex; align-items:center; gap:8px"><i class="fas fa-star"></i> PO002 - Protocolo <span style="color:#8A8F82; cursor:pointer; font-size:12px">✕</span></div>
+          </div>
+          <div style="font-size:12px; color:#8A8F82; margin-top:14px">MUI: <span style="font-family:monospace">&lt;Tabs&gt;/&lt;Tab&gt;</span> customizado. Ativa em branco conectada ao conteúdo; inativas em <span style="font-family:monospace">#E9EBE3</span>. Fechável com ✕; fixável com <i class="fas fa-star"></i>.</div>
+        </div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px">
+          <div style="font-weight:700; font-size:14px; margin-bottom:16px">Abas laterais (verticais)</div>
+          <div style="display:flex; gap:0; height:240px">
+            <div style="display:flex; flex-direction:column; gap:6px">
+              <div style="writing-mode:vertical-rl; transform:rotate(180deg); background:#fff; border:1px solid #C9CDC0; border-right:none; border-radius:0 6px 6px 0; padding:12px 6px; font-size:12px; font-weight:600; color:#7DA82B; display:flex; align-items:center; gap:6px">Pesquisa</div>
+              <div style="writing-mode:vertical-rl; transform:rotate(180deg); background:#E9EBE3; border:1px solid #C9CDC0; border-right:none; border-radius:0 6px 6px 0; padding:12px 6px; font-size:12px; color:#8A8F82">Cadastro</div>
+              <div style="writing-mode:vertical-rl; transform:rotate(180deg); background:#E9EBE3; border:1px solid #C9CDC0; border-right:none; border-radius:0 6px 6px 0; padding:12px 6px; font-size:12px; color:#8A8F82">Notas</div>
+            </div>
+            <div style="flex:1; border:1px solid #C9CDC0; border-radius:0 6px 6px 6px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; color:#B4B8AC">Conteúdo do painel</div>
+          </div>
+          <div style="font-size:12px; color:#8A8F82; margin-top:14px">Alternam entre modos da mesma funcionalidade (Pesquisa / Cadastro / Notas / ViCenti). Texto vertical, ativa em branco com rótulo verde.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CARDS ============ -->
+    <section id="cards" data-screen-label="Cards">
+      <div style="display:flex; align-items:baseline; gap:12px; border-bottom:2px solid #DDE2D0; padding-bottom:10px; margin-bottom:24px">
+        <span style="font-size:13px; font-weight:800; color:#8FBE2F">07</span>
+        <h2 style="margin:0; font-size:22px; font-weight:800; color:#3E4630">Cards &amp; Painéis</h2>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:20px">
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px">
+          <div style="font-weight:700; font-size:14px; margin-bottom:16px">Card de categoria (home do módulo)</div>
+          <div style="border-left:4px solid #8FBE2F; background:#fff; border-radius:6px; box-shadow:0 1px 4px rgba(60,70,40,.12); padding:18px 20px">
+            <div style="display:flex; align-items:center; gap:12px; border-bottom:1px solid #EEF0E8; padding-bottom:12px; margin-bottom:12px">
+              <div style="width:38px; height:38px; border-radius:8px; background:#F1F5E4; color:#7DA82B; display:flex; align-items:center; justify-content:center; font-size:18px"><i class="fas fa-envelope"></i></div>
+              <div style="font-size:17px; font-weight:700; color:#4A4A4A">Protocolo e Remessa</div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px">
+              <div style="display:flex; align-items:center; gap:12px; border:1px solid #E2E5DA; border-radius:6px; padding:9px 14px; cursor:pointer" style-hover="border-color:#8FBE2F; background:#FAFBF6"><span style="color:#C9CDC0; font-size:15px"><i class="far fa-star"></i></span><span style="flex:1; font-size:14px">Protocolo</span><span style="font-size:11px; font-weight:700; color:#8A8F82; background:#F4F5F1; border-radius:4px; padding:2px 8px; font-family:monospace">PO002</span></div>
+              <div style="display:flex; align-items:center; gap:12px; border:1px solid #E2E5DA; border-radius:6px; padding:9px 14px; cursor:pointer" style-hover="border-color:#8FBE2F; background:#FAFBF6"><span style="color:#F5A623; font-size:15px"><i class="fas fa-star"></i></span><span style="flex:1; font-size:14px">Remessas de saída</span><span style="font-size:11px; font-weight:700; color:#8A8F82; background:#F4F5F1; border-radius:4px; padding:2px 8px; font-family:monospace">PO003</span></div>
+              <div style="display:flex; align-items:center; gap:12px; border:1px solid #E2E5DA; border-radius:6px; padding:9px 14px; cursor:pointer" style-hover="border-color:#8FBE2F; background:#FAFBF6"><span style="color:#C9CDC0; font-size:15px"><i class="far fa-star"></i></span><span style="flex:1; font-size:14px">Entrada de remessas</span><span style="font-size:11px; font-weight:700; color:#8A8F82; background:#F4F5F1; border-radius:4px; padding:2px 8px; font-family:monospace">PO004</span></div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:#8A8F82; margin-top:14px">MUI: <span style="font-family:monospace">&lt;Card&gt;</span> + <span style="font-family:monospace">&lt;List&gt;</span>. Borda esquerda verde 4px · linhas com favorito (<i class="far fa-star"></i>/<i class="fas fa-star"></i>), rótulo e código monospace.</div>
+        </div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px">
+          <div style="font-weight:700; font-size:14px; margin-bottom:16px">Painel de módulo (hero verde)</div>
+          <div style="background:#5C6A35; border-radius:8px; padding:22px 24px">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px"><span style="font-size:22px"><i class="fas fa-file-alt"></i></span><span style="font-size:26px; font-weight:700; color:#fff">Protocolo</span></div>
+            <input placeholder="Buscar funcionalidades..." style="width:100%; box-sizing:border-box; border:none; border-radius:18px; padding:10px 18px; font-size:14px; font-family:Verdana,Geneva,sans-serif; outline:none">
+          </div>
+          <div style="font-size:12px; color:#8A8F82; margin-top:14px">Cabeçalho de módulo: fundo <span style="font-family:monospace">#5C6A35</span>, título 26–28px branco, busca em pill.</div>
+          <div style="font-weight:700; font-size:14px; margin:20px 0 12px">Painel agrupador (Complemento)</div>
+          <div style="border:1px solid #E2E5DA; border-radius:6px; background:#FAFBF8; padding:16px 18px">
+            <div style="font-size:15px; font-weight:700; margin-bottom:12px; color:#3E4630">Complemento</div>
+            <div style="display:grid; grid-template-columns:130px 1fr; gap:8px 10px; align-items:center; font-size:13px">
+              <div style="font-weight:600">Situação</div><input value="Em Andamento" readOnly style="border:1px solid #E2E5DA; border-radius:4px; padding:6px 10px; font-size:13px; font-family:Verdana,Geneva,sans-serif; color:#8A8F82; background:#fff; outline:none">
+              <div style="font-weight:600">Remessa</div><input value="0" readOnly style="border:1px solid #E2E5DA; border-radius:4px; padding:6px 10px; font-size:13px; font-family:Verdana,Geneva,sans-serif; color:#8A8F82; background:#fff; outline:none">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ BADGES ============ -->
+    <section id="badges" data-screen-label="Badges">
+      <div style="display:flex; align-items:baseline; gap:12px; border-bottom:2px solid #DDE2D0; padding-bottom:10px; margin-bottom:24px">
+        <span style="font-size:13px; font-weight:800; color:#8FBE2F">08</span>
+        <h2 style="margin:0; font-size:22px; font-weight:800; color:#3E4630">Badges &amp; Etiquetas</h2>
+      </div>
+      <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px; display:flex; gap:28px; align-items:center; flex-wrap:wrap">
+        <div style="display:flex; flex-direction:column; gap:8px; align-items:center"><span style="background:#F5A623; color:#fff; font-size:12px; font-weight:700; border-radius:12px; padding:4px 14px">Centi Cast</span><span style="font-size:11px; color:#8A8F82">Destaque de conteúdo</span></div>
+        <div style="display:flex; flex-direction:column; gap:8px; align-items:center"><span style="background:#E53935; color:#fff; font-size:10px; font-weight:800; letter-spacing:.5px; border-radius:10px; padding:3px 10px">VÍDEO</span><span style="font-size:11px; color:#8A8F82">Tutorial disponível</span></div>
+        <div style="display:flex; flex-direction:column; gap:8px; align-items:center"><span style="font-size:11px; font-weight:700; color:#8A8F82; background:#F4F5F1; border:1px solid #E2E5DA; border-radius:4px; padding:3px 10px; font-family:monospace">PO002</span><span style="font-size:11px; color:#8A8F82">Código de funcionalidade</span></div>
+        <div style="display:flex; flex-direction:column; gap:8px; align-items:center"><span style="background:#E4EAC8; color:#5C6A35; font-size:12px; font-weight:700; border-radius:12px; padding:4px 14px">Em Andamento</span><span style="font-size:11px; color:#8A8F82">Status positivo/ativo</span></div>
+        <div style="display:flex; flex-direction:column; gap:8px; align-items:center"><span style="background:#FDEBD0; color:#B36B00; font-size:12px; font-weight:700; border-radius:12px; padding:4px 14px">Aguardando Saída</span><span style="font-size:11px; color:#8A8F82">Status pendente</span></div>
+        <div style="display:flex; flex-direction:column; gap:8px; align-items:center"><span style="background:#FBE1E0; color:#C62828; font-size:12px; font-weight:700; border-radius:12px; padding:4px 14px">Não atestado</span><span style="font-size:11px; color:#8A8F82">Status de atenção</span></div>
+        <div style="flex-basis:100%; font-size:12px; color:#8A8F82; border-top:1px solid #EEF0E8; padding-top:12px">MUI: <span style="font-family:monospace">&lt;Chip size="small"&gt;</span> com cores do tema.</div>
+      </div>
+    </section>
+
+    <!-- ============ ÍCONES ============ -->
+    <section id="icones" data-screen-label="Ícones">
+      <div style="display:flex; align-items:baseline; gap:12px; border-bottom:2px solid #DDE2D0; padding-bottom:10px; margin-bottom:24px">
+        <span style="font-size:13px; font-weight:800; color:#8FBE2F">09</span>
+        <h2 style="margin:0; font-size:22px; font-weight:800; color:#3E4630">Ícones</h2>
+      </div>
+      <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px">
+        <div style="font-size:13px; color:#8A8F82; margin-bottom:18px; max-width:760px">Biblioteca oficial: <b>Font Awesome 5</b> (estilos <span style="font-family:monospace">fas</span>/<span style="font-family:monospace">far</span>). Nos menus laterais o ícone vive num tile arredondado <span style="font-family:monospace">#F1F5E4</span> em verde <span style="font-family:monospace">#7DA82B</span>; em toolbars, ícone solto cinza <span style="font-family:monospace">#8A8F82</span> que escurece no hover. Abaixo, o vocabulário padrão de ações:</div>
+        <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:14px">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px; border:1px solid #EEF0E8; border-radius:8px; padding:16px 8px"><div style="width:40px; height:40px; border-radius:9px; background:#F1F5E4; color:#7DA82B; display:flex; align-items:center; justify-content:center; font-size:18px"><i class="fas fa-search"></i></div><span style="font-size:11px; color:#8A8F82; text-align:center">pesquisar<br><span style="font-family:monospace; font-size:10px">fa-search</span></span></div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px; border:1px solid #EEF0E8; border-radius:8px; padding:16px 8px"><div style="width:40px; height:40px; border-radius:9px; background:#F1F5E4; color:#7DA82B; display:flex; align-items:center; justify-content:center; font-size:18px"><i class="fas fa-pencil-alt"></i></div><span style="font-size:11px; color:#8A8F82; text-align:center">editar<br><span style="font-family:monospace; font-size:10px">fa-pencil-alt</span></span></div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px; border:1px solid #EEF0E8; border-radius:8px; padding:16px 8px"><div style="width:40px; height:40px; border-radius:9px; background:#F1F5E4; color:#7DA82B; display:flex; align-items:center; justify-content:center; font-size:18px"><i class="fas fa-trash-alt"></i></div><span style="font-size:11px; color:#8A8F82; text-align:center">excluir<br><span style="font-family:monospace; font-size:10px">fa-trash-alt</span></span></div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px; border:1px solid #EEF0E8; border-radius:8px; padding:16px 8px"><div style="width:40px; height:40px; border-radius:9px; background:#F1F5E4; color:#7DA82B; display:flex; align-items:center; justify-content:center; font-size:18px"><i class="fas fa-save"></i></div><span style="font-size:11px; color:#8A8F82; text-align:center">salvar<br><span style="font-family:monospace; font-size:10px">fa-save</span></span></div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px; border:1px solid #EEF0E8; border-radius:8px; padding:16px 8px"><div style="width:40px; height:40px; border-radius:9px; background:#F1F5E4; color:#7DA82B; display:flex; align-items:center; justify-content:center; font-size:18px"><i class="far fa-calendar-alt"></i></div><span style="font-size:11px; color:#8A8F82; text-align:center">calendário<br><span style="font-family:monospace; font-size:10px">fa-calendar-alt</span></span></div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px; border:1px solid #EEF0E8; border-radius:8px; padding:16px 8px"><div style="width:40px; height:40px; border-radius:9px; background:#F1F5E4; color:#7DA82B; display:flex; align-items:center; justify-content:center; font-size:18px"><i class="fas fa-file-alt"></i></div><span style="font-size:11px; color:#8A8F82; text-align:center">documento<br><span style="font-family:monospace; font-size:10px">fa-file-alt</span></span></div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px; border:1px solid #EEF0E8; border-radius:8px; padding:16px 8px"><div style="width:40px; height:40px; border-radius:9px; background:#F1F5E4; color:#7DA82B; display:flex; align-items:center; justify-content:center; font-size:18px"><i class="fas fa-folder" style="color:#B8C48E"></i></div><span style="font-size:11px; color:#8A8F82; text-align:center">pasta / árvore<br><span style="font-family:monospace; font-size:10px">fa-folder</span></span></div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px; border:1px solid #EEF0E8; border-radius:8px; padding:16px 8px"><div style="width:40px; height:40px; border-radius:9px; background:#F1F5E4; color:#7DA82B; display:flex; align-items:center; justify-content:center; font-size:18px"><i class="fas fa-cog"></i></div><span style="font-size:11px; color:#8A8F82; text-align:center">configurações<br><span style="font-family:monospace; font-size:10px">fa-cog</span></span></div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px; border:1px solid #EEF0E8; border-radius:8px; padding:16px 8px"><div style="width:40px; height:40px; border-radius:9px; background:#F1F5E4; color:#7DA82B; display:flex; align-items:center; justify-content:center; font-size:18px"><i class="fas fa-star"></i></div><span style="font-size:11px; color:#8A8F82; text-align:center">favorito<br><span style="font-family:monospace; font-size:10px">fa-star</span></span></div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px; border:1px solid #EEF0E8; border-radius:8px; padding:16px 8px"><div style="width:40px; height:40px; border-radius:9px; background:#F1F5E4; color:#7DA82B; display:flex; align-items:center; justify-content:center; font-size:18px"><i class="fas fa-download"></i></div><span style="font-size:11px; color:#8A8F82; text-align:center">exportar<br><span style="font-family:monospace; font-size:10px">fa-download</span></span></div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px; border:1px solid #EEF0E8; border-radius:8px; padding:16px 8px"><div style="width:40px; height:40px; border-radius:9px; background:#F1F5E4; color:#7DA82B; display:flex; align-items:center; justify-content:center; font-size:18px"><i class="fas fa-eye-slash"></i></div><span style="font-size:11px; color:#8A8F82; text-align:center">sigilo / ocultar<br><span style="font-family:monospace; font-size:10px">fa-eye-slash</span></span></div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px; border:1px solid #EEF0E8; border-radius:8px; padding:16px 8px"><div style="width:40px; height:40px; border-radius:9px; background:#F1F5E4; color:#7DA82B; display:flex; align-items:center; justify-content:center; font-size:18px"><i class="fas fa-undo"></i></div><span style="font-size:11px; color:#8A8F82; text-align:center">desfazer<br><span style="font-family:monospace; font-size:10px">fa-undo</span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GRID & LAYOUT ============ -->
+    <section id="layout" data-screen-label="Grid e Layout">
+      <div style="display:flex; align-items:baseline; gap:12px; border-bottom:2px solid #DDE2D0; padding-bottom:10px; margin-bottom:24px">
+        <span style="font-size:13px; font-weight:800; color:#8FBE2F">10</span>
+        <h2 style="margin:0; font-size:22px; font-weight:800; color:#3E4630">Grid &amp; Layout</h2>
+      </div>
+      <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px">
+        <div style="display:grid; grid-template-columns:200px 1fr; grid-template-rows:56px 40px 1fr; gap:6px; height:320px; font-size:12px; font-weight:600; color:#5C6A35; margin-bottom:18px">
+          <div style="grid-column:1 / -1; background:#E4EAC8; border:1px dashed #8FBE2F; border-radius:6px; display:flex; align-items:center; justify-content:center">Topbar global — 56px (logo, referência mês/ano, entidade, utilitários)</div>
+          <div style="grid-row:2 / 4; background:#F1F5E4; border:1px dashed #8FBE2F; border-radius:6px; display:flex; align-items:center; justify-content:center; text-align:center; padding:8px">Sidebar de módulos<br>260px fixos</div>
+          <div style="background:#F7F8F4; border:1px dashed #C9CDC0; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#8A8F82">Barra de abas de documento — 40px</div>
+          <div style="background:#FAFBF6; border:1px dashed #C9CDC0; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#8A8F82">Área de trabalho — fluida, cards em grid de 3 colunas (gap 24px)</div>
+        </div>
+        <ul style="margin:0; padding-left:20px; font-size:13px; color:#4A4A4A; line-height:2">
+          <li><b>Espaçamento base 4px</b> — escala: 4 · 8 · 12 · 16 · 24 · 32 · 48.</li>
+          <li><b>Cantos:</b> 4–6px em campos e cards; 8px em painéis; pill (18px+) em buscas e badges.</li>
+          <li><b>Sombras:</b> apenas em cards flutuantes — <span style="font-family:monospace">0 1px 4px rgba(60,70,40,.12)</span>.</li>
+          <li><b>Grid da home de módulo:</b> 3 colunas iguais, gap 24px; em telas estreitas colapsa para 1–2 colunas.</li>
+          <li><b>Formulários:</b> coluna principal fluida + painel lateral "Complemento" de ~380px.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ NAVEGAÇÃO ============ -->
+    <section id="nav" data-screen-label="Navegação">
+      <div style="display:flex; align-items:baseline; gap:12px; border-bottom:2px solid #DDE2D0; padding-bottom:10px; margin-bottom:24px">
+        <span style="font-size:13px; font-weight:800; color:#8FBE2F">11</span>
+        <h2 style="margin:0; font-size:22px; font-weight:800; color:#3E4630">Navegação</h2>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:20px">
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px">
+          <div style="font-weight:700; font-size:14px; margin-bottom:16px">Sidebar de módulos</div>
+          <div style="border:1px solid #E2E5DA; border-radius:8px; background:#F7F8F4; padding:12px 0; max-width:280px">
+            <div style="padding:0 12px 12px"><input placeholder="Pesquisar..." style="width:100%; box-sizing:border-box; border:1px solid #C9CDC0; border-radius:16px; padding:7px 14px; font-size:13px; font-family:Verdana,Geneva,sans-serif; outline:none"></div>
+            <div style="display:flex; align-items:center; gap:12px; padding:10px 16px; cursor:pointer" style-hover="background:#EFF2E6"><div style="width:30px; height:30px; border-radius:7px; background:#E4EAC8; color:#5C6A35; display:flex; align-items:center; justify-content:center; font-size:14px"><i class="fas fa-cog"></i></div><span style="flex:1; font-size:15px; font-weight:700; color:#4A4A4A">Gerais</span><span style="color:#8FBE2F; font-weight:800">›</span></div>
+            <div style="display:flex; align-items:center; gap:12px; padding:10px 16px; background:#fff; border-right:4px solid #8FBE2F; cursor:pointer"><div style="width:30px; height:30px; border-radius:7px; background:#E4EAC8; color:#5C6A35; display:flex; align-items:center; justify-content:center; font-size:14px"><i class="fas fa-file-alt"></i></div><span style="flex:1; font-size:15px; font-weight:700; color:#3E4630">Protocolo</span></div>
+            <div style="display:flex; align-items:center; gap:12px; padding:10px 16px; cursor:pointer" style-hover="background:#EFF2E6"><div style="width:30px; height:30px; border-radius:7px; background:#E4EAC8; color:#5C6A35; display:flex; align-items:center; justify-content:center; font-size:14px"><i class="fas fa-chart-line"></i></div><span style="flex:1; font-size:15px; font-weight:700; color:#4A4A4A">Planejamento e Orçamento</span><span style="color:#8FBE2F; font-weight:800">›</span></div>
+            <div style="display:flex; align-items:center; gap:12px; padding:10px 16px; cursor:pointer" style-hover="background:#EFF2E6"><div style="width:30px; height:30px; border-radius:7px; background:#E4EAC8; color:#5C6A35; display:flex; align-items:center; justify-content:center; font-size:14px"><i class="fas fa-shopping-cart"></i></div><span style="flex:1; font-size:15px; font-weight:700; color:#4A4A4A">Compras/Licitação</span><span style="color:#8FBE2F; font-weight:800">›</span></div>
+          </div>
+          <div style="font-size:12px; color:#8A8F82; margin-top:14px">Item ativo: fundo branco + filete verde 4px à direita. Ícone em tile arredondado <span style="font-family:monospace">#E4EAC8</span>.</div>
+        </div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px">
+          <div style="font-weight:700; font-size:14px; margin-bottom:16px">Topbar global</div>
+          <div style="border:1px solid #E2E5DA; border-radius:8px; background:#fff; padding:10px 16px; display:flex; align-items:center; gap:14px; flex-wrap:wrap">
+            <div style="display:flex; align-items:center; gap:8px"><div style="width:26px; height:26px; border-radius:50%; background:#8FBE2F; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:14px">C</div><span style="font-weight:800; font-size:17px; color:#3E4630">centi</span></div>
+            <span style="font-size:14px; font-weight:700; color:#4A4A4A">Referência</span>
+            <select style="border:1px solid #C9CDC0; border-radius:5px; padding:6px 8px; font-size:13px; font-family:Verdana,Geneva,sans-serif; background:#fff"><option>Agosto</option></select>
+            <input value="2026" style="width:64px; border:1px solid #C9CDC0; border-radius:5px; padding:6px 8px; font-size:13px; font-family:Verdana,Geneva,sans-serif; outline:none">
+            <select style="flex:1; min-width:200px; border:1px solid #C9CDC0; border-radius:5px; padding:6px 8px; font-size:13px; font-weight:600; font-family:Verdana,Geneva,sans-serif; background:#fff"><option>01 - CAMARA MUNICIPAL DE RIO VERDE</option></select>
+            <span style="font-size:12px; color:#8A8F82">admin | 3.0.208.277</span>
+          </div>
+          <div style="font-weight:700; font-size:14px; margin:20px 0 12px">Árvore de navegação (cadastro)</div>
+          <div style="border:1px solid #E2E5DA; border-radius:8px; padding:14px 16px; max-width:300px; display:flex; flex-direction:column; gap:6px; font-size:13px">
+            <div style="display:flex; align-items:center; gap:8px; font-weight:700; color:#3E4630"><i class="fas fa-check-circle" style="color:#8FBE2F"></i> Protocolo - 2301804</div>
+            <div style="display:flex; align-items:center; gap:8px; padding-left:16px; color:#4A4A4A"><i class="fas fa-folder-open" style="color:#8FBE2F"></i> Andamentos</div>
+            <div style="display:flex; align-items:center; gap:8px; padding-left:32px; color:#4A4A4A"><i class="fas fa-folder" style="color:#B8C48E"></i> Documentos</div>
+            <div style="display:flex; align-items:center; gap:8px; padding-left:16px; color:#4A4A4A; background:#E4EAC8; border-radius:4px; padding:4px 8px 4px 16px; font-weight:600"><i class="fas fa-folder-open" style="color:#8FBE2F"></i> Movimentação</div>
+            <div style="display:flex; align-items:center; gap:8px; padding-left:16px; color:#4A4A4A"><i class="fas fa-folder" style="color:#B8C48E"></i> Apensar</div>
+            <div style="display:flex; align-items:center; gap:8px; padding-left:16px; color:#4A4A4A"><i class="fas fa-folder" style="color:#B8C48E"></i> Regularidade</div>
+          </div>
+          <div style="font-size:12px; color:#8A8F82; margin-top:14px">Pastas verdes indentadas em 16px por nível; nó selecionado com fundo <span style="font-family:monospace">#E4EAC8</span>.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STACK ============ -->
+    <section id="stack" data-screen-label="Stack">
+      <div style="display:flex; align-items:baseline; gap:12px; border-bottom:2px solid #DDE2D0; padding-bottom:10px; margin-bottom:24px">
+        <span style="font-size:13px; font-weight:800; color:#8FBE2F">12</span>
+        <h2 style="margin:0; font-size:22px; font-weight:800; color:#3E4630">UI Design Stack</h2>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:20px">
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px"><i class="fas fa-cubes" style="color:#8FBE2F; font-size:18px"></i><span style="font-weight:700; font-size:15px">Material UI v9 — tema Centi</span></div>
+          <div style="font-size:13px; color:#4A4A4A; line-height:1.7; margin-bottom:12px">Todos os componentes derivam do MUI com o tema abaixo. Nada de estilos avulsos: variações vêm de <span style="font-family:monospace; background:#F2F3EF; padding:1px 6px; border-radius:3px">variant</span>, <span style="font-family:monospace; background:#F2F3EF; padding:1px 6px; border-radius:3px">size</span> e <span style="font-family:monospace; background:#F2F3EF; padding:1px 6px; border-radius:3px">color</span>.</div>
+          <div style="background:#3E4630; border-radius:6px; padding:14px 16px; font-family:monospace; font-size:12px; line-height:1.8; color:#E3E8D2; overflow:auto">createTheme({<br>&nbsp;&nbsp;palette: { primary: { main: '#8FBE2F' },<br>&nbsp;&nbsp;&nbsp;&nbsp;secondary: { main: '#5C6A35' },<br>&nbsp;&nbsp;&nbsp;&nbsp;error: { main: '#E53935' },<br>&nbsp;&nbsp;&nbsp;&nbsp;warning: { main: '#F5A623' },<br>&nbsp;&nbsp;&nbsp;&nbsp;info: { main: '#4A90D9' } &#125;,<br>&nbsp;&nbsp;typography: { fontFamily: 'system-ui' },<br>&nbsp;&nbsp;shape: { borderRadius: 5 } &#125;)</div>
+        </div>
+        <div style="background:#fff; border:1px solid #E2E5DA; border-radius:8px; padding:24px">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px"><i class="fab fa-font-awesome-flag" style="color:#8FBE2F; font-size:18px"></i><span style="font-weight:700; font-size:15px">Font Awesome 5 — ícones</span></div>
+          <div style="font-size:13px; color:#4A4A4A; line-height:1.7">Biblioteca única de ícones do sistema. Estilos permitidos: <b>Solid</b> (<span style="font-family:monospace; background:#F2F3EF; padding:1px 6px; border-radius:3px">fas</span>) para ações e navegação, <b>Regular</b> (<span style="font-family:monospace; background:#F2F3EF; padding:1px 6px; border-radius:3px">far</span>) para estados vazios (ex.: favorito inativo). Nunca misturar outras bibliotecas.</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px 16px; margin-top:14px; font-size:13px">
+            <div style="display:flex; align-items:center; gap:10px"><i class="fas fa-search" style="color:#5C6A35; width:18px; text-align:center"></i><span style="font-family:monospace; font-size:12px; color:#8A8F82">fa-search</span></div>
+            <div style="display:flex; align-items:center; gap:10px"><i class="fas fa-star" style="color:#F5A623; width:18px; text-align:center"></i><span style="font-family:monospace; font-size:12px; color:#8A8F82">fa-star (fas)</span></div>
+            <div style="display:flex; align-items:center; gap:10px"><i class="far fa-star" style="color:#8A8F82; width:18px; text-align:center"></i><span style="font-family:monospace; font-size:12px; color:#8A8F82">fa-star (far)</span></div>
+            <div style="display:flex; align-items:center; gap:10px"><i class="fas fa-cog" style="color:#5C6A35; width:18px; text-align:center"></i><span style="font-family:monospace; font-size:12px; color:#8A8F82">fa-cog</span></div>
+          </div>
+          <div style="font-size:12px; color:#8A8F82; margin-top:14px">Tamanhos: 14px inline · 16px toolbar · 18px tiles de menu. Cores: <span style="font-family:monospace">#8A8F82</span> neutro, <span style="font-family:monospace">#5C6A35</span> ativo, <span style="font-family:monospace">#E53935</span> destrutivo.</div>
+        </div>
+      </div>
+    </section>
+
+    <div style="border-top:1px solid #DDE2D0; padding-top:20px; font-size:12px; color:#8A8F82; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px">
+      <span>Design System Centi · derivado das telas do sistema (Protocolo — v3.0.208.277)</span>
+      <span>Material UI 9 · Font Awesome 5 · Fontes: system-ui + Verdana · Verde <span style="font-family:monospace">#8FBE2F</span> / oliva <span style="font-family:monospace">#5C6A35</span></span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  contentRef = React.createRef();
+  renderVals() {
+    if (!this._go) {
+      const ids = ['stack','cores','tipografia','botoes','inputs','tabelas','abas','cards','badges','icones','layout','nav'];
+      this._go = {};
+      ids.forEach(id => { this._go[id] = () => this.scrollTo(id); });
+    }
+    return { contentRef: this.contentRef, go: this._go };
+  }
+  scrollTo(id) {
+    const c = this.contentRef.current; if (!c) return;
+    const el = c.querySelector('#' + id); if (!el) return;
+    const start = c.scrollTop;
+    const target = el.getBoundingClientRect().top - c.getBoundingClientRect().top + start - 28;
+    const dist = target - start, dur = 950, t0 = performance.now();
+    const ease = t => 1 - Math.pow(1 - t, 4); // easeOutQuart — desacelera "estacionando"
+    cancelAnimationFrame(this._raf);
+    const step = now => {
+      const p = Math.min(1, (now - t0) / dur);
+      c.scrollTop = start + dist * ease(p);
+      if (p < 1) this._raf = requestAnimationFrame(step);
+    };
+    this._raf = requestAnimationFrame(step);
+  }
+}
+</script>
+</body>
+</html>

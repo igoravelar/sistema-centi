@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centi · PO002 - Protocolo</title>
+<link rel="stylesheet" href="assets/centi.css">
+<style>
+  /* -------------------------------- Pesquisa -------------------------------- */
+  .filtros { padding: 14px 16px; position: relative; }
+  /* deixa livre a faixa da direita ocupada pelo box "Últimas Buscas" (330px + margens) */
+  .filtros-grid { display: grid; grid-template-columns: 240px 240px 1fr 30px; gap: 10px 12px;
+                  max-width: min(1010px, calc(100% - 358px)); }
+  .filtros-grid .cab { font-size: 13px; font-weight: bold; color: var(--txt); text-align: center; }
+  .filtros-grid select, .filtros-grid input {
+    height: 32px; border: 1px solid var(--fld-bd); border-radius: 4px;
+    padding: 0 10px; color: var(--txt); background: #FFFFFF; outline: none; width: 100%;
+  }
+  .filtros-grid select:focus, .filtros-grid input:focus { border-color: var(--g); }
+  .filtros .remover { border: 0; background: none; color: #E53935; display: grid; place-items: center; }
+  .filtros .remover svg { width: 15px; height: 15px; }
+  .filtros .acoes { display: flex; align-items: center; gap: 20px; margin-top: 14px;
+                    max-width: min(1010px, calc(100% - 358px)); }
+  .filtros .link { border: 0; background: none; color: var(--g-dark); font-size: 13px; display: inline-flex; align-items: center; gap: 7px; }
+  .filtros .link.cinza { color: var(--txt); }
+  .filtros .link svg { width: 14px; height: 14px; }
+
+  .ultimas {
+    position: absolute; top: 14px; right: 16px; width: 330px;
+    background: #FFFFFF; border: 1px solid var(--tab-bd); border-radius: 5px; padding: 10px 14px;
+  }
+  .ultimas h3 { margin: 0 0 8px; font-size: 13px; font-weight: bold; color: var(--txt); display: flex; align-items: center; gap: 8px; }
+  .ultimas h3 svg { width: 14px; height: 14px; }
+  .ultimas li { list-style: none; font-size: 12px; padding: 5px 0; color: var(--txt);
+                overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+  .ultimas li:hover { color: var(--g-dark); }
+  .ultimas ul { margin: 0; padding: 0; }
+
+  .res-topo { display: flex; align-items: center; gap: 12px; padding: 12px 16px; flex: 0 0 auto; }
+  .res-topo h2 { margin: 0; font-size: 18px; font-weight: bold; color: var(--txt); }
+  .res-topo .conta { font-size: 13px; color: var(--txt); }
+  .res-topo .dir { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  .res-topo select { height: 32px; border: 1px solid var(--fld-bd); border-radius: 4px; padding: 0 8px; background: #FFFFFF; color: var(--txt); }
+  .res-corpo { flex: 1; min-height: 0; margin: 0 12px 12px; background: #FFFFFF; border: 1px solid var(--tab-bd); border-radius: 4px; overflow: auto; }
+
+  /* -------------------------------- Cadastro -------------------------------- */
+  .cad-toolbar {
+    flex: 0 0 auto; height: 49px; display: flex; align-items: center; gap: 10px;
+    padding: 0 16px; background: var(--panel-2); border: 1px solid var(--tab-bd); border-radius: 5px;
+  }
+  .cad-corpo {
+    flex: 1; min-height: 0; display: flex; gap: 10px;
+    background: #FFFFFF; border: 1px solid var(--tab-bd); border-radius: 5px; padding: 14px 16px;
+  }
+  .arvore { flex: 0 0 228px; overflow: auto; padding-right: 8px; border-right: 1px solid #EEEFF1; }
+  .arvore .titulo { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: bold; color: #5C5B5B; margin-bottom: 14px; }
+  .arvore .titulo svg { width: 15px; height: 15px; color: var(--g); }
+  .arvore .pasta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #5C5B5B;
+                   padding: 7px 4px; border-radius: 4px; cursor: pointer; }
+  .arvore .pasta:hover { background: #F1F5E4; }
+  .arvore .pasta svg { width: 14px; height: 14px; flex: 0 0 auto; color: var(--g); }
+  .arvore .n1 { padding-left: 22px; }
+  .arvore .n2 { padding-left: 44px; }
+  .arvore .pasta.sel { background: var(--g-soft-bg); color: var(--g-olive); font-weight: bold; }
+
+  .form { flex: 1; min-width: 0; max-width: 560px; display: flex; flex-direction: column; gap: 10px; overflow: auto; }
+</style>
+</head>
+<body>
+
+<div class="app"></div>
+
+<script src="assets/shell.js"></script>
+<script>
+const RESULTADOS = [
+  ['2292412','116489','07/08/2026','DIEGO BORGES DA SILVA','31.633.628/0001-00','116489/2026','','AQUISIÇÃO DE MATERIAL','TESTE FLUXO','07/08/2026'],
+  ['2292411','116488','07/08/2026','DIEGO BORGES DA SILVA','31.633.628/0001-00','116488/2026','','ABERTURA DE PROCESSO','TESTE FLUXO','07/08/2026'],
+  ['2292410','116487','07/08/2026','MATHEUS CARDOSO LIMA','325.690.671-00','116487/2026','','ABERTURA DE PROCESSO','INICIAR PROCESSO','06/08/2026'],
+  ['2292409','116486','06/08/2026','DIEGO BORGES DA SILVA','31.633.628/0001-00','116486/2026','','ABERTURA DE PROCESSO','TESTE FLUXO','06/08/2026'],
+  ['2292408','116485','06/08/2026','DIEGO BORGES DA SILVA','011.851.501-00','116485/2026','','ABERTURA DE PROCESSO','PROTOCOLO DIGITAL','06/08/2026'],
+  ['2292407','116484','06/08/2026','DIEGO BORGES DA SILVA','011.851.501-00','116484/2026','','ABERTURA DE PROCESSO','TESTE PROTOCOLO','06/08/2026'],
+  ['2292406','116483','06/08/2026','','','116483/2026','','ABERTURA DE PROCESSO','PROTOCOLO TESTE','06/08/2026'],
+  ['2292405','116482','06/08/2026','DIEGO BORGES DA SILVA','011.851.501-00','116482/2026','JOAO LAZARO','ABERTURA DE PROCESSO','PROTOCOLO NOVO','05/08/2026'],
+  ['2292404','116481','04/08/2026','A B DE MORAES LTDA','','116481/2026','','ALVARÁ PROVISÓRIO','TESTE','04/08/2026'],
+  ['2292403','116480','04/08/2026','A B DE MORAES LTDA','','116480/2026','','ALVARÁ PROVISÓRIO','TESTE','04/08/2026'],
+  ['2292402','116473','29/07/2026','A SOLUCAO TRANSPORTES','13.404.183/0001-00','116473/2026','','ADESÃO DE ATA','TESTE','29/07/2026'],
+  ['2292401','116472','28/07/2026','EMANUELLA','075.930.191-00','116472/2026','EMANUELLA','CANCELAMENTO','TESTE QA','28/07/2026'],
+  ['2292400','116471','26/07/2026','WILLIAN JOSE DA COSTA','07.033.321/0001-00','116471/2026','SMC - SECRETARIA','LIQUIDAÇÃO','LIQUIDAÇÃO','23/07/2026'],
+];
+
+const COLUNAS = ['ID','PROTOCOLO','DATA','INTERESSADO','CPF/CNPJ','PROCESSO/ANO','SOLICITANTE','ASSUNTO','DESCRIÇÃO','DATA DO DOCUMENTO'];
+
+const ULTIMAS = [
+  '11/08/2026 - 11:20: Protocolo - Igual - 116489',
+  '11/08/2026 - 09:34: Protocolo - Igual - 116487',
+  '10/08/2026 - 17:25: Protocolo - Igual - 116480',
+  '10/08/2026 - 16:21: Data - Igual - 04/08/2026',
+];
+
+const PASTAS = [
+  { txt: 'Andamentos',           n: 0 },
+  { txt: 'Documentos',           n: 1 },
+  { txt: 'Movimentação',         n: 0 },
+  { txt: 'Etapas do Fluxo',      n: 0, aberta: true },
+  { txt: 'Em Andamento',         n: 1 },
+  { txt: 'Etapas',               n: 1 },
+  { txt: 'Início',               n: 2 },
+  { txt: 'Conferência da Solicitação', n: 2 },
+  { txt: 'Análise ampliada',     n: 2, sel: true },
+  { txt: 'Parecer do Controle',  n: 2 },
+  { txt: 'Declaração de Impacto', n: 2 },
+  { txt: 'Assinatura Eletrônica', n: 1 },
+  { txt: 'Regularidade',         n: 1 },
+  { txt: 'Atividades',           n: 1 },
+];
+
+/* ------------------------------- Pesquisa ------------------------------- */
+
+function pesquisaHTML() {
+  const linhas = RESULTADOS.map((r, i) => `
+    <tr onclick="abrirCadastro(${i})">${r.map((c, j) =>
+      `<td class="${j === 0 || j === 1 ? 'num' : ''}">${c}</td>`).join('')}</tr>`).join('');
+
+  return `
+  <div class="painel filtros">
+    <div class="filtros-grid">
+      <div class="cab">Campo</div><div class="cab">Operação</div><div class="cab">Valor</div><div></div>
+
+      <select><option>Protocolo</option><option>Id</option><option>Interessado</option><option>Data</option></select>
+      <select><option>Igual</option><option>Contém</option><option>Maior que</option></select>
+      <input placeholder="">
+      <div></div>
+
+      <select><option>Somente ano logado</option><option>Todos os anos</option></select>
+      <select><option>Igual</option><option>Diferente</option></select>
+      <select><option>Sim</option><option>Não</option></select>
+      <button class="remover" title="Remover filtro" onclick="this.closest('.filtros-grid').querySelectorAll(':scope > *:nth-last-child(-n+4)').forEach(e=>e.remove())">${svg('lixeira')}</button>
+    </div>
+
+    <div class="acoes">
+      <button class="link">${svg('mais')} Adicionar Filtro</button>
+      <button class="link cinza">${svg('borracha')} Limpar Filtros</button>
+      <div style="flex:1"></div>
+      <button class="btn btn-primario" style="height:40px;padding:0 26px">${svg('lupa')} Pesquisar</button>
+      <button class="btn btn-neutro" style="height:40px;padding:0 20px">${svg('salvar')} Salvar Filtros</button>
+    </div>
+
+    <aside class="ultimas">
+      <h3>${svg('relogio')} Últimas Buscas ${svg('ajuda', 'style="width:13px;height:13px;margin-left:auto"')}</h3>
+      <ul>${ULTIMAS.map(u => `<li title="${u}">${u}</li>`).join('')}</ul>
+    </aside>
+  </div>
+
+  <div class="painel resultado">
+    <div class="res-topo">
+      <h2>Resultados</h2>
+      <span class="conta">Exibindo ${RESULTADOS.length} de ${RESULTADOS.length}</span>
+      <div class="dir">
+        <span>Mostrar:</span>
+        <select><option>50</option><option>100</option></select>
+        <button class="btn btn-claro">${svg('download')} Exportar</button>
+      </div>
+    </div>
+    <div class="res-corpo scroll">
+      <table class="tabela">
+        <thead><tr>${COLUNAS.map(c => `<th>${c}</th>`).join('')}</tr></thead>
+        <tbody>${linhas}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+/* ------------------------------- Cadastro ------------------------------- */
+
+function campo({ rot, val, ro = true, cod, acoes = [], alto = false, ph = '' }) {
+  // no Cadastro a coluna de código do lookup tem 71px (no drawer do PO011 são 42px)
+  const codBox = cod !== undefined
+    ? `<input class="cx cod cod-l${ro ? ' ro' : ''}" value="${cod}" ${ro ? 'readonly' : ''}>` : '';
+  const acts = acoes.map(a => `<button class="act" title="${a.t}">${svg(a.i)}</button>`).join('');
+  return `
+    <div class="campo"${alto ? ' style="min-height:46px"' : ''}>
+      <div class="rot">${rot}</div>
+      <div class="val">
+        ${codBox}
+        <input class="cx${ro ? ' ro' : ''}" value="${val}" placeholder="${ph}" ${ro ? 'readonly' : ''}>
+        ${acts}
+      </div>
+    </div>`;
+}
+
+function cadastroHTML() {
+  const pastas = PASTAS.map(p => `
+    <div class="pasta n${p.n}${p.sel ? ' sel' : ''}">${svg('pasta')}<span>${p.txt}</span></div>`).join('');
+
+  const campos = [
+    campo({ rot: 'Id', val: '2292412' }),
+    campo({ rot: 'Protocolo<span class="req">*</span>', val: '1990' }),
+    campo({ rot: 'Ano Protocolo<span class="req">*</span>', val: '2026' }),
+    campo({ rot: 'Data Protocolo', val: '06/01/2026' }),
+    campo({ rot: 'Interessado/<br>Beneficiário', cod: '94886', val: 'FUNDO MUNICIPAL DE SAUDE DE RIO VERDE',
+            ro: false, alto: true,
+            acoes: [{ i: 'lapis', t: 'Editar' }, { i: 'mais', t: 'Novo' }, { i: 'lupa', t: 'Pesquisar' }] }),
+    campo({ rot: 'Solicitante/<br>Requerente', cod: '1595202', val: 'SMS - UPA II - UNIDADE DE PRONTO ATENDIMENTO',
+            ro: false, alto: true,
+            acoes: [{ i: 'lapis', t: 'Editar' }, { i: 'lupa', t: 'Pesquisar' }] }),
+    campo({ rot: 'Natureza<span class="req">*</span>', cod: '', val: '', ro: false, ph: 'Pesquisar...',
+            acoes: [{ i: 'lupa', t: 'Pesquisar' }] }),
+  ].join('');
+
+  return `
+  <div class="cad-toolbar">
+    <button class="btn btn-claro">${svg('mais')} Novo</button>
+    <button class="btn btn-claro">${svg('lixeira')} Excluir</button>
+    <button class="btn btn-claro">${svg('salvar')} Salvar</button>
+    <div style="flex:1"></div>
+    <a class="btn btn-primario" href="po011.html">${svg('fluxo')} Guia do Fluxo</a>
+    <button class="btn btn-primario">${svg('camadas')} Operações</button>
+  </div>
+
+  <div class="cad-corpo">
+    <div class="arvore scroll">
+      <div class="titulo">${svg('check')} Protocolo - 2292412</div>
+      ${pastas}
+    </div>
+    <div class="form scroll">${campos}</div>
+  </div>`;
+}
+
+/* --------------------------------- shell --------------------------------- */
+
+const VTABS = [
+  { id: 'pesquisa', rot: 'Pesquisa', ico: 'lupa' },
+  { id: 'cadastro', rot: 'Cadastro', ico: 'lapis' },
+  { id: 'notas',    rot: 'Notas',    ico: 'notas' },
+  { id: 'vicenti',  rot: 'ViCenti',  ico: 'robo' },
+];
+
+let vista = 'pesquisa';
+
+function render() {
+  const vt = VTABS.map(v => `
+    <button class="vtab${v.id === vista ? ' ativa' : ''}" onclick="irPara('${v.id}')">
+      ${svg(v.ico)}<span>${v.rot}</span>
+    </button>`).join('');
+
+  const corpo = vista === 'cadastro' ? cadastroHTML()
+              : vista === 'pesquisa' ? pesquisaHTML()
+              : `<div class="painel" style="flex:1;display:grid;place-items:center;color:var(--txt-mute)">
+                   ${VTABS.find(v => v.id === vista).rot} — em construção
+                 </div>`;
+
+  main.querySelector('.tela')?.remove();
+  main.insertAdjacentHTML('beforeend',
+    `<div class="tela"><div class="vtabs">${vt}</div><div class="conteudo">${corpo}</div></div>`);
+}
+
+function irPara(id) { vista = id; render(); }
+
+/** Clique numa linha de resultado leva ao Cadastro do protocolo. */
+function abrirCadastro(i) { irPara('cadastro'); }
+
+const main = montarShell('po002', ['protocolo','po002']);
+render();
+
+/* estado inicial via ?view=cadastro */
+const q = new URLSearchParams(location.search).get('view');
+if (q && VTABS.some(v => v.id === q)) irPara(q);
+</script>
+</body>
+</html>
