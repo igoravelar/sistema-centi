@@ -29,9 +29,13 @@ Caminhos de navegação:
 - **po002 · Pesquisa** → clique numa linha de resultado leva ao Cadastro
 - **po002 · Cadastro** → botão `Guia do Fluxo` abre o `po011.html`
 - **po011** abre **sem drawer**, com o fluxograma ocupando todo o modal. Clicar
-  numa etapa faz o drawer entrar deslizando da direita; o `×` do drawer o fecha
-  com o movimento inverso. Abas `Dados · Documentos · Checklist · Condições`; no
-  Checklist, clique numa linha abre o detalhe do item (com `Voltar` e `Salvar`)
+  numa etapa faz o drawer entrar deslizando da direita e traz o card clicado
+  para o centro da área que sobra; o `×` do drawer o fecha com o movimento
+  inverso. Abas `Dados · Documentos · Checklist · Condições`; no Checklist,
+  clique numa linha abre o detalhe do item (com `Voltar` e `Salvar`)
+- O fluxograma não tem barras de rolagem: navega-se **arrastando** (mão aberta
+  parada, mão fechada arrastando, dedo apontando sobre os cards). Um arraste
+  acima de 4px cancela o clique, para não abrir o drawer sem querer
 - **po011** → o `×` do modal (ou clicar no fundo escurecido) volta ao Cadastro do PO002
 - As abas de documento no topo acumulam conforme você navega (🏠 · Notificações ·
   Protocolo · PO002 · PO011) e cada uma leva de volta à sua tela. Cada página

@@ -56,17 +56,27 @@
 
   .modal-corpo { flex: 1; min-height: 0; display: flex; gap: 0; padding: 6px; }
 
-  /* grade de pontos do protótipo: passo 17,3 x 15,9 px em #E2EACF */
+  /* grade de pontos do protótipo: passo 17,3 x 15,9 px em #E2EACF.
+     Sem barras de rolagem: a navegação é por clique e arraste (ver ativarArrasto). */
   .bpmn-wrap {
+    position: relative;
     flex: 1; min-width: 0;
     border-radius: 5px;
-    overflow: auto;
+    overflow: hidden;
     padding: 20px;
     background-image: radial-gradient(#E2EACF 1.45px, transparent 1.45px);
     background-size: 17.3px 15.9px;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
   }
-  .bpmn { position: relative; width: 594px; height: 690px; margin: 0 auto; }
-  .bpmn svg.conectores { position: absolute; inset: 0; width: 100%; height: 100%; }
+  /* enquanto arrasta, a mão fechada vale em toda a área, inclusive sobre os cards */
+  .bpmn-wrap.arrastando,
+  .bpmn-wrap.arrastando .etapa { cursor: grabbing; }
+  .bpmn-wrap.arrastando .etapa:hover { animation: none; transform: none; box-shadow: none; }
+  .bpmn { position: relative; width: 594px; height: 1260px; margin: 0 auto; }
+  /* as linhas nunca interceptam o ponteiro: o clique é sempre do card ou do arraste */
+  .bpmn svg.conectores { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 
   /* -------------------------------- etapa -------------------------------- */
   /* o título ocupa toda a faixa entre o topo do card (onde fica a bolinha) e a
@@ -116,6 +126,7 @@
     width: 7px; height: 7px; border-radius: 50%;
   }
 
+  /* verde claro — etapa concluída */
   .etapa.concluida { background: var(--g-soft-bg); border: 1px solid #CAD69C; }
   .etapa.concluida .nome { color: var(--g-mid); }
   .etapa.concluida .depto { color: #A6B56D; }
@@ -123,17 +134,26 @@
   .etapa.concluida .num { background: #DAE5B0; color: var(--g-mid); }
   .etapa.concluida .ponto { background: #B4C086; }
 
-  .etapa.atual { background: linear-gradient(180deg, #ADC84A 0%, #8FAA31 100%); border: 2px solid var(--g-stroke); }
-  .etapa.atual .nome, .etapa.atual .depto { color: #FFFFFF; }
-  .etapa.atual .depto-lbl, .etapa.atual .dias { color: #DFF19C; }
-  .etapa.atual .num { background: var(--g-stroke); color: #FFFFFF; }
-  .etapa.atual .ponto { background: #7E7F79; }
+  /* branco com verde — em andamento, drawer fechado (clique para abrir) */
+  .etapa.andamento { background: linear-gradient(180deg, #FFFFFF 0%, #F7F7F7 100%); border: 2px solid var(--g); }
+  .etapa.andamento .nome { color: var(--g-mid); }
+  .etapa.andamento .depto { color: #5C5B5B; }
+  .etapa.andamento .depto-lbl, .etapa.andamento .dias { color: #9A9A9A; }
+  .etapa.andamento .num { background: var(--g); color: #FFFFFF; }
+  .etapa.andamento .ponto { background: #7E7F79; }
 
-  .etapa.pendente { background: linear-gradient(180deg, #FFFFFF 0%, #F4F4F4 100%); border: 1px solid var(--fld-bd); }
-  .etapa.pendente .nome, .etapa.pendente .depto { color: var(--txt); }
-  .etapa.pendente .depto-lbl, .etapa.pendente .dias { color: #9A9A9A; }
-  .etapa.pendente .num { background: #7E7F79; color: #FFFFFF; }
-  .etapa.pendente .ponto { background: #7E7F79; }
+  /* verde escuro — em andamento com o drawer aberto */
+  .etapa.andamento.aberta { background: linear-gradient(180deg, #ADC84A 0%, #8FAA31 100%); border-color: var(--g-stroke); }
+  .etapa.andamento.aberta .nome, .etapa.andamento.aberta .depto { color: #FFFFFF; }
+  .etapa.andamento.aberta .depto-lbl, .etapa.andamento.aberta .dias { color: #DFF19C; }
+  .etapa.andamento.aberta .num { background: var(--g-stroke); }
+
+  /* branco — etapa não habilitada para tramitar */
+  .etapa.bloqueada { background: linear-gradient(180deg, #FFFFFF 0%, #F4F4F4 100%); border: 1px solid var(--fld-bd); }
+  .etapa.bloqueada .nome, .etapa.bloqueada .depto { color: var(--txt); }
+  .etapa.bloqueada .depto-lbl, .etapa.bloqueada .dias { color: #9A9A9A; }
+  .etapa.bloqueada .num { background: #7E7F79; color: #FFFFFF; }
+  .etapa.bloqueada .ponto { background: #7E7F79; }
 
   /* hover: cresce passando um pouco do alvo e recolhe */
   @keyframes etapa-bounce {
@@ -175,6 +195,14 @@
     transform: none;
     opacity: 1;
     pointer-events: auto;
+  }
+
+  /* troca de etapa com o drawer já aberto: recua um pouco à direita e volta com
+     o novo conteúdo. Precisa vir depois de .aberto para vencer o `transform: none` */
+  .drawer.trocando {
+    transform: translateX(26px);
+    opacity: .5;
+    transition: transform .15s ease-in, opacity .15s ease-in;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -243,17 +271,29 @@ Object.assign(ICO, {
 
 /* ------------------------------ dados do fluxo ------------------------------ */
 
+/**
+ * estado do card:
+ *   concluida  verde claro   — etapa concluída
+ *   andamento  branco+verde  — em andamento; vira verde escuro (.aberta) com o drawer aberto
+ *   bloqueada  branco        — não habilitada para tramitar
+ */
 const ETAPAS = [
   { n: 1, nome: 'Início',                       depto: 'Arrecadação',                dias: '1 dia',  estado: 'concluida',
     x: 232, y: 15,  w: 124, h: 95 },
   { n: 2, nome: 'Conferência da<br>Solicitação', depto: 'DEPARTAMENTO DE IPTU - PD',  dias: '2 dias', estado: 'concluida',
     x: 200, y: 157, w: 188, h: 112 },
-  { n: 3, nome: 'Valor exige análise<br>ampliada?', depto: 'TRIBUTAÇÃO',             dias: '1 dia',  estado: 'atual',
+  { n: 3, nome: 'Valor exige análise<br>ampliada?', depto: 'TRIBUTAÇÃO',             dias: '1 dia',  estado: 'andamento',
     x: 0,   y: 345, w: 190, h: 112 },
-  { n: 4, nome: 'Parecer do Controle<br>interno', depto: 'Controle Interno',         dias: '1 dia',  estado: 'pendente',
+  { n: 4, nome: 'Parecer do Controle<br>interno', depto: 'Controle Interno',         dias: '1 dia',  estado: 'andamento',
     x: 396, y: 345, w: 198, h: 112 },
-  { n: 5, nome: 'Declaração de<br>Impacto de ORC', depto: 'Contabilidade',           dias: '5 dias', estado: 'pendente',
-    x: 200, y: 533, w: 198, h: 112 },
+  { n: 5, nome: 'Conferência<br>documental',    depto: 'TRIBUTOS',                   dias: '1 dia',  estado: 'bloqueada',
+    x: 0,   y: 533, w: 190, h: 112 },
+  { n: 6, nome: 'Declaração de<br>Impacto de ORC', depto: 'Contabilidade',           dias: '5 dias', estado: 'bloqueada',
+    x: 200, y: 721, w: 198, h: 112 },
+  { n: 7, nome: 'Análise Social',               depto: 'Assistência Social',         dias: '3 dias', estado: 'bloqueada',
+    x: 200, y: 909, w: 198, h: 112 },
+  { n: 8, nome: 'Isenção Concedida',            depto: 'Controle Interno',           dias: '1 dia',  estado: 'bloqueada',
+    x: 200, y: 1097, w: 198, h: 112 },
 ];
 
 /* campos da aba Dados, na ordem do protótipo */
@@ -293,9 +333,8 @@ let itemChecklist = null;  // id do item aberto em detalhe
 
 function etapaHTML(e) {
   return `
-  <div class="etapa ${e.estado}${e.n === etapaSel ? ' sel' : ''}"
-       style="left:${e.x}px; top:${e.y}px; width:${e.w}px; height:${e.h}px"
-       onclick="abrirEtapa(${e.n})">
+  <div class="etapa ${e.estado}" data-n="${e.n}"
+       style="left:${e.x}px; top:${e.y}px; width:${e.w}px; height:${e.h}px">
     <span class="num">${e.n}</span>
     <span class="dias">${svg('cronometro')}${e.dias}</span>
     <span class="nome">${e.nome}</span>
@@ -307,12 +346,50 @@ function etapaHTML(e) {
   </div>`;
 }
 
+const RAIO_CURVA = 10;
+
+/** Caminho ortogonal com as quinas arredondadas em `r` px. */
+function caminho(pts, r = RAIO_CURVA) {
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 1; i < pts.length - 1; i++) {
+    const [xa, ya] = pts[i - 1], [x, y] = pts[i], [xb, yb] = pts[i + 1];
+    const da = Math.hypot(x - xa, y - ya), db = Math.hypot(xb - x, yb - y);
+    const rr = Math.min(r, da / 2, db / 2);
+    // entra na quina, curva usando o vértice como controle, e sai
+    d += ` L${x - (x - xa) / da * rr},${y - (y - ya) / da * rr}`;
+    d += ` Q${x},${y} ${x + (xb - x) / db * rr},${y + (yb - y) / db * rr}`;
+  }
+  const [xf, yf] = pts[pts.length - 1];
+  return `${d} L${xf},${yf}`;
+}
+
 /* as linhas que saem dos cards verde-claro (etapas 1 e 2) usam #B4C086; as que
    saem dos demais ficam cinza, como no protótipo */
 function conectoresHTML() {
   const feito = '#B4C086', falta = '#7E7F79';
+
+  const ligacoes = [
+    // 1 -> 2
+    { pts: [[294, 113], [294, 157]], cor: feito, seta: 'pf' },
+    // 2 -> 3 e 2 -> 4
+    { pts: [[294, 272], [294, 308], [95, 308], [95, 345]], cor: feito, seta: 'pf' },
+    { pts: [[294, 308], [495, 308], [495, 345]],           cor: feito, seta: 'pf' },
+    // 3 -> 5 (logo abaixo)
+    { pts: [[95, 460], [95, 533]], cor: falta, seta: 'pp' },
+    // 5 -> 6 e 4 -> 6 (a de 4 desce até a mesma altura)
+    { pts: [[95, 648], [95, 688], [299, 688], [299, 721]], cor: falta, seta: 'pp' },
+    { pts: [[495, 460], [495, 688], [299, 688]],           cor: falta },
+    // 6 -> 7 -> 8
+    { pts: [[299, 836], [299, 909]],  cor: falta, seta: 'pp' },
+    { pts: [[299, 1024], [299, 1097]], cor: falta, seta: 'pp' },
+  ];
+
+  const linhas = ligacoes.map(l =>
+    `<path d="${caminho(l.pts)}" fill="none" stroke="${l.cor}" stroke-width="1"
+           stroke-linejoin="round" ${l.seta ? `marker-end="url(#${l.seta})"` : ''}/>`).join('');
+
   return `
-  <svg class="conectores" viewBox="0 0 594 690" preserveAspectRatio="none">
+  <svg class="conectores" viewBox="0 0 594 1260">
     <defs>
       <marker id="pf" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
         <polygon points="0,0 7,3.5 0,7" fill="${feito}"/>
@@ -321,11 +398,7 @@ function conectoresHTML() {
         <polygon points="0,0 7,3.5 0,7" fill="${falta}"/>
       </marker>
     </defs>
-    <polyline points="294,113 294,157" fill="none" stroke="${feito}" stroke-width="1" marker-end="url(#pf)"/>
-    <polyline points="294,272 294,308 95,308 95,345" fill="none" stroke="${feito}" stroke-width="1" marker-end="url(#pf)"/>
-    <polyline points="294,308 495,308 495,345" fill="none" stroke="${feito}" stroke-width="1" marker-end="url(#pf)"/>
-    <polyline points="95,460 95,500 299,500 299,533" fill="none" stroke="${falta}" stroke-width="1" marker-end="url(#pp)"/>
-    <polyline points="495,460 495,500 299,500" fill="none" stroke="${falta}" stroke-width="1"/>
+    ${linhas}
   </svg>`;
 }
 
@@ -420,26 +493,126 @@ function atualizarDrawer() {
     </div>
     <div class="drawer-corpo scroll">${corpo}</div>
     <div class="drawer-rodape">
-      <button class="btn ${e.estado === 'atual' ? 'btn-claro' : 'btn-neutro'}"
-              ${e.estado === 'atual' ? '' : 'disabled'}>${svg('check')} Concluir etapa</button>
+      <button class="btn ${e.estado === 'andamento' ? 'btn-claro' : 'btn-neutro'}"
+              ${e.estado === 'andamento' ? '' : 'disabled'}>${svg('check')} Concluir etapa</button>
       <button class="btn btn-primario">${svg('camadas')} Operações</button>
     </div>`;
 }
 
 /* --------------------------------- ações --------------------------------- */
 
-/* deve acompanhar a transição do .drawer no CSS */
+/* devem acompanhar as transições do .drawer e do .drawer.trocando no CSS */
 const ANIM_DRAWER = 280;
+const ANIM_TROCA = 150;
 let limpezaDrawer = null;
 
-/** Clique numa etapa: preenche o drawer e o faz entrar deslizando pela direita. */
+/**
+ * Navegação do fluxograma por clique e arraste, no lugar das barras de rolagem.
+ * Um arraste acima do limiar cancela o clique, para não abrir o drawer sem querer.
+ */
+const LIMIAR_ARRASTO = 8;   // px de tolerância ao tremor da mão no clique
+
+/**
+ * A abertura da etapa acontece no `pointerup`, não no evento `click`: com a
+ * captura de ponteiro ativa o clique é redirecionado para o container e nunca
+ * chegaria ao card. Pelo mesmo motivo a captura só é pedida quando o arraste
+ * realmente começa.
+ */
+function ativarArrasto(wrap) {
+  let ativo = false, passou = false, rolou = false, alvo = null;
+  let x0 = 0, y0 = 0, sl = 0, st = 0;
+
+  wrap.addEventListener('pointerdown', e => {
+    if (e.button !== 0) return;
+    ativo = true; passou = false; rolou = false;
+    alvo = e.target.closest('.etapa');
+    x0 = e.clientX; y0 = e.clientY;
+    sl = wrap.scrollLeft; st = wrap.scrollTop;
+  });
+
+  wrap.addEventListener('pointermove', e => {
+    if (!ativo) return;
+    const dx = e.clientX - x0, dy = e.clientY - y0;
+    if (!passou) {
+      if (Math.hypot(dx, dy) < LIMIAR_ARRASTO) return;   // ainda pode virar clique
+      passou = true;
+      wrap.classList.add('arrastando');
+      // mantém o arraste vivo fora da área; se falhar, o arraste segue mesmo assim
+      try { wrap.setPointerCapture(e.pointerId); } catch { /* ponteiro indisponível */ }
+    }
+    wrap.scrollLeft = sl - dx;
+    wrap.scrollTop  = st - dy;
+    // só vira arraste de verdade se a tela saiu do lugar
+    if (wrap.scrollLeft !== sl || wrap.scrollTop !== st) rolou = true;
+  });
+
+  const encerrar = e => {
+    if (!ativo) return false;
+    ativo = false;
+    wrap.classList.remove('arrastando');
+    if (wrap.hasPointerCapture(e.pointerId)) wrap.releasePointerCapture(e.pointerId);
+    return true;
+  };
+
+  wrap.addEventListener('pointerup', e => {
+    if (!encerrar(e)) return;
+    if (!rolou && alvo) abrirEtapa(+alvo.dataset.n);
+    alvo = null;
+  });
+
+  wrap.addEventListener('pointercancel', e => { encerrar(e); alvo = null; });
+}
+
+/** Traz a etapa para o centro da área visível do fluxograma. */
+function centralizarEtapa(n) {
+  const wrap = main.querySelector('.bpmn-wrap');
+  const bpmn = main.querySelector('.bpmn');
+  const card = main.querySelectorAll('.etapa')[ETAPAS.findIndex(e => e.n === n)];
+  if (!wrap || !card) return;
+
+  // offsetLeft/offsetTop ignoram o scale do hover, ao contrário de getBoundingClientRect
+  const x = bpmn.offsetLeft + card.offsetLeft + card.offsetWidth / 2;
+  const y = bpmn.offsetTop  + card.offsetTop  + card.offsetHeight / 2;
+  wrap.scrollTo({
+    left: x - wrap.clientWidth / 2,
+    top:  y - wrap.clientHeight / 2,
+    behavior: 'smooth',
+  });
+}
+
+/**
+ * Clique numa etapa. Com o drawer fechado, ele entra deslizando pela direita;
+ * já aberto em outra etapa, recua um pouco e volta com o novo conteúdo.
+ */
 function abrirEtapa(n) {
   clearTimeout(limpezaDrawer);
-  etapaSel = n;
-  itemChecklist = null;
-  atualizarDrawer();
-  main.querySelectorAll('.etapa').forEach((el, i) => el.classList.toggle('sel', ETAPAS[i].n === n));
-  main.querySelector('.drawer').classList.add('aberto');
+  const drawer = main.querySelector('.drawer');
+  const trocando = drawer.classList.contains('aberto') && etapaSel !== null && etapaSel !== n;
+
+  // o realce do card muda na hora, para o clique ter resposta imediata.
+  // .aberta (verde escuro) só faz sentido para quem está em andamento
+  main.querySelectorAll('.etapa').forEach((el, i) => {
+    const desta = ETAPAS[i].n === n;
+    el.classList.toggle('sel', desta);
+    el.classList.toggle('aberta', desta && ETAPAS[i].estado === 'andamento');
+  });
+
+  const aplicar = () => { etapaSel = n; itemChecklist = null; atualizarDrawer(); };
+
+  if (!trocando) {
+    aplicar();
+    drawer.classList.add('aberto');
+    // só depois que o drawer terminou de entrar a área do fluxo tem a largura final
+    setTimeout(() => centralizarEtapa(n), ANIM_DRAWER);
+    return;
+  }
+
+  drawer.classList.add('trocando');
+  setTimeout(() => {
+    aplicar();
+    drawer.classList.remove('trocando');
+    centralizarEtapa(n);   // a largura não mudou: já dá para centralizar
+  }, ANIM_TROCA);
 }
 
 function trocarAba(id) { abaDrawer = id; itemChecklist = null; atualizarDrawer(); }
@@ -448,7 +621,7 @@ function trocarAba(id) { abaDrawer = id; itemChecklist = null; atualizarDrawer()
 function fecharDrawer() {
   const drawer = main.querySelector('.drawer');
   drawer.classList.remove('aberto');
-  main.querySelectorAll('.etapa').forEach(el => el.classList.remove('sel'));
+  main.querySelectorAll('.etapa').forEach(el => el.classList.remove('sel', 'aberta'));
 
   clearTimeout(limpezaDrawer);
   limpezaDrawer = setTimeout(() => {
@@ -488,7 +661,7 @@ function render() {
             <button class="bt-fechar" onclick="fecharModal()" title="Fechar">${svg('x')}</button>
           </div>
           <div class="modal-corpo">
-            <div class="bpmn-wrap scroll">
+            <div class="bpmn-wrap">
               <div class="bpmn">
                 ${conectoresHTML()}
                 ${ETAPAS.map(etapaHTML).join('')}
@@ -503,6 +676,7 @@ function render() {
 
 const main = montarShell('po011', ['protocolo','po002','po011']);
 render();
+ativarArrasto(main.querySelector('.bpmn-wrap'));
 
 /* a tela abre sem drawer; ?etapa=3&aba=checklist&item=22 permite entrar direto numa etapa */
 const q = new URLSearchParams(location.search);
