@@ -63,7 +63,9 @@
     position: relative;
     flex: 1; min-width: 0;
     overflow: hidden;
-    padding: 20px;
+    /* a folga em volta do canvas é o que permite trazer qualquer card até o
+       ponto de leitura; sem ela os cards das pontas ficam presos na borda */
+    padding: 40px 300px 320px;
     background-image: radial-gradient(#E2EACF 1.45px, transparent 1.45px);
     background-size: 17.3px 15.9px;
     cursor: grab;
@@ -74,7 +76,7 @@
   .bpmn-wrap.arrastando,
   .bpmn-wrap.arrastando .etapa { cursor: grabbing; }
   .bpmn-wrap.arrastando .etapa:hover { transform: none; box-shadow: none; }
-  .bpmn { position: relative; width: 594px; height: 1260px; margin: 0 auto; }
+  .bpmn { position: relative; width: 594px; height: 1260px; }
   /* as linhas nunca interceptam o ponteiro: o clique é sempre do card ou do arraste */
   .bpmn svg.conectores { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 
@@ -157,7 +159,7 @@
 
   /* hover: só cresce e volta ao tamanho original, sem oscilar */
   .etapa:hover {
-    transform: scale(1.04);
+    transform: scale(1.07);
     box-shadow: 0 6px 18px rgba(93,106,56,.28);
     z-index: 3;
   }
@@ -226,6 +228,23 @@
   }
 
   .drawer-corpo { flex: 1; min-height: 0; overflow: auto; padding: 14px 20px; display: flex; flex-direction: column; gap: 10px; }
+
+  /* troca de aba: o formulário atual desce sumindo, o novo sobe aparecendo */
+  .drawer-corpo.saindo {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity .14s ease-in, transform .14s ease-in;
+  }
+  @keyframes campos-entrando {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .drawer-corpo.entrando { animation: campos-entrando .22s ease-out; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .drawer-corpo.saindo { transition-duration: .01ms; }
+    .drawer-corpo.entrando { animation-duration: .01ms; }
+  }
 
   .drawer-rodape {
     flex: 0 0 50px;
@@ -427,7 +446,7 @@ function corpoChecklist() {
     return `
       <div style="display:flex;align-items:center;gap:10px">
         <button class="bt-fechar" style="background:#fff;border-color:var(--fld-bd);color:var(--txt)"
-                onclick="itemChecklist=null;atualizarDrawer()" title="Voltar">${svg('voltar')}</button>
+                onclick="itemChecklist=null;trocarCorpoDrawer()" title="Voltar">${svg('voltar')}</button>
         <span style="font-size:11px">Voltar</span>
         <div style="flex:1"></div>
         <button class="btn btn-primario btn-mini">Salvar</button>
@@ -439,7 +458,7 @@ function corpoChecklist() {
   }
 
   const linhas = CHECKLIST.map(c => `
-    <div class="lin ${c.classe}" onclick="itemChecklist='${c.id}';atualizarDrawer()">
+    <div class="lin ${c.classe}" onclick="itemChecklist='${c.id}';trocarCorpoDrawer()">
       <input type="checkbox" ${c.situacao === 'Concluído' ? 'checked' : ''} onclick="event.stopPropagation()">
       <span>${c.id}</span><span>${c.situacao}</span>
     </div>`).join('');
@@ -497,7 +516,9 @@ function atualizarDrawer() {
 /* devem acompanhar as transições do .drawer e do .drawer.trocando no CSS */
 const ANIM_DRAWER = 280;
 const ANIM_TROCA = 150;
+const ANIM_ABA = 140;    /* acompanha a transição de .drawer-corpo.saindo */
 let limpezaDrawer = null;
+let trocaCorpo = null;
 
 /**
  * Navegação do fluxograma por clique e arraste, no lugar das barras de rolagem.
@@ -556,7 +577,19 @@ function ativarArrasto(wrap) {
   wrap.addEventListener('pointercancel', e => { encerrar(e); alvo = null; });
 }
 
-/** Traz a etapa para o centro da área visível do fluxograma. */
+/* onde o card clicado é posicionado na área visível: centrado na horizontal e
+   na parte de cima na vertical, deixando as etapas seguintes à vista */
+const ALVO_X = 0.5;
+const ALVO_Y = 0.25;
+
+/** Enquadra o fluxo ao abrir a tela: começo à vista e canvas centralizado. */
+function enquadrarFluxo() {
+  const wrap = main.querySelector('.bpmn-wrap');
+  wrap.scrollLeft = (wrap.scrollWidth - wrap.clientWidth) / 2;
+  wrap.scrollTop = 0;
+}
+
+/** Leva a etapa até o ponto de leitura da área visível. */
 function centralizarEtapa(n) {
   const wrap = main.querySelector('.bpmn-wrap');
   const bpmn = main.querySelector('.bpmn');
@@ -567,8 +600,8 @@ function centralizarEtapa(n) {
   const x = bpmn.offsetLeft + card.offsetLeft + card.offsetWidth / 2;
   const y = bpmn.offsetTop  + card.offsetTop  + card.offsetHeight / 2;
   wrap.scrollTo({
-    left: x - wrap.clientWidth / 2,
-    top:  y - wrap.clientHeight / 2,
+    left: x - wrap.clientWidth * ALVO_X,
+    top:  y - wrap.clientHeight * ALVO_Y,
     behavior: 'smooth',
   });
 }
@@ -608,7 +641,28 @@ function abrirEtapa(n) {
   }, ANIM_TROCA);
 }
 
-function trocarAba(id) { abaDrawer = id; itemChecklist = null; atualizarDrawer(); }
+/** Troca só o corpo da aba, com a saída descendo e a entrada subindo, em fade. */
+function trocarCorpoDrawer() {
+  const corpo = main.querySelector('.drawer-corpo');
+  corpo.classList.remove('entrando');
+  corpo.classList.add('saindo');
+  clearTimeout(trocaCorpo);
+  trocaCorpo = setTimeout(() => {
+    corpo.innerHTML = ABAS_DRAWER.find(a => a.id === abaDrawer).corpo();
+    corpo.classList.remove('saindo');
+    void corpo.offsetWidth;            // reinicia a animação de entrada
+    corpo.classList.add('entrando');
+  }, ANIM_ABA);
+}
+
+function trocarAba(id) {
+  if (id === abaDrawer) return;
+  abaDrawer = id;
+  itemChecklist = null;
+  main.querySelectorAll('.drawer-abas button')
+      .forEach((b, i) => b.classList.toggle('ativa', ABAS_DRAWER[i].id === id));
+  trocarCorpoDrawer();
+}
 
 /** Fecha o drawer com o movimento inverso; só esvazia o conteúdo ao fim da animação. */
 function fecharDrawer() {
@@ -670,6 +724,7 @@ function render() {
 const main = montarShell('po011', ['protocolo','po002','po011']);
 render();
 ativarArrasto(main.querySelector('.bpmn-wrap'));
+enquadrarFluxo();
 
 /* a tela abre sem drawer; ?etapa=3&aba=checklist&item=22 permite entrar direto numa etapa */
 const q = new URLSearchParams(location.search);
