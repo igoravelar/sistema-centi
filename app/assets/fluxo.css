@@ -1,0 +1,230 @@
+/* ==========================================================================
+   Centi — fluxograma do processo (BPMN) e drawer da etapa
+   Compartilhado entre PO050 (tela) e PO011 (modal). A largura do drawer vem
+   de --drawer-w, definida por quem usa o módulo.
+   ========================================================================== */
+
+/* container do fluxo: canvas à esquerda, drawer à direita */
+.fluxo { flex: 1; min-height: 0; display: flex; }
+
+.bt-fechar {
+  width: 20px; height: 20px;
+  border: 1px solid var(--g-soft-bd2); border-radius: 4px;
+  background: var(--g-soft-bg); color: var(--g-olive);
+  display: grid; place-items: center; padding: 0;
+}
+.bt-fechar:hover { background: var(--g); color: #FFFFFF; border-color: var(--g); }
+.bt-fechar svg { width: 11px; height: 11px; }
+
+
+/* grade de pontos do protótipo: passo 17,3 x 15,9 px em #E2EACF.
+   Sem barras de rolagem: a navegação é por clique e arraste (ver ativarArrasto). */
+.bpmn-wrap {
+  position: relative;
+  flex: 1; min-width: 0;
+  overflow: hidden;
+  background-image: radial-gradient(#E2EACF 1.45px, transparent 1.45px);
+  background-size: 17.3px 15.9px;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+/* enquanto arrasta, a mão fechada vale em toda a área, inclusive sobre os cards */
+.bpmn-wrap.arrastando,
+.bpmn-wrap.arrastando .etapa { cursor: grabbing; }
+.bpmn-wrap.arrastando .etapa:hover { transform: none; box-shadow: none; }
+/* a folga vai neste espaçador, e não no padding do .bpmn-wrap: padding não
+   encolhe, e travava a largura mínima da área do fluxo quando o drawer cresce */
+.bpmn-espaco { display: inline-block; padding: 40px 300px 320px; }
+.bpmn { position: relative; width: 594px; height: 1260px; }
+/* as linhas nunca interceptam o ponteiro: o clique é sempre do card ou do arraste */
+.bpmn svg.conectores { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+/* -------------------------------- etapa -------------------------------- */
+/* o título ocupa toda a faixa entre o topo do card (onde fica a bolinha) e a
+   régua do DEPTO, e se centraliza nela — daí as distâncias iguais dos dois lados */
+.etapa {
+  position: absolute;
+  border-radius: 10px;
+  display: flex; flex-direction: column;
+  cursor: pointer;
+  z-index: 2;
+  transform-origin: center;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.etapa .dias {
+  position: absolute; top: 7px; left: 10px;
+  display: flex; align-items: center; gap: 5px;
+  font-size: 9px;
+}
+.etapa .dias svg { width: 11px; height: 11px; }
+
+/* o padding-top desconta os 14px em que a bolinha invade o card, para que a
+   faixa de centralização comece na base dela e não na borda */
+.etapa .nome {
+  flex: 1;
+  display: grid; place-items: center;
+  padding: 14px 12px 0;
+  font-size: 14px; font-weight: bold; text-align: center; line-height: 16px;
+}
+
+.etapa .rodape { flex: 0 0 auto; padding-bottom: 9px; text-align: center; }
+/* sem recuo lateral: as réguas encostam nas bordas do card */
+.etapa .depto-lbl {
+  font-size: 7px;
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 4px;
+}
+.etapa .depto-lbl::before, .etapa .depto-lbl::after { content: ""; flex: 1; height: 1px; background: currentColor; opacity: .45; }
+.etapa .depto { font-size: 11px; padding: 0 8px; }
+.etapa .num {
+  position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+  width: 29px; height: 29px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 13px; font-weight: bold;
+}
+.etapa .ponto {
+  position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+  width: 7px; height: 7px; border-radius: 50%;
+}
+
+/* verde claro — etapa concluída */
+.etapa.concluida { background: var(--g-soft-bg); border: 1px solid #CAD69C; }
+.etapa.concluida .nome { color: var(--g-mid); }
+.etapa.concluida .depto { color: #A6B56D; }
+.etapa.concluida .depto-lbl, .etapa.concluida .dias { color: #9A9A9A; }
+.etapa.concluida .num { background: #DAE5B0; color: var(--g-mid); }
+.etapa.concluida .ponto { background: #B4C086; }
+
+/* branco com verde — em andamento, drawer fechado (clique para abrir) */
+.etapa.andamento { background: linear-gradient(180deg, #FFFFFF 0%, #F7F7F7 100%); border: 2px solid var(--g); }
+.etapa.andamento .nome { color: var(--g-mid); }
+.etapa.andamento .depto { color: #5C5B5B; }
+.etapa.andamento .depto-lbl, .etapa.andamento .dias { color: #9A9A9A; }
+.etapa.andamento .num { background: var(--g); color: #FFFFFF; }
+.etapa.andamento .ponto { background: #7E7F79; }
+
+/* verde escuro — em andamento com o drawer aberto */
+.etapa.andamento.aberta { background: linear-gradient(180deg, #ADC84A 0%, #8FAA31 100%); border-color: var(--g-stroke); }
+.etapa.andamento.aberta .nome, .etapa.andamento.aberta .depto { color: #FFFFFF; }
+.etapa.andamento.aberta .depto-lbl, .etapa.andamento.aberta .dias { color: #DFF19C; }
+.etapa.andamento.aberta .num { background: var(--g-stroke); }
+
+/* branco — etapa não habilitada para tramitar */
+.etapa.bloqueada { background: linear-gradient(180deg, #FFFFFF 0%, #F4F4F4 100%); border: 1px solid var(--fld-bd); }
+.etapa.bloqueada .nome, .etapa.bloqueada .depto { color: var(--txt); }
+.etapa.bloqueada .depto-lbl, .etapa.bloqueada .dias { color: #9A9A9A; }
+.etapa.bloqueada .num { background: #7E7F79; color: #FFFFFF; }
+.etapa.bloqueada .ponto { background: #7E7F79; }
+
+/* hover: só cresce e volta ao tamanho original, sem oscilar */
+.etapa:hover {
+  transform: scale(1.07);
+  box-shadow: 0 6px 18px rgba(93,106,56,.28);
+  z-index: 3;
+}
+.etapa.sel { outline: 2px solid var(--g); outline-offset: 3px; }
+
+/* -------------------------------- drawer -------------------------------- */
+/* fechado, o drawer fica deslocado para fora e com margem negativa, para que a
+   área do BPMN ocupe toda a largura; `.aberto` desfaz os dois ao mesmo tempo */
+/* ocupa metade do modal; fechado, a margem negativa devolve essa metade ao fluxo */
+.drawer {
+  flex: 0 0 var(--drawer-w, 50%);
+  background: #FFFFFF;
+  border-left: 1px solid var(--fld-bd);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+
+  margin-right: calc(-1 * var(--drawer-w, 50%));
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .28s ease, margin-right .28s ease, opacity .2s ease;
+}
+.drawer.aberto {
+  margin-right: 0;
+  transform: none;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* troca de etapa com o drawer já aberto: recua um pouco à direita e volta com
+   o novo conteúdo. Precisa vir depois de .aberto para vencer o `transform: none` */
+.drawer.trocando {
+  transform: translateX(26px);
+  opacity: .5;
+  transition: transform .15s ease-in, opacity .15s ease-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer { transition-duration: .01ms; }
+}
+
+.drawer-topo { flex: 0 0 auto; padding: 20px 20px 0; position: relative; }
+.drawer-topo .bt-fechar { position: absolute; top: 11px; right: 11px; background: #FFFFFF; border-color: var(--fld-bd); color: var(--txt); }
+.drawer-titulo { display: flex; align-items: center; gap: 10px; }
+.drawer-titulo .num {
+  width: 29px; height: 29px; flex: 0 0 29px; border-radius: 50%;
+  background: var(--g); color: #FFFFFF;
+  display: grid; place-items: center; font-size: 13px; font-weight: bold;
+}
+.drawer-titulo h3 { margin: 0; font-size: 14px; font-weight: bold; color: var(--g-mid); }
+
+.drawer-abas { display: flex; margin-top: 19px; }
+.drawer-abas button {
+  flex: 1; border: 0; background: none;
+  padding: 0 0 10px;
+  font-size: 12px; font-weight: bold; color: var(--txt-mute2);
+  border-bottom: 1px solid var(--fld-bd);
+  transition: color .15s ease, border-color .15s ease;
+}
+/* hover sem trocar a espessura da linha, para a aba não pular */
+.drawer-abas button:not(.ativa):hover { color: var(--g-mid); border-bottom-color: var(--g-line); }
+.drawer-abas button.ativa {
+  color: var(--g-mid);
+  border-bottom: 5px solid var(--g-line);
+  padding-bottom: 6px;
+}
+
+.drawer-corpo { flex: 1; min-height: 0; overflow: auto; padding: 14px 20px; display: flex; flex-direction: column; gap: 10px; }
+
+/* troca de aba: o formulário atual desce sumindo, o novo sobe aparecendo */
+.drawer-corpo.saindo {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .14s ease-in, transform .14s ease-in;
+}
+@keyframes campos-entrando {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.drawer-corpo.entrando { animation: campos-entrando .22s ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer-corpo.saindo { transition-duration: .01ms; }
+  .drawer-corpo.entrando { animation-duration: .01ms; }
+}
+
+.drawer-rodape {
+  flex: 0 0 50px;
+  display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+  padding: 0 10px;
+  background: #FFFFFF;
+  border-top: 1px solid #EEEFF1;
+}
+
+/* checklist */
+.checklist { border: 1px solid var(--fld-bd); border-radius: 4px; overflow: hidden; }
+.checklist .lin {
+  display: grid; grid-template-columns: 38px 58px 1fr; align-items: center;
+  height: 32px; padding: 0 10px; font-size: 12px; color: var(--txt);
+  cursor: pointer; background: #FFFFFF;
+}
+.checklist .lin.cab { background: #E4E4E4; font-weight: bold; cursor: default; }
+.checklist .lin.destaque { background: #E1EEAF; }
+.checklist .lin.cinza { background: #F7F7F6; }
+.checklist .lin:not(.cab):hover { background: #F1F5E4; }
+.checklist input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--g); margin: 0; }
+
+.vazio { padding: 24px; text-align: center; color: var(--txt-mute); font-size: 12px; }

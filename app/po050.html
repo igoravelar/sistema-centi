@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centi · PO050 - Gestão de Processos</title>
+<link rel="stylesheet" href="assets/centi.css">
+<link rel="stylesheet" href="assets/fluxo.css">
+<style>
+  /* o fluxo é o conteúdo da aba Cadastro, e o drawer ocupa 2/3 da área */
+  .cad .fluxo { --drawer-w: 66.667%; }
+</style>
+</head>
+<body>
+
+<div class="app"></div>
+
+<script src="assets/shell.js"></script>
+<script src="assets/fluxo.js"></script>
+<script>
+const main = montarShell('po050', ['protocolo', 'po002', 'po050']);
+
+main.insertAdjacentHTML('beforeend', `
+  <div class="tela">
+    <div class="vtabs">
+      <button class="vtab" onclick="location.href='po002.html'">${svg('lupa')}<span>Pesquisa</span></button>
+      <button class="vtab ativa">${svg('lapis')}<span>Cadastro</span></button>
+      <button class="vtab">${svg('notas')}<span>Notas</span></button>
+      <button class="vtab">${svg('robo')}<span>ViCenti</span></button>
+    </div>
+
+    <div class="conteudo">
+      <div class="cad">
+        <div class="cad-topo">
+          <div class="esq">
+            ${svg('fluxograma')}
+            <span class="nome">Protocolo - 2292412</span>
+          </div>
+          <div class="dir">
+            <button class="btn btn-claro">${svg('mais')} Novo</button>
+            <button class="btn btn-claro">${svg('lixeira')} Excluir</button>
+            <button class="btn btn-claro">${svg('salvar')} Salvar</button>
+            <div style="flex:1"></div>
+            <button class="btn btn-primario">${svg('gerais')} Operações</button>
+          </div>
+        </div>
+
+        <div class="fluxo"></div>
+      </div>
+    </div>
+  </div>`);
+
+montarFluxo(main.querySelector('.fluxo'));
+</script>
+</body>
+</html>

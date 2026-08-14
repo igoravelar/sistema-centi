@@ -46,25 +46,8 @@
   /* -------------------------------- Cadastro --------------------------------
      Um container só: a coluna da esquerda (título + pastas) atravessa a faixa
      cinza, e a linha que a separa do formulário sobe até o topo. */
-  .cad {
-    flex: 1; min-height: 0;
-    display: flex; flex-direction: column;
-    background: #FFFFFF;
-    border: 1px solid var(--tab-bd); border-radius: 5px;
-    overflow: hidden;
-  }
-
-  .cad-topo { flex: 0 0 49px; display: flex; background: var(--panel-2); }
-  .cad-topo .esq {
-    flex: 0 0 240px;
-    display: flex; align-items: center; gap: 7px;
-    padding: 0 12px;
-    border-right: 1px solid var(--tab-bd);
-  }
-  .cad-topo .esq .nome { font-size: 14px; font-weight: bold; color: #5C5B5B; white-space: nowrap; }
-  .cad-topo .esq svg { width: 15px; height: 15px; flex: 0 0 auto; color: var(--g); display: block; }
-  .cad-topo .dir { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 0 16px; }
-
+  /* a divisória só existe no PO002, por causa da coluna de pastas embaixo */
+  .cad-topo .esq { border-right: 1px solid var(--tab-bd); }
   .cad-corpo { flex: 1; min-height: 0; display: flex; }
 
   .arvore { flex: 0 0 240px; overflow: auto; padding: 12px 10px; border-right: 1px solid var(--tab-bd); }
@@ -258,7 +241,7 @@ function cadastroHTML() {
         <button class="btn btn-claro">${svg('lixeira')} Excluir</button>
         <button class="btn btn-claro">${svg('salvar')} Salvar</button>
         <div style="flex:1"></div>
-        <a class="btn btn-primario" href="po011.html">${svg('fluxo')} Guia do Fluxo</a>
+        <a class="btn btn-primario" href="po050.html">${svg('fluxograma')} Guia do Fluxo</a>
         <button class="btn btn-primario">${svg('gerais')} Operações</button>
       </div>
     </div>
