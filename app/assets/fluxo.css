@@ -23,6 +23,8 @@
   position: relative;
   flex: 1; min-width: 0;
   overflow: hidden;
+  /* o fundo é do próprio container do fluxo, para valer em qualquer tela */
+  background-color: #F7FBEE;
   background-image: radial-gradient(#E2EACF 1.45px, transparent 1.45px);
   background-size: 17.3px 15.9px;
   cursor: grab;
