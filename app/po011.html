@@ -54,14 +54,14 @@
   .bt-fechar:hover { background: var(--g); color: #FFFFFF; border-color: var(--g); }
   .bt-fechar svg { width: 11px; height: 11px; }
 
-  .modal-corpo { flex: 1; min-height: 0; display: flex; gap: 0; padding: 6px; }
+  /* sem moldura: o fluxo e o drawer encostam nas bordas do modal */
+  .modal-corpo { flex: 1; min-height: 0; display: flex; }
 
   /* grade de pontos do protótipo: passo 17,3 x 15,9 px em #E2EACF.
      Sem barras de rolagem: a navegação é por clique e arraste (ver ativarArrasto). */
   .bpmn-wrap {
     position: relative;
     flex: 1; min-width: 0;
-    border-radius: 5px;
     overflow: hidden;
     padding: 20px;
     background-image: radial-gradient(#E2EACF 1.45px, transparent 1.45px);
@@ -73,7 +73,7 @@
   /* enquanto arrasta, a mão fechada vale em toda a área, inclusive sobre os cards */
   .bpmn-wrap.arrastando,
   .bpmn-wrap.arrastando .etapa { cursor: grabbing; }
-  .bpmn-wrap.arrastando .etapa:hover { animation: none; transform: none; box-shadow: none; }
+  .bpmn-wrap.arrastando .etapa:hover { transform: none; box-shadow: none; }
   .bpmn { position: relative; width: 594px; height: 1260px; margin: 0 auto; }
   /* as linhas nunca interceptam o ponteiro: o clique é sempre do card ou do arraste */
   .bpmn svg.conectores { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
@@ -155,36 +155,26 @@
   .etapa.bloqueada .num { background: #7E7F79; color: #FFFFFF; }
   .etapa.bloqueada .ponto { background: #7E7F79; }
 
-  /* hover: cresce passando um pouco do alvo e recolhe */
-  @keyframes etapa-bounce {
-    0%   { transform: scale(1); }
-    55%  { transform: scale(1.075); }
-    100% { transform: scale(1.04); }
-  }
+  /* hover: só cresce e volta ao tamanho original, sem oscilar */
   .etapa:hover {
-    animation: etapa-bounce .3s cubic-bezier(.34, 1.4, .64, 1) forwards;
+    transform: scale(1.04);
     box-shadow: 0 6px 18px rgba(93,106,56,.28);
     z-index: 3;
   }
   .etapa.sel { outline: 2px solid var(--g); outline-offset: 3px; }
 
-  @media (prefers-reduced-motion: reduce) {
-    .etapa:hover { animation: none; transform: scale(1.04); }
-  }
-
   /* -------------------------------- drawer -------------------------------- */
   /* fechado, o drawer fica deslocado para fora e com margem negativa, para que a
      área do BPMN ocupe toda a largura; `.aberto` desfaz os dois ao mesmo tempo */
+  /* ocupa metade do modal; fechado, a margem negativa devolve essa metade ao fluxo */
   .drawer {
-    flex: 0 0 450px;
+    flex: 0 0 50%;
     background: #FFFFFF;
-    border: 1px solid var(--fld-bd);
-    border-radius: 5px;
+    border-left: 1px solid var(--fld-bd);
     display: flex; flex-direction: column;
     overflow: hidden;
 
-    margin-left: 6px;
-    margin-right: -456px;
+    margin-right: -50%;
     transform: translateX(100%);
     opacity: 0;
     pointer-events: none;
@@ -225,7 +215,10 @@
     padding: 0 0 10px;
     font-size: 12px; font-weight: bold; color: var(--txt-mute2);
     border-bottom: 1px solid var(--fld-bd);
+    transition: color .15s ease, border-color .15s ease;
   }
+  /* hover sem trocar a espessura da linha, para a aba não pular */
+  .drawer-abas button:not(.ativa):hover { color: var(--g-mid); border-bottom-color: var(--g-line); }
   .drawer-abas button.ativa {
     color: var(--g-mid);
     border-bottom: 5px solid var(--g-line);
@@ -495,7 +488,7 @@ function atualizarDrawer() {
     <div class="drawer-rodape">
       <button class="btn ${e.estado === 'andamento' ? 'btn-claro' : 'btn-neutro'}"
               ${e.estado === 'andamento' ? '' : 'disabled'}>${svg('check')} Concluir etapa</button>
-      <button class="btn btn-primario">${svg('camadas')} Operações</button>
+      <button class="btn btn-primario">${svg('gerais')} Operações</button>
     </div>`;
 }
 
