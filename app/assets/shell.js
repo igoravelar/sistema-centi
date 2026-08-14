@@ -131,6 +131,29 @@ function sidebarHTML() {
   </aside>`;
 }
 
+/* As abas abertas vivem na sessão do navegador, e não em cada página: navegar
+   entre telas não pode fechar as outras. Só o × tira uma aba da lista. */
+const CHAVE_ABAS = 'centi:abas';
+
+function abasAbertas() {
+  try { return JSON.parse(sessionStorage.getItem(CHAVE_ABAS)) || []; }
+  catch { return []; }
+}
+
+function guardarAbas(ids) {
+  try { sessionStorage.setItem(CHAVE_ABAS, JSON.stringify(ids)); }
+  catch { /* sessão indisponível: as abas valem só nesta página */ }
+}
+
+/** Fecha a aba pelo ×. Se era a aba em foco, volta para o Início. */
+function fecharAba(id, botao) {
+  guardarAbas(abasAbertas().filter(x => x !== id));
+  const aba = botao.closest('.doctab');
+  const eraAtiva = aba.classList.contains('ativa');
+  aba.remove();
+  if (eraAtiva) location.href = 'index.html';
+}
+
 function doctabsHTML(atual, abertas) {
   const ids = ['home', 'notif', ...abertas];
   const tabs = ids.map(id => {
@@ -141,7 +164,7 @@ function doctabsHTML(atual, abertas) {
       ${svg(a.ico)}
       ${a.rotulo ? `<span>${a.rotulo}</span>` : ''}
       ${a.fechavel ? `<button class="fechar" title="Fechar aba"
-          onclick="event.preventDefault();event.stopPropagation();this.closest('.doctab').remove()">×</button>` : ''}
+          onclick="event.preventDefault();event.stopPropagation();fecharAba('${id}', this)">×</button>` : ''}
     </a>`;
   }).join('');
 
@@ -156,12 +179,16 @@ function doctabsHTML(atual, abertas) {
 
 /**
  * Monta o shell dentro de <div class="app"> e devolve o <main> para a tela
- * preencher.
+ * preencher. A aba da tela atual entra na lista da sessão se ainda não estiver
+ * lá; as demais são preservadas.
  *
- * @param {string} atual   id da aba em foco ('home', 'protocolo', 'po002'...)
- * @param {string[]} abertas ids das abas de documento abertas, na ordem
+ * @param {string} atual id da aba em foco ('home', 'protocolo', 'po002'...)
  */
-function montarShell(atual, abertas = []) {
+function montarShell(atual) {
+  const abertas = abasAbertas();
+  if (ABAS[atual] && ABAS[atual].fechavel && !abertas.includes(atual)) abertas.push(atual);
+  guardarAbas(abertas);
+
   const app = document.querySelector('.app');
   app.insertAdjacentHTML('afterbegin', topbarHTML() + sidebarHTML());
   const main = document.createElement('main');

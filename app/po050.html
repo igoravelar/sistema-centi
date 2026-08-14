@@ -9,6 +9,7 @@
 <style>
   /* o fluxo é o conteúdo da aba Cadastro, e o drawer ocupa 2/3 da área */
   .cad .fluxo { --drawer-w: 66.667%; }
+  .vazio-vista { flex: 1; display: grid; place-items: center; color: var(--txt-mute); }
 </style>
 </head>
 <body>
@@ -18,15 +19,37 @@
 <script src="assets/shell.js"></script>
 <script src="assets/fluxo.js"></script>
 <script>
-const main = montarShell('po050', ['protocolo', 'po002', 'po050']);
+/* As abas verticais são desta tela: trocam de vista aqui dentro, sem sair do
+   PO050. O fluxo fica montado o tempo todo, só oculto, para não perder o
+   enquadramento nem o drawer aberto ao ir e voltar. */
+const VISTAS = [
+  { id: 'pesquisa', rot: 'Pesquisa', ico: 'lupa' },
+  { id: 'cadastro', rot: 'Cadastro', ico: 'lapis' },
+  { id: 'notas',    rot: 'Notas',    ico: 'notas' },
+  { id: 'vicenti',  rot: 'ViCenti',  ico: 'robo' },
+];
+
+let vista = 'cadastro';
+
+function irPara(id) {
+  vista = id;
+  main.querySelectorAll('.vtab').forEach((b, i) => b.classList.toggle('ativa', VISTAS[i].id === id));
+  main.querySelector('.cad').hidden = id !== 'cadastro';
+
+  const outra = main.querySelector('.vazio-vista');
+  outra.hidden = id === 'cadastro';
+  outra.textContent = (VISTAS.find(v => v.id === id) || {}).rot + ' — em construção';
+}
+
+const main = montarShell('po050');
 
 main.insertAdjacentHTML('beforeend', `
   <div class="tela">
     <div class="vtabs">
-      <button class="vtab" onclick="location.href='po002.html'">${svg('lupa')}<span>Pesquisa</span></button>
-      <button class="vtab ativa">${svg('lapis')}<span>Cadastro</span></button>
-      <button class="vtab">${svg('notas')}<span>Notas</span></button>
-      <button class="vtab">${svg('robo')}<span>ViCenti</span></button>
+      ${VISTAS.map(v => `
+        <button class="vtab${v.id === vista ? ' ativa' : ''}" onclick="irPara('${v.id}')">
+          ${svg(v.ico)}<span>${v.rot}</span>
+        </button>`).join('')}
     </div>
 
     <div class="conteudo">
@@ -47,6 +70,8 @@ main.insertAdjacentHTML('beforeend', `
 
         <div class="fluxo"></div>
       </div>
+
+      <div class="painel vazio-vista" hidden></div>
     </div>
   </div>`);
 
