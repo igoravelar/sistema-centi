@@ -43,27 +43,44 @@
   .res-topo select { height: 32px; border: 1px solid var(--fld-bd); border-radius: 4px; padding: 0 8px; background: #FFFFFF; color: var(--txt); }
   .res-corpo { flex: 1; min-height: 0; margin: 0 12px 12px; background: #FFFFFF; border: 1px solid var(--tab-bd); border-radius: 4px; overflow: auto; }
 
-  /* -------------------------------- Cadastro -------------------------------- */
-  .cad-toolbar {
-    flex: 0 0 auto; height: 49px; display: flex; align-items: center; gap: 10px;
-    padding: 0 16px; background: var(--panel-2); border: 1px solid var(--tab-bd); border-radius: 5px;
+  /* -------------------------------- Cadastro --------------------------------
+     Um container só: a coluna da esquerda (título + pastas) atravessa a faixa
+     cinza, e a linha que a separa do formulário sobe até o topo. */
+  .cad {
+    flex: 1; min-height: 0;
+    display: flex; flex-direction: column;
+    background: #FFFFFF;
+    border: 1px solid var(--tab-bd); border-radius: 5px;
+    overflow: hidden;
   }
-  .cad-corpo {
-    flex: 1; min-height: 0; display: flex; gap: 10px;
-    background: #FFFFFF; border: 1px solid var(--tab-bd); border-radius: 5px; padding: 14px 16px;
+
+  .cad-topo { flex: 0 0 49px; display: flex; background: var(--panel-2); }
+  .cad-topo .esq {
+    flex: 0 0 240px;
+    display: flex; align-items: center; gap: 7px;
+    padding: 0 12px;
+    border-right: 1px solid var(--tab-bd);
   }
-  .arvore { flex: 0 0 228px; overflow: auto; padding-right: 8px; border-right: 1px solid #EEEFF1; }
-  .arvore .titulo { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: bold; color: #5C5B5B; margin-bottom: 14px; }
-  .arvore .titulo svg { width: 15px; height: 15px; color: var(--g); }
-  .arvore .pasta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #5C5B5B;
+  .cad-topo .esq .nome { font-size: 14px; font-weight: bold; color: #5C5B5B; white-space: nowrap; }
+  .cad-topo .esq svg { width: 15px; height: 15px; flex: 0 0 auto; color: var(--g); display: block; }
+  .cad-topo .dir { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 0 16px; }
+
+  .cad-corpo { flex: 1; min-height: 0; display: flex; }
+
+  .arvore { flex: 0 0 240px; overflow: auto; padding: 12px 10px; border-right: 1px solid var(--tab-bd); }
+  .arvore .pasta { display: flex; align-items: center; gap: 9px; font-size: 12px; color: #5C5B5B;
                    padding: 7px 4px; border-radius: 4px; cursor: pointer; }
   .arvore .pasta:hover { background: #F1F5E4; }
-  .arvore .pasta svg { width: 14px; height: 14px; flex: 0 0 auto; color: var(--g); }
+  .arvore .pasta .chev { flex: 0 0 13px; display: flex; }
+  .arvore .pasta .chev svg { width: 13px; height: 13px; color: var(--g); }
+  .arvore .pasta .ico { flex: 0 0 15px; display: flex; }
+  .arvore .pasta .ico svg { width: 15px; height: 15px; color: var(--g); }
   .arvore .n1 { padding-left: 22px; }
   .arvore .n2 { padding-left: 44px; }
   .arvore .pasta.sel { background: var(--g-soft-bg); color: var(--g-olive); font-weight: bold; }
 
-  .form { flex: 1; min-width: 0; max-width: 560px; display: flex; flex-direction: column; gap: 10px; overflow: auto; }
+  .form { flex: 1; min-width: 0; max-width: 576px; display: flex; flex-direction: column; gap: 10px;
+          overflow: auto; padding: 14px 16px; }
 </style>
 </head>
 <body>
@@ -72,6 +89,23 @@
 
 <script src="assets/shell.js"></script>
 <script>
+/**
+ * Ícones do Font Awesome 5 Free (traçados oficiais, licença CC BY 4.0).
+ * Diferente do dicionário ICO, que é desenhado a traço, estes são preenchidos
+ * e têm viewBox próprio.
+ */
+const FA = {
+  pasta: { vb: '0 0 512 512', d: 'M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z' },
+  chevronDireita: { vb: '0 0 512 512', d: 'M256 8c137 0 248 111 248 248S393 504 256 504 8 393 8 256 119 8 256 8zm113.9 231L234.4 103.5c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L285.1 256 183.5 357.6c-9.4 9.4-9.4 24.6 0 33.9l17 17c9.4 9.4 24.6 9.4 33.9 0L369.9 273c9.4-9.4 9.4-24.6 0-34z' },
+  chevronBaixo: { vb: '0 0 512 512', d: 'M504 256c0 137-111 248-248 248S8 393 8 256 119 8 256 8s248 111 248 248zM273 369.9l135.5-135.5c9.4-9.4 9.4-24.6 0-33.9l-17-17c-9.4-9.4-24.6-9.4-33.9 0L256 285.1 154.4 183.5c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L239 369.9c9.4 9.4 24.6 9.4 34 0z' },
+  check: { vb: '0 0 512 512', d: 'M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 448c-110.532 0-200-89.451-200-200 0-110.532 89.451-200 200-200 110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200zm140.204-254.804c4.686 4.686 4.686 12.284 0 16.971l-159.196 159.196c-4.686 4.686-12.284 4.686-16.971 0l-72.708-72.708c-4.686-4.686-4.686-12.284 0-16.971l16.97-16.97c4.686-4.686 12.284-4.686 16.971 0l47.253 47.253 133.741-133.741c4.686-4.686 12.284-4.686 16.971 0l16.969 16.97z' },
+};
+
+function fa(nome) {
+  const i = FA[nome];
+  return `<svg viewBox="${i.vb}" fill="currentColor" aria-hidden="true"><path d="${i.d}"/></svg>`;
+}
+
 const RESULTADOS = [
   ['2292412','116489','07/08/2026','DIEGO BORGES DA SILVA','31.633.628/0001-00','116489/2026','','AQUISIÇÃO DE MATERIAL','TESTE FLUXO','07/08/2026'],
   ['2292411','116488','07/08/2026','DIEGO BORGES DA SILVA','31.633.628/0001-00','116488/2026','','ABERTURA DE PROCESSO','TESTE FLUXO','07/08/2026'],
@@ -97,21 +131,22 @@ const ULTIMAS = [
   '10/08/2026 - 16:21: Data - Igual - 04/08/2026',
 ];
 
+/* chev: pastas que abrem — 'direita' recolhida, 'baixo' expandida */
 const PASTAS = [
-  { txt: 'Andamentos',           n: 0 },
+  { txt: 'Andamentos',           n: 0, chev: 'direita' },
   { txt: 'Documentos',           n: 1 },
-  { txt: 'Movimentação',         n: 0 },
-  { txt: 'Etapas do Fluxo',      n: 0, aberta: true },
-  { txt: 'Em Andamento',         n: 1 },
-  { txt: 'Etapas',               n: 1 },
+  { txt: 'Movimentação',         n: 0, chev: 'direita' },
+  { txt: 'Etapas do Fluxo',      n: 0, chev: 'baixo' },
+  { txt: 'Em Andamento',         n: 1, chev: 'baixo' },
+  { txt: 'Etapas',               n: 1, chev: 'baixo' },
   { txt: 'Início',               n: 2 },
   { txt: 'Conferência da Solicitação', n: 2 },
   { txt: 'Análise ampliada',     n: 2, sel: true },
   { txt: 'Parecer do Controle',  n: 2 },
   { txt: 'Declaração de Impacto', n: 2 },
-  { txt: 'Assinatura Eletrônica', n: 1 },
-  { txt: 'Regularidade',         n: 1 },
-  { txt: 'Atividades',           n: 1 },
+  { txt: 'Assinatura Eletrônica', n: 1, chev: 'direita' },
+  { txt: 'Regularidade',         n: 1, chev: 'direita' },
+  { txt: 'Atividades',           n: 1, chev: 'direita' },
 ];
 
 /* ------------------------------- Pesquisa ------------------------------- */
@@ -190,7 +225,11 @@ function campo({ rot, val, ro = true, cod, acoes = [], alto = false, ph = '' }) 
 
 function cadastroHTML() {
   const pastas = PASTAS.map(p => `
-    <div class="pasta n${p.n}${p.sel ? ' sel' : ''}">${svg('pasta')}<span>${p.txt}</span></div>`).join('');
+    <div class="pasta n${p.n}${p.sel ? ' sel' : ''}">
+      <span class="chev">${p.chev ? fa(p.chev === 'baixo' ? 'chevronBaixo' : 'chevronDireita') : ''}</span>
+      <span class="ico">${fa('pasta')}</span>
+      <span>${p.txt}</span>
+    </div>`).join('');
 
   const campos = [
     campo({ rot: 'Id', val: '2292412' }),
@@ -208,21 +247,26 @@ function cadastroHTML() {
   ].join('');
 
   return `
-  <div class="cad-toolbar">
-    <button class="btn btn-claro">${svg('mais')} Novo</button>
-    <button class="btn btn-claro">${svg('lixeira')} Excluir</button>
-    <button class="btn btn-claro">${svg('salvar')} Salvar</button>
-    <div style="flex:1"></div>
-    <a class="btn btn-primario" href="po011.html">${svg('fluxo')} Guia do Fluxo</a>
-    <button class="btn btn-primario">${svg('camadas')} Operações</button>
-  </div>
-
-  <div class="cad-corpo">
-    <div class="arvore scroll">
-      <div class="titulo">${svg('check')} Protocolo - 2292412</div>
-      ${pastas}
+  <div class="cad">
+    <div class="cad-topo">
+      <div class="esq">
+        ${fa('chevronBaixo')}${fa('check')}
+        <span class="nome">Protocolo - 2292412</span>
+      </div>
+      <div class="dir">
+        <button class="btn btn-claro">${svg('mais')} Novo</button>
+        <button class="btn btn-claro">${svg('lixeira')} Excluir</button>
+        <button class="btn btn-claro">${svg('salvar')} Salvar</button>
+        <div style="flex:1"></div>
+        <a class="btn btn-primario" href="po011.html">${svg('fluxo')} Guia do Fluxo</a>
+        <button class="btn btn-primario">${svg('gerais')} Operações</button>
+      </div>
     </div>
-    <div class="form scroll">${campos}</div>
+
+    <div class="cad-corpo">
+      <div class="arvore scroll">${pastas}</div>
+      <div class="form scroll">${campos}</div>
+    </div>
   </div>`;
 }
 
