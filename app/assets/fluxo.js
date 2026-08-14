@@ -50,11 +50,12 @@ const DADOS = [
   { rot: 'Resultado da decisão', val: '' },
 ];
 
+/* `marcado` é o que pinta a linha de verde; `zebra` é só a alternância de fundo */
 const CHECKLIST = [
-  { id: '21', situacao: 'Concluído',      classe: '' },
-  { id: '22', situacao: 'Não Preenchido', classe: 'destaque' },
-  { id: '23', situacao: 'Não Preenchido', classe: '' },
-  { id: '24', situacao: 'Não Preenchido', classe: 'cinza' },
+  { id: '21', situacao: 'Concluído',      marcado: false },
+  { id: '22', situacao: 'Não Preenchido', marcado: true },
+  { id: '23', situacao: 'Não Preenchido', marcado: false },
+  { id: '24', situacao: 'Não Preenchido', marcado: false, zebra: true },
 ];
 
 const ITENS_CHECKLIST = {
@@ -187,16 +188,51 @@ function corpoChecklist() {
   }
 
   const linhas = CHECKLIST.map(c => `
-    <div class="lin ${c.classe}" onclick="itemChecklist='${c.id}';trocarCorpoDrawer()">
-      <input type="checkbox" ${c.situacao === 'Concluído' ? 'checked' : ''} onclick="event.stopPropagation()">
+    <div class="lin${c.zebra ? ' zebra' : ''}${c.marcado ? ' marcada' : ''}"
+         onclick="itemChecklist='${c.id}';trocarCorpoDrawer()">
+      <span><input type="checkbox" ${c.marcado ? 'checked' : ''}
+                   onclick="event.stopPropagation()"
+                   onchange="marcarItem(this, '${c.id}')"></span>
       <span>${c.id}</span><span>${c.situacao}</span>
     </div>`).join('');
 
   return `
     <div class="checklist">
-      <div class="lin cab"><span></span><span>ID</span><span>SITUAÇÃO</span></div>
+      <div class="lin cab">
+        <span><input type="checkbox" onclick="event.stopPropagation()" onchange="marcarTodos(this)"></span>
+        <span>ID</span><span>SITUAÇÃO</span>
+      </div>
       ${linhas}
     </div>`;
+}
+
+/* ------------------------- marcação do checklist ------------------------- */
+
+/** Marca um item: é a marcação, e não a situação, que pinta a linha de verde. */
+function marcarItem(el, id) {
+  const item = CHECKLIST.find(c => c.id === id);
+  if (item) item.marcado = el.checked;
+  el.closest('.lin').classList.toggle('marcada', el.checked);
+  sincronizarCabecalho();
+}
+
+/** Caixa do cabeçalho: marca ou desmarca todos de uma vez. */
+function marcarTodos(el) {
+  CHECKLIST.forEach(c => { c.marcado = el.checked; });
+  raiz.querySelectorAll('.checklist .lin:not(.cab)').forEach(lin => {
+    lin.querySelector('input').checked = el.checked;
+    lin.classList.toggle('marcada', el.checked);
+  });
+  el.indeterminate = false;
+}
+
+/** Deixa a caixa do cabeçalho parcial quando só parte dos itens está marcada. */
+function sincronizarCabecalho() {
+  const cab = raiz && raiz.querySelector('.checklist .lin.cab input');
+  if (!cab) return;
+  const marcados = CHECKLIST.filter(c => c.marcado).length;
+  cab.checked = marcados === CHECKLIST.length;
+  cab.indeterminate = marcados > 0 && marcados < CHECKLIST.length;
 }
 
 function corpoCondicoes() {
@@ -223,7 +259,8 @@ function atualizarDrawer() {
     <button class="${a.id === abaDrawer ? 'ativa' : ''}" onclick="trocarAba('${a.id}')">${a.rot}</button>`).join('');
   const corpo = ABAS_DRAWER.find(a => a.id === abaDrawer).corpo();
 
-  raiz.querySelector('.drawer').innerHTML = `
+  const drawer = raiz.querySelector('.drawer');
+  drawer.innerHTML = `
     <div class="drawer-topo">
       <button class="bt-fechar" onclick="fecharDrawer()" title="Fechar">${svg('x')}</button>
       <div class="drawer-titulo">
@@ -238,6 +275,8 @@ function atualizarDrawer() {
               ${e.estado === 'andamento' ? '' : 'disabled'}>${svg('check')} Concluir etapa</button>
       <button class="btn btn-primario">${svg('gerais')} Operações</button>
     </div>`;
+
+  sincronizarCabecalho();
 }
 
 /* --------------------------------- ações --------------------------------- */
@@ -378,6 +417,7 @@ function trocarCorpoDrawer() {
   clearTimeout(trocaCorpo);
   trocaCorpo = setTimeout(() => {
     corpo.innerHTML = ABAS_DRAWER.find(a => a.id === abaDrawer).corpo();
+    sincronizarCabecalho();
     corpo.classList.remove('saindo');
     void corpo.offsetWidth;            // reinicia a animação de entrada
     corpo.classList.add('entrando');

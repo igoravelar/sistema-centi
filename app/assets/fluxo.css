@@ -214,17 +214,51 @@
   border-top: 1px solid #EEEFF1;
 }
 
-/* checklist */
-.checklist { border: 1px solid var(--fld-bd); border-radius: 4px; overflow: hidden; }
+/* checklist: sem contorno externo, colunas separadas por linha vertical */
 .checklist .lin {
-  display: grid; grid-template-columns: 38px 58px 1fr; align-items: center;
-  height: 32px; padding: 0 10px; font-size: 12px; color: var(--txt);
+  display: grid; grid-template-columns: 44px 72px 1fr;
+  height: 34px;
+  font-size: 12px; color: var(--txt);
   cursor: pointer; background: #FFFFFF;
 }
+.checklist .lin > * {
+  display: flex; align-items: center;
+  padding: 0 12px;
+  border-right: 1px solid #E4E4E4;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.checklist .lin > *:last-child { border-right: 0; }
+
 .checklist .lin.cab { background: #E4E4E4; font-weight: bold; cursor: default; }
-.checklist .lin.destaque { background: #E1EEAF; }
-.checklist .lin.cinza { background: #F7F7F6; }
+.checklist .lin.cab > * { border-right-color: #D2D2D2; }
+
+.checklist .lin.zebra { background: #F7F7F6; }
 .checklist .lin:not(.cab):hover { background: #F1F5E4; }
-.checklist input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--g); margin: 0; }
+/* o verde só aparece com o item marcado, e vem depois do hover para vencê-lo */
+.checklist .lin.marcada { background: #D6E8A2; }
+.checklist .lin.marcada:hover { background: #CDE293; }
+
+/* caixa de seleção desenhada: azul quando marcada ou parcial */
+.checklist input[type=checkbox] {
+  appearance: none; -webkit-appearance: none;
+  width: 18px; height: 18px; margin: 0; flex: 0 0 18px;
+  border: 1px solid #C7CBD1; border-radius: 4px;
+  background: #FFFFFF;
+  display: grid; place-items: center;
+  cursor: pointer;
+}
+.checklist input[type=checkbox]:checked,
+.checklist input[type=checkbox]:indeterminate {
+  background: var(--selecao); border-color: var(--selecao);
+}
+.checklist input[type=checkbox]:checked::after {
+  content: ""; width: 5px; height: 9px;
+  border: solid #FFFFFF; border-width: 0 2px 2px 0;
+  transform: translateY(-1px) rotate(45deg);
+}
+.checklist input[type=checkbox]:indeterminate::after {
+  content: ""; width: 9px; height: 2px;
+  background: #FFFFFF; border-radius: 1px;
+}
 
 .vazio { padding: 24px; text-align: center; color: var(--txt-mute); font-size: 12px; }
