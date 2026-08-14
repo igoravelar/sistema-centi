@@ -21,7 +21,6 @@ const ICO = {
   sino: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
   arquivo: '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14,2 14,8 20,8"/>',
   fluxo: '<rect x="2" y="3" width="7" height="6" rx="1"/><rect x="15" y="15" width="7" height="6" rx="1"/><path d="M5.5 9v5a4 4 0 0 0 4 4H15"/>',
-  fluxograma: '<rect x="9" y="2" width="6" height="5" rx="1"/><rect x="2" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="6" height="5" rx="1"/><path d="M12 7v3"/><path d="M5 16v-2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v2"/>',
   lupa: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
   lapis: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/>',
   notas: '<line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/>',
@@ -82,7 +81,7 @@ const ABAS = {
   protocolo: { ico: 'protocolo', rotulo: 'Protocolo', href: 'protocolo.html', fechavel: true },
   po002:     { ico: 'arquivo',   rotulo: 'PO002 - Protocolo', href: 'po002.html', fechavel: true },
   po011:     { ico: 'fluxo',     rotulo: 'PO011 - Central de Protocolos', href: 'po011.html', fechavel: true },
-  po050:     { ico: 'fluxograma', rotulo: 'PO050 - Gestão de Processos', href: 'po050.html', fechavel: true },
+  po050:     { ico: 'fluxo',      rotulo: 'PO050 - Gestão de Processos', href: 'po050.html', fechavel: true },
 };
 
 function topbarHTML() {
