@@ -77,12 +77,12 @@ const MODULOS = [
  * tela declara que estão abertas (ver montarShell).
  */
 const ABAS = {
-  home:      { ico: 'casa',      href: 'index.html' },
+  home:      { ico: 'casa',      href: 'prototipo.html' },
   notif:     { ico: 'sino',      rotulo: 'Notificações', href: '#' },
   protocolo: { ico: 'protocolo', rotulo: 'Protocolo', href: 'protocolo.html', fechavel: true },
   po002:     { ico: 'arquivo',   rotulo: 'PO002 - Protocolo', href: 'po002.html', fechavel: true },
   po011:     { ico: 'fluxo',     rotulo: 'PO011 - Central de Protocolos', href: 'po011.html', fechavel: true },
-  po050:     { ico: 'fluxograma', rotulo: 'PO050 - Gestão de Processos', href: 'po050.html', fechavel: true },
+  po050:     { ico: 'fluxograma', rotulo: 'PO031 - Tramitação de protocolo', href: 'po050.html', fechavel: true },
 };
 
 function topbarHTML() {

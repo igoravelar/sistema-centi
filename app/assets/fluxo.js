@@ -8,6 +8,12 @@ let raiz = null;   /* container do fluxo, definido por montarFluxo */
 /* ícone "timer" do Lucide (lucide.dev/icons/timer), traçado oficial */
 Object.assign(ICO, {
   cronometro: '<line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/>',
+  mais_zoom:  '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  menos_zoom: '<line x1="5" y1="12" x2="19" y2="12"/>',
+  olho:       '<path d="M9.9 4.24A9.1 9.1 0 0 1 12 4c7 0 10 8 10 8a18 18 0 0 1-2.16 3.19"/><path d="M6.6 6.6A18 18 0 0 0 2 12s3 8 10 8a9 9 0 0 0 5.4-1.6"/><path d="M14.1 14.1a3 3 0 1 1-4.2-4.2"/><line x1="2" y1="2" x2="22" y2="22"/>',
+  funil:      '<polygon points="21 4 3 4 10 12.5 10 19 14 21 14 12.5 21 4"/>',
+  telaCheia:  '<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>',
+  sairTelaCheia: '<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>',
 });
 
 /* ------------------------------ dados do fluxo ------------------------------ */
@@ -58,6 +64,37 @@ const CHECKLIST = [
   { id: '24', situacao: 'Não Preenchido', marcado: false, zebra: true },
 ];
 
+const DOCUMENTOS = [
+  { id: '1', descricao: 'REQUERIMENTO DE ISENÇÃO', obrigatorio: 'Sim', situacao: 'Não informado', marcado: false },
+  { id: '2', descricao: 'CARNÊ DE IPTU',           obrigatorio: 'Sim', situacao: 'Não informado', marcado: false, zebra: true },
+];
+
+/* as grids são identificadas por data-col, para a marcação achar a coleção */
+const COLECOES = {};   /* preenchido abaixo, após as duas listas existirem */
+
+Object.assign(COLECOES, { checklist: CHECKLIST, documentos: DOCUMENTOS });
+
+/* informações do protocolo, abertas pelo link do título da tela */
+const PROTOCOLO_NUM = '2292416';
+const PROTOCOLO = [
+  { rot: 'Id',                            val: '2292416', ro: true },
+  { rot: 'Protocolo<i>*</i>',             val: '116491',  ro: true },
+  { rot: 'Ano protocolo<i>*</i>',         val: '2026',    ro: true },
+  { rot: 'Data protocolo',                val: '14/08/2026', ro: true },
+  { rot: 'Interessado/<br>Beneficiário<i>*</i>', cod: '476701', val: 'DIEGO BORGES DA SILVA',
+    codL: true, acoes: ['lapis', 'lupa', 'olho'] },
+  { rot: 'Solicitante/<br>Requerente',    cod: '', val: '', ph: 'Pesquisar', codL: true, acoes: ['lupa'] },
+  { rot: 'Natureza<i>*</i>',              cod: '14', val: 'ISENÇÃO DE IPTU', codL: true, acoes: ['lapis', 'lupa'] },
+  { rot: 'Protocolo origem',              cod: '', val: '', ph: 'Pesquisar', codL: true, acoes: ['lupa'] },
+  { rot: 'Observação<i>*</i>',            val: '123123123', area: true, acoes: ['lupa'] },
+  { rot: 'Data do documento',             val: '', ph: 'dd/mm/yyyy', acoes: ['calendario'] },
+  { rot: 'Valor',                         val: '10,00' },
+  { rot: 'Número documento',              val: '' },
+  { rot: 'Repartição',                    val: 'PROTOCOLO CENTRAL', ro: true },
+  { rot: 'Apensar automático?<i>*</i>',   val: 'Não', opcoes: ['Não', 'Sim'] },
+  { rot: 'Sigiloso<i>*</i>',              val: 'Não', opcoes: ['Não', 'Sim'] },
+];
+
 const ITENS_CHECKLIST = {
   '21': 'O objeto está devidamente descrito',
   '22': 'A justificativa da contrata...',
@@ -70,6 +107,7 @@ const ITENS_CHECKLIST = {
 let etapaSel = null;       // etapa aberta no drawer (null = drawer fechado)
 let abaDrawer = 'dados';   // dados | documentos | checklist | condicoes
 let itemChecklist = null;  // id do item aberto em detalhe
+let conteudoDrawer = 'etapa';   // 'etapa' | 'protocolo'
 
 /* --------------------------------- BPMN --------------------------------- */
 
@@ -131,7 +169,7 @@ function conectoresHTML() {
            stroke-linejoin="round" ${l.seta ? `marker-end="url(#${l.seta})"` : ''}/>`).join('');
 
   return `
-  <svg class="conectores" viewBox="0 0 594 1260">
+  <svg class="conectores" viewBox="0 0 594 1213">
     <defs>
       <marker id="pf" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
         <polygon points="0,0 7,3.5 0,7" fill="${feito}"/>
@@ -146,18 +184,26 @@ function conectoresHTML() {
 
 /* -------------------------------- drawer -------------------------------- */
 
-function campoHTML({ rot, val = '', cod, ro = false, lupa = false, area = false }) {
-  const codBox = cod !== undefined ? `<input class="cx cod ro" value="${cod}" readonly>` : '';
-  const entrada = area
-    ? `<textarea class="cx" rows="4"></textarea>`
-    : `<input class="cx${ro ? ' ro' : ''}" value="${val}" ${ro ? 'readonly' : ''}>`;
+const TITULO_ACAO = { lupa: 'Pesquisar', lapis: 'Editar', olho: 'Sigilo', calendario: 'Escolher data', mais: 'Novo' };
+
+function campoHTML({ rot, val = '', cod, ro = false, lupa = false, area = false,
+                     ph = '', acoes = [], opcoes, codL = false }) {
+  const codBox = cod !== undefined
+    ? `<input class="cx cod${codL ? ' cod-l' : ''}${ro ? ' ro' : ''}" value="${cod}" ${ro ? 'readonly' : ''}>` : '';
+
+  const entrada = opcoes
+    ? `<select class="cx">${opcoes.map(o => `<option${o === val ? ' selected' : ''}>${o}</option>`).join('')}</select>`
+    : area
+      ? `<textarea class="cx" rows="4" placeholder="${ph}">${val}</textarea>`
+      : `<input class="cx${ro ? ' ro' : ''}" value="${val}" placeholder="${ph}" ${ro ? 'readonly' : ''}>`;
+
+  const bts = (lupa ? ['lupa'] : acoes)
+    .map(a => `<button class="act" title="${TITULO_ACAO[a] || ''}">${svg(a)}</button>`).join('');
+
   return `
     <div class="campo"${area ? ' style="min-height:96px"' : ''}>
       <div class="rot">${rot}</div>
-      <div class="val">
-        ${codBox}${entrada}
-        ${lupa ? `<button class="act" title="Pesquisar">${svg('lupa')}</button>` : ''}
-      </div>
+      <div class="val">${codBox}${entrada}${bts}</div>
     </div>`;
 }
 
@@ -165,9 +211,81 @@ function corpoDados() {
   return DADOS.map(campoHTML).join('');
 }
 
+/* ----------------------- grids com seleção ----------------------- */
+
+/** Marca uma linha: é a marcação, e não a situação, que pinta a linha de verde. */
+function marcarLinha(el) {
+  const lin = el.closest('.lin'), grid = el.closest('.grid');
+  const item = (COLECOES[grid.dataset.col] || []).find(c => c.id === lin.dataset.id);
+  if (item) item.marcado = el.checked;
+  lin.classList.toggle('marcada', el.checked);
+  sincronizarCabecalho();
+}
+
+/** Caixa do cabeçalho: marca ou desmarca todas as linhas daquela grid. */
+function marcarTodos(el) {
+  const grid = el.closest('.grid');
+  (COLECOES[grid.dataset.col] || []).forEach(c => { c.marcado = el.checked; });
+  grid.querySelectorAll('.lin:not(.cab)').forEach(lin => {
+    lin.querySelector('input').checked = el.checked;
+    lin.classList.toggle('marcada', el.checked);
+  });
+  el.indeterminate = false;
+}
+
+/** Deixa a caixa do cabeçalho parcial quando só parte das linhas está marcada. */
+function sincronizarCabecalho() {
+  if (!raiz) return;
+  raiz.querySelectorAll('.grid[data-col]').forEach(grid => {
+    const cab = grid.querySelector('.lin.cab input');
+    const col = COLECOES[grid.dataset.col];
+    if (!cab || !col) return;
+    const marcados = col.filter(c => c.marcado).length;
+    cab.checked = marcados > 0 && marcados === col.length;
+    cab.indeterminate = marcados > 0 && marcados < col.length;
+  });
+}
+
+/**
+ * Monta uma grid com coluna de seleção. `colunas` traz rótulo, largura e se a
+ * célula é numérica; `celulas` devolve o conteúdo de cada linha, na ordem.
+ */
+function gridHTML({ col, colunas, itens, celulas, aoClicar }) {
+  const larguras = '44px ' + colunas.map(c => c.w).join(' ');
+  const cab = colunas.map(c =>
+    `<span class="${c.num ? 'num' : ''}"><span class="rot">${c.rot}</span>` +
+    `<span class="funil">${svg('funil')}</span></span>`).join('');
+
+  const linhas = itens.map(it => `
+    <div class="lin${it.zebra ? ' zebra' : ''}${it.marcado ? ' marcada' : ''}" data-id="${it.id}"
+         ${aoClicar ? `onclick="${aoClicar(it)}"` : ''}>
+      <span><input type="checkbox" ${it.marcado ? 'checked' : ''}
+                   onclick="event.stopPropagation()" onchange="marcarLinha(this)"></span>
+      ${celulas(it).map((v, i) => `<span class="${colunas[i].num ? 'num' : ''}">${v}</span>`).join('')}
+    </div>`).join('');
+
+  return `
+    <div class="grid" data-col="${col}" style="--cols: ${larguras}">
+      <div class="lin cab">
+        <span><input type="checkbox" onclick="event.stopPropagation()" onchange="marcarTodos(this)"></span>
+        ${cab}
+      </div>
+      ${linhas}
+    </div>`;
+}
+
 function corpoDocumentos() {
-  return campoHTML({ rot: 'Id', val: '15', ro: true }) +
-    `<div class="checklist"><div class="vazio">Nenhum documento vinculado a esta etapa.</div></div>`;
+  return gridHTML({
+    col: 'documentos',
+    itens: DOCUMENTOS,
+    colunas: [
+      { rot: 'ID', w: '80px', num: true },
+      { rot: 'DESCRIÇÃO DOCUMENTO', w: '1fr' },
+      { rot: 'OBRIGATÓRIO', w: '110px' },
+      { rot: 'SITUAÇÃO', w: '130px' },
+    ],
+    celulas: d => [d.id, d.descricao, d.obrigatorio, d.situacao],
+  });
 }
 
 function corpoChecklist() {
@@ -187,56 +305,24 @@ function corpoChecklist() {
       ${campoHTML({ rot: 'Anotações', area: true })}`;
   }
 
-  const linhas = CHECKLIST.map(c => `
-    <div class="lin${c.zebra ? ' zebra' : ''}${c.marcado ? ' marcada' : ''}"
-         onclick="itemChecklist='${c.id}';trocarCorpoDrawer()">
-      <span><input type="checkbox" ${c.marcado ? 'checked' : ''}
-                   onclick="event.stopPropagation()"
-                   onchange="marcarItem(this, '${c.id}')"></span>
-      <span>${c.id}</span><span>${c.situacao}</span>
-    </div>`).join('');
-
-  return `
-    <div class="checklist">
-      <div class="lin cab">
-        <span><input type="checkbox" onclick="event.stopPropagation()" onchange="marcarTodos(this)"></span>
-        <span>ID</span><span>SITUAÇÃO</span>
-      </div>
-      ${linhas}
-    </div>`;
-}
-
-/* ------------------------- marcação do checklist ------------------------- */
-
-/** Marca um item: é a marcação, e não a situação, que pinta a linha de verde. */
-function marcarItem(el, id) {
-  const item = CHECKLIST.find(c => c.id === id);
-  if (item) item.marcado = el.checked;
-  el.closest('.lin').classList.toggle('marcada', el.checked);
-  sincronizarCabecalho();
-}
-
-/** Caixa do cabeçalho: marca ou desmarca todos de uma vez. */
-function marcarTodos(el) {
-  CHECKLIST.forEach(c => { c.marcado = el.checked; });
-  raiz.querySelectorAll('.checklist .lin:not(.cab)').forEach(lin => {
-    lin.querySelector('input').checked = el.checked;
-    lin.classList.toggle('marcada', el.checked);
+  return gridHTML({
+    col: 'checklist',
+    itens: CHECKLIST,
+    colunas: [
+      { rot: 'ID', w: '72px', num: true },
+      { rot: 'SITUAÇÃO', w: '1fr' },
+    ],
+    celulas: c => [c.id, c.situacao],
+    aoClicar: c => `itemChecklist='${c.id}';trocarCorpoDrawer()`,
   });
-  el.indeterminate = false;
 }
 
-/** Deixa a caixa do cabeçalho parcial quando só parte dos itens está marcada. */
-function sincronizarCabecalho() {
-  const cab = raiz && raiz.querySelector('.checklist .lin.cab input');
-  if (!cab) return;
-  const marcados = CHECKLIST.filter(c => c.marcado).length;
-  cab.checked = marcados === CHECKLIST.length;
-  cab.indeterminate = marcados > 0 && marcados < CHECKLIST.length;
+function corpoProtocolo() {
+  return PROTOCOLO.map(campoHTML).join('');
 }
 
 function corpoCondicoes() {
-  return `<div class="checklist"><div class="vazio">Nenhuma condição cadastrada para esta etapa.</div></div>`;
+  return `<div class="vazio">Nenhuma condição cadastrada para esta etapa.</div>`;
 }
 
 const ABAS_DRAWER = [
@@ -252,6 +338,20 @@ const ABAS_DRAWER = [
  * animar a entrada e a saída.
  */
 function atualizarDrawer() {
+  const drawerEl = raiz.querySelector('.drawer');
+
+  if (conteudoDrawer === 'protocolo') {
+    drawerEl.innerHTML = `
+      <div class="drawer-topo">
+        <button class="bt-fechar" onclick="fecharDrawer()" title="Fechar">${svg('x')}</button>
+        <div class="drawer-titulo">
+          <h3>Protocolo - ${PROTOCOLO_NUM}</h3>
+        </div>
+      </div>
+      <div class="drawer-corpo scroll">${corpoProtocolo()}</div>`;
+    return;
+  }
+
   const e = ETAPAS.find(x => x.n === etapaSel);
   if (!e) return;
 
@@ -273,7 +373,6 @@ function atualizarDrawer() {
     <div class="drawer-rodape">
       <button class="btn ${e.estado === 'andamento' ? 'btn-claro' : 'btn-neutro'}"
               ${e.estado === 'andamento' ? '' : 'disabled'}>${svg('check')} Concluir etapa</button>
-      <button class="btn btn-primario">${svg('gerais')} Operações</button>
     </div>`;
 
   sincronizarCabecalho();
@@ -338,7 +437,10 @@ function ativarArrasto(wrap) {
 
   wrap.addEventListener('pointerup', e => {
     if (!encerrar(e)) return;
-    if (!rolou && alvo) abrirEtapa(+alvo.dataset.n);
+    if (!rolou) {
+      if (visaoGeral()) aplicarZoom(1, { x: e.clientX, y: e.clientY });
+      else if (alvo) abrirEtapa(+alvo.dataset.n);
+    }
     alvo = null;
   });
 
@@ -350,12 +452,89 @@ function ativarArrasto(wrap) {
 const ALVO_X = 0.5;
 const ALVO_Y = 0.25;
 
-/** Enquadra o fluxo ao abrir a tela: começo à vista e canvas centralizado. */
+/* ---------------------------------- zoom ---------------------------------- */
+
+const ZOOM_MAX = 2;
+const ZOOM_PASSO = 1.25;
+const DESENHO_L = 594, DESENHO_A = 1213;   /* área ocupada pelas etapas */
+
+let zoom = 1;
+let escalaCaber = 1;      /* escala em que o fluxo inteiro cabe na área visível */
+let espacoL = 0, espacoA = 0;   /* tamanho do canvas sem escala */
+let desvioX = 0, desvioY = 0;   /* centralização quando o canvas é menor que a área */
+
+/** Abaixo de 100% a tela está em visão geral: lupa no cursor, clique aproxima. */
+function visaoGeral() { return zoom < 0.999; }
+
+/**
+ * Aplica a escala. O tamanho da caixa acompanha a escala para que a rolagem
+ * continue batendo com o que se vê; `ponto` (coordenadas de tela) é mantido no
+ * lugar, então o zoom acontece sob o cursor.
+ */
+function aplicarZoom(z, ponto) {
+  const wrap = raiz.querySelector('.bpmn-wrap');
+  const caixa = raiz.querySelector('.bpmn-zoom');
+  const espaco = raiz.querySelector('.bpmn-espaco');
+  z = Math.min(Math.max(z, escalaCaber), ZOOM_MAX);
+
+  const r = wrap.getBoundingClientRect();
+  const px = ponto ? ponto.x - r.left : wrap.clientWidth / 2;
+  const py = ponto ? ponto.y - r.top : wrap.clientHeight / 2;
+  const cx = (wrap.scrollLeft + px - desvioX) / zoom;   /* ponto do conteúdo sob o cursor */
+  const cy = (wrap.scrollTop  + py - desvioY) / zoom;
+
+  zoom = z;
+  const escalaL = espacoL * z, escalaA = espacoA * z;
+  /* quando o desenho é menor que a área, a caixa cresce até a área e o
+     espaçador é deslocado para o meio — a rolagem sozinha não centralizaria */
+  const caixaL = Math.max(escalaL, wrap.clientWidth);
+  const caixaA = Math.max(escalaA, wrap.clientHeight);
+  desvioX = (caixaL - escalaL) / 2;
+  desvioY = (caixaA - escalaA) / 2;
+
+  caixa.style.width  = Math.round(caixaL) + 'px';
+  caixa.style.height = Math.round(caixaA) + 'px';
+  espaco.style.transform = `translate(${desvioX}px, ${desvioY}px) scale(${z})`;
+
+  wrap.scrollLeft = cx * z + desvioX - px;
+  wrap.scrollTop  = cy * z + desvioY - py;
+  wrap.classList.toggle('visao-geral', visaoGeral());
+}
+
+function maisZoom()  { aplicarZoom(zoom * ZOOM_PASSO); }
+function menosZoom() { aplicarZoom(zoom / ZOOM_PASSO); }
+
+/** Enquadra o fluxo inteiro na área visível. */
 function enquadrarFluxo() {
   const wrap = raiz.querySelector('.bpmn-wrap');
-  wrap.scrollLeft = (wrap.scrollWidth - wrap.clientWidth) / 2;
-  wrap.scrollTop = 0;
+  const espaco = raiz.querySelector('.bpmn-espaco');
+  const bpmn = raiz.querySelector('.bpmn');
+
+  espacoL = espaco.offsetWidth;    /* offset* ignora o transform */
+  espacoA = espaco.offsetHeight;
+
+  escalaCaber = Math.min(1,
+    (wrap.clientWidth  - 40) / DESENHO_L,
+    (wrap.clientHeight - 40) / DESENHO_A);
+
+  zoom = 1; desvioX = 0; desvioY = 0;   /* zera antes, para aplicarZoom converter certo */
+  aplicarZoom(escalaCaber);
+  wrap.scrollLeft = (bpmn.offsetLeft + DESENHO_L / 2) * zoom + desvioX - wrap.clientWidth / 2;
+  wrap.scrollTop  = (bpmn.offsetTop  + DESENHO_A / 2) * zoom + desvioY - wrap.clientHeight / 2;
 }
+
+/** Tela cheia da área do fluxo; o enquadramento é refeito ao entrar e sair. */
+function alternarTelaCheia() {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else if (raiz.requestFullscreen) raiz.requestFullscreen();
+}
+
+document.addEventListener('fullscreenchange', () => {
+  if (!raiz) return;
+  const bt = raiz.querySelector('.zoom-ctrl .cheia');
+  if (bt) bt.innerHTML = svg(document.fullscreenElement ? 'sairTelaCheia' : 'telaCheia');
+  enquadrarFluxo();
+});
 
 /** Leva a etapa até o ponto de leitura da área visível. */
 function centralizarEtapa(n) {
@@ -365,8 +544,8 @@ function centralizarEtapa(n) {
   if (!wrap || !card) return;
 
   // offsetLeft/offsetTop ignoram o scale do hover, ao contrário de getBoundingClientRect
-  const x = bpmn.offsetLeft + card.offsetLeft + card.offsetWidth / 2;
-  const y = bpmn.offsetTop  + card.offsetTop  + card.offsetHeight / 2;
+  const x = (bpmn.offsetLeft + card.offsetLeft + card.offsetWidth / 2) * zoom + desvioX;
+  const y = (bpmn.offsetTop  + card.offsetTop  + card.offsetHeight / 2) * zoom + desvioY;
   wrap.scrollTo({
     left: x - wrap.clientWidth * ALVO_X,
     top:  y - wrap.clientHeight * ALVO_Y,
@@ -380,8 +559,10 @@ function centralizarEtapa(n) {
  */
 function abrirEtapa(n) {
   clearTimeout(limpezaDrawer);
+  const veioDoProtocolo = conteudoDrawer === 'protocolo';
+  conteudoDrawer = 'etapa';
   const drawer = raiz.querySelector('.drawer');
-  const trocando = drawer.classList.contains('aberto') && etapaSel !== null && etapaSel !== n;
+  const trocando = drawer.classList.contains('aberto') && (veioDoProtocolo || (etapaSel !== null && etapaSel !== n));
 
   // o realce do card muda na hora, para o clique ter resposta imediata.
   // .aberta (verde escuro) só faz sentido para quem está em andamento
@@ -407,6 +588,32 @@ function abrirEtapa(n) {
     drawer.classList.remove('trocando');
     centralizarEtapa(n);   // a largura não mudou: já dá para centralizar
   }, ANIM_TROCA);
+}
+
+/**
+ * Abre as informações do protocolo no drawer. Nenhum card fica selecionado e o
+ * fluxo é reenquadrado no espaço que sobra ao lado do drawer.
+ */
+function abrirProtocolo() {
+  clearTimeout(limpezaDrawer);
+  conteudoDrawer = 'protocolo';
+  etapaSel = null;
+  itemChecklist = null;
+  raiz.querySelectorAll('.etapa').forEach(el => el.classList.remove('sel', 'aberta'));
+
+  const drawer = raiz.querySelector('.drawer');
+  if (drawer.classList.contains('aberto')) {
+    drawer.classList.add('trocando');
+    setTimeout(() => {
+      atualizarDrawer();
+      drawer.classList.remove('trocando');
+      enquadrarFluxo();
+    }, ANIM_TROCA);
+  } else {
+    atualizarDrawer();
+    drawer.classList.add('aberto');
+    setTimeout(enquadrarFluxo, ANIM_DRAWER);   // só então a área tem a largura final
+  }
 }
 
 /** Troca só o corpo da aba, com a saída descendo e a entrada subindo, em fade. */
@@ -443,6 +650,7 @@ function fecharDrawer() {
   limpezaDrawer = setTimeout(() => {
     if (drawer.classList.contains('aberto')) return;  // reaberto durante a animação
     etapaSel = null;
+    conteudoDrawer = 'etapa';
     drawer.innerHTML = '';
   }, ANIM_DRAWER);
 }
@@ -458,13 +666,22 @@ function montarFluxo(container) {
   raiz = container;
   container.innerHTML = `
     <div class="bpmn-wrap">
-      <div class="bpmn-espaco">
-        <div class="bpmn">
-          ${conectoresHTML()}
-          ${ETAPAS.map(etapaHTML).join('')}
+      <div class="bpmn-zoom">
+        <div class="bpmn-espaco">
+          <div class="bpmn">
+            ${conectoresHTML()}
+            ${ETAPAS.map(etapaHTML).join('')}
+          </div>
         </div>
       </div>
     </div>
+
+    <div class="zoom-ctrl">
+      <button onclick="maisZoom()" title="Aproximar">${svg('mais_zoom', 'stroke-width="2.6"')}</button>
+      <button onclick="menosZoom()" title="Afastar">${svg('menos_zoom', 'stroke-width="2.6"')}</button>
+      <button class="cheia" onclick="alternarTelaCheia()" title="Tela cheia">${svg('telaCheia')}</button>
+    </div>
+
     <aside class="drawer"></aside>`;
 
   ativarArrasto(container.querySelector('.bpmn-wrap'));

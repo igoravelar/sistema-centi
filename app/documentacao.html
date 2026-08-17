@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centi · Documentação Novo Protocolo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; }
+
+:root {
+  --verde:       #A1BB3E;
+  --verde-linha: #D5E690;
+  --cinza-linha: #DCDCDC;
+  --txt:         #545454;
+  --txt-strong:  #333333;
+  --txt-mute:    #8A8A8A;
+  --topbar-h:    64px;
+  --sidebar-w:   280px;
+}
+
+html {
+  scroll-padding-top: calc(var(--topbar-h) + 24px);
+}
+
+body {
+  margin: 0;
+  background: #FFFFFF;
+  color: var(--txt);
+  font-family: "Open Sans", Verdana, Geneva, sans-serif;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* ── topbar ─────────────────────────────────────────────── */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  background: #FFFFFF;
+  border-bottom: 2px solid var(--verde-linha);
+  z-index: 10;
+}
+
+.topbar .marca img {
+  height: 30px;
+  display: block;
+}
+
+.topbar h1 {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--verde);
+  white-space: nowrap;
+}
+
+.topbar .atualizado {
+  margin-left: auto;
+  font-size: 12px;
+  color: #9A9A9A;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.topbar .badge-data {
+  background: #EDF5CC;
+  color: #6D8415;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 999px;
+}
+
+/* ── menu lateral ───────────────────────────────────────── */
+.sidebar {
+  position: fixed;
+  top: var(--topbar-h);
+  bottom: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  overflow-y: auto;
+  padding: 28px 20px 40px 28px;
+  border-right: 1px solid var(--cinza-linha);
+  background: #FFFFFF;
+}
+
+/* campo de busca do menu */
+.busca {
+  position: relative;
+  margin: 2px 0 18px;
+}
+
+.busca input {
+  width: 100%;
+  padding: 12px 40px 12px 14px;
+  font-family: "Open Sans", Verdana, Geneva, sans-serif;
+  font-size: 13px;
+  color: var(--txt);
+  background: #FFFFFF;
+  border: 1px solid #D2D2D2;
+  border-radius: 10px;
+  outline: none;
+}
+
+.busca input::placeholder { color: #CDCDCD; }
+
+.busca input:focus {
+  border-color: var(--verde-linha);
+  box-shadow: 0 0 0 3px #EFF5D8;
+}
+
+.busca .lupa {
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+.busca .lupa circle,
+.busca .lupa path {
+  stroke: #9A9A9A;
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sidebar .grupo + .grupo { margin-top: 6px; }
+
+.sidebar .grupo-titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--txt-strong);
+  cursor: pointer;
+  user-select: none;
+  border-radius: 8px;
+}
+
+.sidebar .grupo-titulo:hover { background: #F6F8EE; }
+
+.sidebar .grupo-titulo .seta {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  transition: transform .25s ease;
+}
+
+.sidebar .grupo.fechado .grupo-titulo .seta { transform: rotate(-90deg); }
+
+.sidebar .grupo-titulo .seta path {
+  stroke: var(--verde);
+  stroke-width: 2.4;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* submenus alinhados na linha vertical cinza */
+.sidebar ul {
+  list-style: none;
+  margin: 2px 0 10px 12px;
+  padding: 0 0 0 14px;
+  border-left: 1px solid var(--cinza-linha);
+  overflow: hidden;
+}
+
+.sidebar .grupo.fechado ul { display: none; }
+
+.sidebar ul a {
+  display: block;
+  padding: 5px 10px;
+  font-size: 12.5px;
+  color: var(--txt);
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.sidebar ul a:hover {
+  color: var(--verde);
+  background: #F6F8EE;
+}
+
+.sidebar ul a.ativo {
+  color: var(--verde);
+  font-weight: 700;
+}
+
+/* ── conteúdo ───────────────────────────────────────────── */
+.conteudo {
+  margin-left: var(--sidebar-w);
+  padding: calc(var(--topbar-h) + 40px) 40px 90px;
+}
+
+.pagina {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.pagina h2 {
+  margin: 60px 0 14px;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--txt-strong);
+  line-height: 1.3;
+}
+
+.pagina section:first-child h2 { margin-top: 0; }
+
+.pagina h3 {
+  margin: 40px 0 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--txt-strong);
+}
+
+.pagina p { margin: 0 0 14px; }
+
+.pagina .lead {
+  font-size: 14.5px;
+  color: var(--txt-mute);
+  margin-bottom: 24px;
+}
+
+.pagina section + section {
+  margin-top: 70px;
+  border-top: 1px solid #EFEFEF;
+  padding-top: 10px;
+}
+
+.pagina code {
+  background: #F6F8EE;
+  border: 1px solid var(--verde-linha);
+  border-radius: 5px;
+  padding: 1px 7px;
+  font-size: 12px;
+  color: #6D8415;
+}
+
+.pagina .nota {
+  background: #FDFBEB;
+  border: 1px solid #F0E6B2;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin: 20px 0;
+}
+
+@media (max-width: 920px) {
+  .sidebar { display: none; }
+  .conteudo { margin-left: 0; }
+  .topbar h1 { position: static; transform: none; margin-left: 18px; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="marca" href="index.html" title="Voltar ao início">
+    <img src="assets/img/marca-centi.png" alt="Centi">
+  </a>
+  <h1>Documentação Novo Protocolo</h1>
+  <div class="atualizado">Atualizado em: <span class="badge-data">17/08/2026</span></div>
+</header>
+
+<nav class="sidebar" id="sidebar"></nav>
+
+<main class="conteudo">
+  <div class="pagina">
+
+    <section id="etapa1">
+      <h2>#1 Modelo de Negócios</h2>
+      <p class="lead">Definição do modelo de negócios do Novo Protocolo: proposta de valor, segmentos atendidos e modelo de receita.</p>
+      <p>Conteúdo a preencher com as definições desta etapa.</p>
+    </section>
+
+    <section id="etapa2">
+      <h2>#2 Inteligência de Mercado</h2>
+      <p class="lead">Análise do mercado, concorrentes e tendências que orientam o posicionamento do produto.</p>
+      <p>Conteúdo a preencher com as definições desta etapa.</p>
+    </section>
+
+    <section id="etapa3">
+      <h2>#3 Estratégia do Produto</h2>
+      <p class="lead">Visão do produto, diferenciais competitivos e roadmap estratégico.</p>
+      <p>Conteúdo a preencher com as definições desta etapa.</p>
+    </section>
+
+    <section id="etapa4">
+      <h2>#4 Modelagem do produto</h2>
+      <p class="lead">Detalhamento funcional do produto: fluxos, telas e regras de negócio.</p>
+      <p>Conteúdo a preencher com as definições desta etapa. As telas já prototipadas incluem o menu do módulo, a <code>PO030 - Fluxo de Processos</code> e a <code>PO031 - Tramitação de protocolo</code>.</p>
+    </section>
+
+    <section id="etapa5">
+      <h2>#5 Arquitetura Tecnológica</h2>
+      <p class="lead">Decisões de arquitetura, integrações e infraestrutura que sustentam o produto.</p>
+      <p>Conteúdo a preencher com as definições desta etapa.</p>
+    </section>
+
+    <section id="etapa6">
+      <h2>#6 Design System e UX/UI</h2>
+      <p class="lead">Identidade visual, componentes e padrões de experiência aplicados às telas.</p>
+      <p>A paleta parte do verde institucional <code>#A1BB3E</code>, com tons de apoio como <code>#D5E690</code> para filetes e divisores, e a família Open Sans nas telas novas.</p>
+    </section>
+
+    <section id="etapa7">
+      <h2>#7 Skill Inovação (IA/ViCenti)</h2>
+      <p class="lead">Aplicações de inteligência artificial e do assistente ViCenti no contexto do Novo Protocolo.</p>
+      <p>Conteúdo a preencher com as definições desta etapa.</p>
+    </section>
+
+    <section id="etapa8">
+      <h2>#8 Legal &amp; Compliance</h2>
+      <p class="lead">Requisitos legais, normativos e de conformidade que o produto deve atender.</p>
+      <p>Conteúdo a preencher com as definições desta etapa.</p>
+    </section>
+
+    <section id="etapa9">
+      <h2>#9 Pipeline de Vendas</h2>
+      <p class="lead">Estruturação do funil comercial e da abordagem de vendas do produto.</p>
+      <p>Conteúdo a preencher com as definições desta etapa.</p>
+    </section>
+
+    <section id="etapa10">
+      <h2>#10 Validação (piloto)</h2>
+      <p class="lead">Plano de validação com clientes piloto e critérios de sucesso.</p>
+      <p>Conteúdo a preencher com as definições desta etapa.</p>
+    </section>
+
+    <section id="etapa11">
+      <h2>#11 CSI &amp; CSM</h2>
+      <p class="lead">Customer Success: implantação, acompanhamento e sustentação dos clientes.</p>
+      <p>Conteúdo a preencher com as definições desta etapa.</p>
+    </section>
+
+    <section id="etapa12">
+      <h2>#12 Marketing &amp; Design</h2>
+      <p class="lead">Comunicação, materiais e campanhas de lançamento do produto.</p>
+      <p>Conteúdo a preencher com as definições desta etapa.</p>
+    </section>
+
+    <section id="etapa13">
+      <h2>#13 Expansão &amp; Escala</h2>
+      <p class="lead">Estratégia de crescimento após a validação: novos mercados e ganho de escala.</p>
+      <p>Conteúdo a preencher com as definições desta etapa.</p>
+    </section>
+
+  </div>
+</main>
+
+<script>
+/* Menu lateral: etapas do projeto com submenus ancorados nas seções */
+const MENU = [
+  { titulo: '#1 Modelo de Negócios',        itens: [{ id: 'etapa1',  txt: 'Visão geral' }] },
+  { titulo: '#2 Inteligência de Mercado',   itens: [{ id: 'etapa2',  txt: 'Visão geral' }] },
+  { titulo: '#3 Estratégia do Produto',     itens: [{ id: 'etapa3',  txt: 'Visão geral' }] },
+  { titulo: '#4 Modelagem do produto',      itens: [{ id: 'etapa4',  txt: 'Visão geral' }] },
+  { titulo: '#5 Arquitetura Tecnológica',   itens: [{ id: 'etapa5',  txt: 'Visão geral' }] },
+  { titulo: '#6 Design System e UX/UI',     itens: [{ id: 'etapa6',  txt: 'Visão geral' }] },
+  { titulo: '#7 Skill Inovação (IA/ViCenti)', itens: [{ id: 'etapa7', txt: 'Visão geral' }] },
+  { titulo: '#8 Legal & Compliance',        itens: [{ id: 'etapa8',  txt: 'Visão geral' }] },
+  { titulo: '#9 Pipeline de Vendas',        itens: [{ id: 'etapa9',  txt: 'Visão geral' }] },
+  { titulo: '#10 Validação (piloto)',       itens: [{ id: 'etapa10', txt: 'Visão geral' }] },
+  { titulo: '#11 CSI & CSM',                itens: [{ id: 'etapa11', txt: 'Visão geral' }] },
+  { titulo: '#12 Marketing & Design',       itens: [{ id: 'etapa12', txt: 'Visão geral' }] },
+  { titulo: '#13 Expansão & Escala',        itens: [{ id: 'etapa13', txt: 'Visão geral' }] },
+];
+
+const SETA = `<svg class="seta" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>`;
+
+/* lupa no estilo outline da Lucide */
+const LUPA = `<svg class="lupa" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>`;
+
+document.getElementById('sidebar').innerHTML = `
+  <div class="busca">
+    <input type="text" id="filtro" placeholder="Escreva para filtrar..." autocomplete="off">
+    ${LUPA}
+  </div>` +
+  MENU.map(g => `
+  <div class="grupo fechado">
+    <div class="grupo-titulo" onclick="this.parentElement.classList.toggle('fechado')">
+      ${SETA}<span>${g.titulo}</span>
+    </div>
+    <ul>
+      ${g.itens.map(i => `<li><a href="#${i.id}">${i.txt}</a></li>`).join('')}
+    </ul>
+  </div>`).join('');
+
+/* Filtro: esconde grupos e submenus que não contêm o texto digitado.
+   Se o título do grupo casa, o grupo inteiro permanece visível. */
+const semAcento = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+document.getElementById('filtro').addEventListener('input', ev => {
+  const termo = semAcento(ev.target.value.trim());
+
+  document.querySelectorAll('.sidebar .grupo').forEach(grupo => {
+    const titulo = semAcento(grupo.querySelector('.grupo-titulo span').textContent);
+    const itens = [...grupo.querySelectorAll('li')];
+
+    if (!termo) {
+      grupo.style.display = '';
+      itens.forEach(li => li.style.display = '');
+      return;
+    }
+
+    if (titulo.includes(termo)) {
+      grupo.style.display = '';
+      grupo.classList.remove('fechado');
+      itens.forEach(li => li.style.display = '');
+      return;
+    }
+
+    let algum = false;
+    itens.forEach(li => {
+      const casa = semAcento(li.textContent).includes(termo);
+      li.style.display = casa ? '' : 'none';
+      if (casa) algum = true;
+    });
+
+    grupo.style.display = algum ? '' : 'none';
+    if (algum) grupo.classList.remove('fechado');
+  });
+});
+
+/* Rolagem animada com desaceleração (ease-out cúbico) */
+function rolarPara(alvo) {
+  const topo = alvo.getBoundingClientRect().top + window.scrollY - 88;
+  const inicio = window.scrollY;
+  const distancia = topo - inicio;
+  const duracao = 650;
+  let t0 = null;
+
+  function passo(t) {
+    if (t0 === null) t0 = t;
+    const p = Math.min((t - t0) / duracao, 1);
+    const ease = 1 - Math.pow(1 - p, 3); /* easeOutCubic */
+    window.scrollTo(0, inicio + distancia * ease);
+    if (p < 1) requestAnimationFrame(passo);
+  }
+  requestAnimationFrame(passo);
+}
+
+document.querySelectorAll('.sidebar a').forEach(a => {
+  a.addEventListener('click', ev => {
+    ev.preventDefault();
+    const alvo = document.getElementById(a.getAttribute('href').slice(1));
+    if (!alvo) return;
+    history.replaceState(null, '', a.getAttribute('href'));
+    rolarPara(alvo);
+  });
+});
+
+/* Destaca no menu a seção visível durante a rolagem */
+const secoes = [...document.querySelectorAll('.pagina section')];
+const links = new Map(
+  [...document.querySelectorAll('.sidebar a')].map(a => [a.getAttribute('href').slice(1), a])
+);
+
+function marcarAtivo() {
+  let atual = secoes[0];
+  for (const s of secoes) {
+    if (s.getBoundingClientRect().top <= 120) atual = s;
+  }
+  links.forEach(a => a.classList.remove('ativo'));
+  const link = links.get(atual.id);
+  if (link) link.classList.add('ativo');
+}
+
+document.addEventListener('scroll', marcarAtivo, { passive: true });
+marcarAtivo();
+</script>
+</body>
+</html>

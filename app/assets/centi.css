@@ -331,7 +331,7 @@ a { color: inherit; text-decoration: none; }
 /* ============================== campos ============================== */
 
 /* linha de formulário: rótulo colado ao campo */
-.campo { display: flex; align-items: stretch; min-height: 32px; }
+.campo { display: flex; align-items: stretch; min-height: 32px; flex: 0 0 auto; }
 
 .campo > .rot {
   flex: 0 0 130px;
@@ -343,7 +343,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--txt);
   line-height: 15px;
 }
-.campo > .rot .req { color: inherit; }
+.campo > .rot .req { color: #E53935; }
 
 .campo > .val {
   flex: 1;
@@ -370,7 +370,7 @@ a { color: inherit; text-decoration: none; }
 .campo .cx + .cx { margin-left: -1px; }
 .campo .cx.ro { background: var(--ro-bg); color: var(--txt); }
 .campo .cx.cod { flex: 0 0 42px; text-align: left; padding-left: 16px; }
-.campo .cx.cod-l { flex: 0 0 71px; }
+.campo .cx.cod-l { flex: 0 0 92px; }
 .campo textarea.cx { resize: none; white-space: normal; font-size: 12px; }
 .campo .cx::placeholder { color: var(--ph); }
 .campo .cx:focus { border-color: var(--g); box-shadow: 0 0 0 2px rgba(161,187,62,.18); position: relative; z-index: 1; }

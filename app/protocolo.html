@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Centi · Módulo Protocolo</title>
 <link rel="stylesheet" href="assets/centi.css?v=2">
-<link rel="stylesheet" href="assets/menu.css?v=2">
+<link rel="stylesheet" href="assets/menu.css?v=3">
 </head>
 <body>
 
 <div class="app"></div>
 
-<script src="assets/shell.js?v=2"></script>
+<script src="assets/shell.js?v=4"></script>
 <script>
 /* ícones extras usados só nesta tela */
 Object.assign(ICO, {
@@ -58,7 +58,13 @@ const MODULOS_MENU = [
       { txt: 'Tela Protocolo',               cod: 'PO011', ico: 'monitor',  href: 'po011.html', fav: true, tag: 'novo' },
       { txt: 'Aprovar/reprovar protocolos',  cod: 'PO024', ico: 'aprovar' },
       { txt: 'Documentos excluídos',         cod: 'PO022', ico: 'lixeira' },
-      { txt: 'Gestão de Processos',          cod: 'PO050', ico: 'fluxograma', href: 'po050.html', tag: 'novo' },
+    ],
+  },
+  {
+    classe: 'gestao', titulo: 'Gestão de Processo', ico: 'fluxograma',
+    itens: [
+      { txt: 'Fluxo de Processos',      cod: 'PO030', ico: 'fluxo' },
+      { txt: 'Tramitação de protocolo', cod: 'PO031', ico: 'fluxograma', href: 'po050.html', tag: 'novo' },
     ],
   },
   {

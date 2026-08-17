@@ -139,6 +139,7 @@
 .module:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(96,96,98,.12); }
 
 .module.remessa       { border-left-color: var(--g); }
+.module.gestao        { border-left-color: #7F9612; }
 .module.massa         { border-left-color: #5D6A38; }
 .module.documentos    { border-left-color: #A9C63A; }
 .module.relatorios    { border-left-color: #F5A623; }

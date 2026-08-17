@@ -4,8 +4,10 @@
    de --drawer-w, definida por quem usa o módulo.
    ========================================================================== */
 
-/* container do fluxo: canvas à esquerda, drawer à direita */
-.fluxo { flex: 1; min-height: 0; display: flex; }
+/* container do fluxo: canvas à esquerda, drawer à direita.
+   `relative` ancora os controles de zoom, que não podem rolar com o conteúdo. */
+.fluxo { flex: 1; min-height: 0; display: flex; position: relative; }
+.fluxo:fullscreen { background: #FFFFFF; }
 
 .bt-fechar {
   width: 20px; height: 20px;
@@ -31,16 +33,41 @@
   user-select: none;
   touch-action: none;
 }
+/* em visão geral o clique aproxima, então o cursor é a lupa */
+.bpmn-wrap.visao-geral,
+.bpmn-wrap.visao-geral .etapa { cursor: zoom-in; }
+
 /* enquanto arrasta, a mão fechada vale em toda a área, inclusive sobre os cards */
 .bpmn-wrap.arrastando,
 .bpmn-wrap.arrastando .etapa { cursor: grabbing; }
 .bpmn-wrap.arrastando .etapa:hover { transform: none; box-shadow: none; }
 /* a folga vai neste espaçador, e não no padding do .bpmn-wrap: padding não
    encolhe, e travava a largura mínima da área do fluxo quando o drawer cresce */
-.bpmn-espaco { display: inline-block; padding: 40px 300px 320px; }
-.bpmn { position: relative; width: 594px; height: 1260px; }
+/* a caixa acompanha o tamanho já escalado, para a rolagem bater com o que se vê */
+.bpmn-zoom { position: relative; }
+/* folga simétrica: assim centralizar o espaçador centraliza o próprio desenho */
+.bpmn-espaco { display: inline-block; padding: 320px 300px; transform-origin: 0 0; }
+.bpmn { position: relative; width: 594px; height: 1213px; }
 /* as linhas nunca interceptam o ponteiro: o clique é sempre do card ou do arraste */
 .bpmn svg.conectores { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+/* ------------------------- controles de zoom ------------------------- */
+.zoom-ctrl {
+  position: absolute; left: 10px; bottom: 10px; z-index: 5;
+  display: flex; flex-direction: column;
+}
+.zoom-ctrl button {
+  width: 34px; height: 34px; padding: 0;
+  display: grid; place-items: center;
+  border: 1px solid var(--fld-bd);
+  background: #FFFFFF; color: var(--txt);
+}
+.zoom-ctrl button + button { border-top: 0; }   /* colados na vertical */
+.zoom-ctrl button:first-child { border-radius: 4px 4px 0 0; }
+.zoom-ctrl button:last-child  { border-radius: 0 0 4px 4px; }
+.zoom-ctrl { box-shadow: 0 1px 3px rgba(60,70,40,.10); border-radius: 5px; }
+.zoom-ctrl button:hover { background: var(--g-soft-bg); color: var(--g-olive); border-color: var(--g-soft-bd); }
+.zoom-ctrl svg { width: 17px; height: 17px; }
 
 /* -------------------------------- etapa -------------------------------- */
 /* o título ocupa toda a faixa entre o topo do card (onde fica a bolinha) e a
@@ -135,6 +162,7 @@
   flex: 0 0 var(--drawer-w, 50%);
   background: #FFFFFF;
   border-left: 1px solid var(--fld-bd);
+  box-shadow: -8px 0 20px rgba(60,70,40,.18);   /* projeta sobre o fluxograma */
   display: flex; flex-direction: column;
   overflow: hidden;
 
@@ -216,32 +244,39 @@
   border-top: 1px solid #EEEFF1;
 }
 
-/* checklist: sem contorno externo, colunas separadas por linha vertical */
-.checklist .lin {
-  display: grid; grid-template-columns: 44px 72px 1fr;
+/* grid de linhas com coluna de seleção: sem contorno externo, colunas
+   separadas por linha vertical. As larguras vêm de --cols, definidas por aba. */
+.grid .lin {
+  display: grid; grid-template-columns: var(--cols);
   height: 34px;
   font-size: 12px; color: var(--txt);
   cursor: pointer; background: #FFFFFF;
 }
-.checklist .lin > * {
-  display: flex; align-items: center;
+.grid .lin > * {
+  display: flex; align-items: center; gap: 8px;
   padding: 0 12px;
   border-right: 1px solid #E4E4E4;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.checklist .lin > *:last-child { border-right: 0; }
+.grid .lin > *:last-child { border-right: 0; }
+.grid .lin > .num { justify-content: flex-end; }
 
-.checklist .lin.cab { background: #E4E4E4; font-weight: bold; cursor: default; }
-.checklist .lin.cab > * { border-right-color: #D2D2D2; }
+.grid .lin.cab { background: #E4E4E4; font-weight: bold; cursor: default; }
+.grid .lin.cab > * { border-right-color: #D2D2D2; }
+/* o rótulo encolhe com reticências para o funil nunca ser empurrado para fora */
+.grid .lin.cab .rot { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.grid .lin.cab > *:not(.num) .rot { flex: 1; min-width: 0; }
+.grid .funil { flex: 0 0 11px; color: #8A8A8A; display: flex; }
+.grid .funil svg { width: 11px; height: 11px; }
 
-.checklist .lin.zebra { background: #F7F7F6; }
-.checklist .lin:not(.cab):hover { background: #F1F5E4; }
+.grid .lin.zebra { background: #F7F7F6; }
+.grid .lin:not(.cab):hover { background: #F1F5E4; }
 /* o verde só aparece com o item marcado, e vem depois do hover para vencê-lo */
-.checklist .lin.marcada { background: #D6E8A2; }
-.checklist .lin.marcada:hover { background: #CDE293; }
+.grid .lin.marcada { background: #D6E8A2; }
+.grid .lin.marcada:hover { background: #CDE293; }
 
 /* caixa de seleção desenhada: azul quando marcada ou parcial */
-.checklist input[type=checkbox] {
+.grid input[type=checkbox] {
   appearance: none; -webkit-appearance: none;
   width: 18px; height: 18px; margin: 0; flex: 0 0 18px;
   border: 1px solid #C7CBD1; border-radius: 4px;
@@ -249,18 +284,20 @@
   display: grid; place-items: center;
   cursor: pointer;
 }
-.checklist input[type=checkbox]:checked,
-.checklist input[type=checkbox]:indeterminate {
+.grid input[type=checkbox]:checked,
+.grid input[type=checkbox]:indeterminate {
   background: var(--selecao); border-color: var(--selecao);
 }
-.checklist input[type=checkbox]:checked::after {
+.grid input[type=checkbox]:checked::after {
   content: ""; width: 5px; height: 9px;
   border: solid #FFFFFF; border-width: 0 2px 2px 0;
   transform: translateY(-1px) rotate(45deg);
 }
-.checklist input[type=checkbox]:indeterminate::after {
+.grid input[type=checkbox]:indeterminate::after {
   content: ""; width: 9px; height: 2px;
   background: #FFFFFF; border-radius: 1px;
 }
+
+.campo > .rot i { font-style: normal; color: #E53935; }
 
 .vazio { padding: 24px; text-align: center; color: var(--txt-mute); font-size: 12px; }

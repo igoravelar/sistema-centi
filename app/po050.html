@@ -3,20 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Centi · PO050 - Gestão de Processos</title>
+<title>Centi · PO031 - Tramitação de protocolo</title>
 <link rel="stylesheet" href="assets/centi.css?v=2">
 <link rel="stylesheet" href="assets/fluxo.css?v=2">
 <style>
   /* o fluxo é o conteúdo da aba Cadastro, e o drawer ocupa 2/3 da área */
   .cad .fluxo { --drawer-w: 66.667%; }
   .vazio-vista { flex: 1; display: grid; place-items: center; color: var(--txt-mute); }
+  /* o título abre as informações do protocolo no drawer */
+  .cad-topo .esq .link { text-decoration: underline; cursor: pointer; transition: color .15s ease; }
+  .cad-topo .esq .link:hover { color: var(--g-dark); }
 </style>
 </head>
 <body>
 
 <div class="app"></div>
 
-<script src="assets/shell.js?v=2"></script>
+<script src="assets/shell.js?v=4"></script>
 <script src="assets/fluxo.js?v=2"></script>
 <script>
 /* As abas verticais são desta tela: trocam de vista aqui dentro, sem sair do
@@ -57,7 +60,7 @@ main.insertAdjacentHTML('beforeend', `
         <div class="cad-topo">
           <div class="esq">
             ${svg('fluxograma')}
-            <span class="nome">Protocolo - 2292412</span>
+            <a class="nome link" onclick="abrirProtocolo()">Protocolo - 2292416</a>
           </div>
           <div class="dir">
             <button class="btn btn-claro">${svg('mais')} Novo</button>
