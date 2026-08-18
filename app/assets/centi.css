@@ -65,6 +65,18 @@ html, body {
 
 button { font-family: inherit; cursor: pointer; }
 input, select, textarea { font-family: inherit; font-size: 12px; }
+
+/* combos: seta própria, afastada 10px da borda direita do campo */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23747474' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 13px;
+  padding-right: 32px;
+}
 a { color: inherit; text-decoration: none; }
 
 /* ============================ layout raiz ============================ */
@@ -223,13 +235,20 @@ a { color: inherit; text-decoration: none; }
   padding: var(--moldura);   /* recuo igual nos quatro lados */
 }
 
-/* abas de documento */
+/* abas de documento: a régua vertical tem 30px, e a aba início fica a 6px
+   da linha lateral do container — o mesmo respiro que a aba Pesquisa tem
+   para a linha de topo. O -1px funde a base das abas com a linha do topo
+   do container, para as duas serem a mesma linha. */
 .doctabs {
   display: flex;
   align-items: flex-end;
   gap: 0;
   height: var(--tab-h);
   flex: 0 0 auto;
+  margin-left: 36px;
+  margin-bottom: -1px;
+  position: relative;
+  z-index: 3;
 }
 
 .doctab {
@@ -316,7 +335,8 @@ a { color: inherit; text-decoration: none; }
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding-top: 6px;
+  /* sem respiro no topo: a linha do container encosta nas abas de documento */
+  padding-top: 0;
 }
 
 /* painéis */
@@ -405,10 +425,10 @@ a { color: inherit; text-decoration: none; }
 .btn svg { width: 12px; height: 12px; }
 
 .btn-primario { background: var(--g); color: #FFFFFF; }
-.btn-primario:hover { background: #8FAA31; }
+.btn-primario:hover { background: #5D6725; }
 
 .btn-claro { background: var(--g-soft-bg); color: var(--g-olive); border-color: var(--g-soft-bd); }
-.btn-claro:hover { background: var(--g); color: #FFFFFF; border-color: var(--g); }
+.btn-claro:hover { background: #5D6725; color: #FFFFFF; border-color: #5D6725; }
 
 .btn-neutro { background: #EAEAEA; color: #A0A0A0; border-color: #CFCFCD; }
 .btn-neutro:disabled { cursor: default; }
@@ -463,8 +483,12 @@ a { color: inherit; text-decoration: none; }
   flex: 0 0 240px;
   display: flex; align-items: center; gap: 7px;
   padding: 0 12px;
+  /* largura cravada em 240px: o título nunca pode empurrar a divisória,
+     que precisa alinhar com a da coluna de pastas logo abaixo */
+  overflow: hidden;
 }
-.cad-topo .esq .nome { font-size: 14px; font-weight: bold; color: #5C5B5B; white-space: nowrap; }
+.cad-topo .esq .nome { font-size: 12.5px; font-weight: bold; color: #5C5B5B; white-space: nowrap;
+                       overflow: hidden; text-overflow: ellipsis; }
 .cad-topo .esq svg { width: 15px; height: 15px; flex: 0 0 auto; color: var(--g); display: block; }
 .cad-topo .dir { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; padding: 0 16px; }
 

@@ -15,7 +15,7 @@
   background: var(--g-soft-bg); color: var(--g-olive);
   display: grid; place-items: center; padding: 0;
 }
-.bt-fechar:hover { background: var(--g); color: #FFFFFF; border-color: var(--g); }
+.bt-fechar:hover { background: #5D6725; color: #FFFFFF; border-color: #5D6725; }
 .bt-fechar svg { width: 11px; height: 11px; }
 
 

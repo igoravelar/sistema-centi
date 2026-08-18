@@ -3,82 +3,1052 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Centi · PO031 - Tramitação de protocolo</title>
-<link rel="stylesheet" href="assets/centi.css?v=2">
-<link rel="stylesheet" href="assets/fluxo.css?v=2">
+<title>Centi · PO050 - Fluxo de Processos</title>
+<link rel="stylesheet" href="assets/centi.css?v=7">
+<link rel="stylesheet" href="assets/fluxo.css?v=5">
 <style>
-  /* o fluxo é o conteúdo da aba Cadastro, e o drawer ocupa 2/3 da área */
-  .cad .fluxo { --drawer-w: 66.667%; }
-  .vazio-vista { flex: 1; display: grid; place-items: center; color: var(--txt-mute); }
-  /* o título abre as informações do protocolo no drawer */
-  .cad-topo .esq .link { text-decoration: underline; cursor: pointer; transition: color .15s ease; }
-  .cad-topo .esq .link:hover { color: var(--g-dark); }
+  /* Pesquisa: filtros à esquerda, Últimas Buscas à direita, separados por
+     uma linha vertical cinza */
+  .filtros { padding: 14px 16px; display: flex; gap: 16px; }
+  /* a divisória vertical atravessa o painel inteiro, de borda a borda */
+  .filtros-esq { flex: 1; min-width: 0; border-right: 1px solid var(--tab-bd);
+                 margin: -14px 0; padding: 14px 16px 14px 0; }
+  .filtros-grid { display: grid; grid-template-columns: 240px 240px 1fr; gap: 10px 12px; }
+  .filtros-grid .cab { font-size: 11.5px; font-weight: bold; color: var(--txt); text-align: left; }
+  .filtros-grid select, .filtros-grid input {
+    height: 32px; border: 1px solid var(--fld-bd); border-radius: 4px;
+    padding: 0 10px; color: var(--txt); background: #FFFFFF; outline: none; width: 100%;
+  }
+  .filtros-grid select:focus, .filtros-grid input:focus { border-color: var(--g); }
+  .filtros .remover { border: 0; background: none; color: #E53935; display: grid; place-items: center; }
+  .filtros .remover svg { width: 15px; height: 15px; }
+  /* linha horizontal: do início do input Campo até a divisória vertical */
+  .filtros .divisor { height: 1px; background: var(--tab-bd); margin-top: 14px; }
+  .filtros .acoes { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+
+  .ultimas {
+    flex: 0 0 330px;
+    background: #FFFFFF; border: 1px solid var(--tab-bd); border-radius: 5px; padding: 10px 14px;
+  }
+  .ultimas h3 { margin: 0 0 8px; font-size: 13px; font-weight: bold; color: var(--txt); display: flex; align-items: center; gap: 8px; }
+  .ultimas h3 svg { width: 14px; height: 14px; }
+  .ultimas .vazio { font-size: 12px; color: var(--txt-mute); text-align: center; padding: 18px 0 12px; }
+
+  .res-topo { display: flex; align-items: center; gap: 12px; padding: 12px 16px; flex: 0 0 auto; }
+  .res-topo h2 { margin: 0; font-size: 18px; font-weight: bold; color: var(--txt); }
+  .res-topo .conta { font-size: 13px; color: var(--txt); }
+  .res-topo .dir { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  .res-topo select { height: 29px; border: 1px solid var(--fld-bd); border-radius: 4px; padding: 0 8px; background: #FFFFFF; color: var(--txt); }
+  .res-corpo { flex: 1; min-height: 0; margin: 0 12px 12px; background: #FFFFFF; border: 1px solid var(--tab-bd); border-radius: 4px; overflow: auto; }
+
+  /* ------------------------------- Cadastro -------------------------------
+     Coluna de pastas à esquerda (como no PO002); as pastas vão surgindo
+     conforme o cadastro avança. */
+  .cad-topo .esq { border-right: 1px solid var(--tab-bd); }
+  .cad-corpo { flex: 1; min-height: 0; display: flex; }
+
+  .arvore { flex: 0 0 240px; overflow: auto; padding: 12px 10px; border-right: 1px solid var(--tab-bd); }
+  .arvore .pasta { display: flex; align-items: center; gap: 9px; font-size: 12px; color: #5C5B5B;
+                   padding: 7px 4px; border-radius: 4px; cursor: pointer; }
+  .arvore .pasta:hover { background: #F1F5E4; }
+  .arvore .pasta .chev { flex: 0 0 13px; display: flex; }
+  .arvore .pasta .chev svg { width: 13px; height: 13px; color: var(--g); }
+  .arvore .pasta .ico { flex: 0 0 15px; display: flex; }
+  .arvore .pasta .ico svg { width: 15px; height: 15px; color: var(--g); }
+  .arvore .n1 { padding-left: 22px; }
+  .arvore .n2 { padding-left: 44px; }
+  .arvore .n3 { padding-left: 66px; }
+  .arvore .n4 { padding-left: 88px; }
+  .arvore .pasta.sel { background: var(--g-soft-bg); color: var(--g-olive); font-weight: bold; }
+
+  /* botão de criar etapa: pílula verde no topo direito do canvas do fluxo */
+  .nova-etapa {
+    position: absolute; top: 10px; right: 10px; z-index: 5;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px;
+    background: var(--g-soft-bg);
+    border: 1px solid var(--g);
+    border-radius: 999px;
+    color: var(--g-dark);
+    font-size: 11px; font-weight: bold; text-transform: uppercase;
+  }
+  .nova-etapa:hover { background: #5D6725; color: #FFFFFF; border-color: #5D6725; }
+  .nova-etapa svg { width: 12px; height: 12px; }
+
+  /* ------------------------- modal Etapa do fluxo -------------------------
+     Cobre a área da aba PO050 inteira (pastas + fluxograma), como no PO011. */
+  .modal-overlay {
+    position: absolute;
+    inset: calc(var(--moldura) + var(--tab-h)) var(--moldura) var(--moldura) calc(var(--moldura) + 30px);
+    background: rgba(0,0,0,.4);
+    border-radius: 5px;
+    display: flex; align-items: stretch;
+    padding: 20px;
+    z-index: 10;
+  }
+  .modal {
+    flex: 1; min-width: 0;
+    background: #FFFFFF;
+    border-radius: 5px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .modal-cab { flex: 0 0 52px; display: flex; align-items: center; gap: 10px; padding: 0 18px; }
+  .modal-cab h2 { margin: 0; flex: 1; font-size: 16px; font-weight: normal; color: var(--txt-strong); }
+
+  .modal-corpo {
+    flex: 1; min-height: 0;
+    display: flex;
+    margin: 0 14px 14px;
+    border: 1px solid var(--tab-bd); border-radius: 5px;
+    overflow: hidden;
+  }
+  .modal-arvore .cab-arv { display: flex; align-items: center; gap: 7px; padding: 6px 4px 10px;
+                           font-size: 12.5px; font-weight: bold; color: #5C5B5B; }
+  .modal-arvore .cab-arv svg { width: 14px; height: 14px; flex: 0 0 auto; }
+  .modal-arvore .cab-arv .mais svg { color: var(--g); }
+  .modal-arvore .cab-arv .chev-arv svg { color: var(--g); }
+
+  .modal-dir { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  /* faixa de ações: um cinza acima do cinza do formulário */
+  .modal-toolbar { flex: 0 0 49px; display: flex; align-items: center; gap: 10px; padding: 0 14px;
+                   background: var(--panel-2); }
+  .modal-form { flex: 1; min-height: 0; overflow: auto; padding: 14px 16px;
+                background: var(--panel-1); display: flex; flex-direction: column; gap: 10px; }
+  .modal-form .campo { max-width: 1100px; }
+
+  /* botão + que aparece ao passar o mouse na linha da pasta */
+  .arvore .pasta { position: relative; }
+  .arvore .pasta .add {
+    position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+    width: 22px; height: 22px; padding: 0;
+    border: 1px solid var(--g-soft-bd); border-radius: 50%;
+    background: var(--g-soft-bg); color: var(--g-olive);
+    display: none; place-items: center;
+  }
+  .arvore .pasta:hover .add { display: grid; }
+  .arvore .pasta .add:hover { background: #5D6725; color: #FFFFFF; }
+  .arvore .pasta .add svg { width: 12px; height: 12px; }
+
+  /* grid de itens da pasta (Documentos / Checklist / Condições) */
+  .modal-grid { flex: 1; min-height: 0; overflow: auto; padding: 14px 16px; background: var(--panel-1); }
+  .modal-grid .grid-box { background: #FFFFFF; border: 1px solid var(--tab-bd); border-radius: 4px; overflow: auto; }
+  .modal-grid .tabela th .funil { float: right; }
+  .modal-grid .tabela th svg { width: 11px; height: 11px; color: var(--txt-mute); }
+  .modal-grid .tabela .cb { width: 34px; text-align: center; }
+
+  /* ícone + (traço verde) ao lado do título do cadastro */
+  .cad-topo .esq .mais-fluxo svg { color: var(--g); }
+
+  /* títulos do topo são links que reabrem o formulário correspondente */
+  .nome-link { text-decoration: underline; cursor: pointer; transition: color .15s ease; }
+  .nome-link:hover { color: var(--g); }
+
+  /* cores dos cards por tipo de etapa: Início é o verde padrão (andamento);
+     Tarefa azul, Decisão laranja, Fim vermelho */
+  .etapa.tarefa, .etapa.decisao, .etapa.fim {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F7F7F7 100%);
+  }
+  .etapa.tarefa .depto, .etapa.decisao .depto, .etapa.fim .depto { color: #5C5B5B; }
+  .etapa.tarefa .depto-lbl, .etapa.tarefa .dias,
+  .etapa.decisao .depto-lbl, .etapa.decisao .dias,
+  .etapa.fim .depto-lbl, .etapa.fim .dias { color: #9A9A9A; }
+  .etapa.tarefa .ponto, .etapa.decisao .ponto, .etapa.fim .ponto { background: #7E7F79; }
+
+  .etapa.tarefa { border: 2px solid var(--selecao); }
+  .etapa.tarefa .nome { color: var(--selecao); }
+  .etapa.tarefa .num { background: var(--selecao); color: #FFFFFF; }
+
+  .etapa.decisao { border: 2px solid #F5A623; }
+  .etapa.decisao .nome { color: #F5A623; }
+  .etapa.decisao .num { background: #F5A623; color: #FFFFFF; }
+
+  .etapa.fim { border: 2px solid #E53935; }
+  .etapa.fim .nome { color: #E53935; }
+  .etapa.fim .num { background: #E53935; color: #FFFFFF; }
+
+  /* linha que liga os cards do fluxo */
+  .liga-cards { width: 2px; height: 56px; background: #BCC8A0; }
+
+  .form { flex: 1; min-width: 0; max-width: 576px; display: flex; flex-direction: column; gap: 10px;
+          overflow: auto; padding: 14px 16px; }
+  .form .rot .ajuda-rot { width: 13px; height: 13px; vertical-align: -2px; margin-left: 5px; color: var(--txt-mute); }
 </style>
 </head>
 <body>
 
 <div class="app"></div>
 
-<script src="assets/shell.js?v=4"></script>
+<script src="assets/shell.js?v=7"></script>
 <script src="assets/fluxo.js?v=2"></script>
 <script>
-/* As abas verticais são desta tela: trocam de vista aqui dentro, sem sair do
-   PO050. O fluxo fica montado o tempo todo, só oculto, para não perder o
-   enquadramento nem o drawer aberto ao ir e voltar. */
-const VISTAS = [
+/* ícones extras desta tela */
+Object.assign(ICO, {
+  desfazer: '<path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/>',
+  checkSimples: '<polyline points="20,6 9,17 4,12"/>',
+});
+
+/**
+ * Ícones do Font Awesome 5 Free (traçados oficiais, licença CC BY 4.0),
+ * mesmos usados na árvore de pastas do PO002.
+ */
+const FA = {
+  pasta: { vb: '0 0 512 512', d: 'M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z' },
+  pastaAberta: { vb: '0 0 576 512', d: 'M572.694 292.093L500.27 416.248A63.997 63.997 0 0 1 444.989 448H45.025c-18.523 0-30.064-20.093-20.731-36.093l72.424-124.155A64 64 0 0 1 152 256h399.964c18.523 0 30.064 20.093 20.73 36.093zM152 224h328v-48c0-26.51-21.49-48-48-48H272l-64-64H48C21.49 64 0 85.49 0 112v278.046l69.077-118.418C86.214 242.25 118.179 224 152 224z' },
+  chevronBaixo: { vb: '0 0 512 512', d: 'M504 256c0 137-111 248-248 248S8 393 8 256 119 8 256 8s248 111 248 248zM273 369.9l135.5-135.5c9.4-9.4 9.4-24.6 0-33.9l-17-17c-9.4-9.4-24.6-9.4-33.9 0L256 285.1 154.4 183.5c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L239 369.9c9.4 9.4 24.6 9.4 34 0z' },
+  chevronDireita: { vb: '0 0 512 512', d: 'M256 8c137 0 248 111 248 248S393 504 256 504 8 393 8 256 119 8 256 8zm113.9 231L234.4 103.5c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L285.1 256 183.5 357.6c-9.4 9.4-9.4 24.6 0 33.9l17 17c9.4 9.4 24.6 9.4 33.9 0L369.9 273c9.4-9.4 9.4-24.6 0-34z' },
+  maisCirculo: { vb: '0 0 512 512', d: 'M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6 0-12-5.4-12-12v-92h-92c-6.6 0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6 0 12 5.4 12 12v92h92c6.6 0 12 5.4 12 12v56z' },
+  check: { vb: '0 0 512 512', d: 'M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 448c-110.532 0-200-89.451-200-200 0-110.532 89.451-200 200-200 110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200zm140.204-254.804c4.686 4.686 4.686 12.284 0 16.971l-159.196 159.196c-4.686 4.686-12.284 4.686-16.971 0l-72.708-72.708c-4.686-4.686-4.686-12.284 0-16.971l16.97-16.97c4.686-4.686 12.284-4.686 16.971 0l47.253 47.253 133.741-133.741c4.686-4.686 12.284-4.686 16.971 0l16.969 16.97z' },
+};
+
+function fa(nome) {
+  const i = FA[nome];
+  return `<svg viewBox="${i.vb}" fill="currentColor" aria-hidden="true"><path d="${i.d}"/></svg>`;
+}
+
+/* Fluxos cadastrados: [id, natureza, nome, status] */
+const RESULTADOS = [
+  ['1', 'ABERTURA DE LICITAÇÃO',                 'ABERTURA DE LICITAÇÃO 01', 'Publicado'],
+  ['3', 'Alvará de Funcionamento',               'Alvará de Funcionamento',  'Rascunho'],
+  ['2', 'AQUISIÇÃO - PD',                        'AQUISIÇÃO MATERIAL',       'Publicado'],
+  ['9', 'TIPO TESTE 2',                          'FLUXO TESTE 2',            'Rascunho'],
+  ['5', 'ISENÇÃO DE IPTU',                       'ISENÇÃO DE IPTU',          'Publicado'],
+  ['4', 'LICENÇA PARA CONSTRUÇÃO',               'Licença para Construção',  'Rascunho'],
+  ['8', 'PAGAMENTO DE HORAS EXTRAS',             'PAGAMENTO DE HORAS EXTRAS','Publicado'],
+  ['7', '1º TERMO ADITIVO DE PRAZO DE CONTRATO', 'TESTE 1 DE FLUXO',         'Rascunho'],
+  ['6', '1º TERMO ADITIVO',                      'TESTE MATHEUS',            'Rascunho'],
+];
+
+const COLUNAS = ['ID', 'NATUREZA', 'NOME', 'STATUS'];
+
+/* ------------------------------- Pesquisa ------------------------------- */
+
+/* a grid nasce vazia; o botão Pesquisar traz os resultados */
+let pesquisou = false;
+
+function pesquisar() { pesquisou = true; render(); }
+
+function pesquisaHTML() {
+  const linhas = !pesquisou ? '' : RESULTADOS.map((r, i) => `
+    <tr${i === 0 ? ' class="sel"' : ''} onclick="abrirCadastro(${i})">${r.map((c, j) =>
+      `<td class="${j === 0 ? 'num' : ''}">${c}</td>`).join('')}</tr>`).join('');
+
+  return `
+  <div class="painel filtros">
+    <div class="filtros-esq">
+      <div class="filtros-grid">
+        <div class="cab">Campo</div><div class="cab">Operação</div><div class="cab">Valor</div>
+
+        <select><option>Nome</option><option>Id</option><option>Natureza</option><option>Status</option></select>
+        <select><option>Contendo</option><option>Igual</option><option>Diferente</option></select>
+        <input placeholder="">
+      </div>
+
+      <div class="divisor"></div>
+
+      <div class="acoes">
+        <button class="btn btn-claro">${svg('mais')} Adicionar Filtro</button>
+        <button class="btn btn-claro">${svg('borracha')} Limpar Filtros</button>
+        <div style="flex:1"></div>
+        <button class="btn btn-primario" onclick="pesquisar()">${svg('lupa')} Pesquisar</button>
+        <button class="btn btn-neutro">${svg('salvar')} Salvar Filtros</button>
+      </div>
+    </div>
+
+    <aside class="ultimas">
+      <h3>${svg('relogio')} Últimas Buscas ${svg('ajuda', 'style="width:13px;height:13px;margin-left:auto"')}</h3>
+      <div class="vazio">Nenhuma busca recente.</div>
+    </aside>
+  </div>
+
+  <div class="painel resultado">
+    <div class="res-topo">
+      <h2>Resultados</h2>
+      <span class="conta">${pesquisou ? `Exibindo ${RESULTADOS.length} de ${RESULTADOS.length}` : 'Nenhum resultado encontrado.'}</span>
+      <div class="dir">
+        <span>Mostrar:</span>
+        <select><option>50</option><option>100</option></select>
+        <button class="btn btn-claro">${svg('download')} Exportar</button>
+      </div>
+    </div>
+    <div class="res-corpo scroll">
+      <table class="tabela">
+        <thead><tr>${COLUNAS.map(c => `<th>${c}</th>`).join('')}</tr></thead>
+        <tbody>${linhas}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+/* ------------------------------- Cadastro ------------------------------- */
+
+/** Campo padrão: rótulo à esquerda, valor à direita (componente do centi.css). */
+function campo({ rot, val = '', ro = false, cod, acoes = [], alto = false, ph = '' }) {
+  const codBox = cod !== undefined
+    ? `<input class="cx cod cod-l${ro ? ' ro' : ''}" value="${cod}" ${ro ? 'readonly' : ''}>` : '';
+  const acts = acoes.map(a => `<button class="act" title="${a.t}">${svg(a.i)}</button>`).join('');
+  return `
+    <div class="campo"${alto ? ' style="min-height:46px"' : ''}>
+      <div class="rot">${rot}</div>
+      <div class="val">
+        ${codBox}
+        <input class="cx${ro ? ' ro' : ''}" value="${val}" placeholder="${ph}" ${ro ? 'readonly' : ''}>
+        ${acts}
+      </div>
+    </div>`;
+}
+
+/** Variante com textarea (Descrição). */
+function campoArea({ rot, val = '', linhas = 4 }) {
+  return `
+    <div class="campo" style="min-height:${linhas * 22 + 16}px">
+      <div class="rot">${rot}</div>
+      <div class="val"><textarea class="cx" rows="${linhas}">${val}</textarea></div>
+    </div>`;
+}
+
+/** Variante com select; `val` marca a opção selecionada. */
+function campoSelect({ rot, opcoes, ro = false, val }) {
+  return `
+    <div class="campo">
+      <div class="rot">${rot}</div>
+      <div class="val">
+        <select class="cx${ro ? ' ro' : ''}" ${ro ? 'disabled' : ''}>
+          ${opcoes.map(o => `<option${o === val ? ' selected' : ''}>${o}</option>`).join('')}
+        </select>
+      </div>
+    </div>`;
+}
+
+/* O Cadastro caminha por etapas: 'fluxo' (dados do fluxo) e, após salvar,
+   'versao' (criação da primeira versão). Em cada etapa o formulário nasce
+   vazio; o primeiro clique em qualquer campo preenche tudo (protótipo) e
+   habilita o Salvar. O Excluir permanece bloqueado — ainda não se pode
+   excluir o fluxo neste momento. */
+let etapa = 'fluxo';
+let preenchido = false;
+let fluxoCriado = false;   /* após o primeiro salvar, o título vira link do formulário */
+
+function preencher() {
+  if (preenchido) return;
+  preenchido = true;
+  render();
+}
+
+function salvarCadastro() {
+  if (!preenchido) return;
+  if (etapa === 'fluxo')  { fluxoCriado = true; etapa = 'versoes'; preenchido = false; expandVersoes = false; render(); }
+  else if (etapa === 'versao') { etapa = 'etapas'; preenchido = false; expandVersoes = true; expandVersao = true; render(); }
+}
+
+/** O título do topo reabre o formulário do fluxo no container. */
+function verFluxo() { etapa = 'fluxo'; if (fluxoCriado) preenchido = true; render(); }
+
+/** O + da pasta Versões abre o formulário de nova versão. */
+function novaVersao() { etapa = 'versao'; preenchido = false; expandVersoes = true; render(); }
+
+/* Expansão das pastas: seta para a direita = recolhida; para baixo = aberta */
+let expandVersoes = false;
+let expandVersao = false;
+
+function toggleVersoes() { expandVersoes = !expandVersoes; render(); }
+function toggleVersao()  { expandVersao = !expandVersao; render(); }
+
+/** Chevron clicável que abre/recolhe o nó. */
+function chevArv(aberto, toggle) {
+  return `<span class="chev" onclick="event.stopPropagation();${toggle}()">${fa(aberto ? 'chevronBaixo' : 'chevronDireita')}</span>`;
+}
+
+/** O Novo reabre o cadastro do fluxo zerado. */
+function novoFluxo() { etapa = 'fluxo'; preenchido = false; fluxoCriado = false; modalEtapa = false; etapasFluxo = []; modalEditIdx = null; irPara('cadastro'); }
+
+/* ------------------------- modal Etapa do fluxo ------------------------- */
+
+let modalEtapa = false;
+let modalVista = 'form';       /* form | doc-grid | doc-form | check-grid | check-form | cond-grid | cond-form */
+let modalPreenchido = false;   /* Título preenchido habilita o Salvar */
+
+/* As etapas criadas alimentam o fluxograma dinamicamente. As duas primeiras
+   são as guiadas do protótipo; da terceira em diante o formulário é livre. */
+let etapasFluxo = [];
+let modalEditIdx = null;   /* índice do card sendo revisto; null = criando */
+
+/* qual formulário a modal usa: etapa1 e etapa2 (guiados) ou 'nova' (livre) */
+let modalAlvo = 'etapa1';
+let modalCriada = false;   /* etapa já existe: título e formulário preenchidos */
+
+function abrirModalEtapa()  {
+  modalEtapa = true; modalVista = 'form'; modalPreenchido = false; modalCriada = false;
+  modalEditIdx = null;
+  modalAlvo = etapasFluxo.length === 0 ? 'etapa1' : etapasFluxo.length === 1 ? 'etapa2' : 'nova';
+  mExp = { docs: false, doc1: false, ass1: false, doc2: false, check: false, cond: false };
+  render();
+}
+
+/** Clique num card do fluxograma reabre a modal da etapa, já preenchida. */
+function abrirCard(i) {
+  modalEtapa = true; modalVista = 'form'; modalPreenchido = true; modalCriada = true;
+  modalEditIdx = i;
+  modalAlvo = i === 0 ? 'etapa1' : i === 1 ? 'etapa2' : 'nova';
+  mExp = { docs: false, doc1: false, ass1: false, doc2: false, check: false, cond: false };
+  render();
+}
+
+/** Habilita o Salvar quando o formulário livre começa a ser preenchido
+    (sem re-render, para não perder a digitação). */
+function habilitarSalvarEtapa() {
+  if (modalPreenchido) return;
+  modalPreenchido = true; modalCriada = true;
+  const bt = document.querySelector('.bt-salvar');
+  if (bt) {
+    bt.disabled = false;
+    bt.className = 'btn btn-primario bt-salvar';
+    bt.setAttribute('onclick', 'salvarModal()');
+  }
+}
+
+/** Lê os campos do formulário livre para montar o card. */
+function lerFormNova() {
+  const v = id => (document.getElementById(id) || {}).value || '';
+  const prazo = v('ne-prazo');
+  const tipo = v('ne-tipo') || 'Tarefa';
+  return {
+    titulo: v('ne-titulo') || 'Nova etapa',
+    tipo,
+    depto: v('ne-depto') || '—',
+    dias: prazo && tipo !== 'Início'
+      ? `${prazo} ${v('ne-tipoprazo') === 'Dias úteis' ? 'dias úteis' : 'dias'}` : null,
+  };
+}
+function fecharModalEtapa() { modalEtapa = false; render(); }
+
+/* voltar ao formulário de uma etapa já criada mantém os dados preenchidos */
+function modalIr(vista) {
+  modalVista = vista;
+  modalPreenchido = vista === 'form' && modalCriada;
+  render();
+}
+
+/* expansão dos nós da árvore da modal (seta direita = recolhido) */
+let mExp = { docs: false, doc1: false, ass1: false, doc2: false, check: false, cond: false };
+
+function mToggle(no) { mExp[no] = !mExp[no]; render(); }
+
+function chevM(no) {
+  return `<span class="chev" onclick="event.stopPropagation();mToggle('${no}')">${fa(mExp[no] ? 'chevronBaixo' : 'chevronDireita')}</span>`;
+}
+
+/** Abre o formulário de um item já cadastrado (vem preenchido). */
+function abrirItemModal(vista) { modalVista = vista; modalPreenchido = true; render(); }
+
+function preencherTituloEtapa() {
+  if (modalPreenchido) return;
+  modalPreenchido = true;
+  modalCriada = true;
+  render();
+}
+
+/** Primeiro clique num formulário de item preenche os dados de exemplo. */
+function preencherModal() {
+  if (modalPreenchido) return;
+  modalPreenchido = true;
+  render();
+}
+
+/** Salvar: no formulário da etapa, fecha a modal e cria (ou atualiza) o card
+    no fluxograma; nos formulários de item, leva à grid da pasta. */
+function salvarModal() {
+  if (!modalPreenchido) return;
+  if (modalVista === 'form') {
+    if (modalEditIdx === null) {
+      if (modalAlvo === 'etapa1')
+        etapasFluxo.push({ titulo: 'Entrada de Protocolo', tipo: 'Início', depto: 'QUALQUER UM', dias: null });
+      else if (modalAlvo === 'etapa2')
+        etapasFluxo.push({ titulo: 'Recebimento do pedido', tipo: 'Tarefa', depto: 'PROTOCOLO CENTRAL', dias: '2 dias' });
+      else
+        etapasFluxo.push(lerFormNova());
+    } else if (modalAlvo === 'nova') {
+      etapasFluxo[modalEditIdx] = lerFormNova();
+    }
+    modalEtapa = false; render();
+  }
+  else if (modalVista === 'ass-form') modalIr('doc-grid');
+  else if (modalVista.endsWith('-form')) modalIr(modalVista.replace('-form', '-grid'));
+}
+
+/** Classe de cor do card conforme o tipo da etapa. */
+function classeTipo(tipo) {
+  return tipo === 'Início' ? 'andamento'
+       : tipo === 'Tarefa' ? 'tarefa'
+       : tipo === 'Decisão' ? 'decisao'
+       : 'fim';
+}
+
+/* itens já cadastrados nas pastas da etapa */
+const DOCS_ETAPA   = [['30', 'REQUERIMENTO DE ISENÇÃO'], ['31', 'CARNÊ DE IPTU']];
+const CHECKS_ETAPA = [['1', 'O requerimento está assinado pelo requerente?'], ['2', 'O carnê do IPTU corresponde ao imóvel do pedido?']];
+const CONDS_ETAPA  = [['1'], ['2']];
+
+function gridModalHTML(colunas, linhas, comCheck) {
+  const ths = (comCheck ? '<th class="cb"><input type="checkbox"></th>' : '') +
+    colunas.map(c => `<th>${c} <span class="funil">${svg('funil')}</span></th>`).join('');
+  const trs = linhas.map(l => `
+    <tr>${comCheck ? '<td class="cb"><input type="checkbox"></td>' : ''}${l.map((v, i) =>
+      `<td class="${i === 0 ? 'num' : ''}">${v}</td>`).join('')}</tr>`).join('');
+  return `
+  <div class="modal-grid scroll">
+    <div class="grid-box">
+      <table class="tabela">
+        <thead><tr>${ths}</tr></thead>
+        <tbody>${trs}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function formEtapaHTML() {
+  return modalAlvo === 'nova' ? formEtapaNovaHTML()
+       : modalAlvo === 'etapa2' ? formEtapa2HTML()
+       : formEtapa1HTML();
+}
+
+/* formulário livre (3ª etapa em diante): os campos são lidos no Salvar */
+function formEtapaNovaHTML() {
+  const e = modalEditIdx !== null ? etapasFluxo[modalEditIdx] : null;
+  const ordem = (modalEditIdx !== null ? modalEditIdx : etapasFluxo.length) + 1;
+  const prazoVal = e && e.dias ? parseInt(e.dias, 10) : '';
+  const tipoOpts = ['Início', 'Tarefa', 'Decisão', 'Fim']
+    .map(o => `<option${e && e.tipo === o ? ' selected' : ''}>${o}</option>`).join('');
+  return [
+    campo({ rot: 'Id', val: e ? String(37 + modalEditIdx) : '0', ro: true }),
+    `<div class="campo">
+       <div class="rot">Título<span class="req">*</span></div>
+       <div class="val"><input id="ne-titulo" class="cx" value="${e ? e.titulo : ''}" oninput="habilitarSalvarEtapa()"></div>
+     </div>`,
+    `<div class="campo">
+       <div class="rot">Tipo de etapa<span class="req">*</span></div>
+       <div class="val"><select id="ne-tipo" class="cx" onchange="habilitarSalvarEtapa()">${tipoOpts}</select></div>
+     </div>`,
+    campo({ rot: 'Ordem<span class="req">*</span>', val: String(ordem) }),
+    `<div class="campo">
+       <div class="rot">Repartição<br>responsável</div>
+       <div class="val">
+         <input class="cx cod cod-l" value="">
+         <input id="ne-depto" class="cx" value="${e && e.depto !== '—' ? e.depto : ''}" placeholder="Pesquisar" oninput="habilitarSalvarEtapa()">
+         <button class="act" title="Pesquisar">${svg('lupa')}</button>
+       </div>
+     </div>`,
+    campo({ rot: 'Responsável<br>específico', cod: '', val: '', ph: 'Pesquisar',
+            acoes: [{ i: 'lupa', t: 'Pesquisar' }] }),
+    campoArea({ rot: 'Critério de<br>conclusão', linhas: 3 }),
+    campoArea({ rot: 'Orientações', linhas: 3 }),
+    campoArea({ rot: 'Alertas', linhas: 3 }),
+    campoSelect({ rot: 'Exige aprovação', opcoes: ['Não', 'Sim'], val: 'Não' }),
+    campoSelect({ rot: 'Bloqueia sem<br>documentos<span class="req">*</span>', opcoes: ['Não', 'Sim'], val: 'Não' }),
+    `<div class="campo">
+       <div class="rot">Prazo<br>(quantidade)</div>
+       <div class="val"><input id="ne-prazo" class="cx" value="${prazoVal}" oninput="habilitarSalvarEtapa()"></div>
+     </div>`,
+    `<div class="campo">
+       <div class="rot">Tipo de prazo</div>
+       <div class="val"><select id="ne-tipoprazo" class="cx">
+         <option>Dias corridos</option><option>Dias úteis</option>
+       </select></div>
+     </div>`,
+  ].join('');
+}
+
+/* 1ª etapa: Entrada de Protocolo (Início) */
+function formEtapa1HTML() {
+  const p = modalPreenchido;
+  return [
+    campo({ rot: 'Id', val: '0', ro: true }),
+    `<div class="campo">
+       <div class="rot">Título<span class="req">*</span></div>
+       <div class="val"><input class="cx" value="${p ? 'Entrada de Protocolo' : ''}" onfocus="preencherTituloEtapa()"></div>
+     </div>`,
+    campoSelect({ rot: 'Tipo de etapa<span class="req">*</span>', opcoes: ['Início', 'Tarefa', 'Decisão', 'Fim'] }),
+    campo({ rot: 'Ordem<span class="req">*</span>', val: '0' }),
+    campo({ rot: 'Repartição<br>responsável', cod: '', val: '', ph: 'Pesquisar',
+            acoes: [{ i: 'lupa', t: 'Pesquisar' }] }),
+    campo({ rot: 'Responsável<br>específico', cod: '', val: '', ph: 'Pesquisar',
+            acoes: [{ i: 'lupa', t: 'Pesquisar' }] }),
+    campoArea({ rot: 'Critério de<br>conclusão', linhas: 3 }),
+    campoArea({ rot: 'Orientações', linhas: 3 }),
+    campoArea({ rot: 'Alertas', linhas: 3 }),
+  ].join('');
+}
+
+/* 2ª etapa: Recebimento do pedido (Tarefa), com os campos de prazo */
+function formEtapa2HTML() {
+  const p = modalPreenchido;
+  const acoesLookup = p
+    ? [{ i: 'lapis', t: 'Editar' }, { i: 'lupa', t: 'Pesquisar' }]
+    : [{ i: 'lupa', t: 'Pesquisar' }];
+  return [
+    campo({ rot: 'Id', val: p ? '37' : '0', ro: true }),
+    `<div class="campo">
+       <div class="rot">Título<span class="req">*</span></div>
+       <div class="val"><input class="cx" value="${p ? 'Recebimento do pedido' : ''}" onfocus="preencherTituloEtapa()"></div>
+     </div>`,
+    campoSelect({ rot: 'Tipo de etapa<span class="req">*</span>', opcoes: ['Início', 'Tarefa', 'Decisão', 'Fim'],
+                  val: p ? 'Tarefa' : 'Início' }),
+    campo({ rot: 'Ordem<span class="req">*</span>', val: p ? '2' : '0' }),
+    campo({ rot: 'Repartição<br>responsável', cod: p ? '1960' : '', val: p ? 'PROTOCOLO CENTRAL' : '',
+            ph: 'Pesquisar', acoes: acoesLookup }),
+    campo({ rot: 'Responsável<br>específico', cod: '', val: '', ph: 'Pesquisar',
+            acoes: [{ i: 'lupa', t: 'Pesquisar' }] }),
+    campoArea({ rot: 'Critério de<br>conclusão', linhas: 3,
+                val: p ? 'Pedido recebido, requerimento assinado pelo requerente e documentação anexada.' : '' }),
+    campoArea({ rot: 'Orientações', linhas: 3,
+                val: p ? 'Confira se o requerimento está assinado pelo próprio requerente ou por procurador com poderes. Sem a assinatura o pedido não pode ser analisado.' : '' }),
+    campoArea({ rot: 'Alertas', linhas: 3,
+                val: p ? 'O prazo deste processo corre em dias corridos, inclusive fins de semana. Não deixe parado.' : '' }),
+    campoSelect({ rot: 'Exige aprovação', opcoes: ['Não', 'Sim'], val: 'Não' }),
+    campoSelect({ rot: 'Bloqueia sem<br>documentos<span class="req">*</span>', opcoes: ['Não', 'Sim'],
+                  val: p ? 'Sim' : 'Não' }),
+    campo({ rot: 'Prazo<br>(quantidade)', val: p ? '2' : '' }),
+    campoSelect({ rot: 'Tipo de prazo', opcoes: ['Dias corridos', 'Dias úteis'], val: 'Dias corridos' }),
+  ].join('');
+}
+
+function formDocHTML() {
+  const p = modalPreenchido;
+  const acoesLookup = p
+    ? [{ i: 'lapis', t: 'Editar' }, { i: 'lupa', t: 'Pesquisar' }]
+    : [{ i: 'lupa', t: 'Pesquisar' }];
+  return [
+    campo({ rot: 'Id', val: p ? '30' : '0', ro: true }),
+    campo({ rot: 'Tipo de<br>documento<span class="req">*</span>', cod: p ? '3107' : '',
+            val: p ? 'REQUERIMENTO DE ISENÇÃO' : '', ph: 'Pesquisar', acoes: acoesLookup }),
+    campoSelect({ rot: 'Requerido<span class="req">*</span>', opcoes: ['Desejável', 'Obrigatório'],
+                  val: p ? 'Obrigatório' : 'Desejável' }),
+    campo({ rot: 'Template', cod: '', val: '', ph: 'Pesquisar', acoes: [{ i: 'lupa', t: 'Pesquisar' }] }),
+    campoArea({ rot: 'Observação', linhas: 3,
+                val: p ? 'Requerimento assinado pelo PRÓPRIO requerente (assinante externo).' : '' }),
+    campoSelect({ rot: 'Exige assinatura<span class="req">*</span>', opcoes: ['Não', 'Sim'],
+                  val: p ? 'Sim' : 'Não' }),
+  ].join('');
+}
+
+function formCheckHTML() {
+  const p = modalPreenchido;
+  return [
+    campo({ rot: 'Id', val: p ? '50' : '0', ro: true }),
+    campo({ rot: 'Ordem<span class="req">*</span>', val: p ? '1' : '0' }),
+    campo({ rot: 'Descrição<span class="req">*</span>',
+            val: p ? 'O requerimento está assinado pelo requerente ou procurador?' : '' }),
+    campoSelect({ rot: 'Obrigatório<span class="req">*</span>', opcoes: ['Não', 'Sim'],
+                  val: p ? 'Sim' : 'Não' }),
+    campoSelect({ rot: 'Exige anotação<span class="req">*</span>', opcoes: ['Não', 'Sim'], val: 'Não' }),
+  ].join('');
+}
+
+function formCondHTML() {
+  const p = modalPreenchido;
+  const acoesLookup = p
+    ? [{ i: 'lapis', t: 'Editar' }, { i: 'lupa', t: 'Pesquisar' }]
+    : [{ i: 'lupa', t: 'Pesquisar' }];
+  return [
+    campo({ rot: 'Id', val: p ? '30' : '0', ro: true }),
+    campo({ rot: 'Ordem de<br>avaliação<span class="req">*</span>', val: p ? '1' : '0' }),
+    campo({ rot: 'Variável', cod: '', val: '', ph: 'Pesquisar', acoes: [{ i: 'lupa', t: 'Pesquisar' }] }),
+    campoSelect({ rot: 'Operador', opcoes: ['Igual', 'Diferente', 'Maior que', 'Menor que'], val: 'Igual' }),
+    campo({ rot: 'Valor', val: '' }),
+    campo({ rot: 'Etapa destino<span class="req">*</span>', cod: p ? '38' : '',
+            val: p ? 'Conferência documental' : '', ph: 'Pesquisar', acoes: acoesLookup }),
+    campo({ rot: 'Descrição legível<span class="req">*</span>',
+            val: p ? 'Pedido recebido: segue para a conferência documental' : '' }),
+    campoSelect({ rot: 'Condição padrão<br>(senão)<span class="req">*</span>', opcoes: ['Não', 'Sim'],
+                  val: p ? 'Sim' : 'Não' }),
+  ].join('');
+}
+
+function formAssHTML() {
+  return [
+    campo({ rot: 'Id', val: '0', ro: true }),
+    campoSelect({ rot: 'Tipo de<br>assinante<span class="req">*</span>',
+                  opcoes: ['Responsável da etapa', 'Requerente', 'Repartição responsável'],
+                  val: 'Responsável da etapa' }),
+  ].join('');
+}
+
+function modalEtapaHTML() {
+  const corpo =
+      modalVista === 'doc-grid'   ? gridModalHTML(['ID', 'TIPO DE DOCUMENTO'], DOCS_ETAPA, true)
+    : modalVista === 'check-grid' ? gridModalHTML(['ID', 'DESCRIÇÃO'], CHECKS_ETAPA, true)
+    : modalVista === 'cond-grid'  ? gridModalHTML(['ID'], CONDS_ETAPA, false)
+    : `<div class="modal-form scroll"${!modalPreenchido && modalVista.endsWith('-form') && modalVista !== 'ass-form' ? ' onclick="preencherModal()"' : ''}>${
+        modalVista === 'doc-form'   ? formDocHTML()
+      : modalVista === 'check-form' ? formCheckHTML()
+      : modalVista === 'cond-form'  ? formCondHTML()
+      : modalVista === 'ass-form'   ? formAssHTML()
+      : formEtapaHTML()}</div>`;
+
+  const btnSalvar = (modalPreenchido && !modalVista.endsWith('-grid'))
+    ? `<button class="btn btn-primario bt-salvar" onclick="salvarModal()">${svg('salvar')} Salvar</button>`
+    : `<button class="btn btn-neutro bt-salvar" disabled>${svg('salvar')} Salvar</button>`;
+
+  /* numa grid de pasta, o Novo habilita e abre o formulário do item */
+  const btnNovo = modalVista.endsWith('-grid')
+    ? `<button class="btn btn-claro" onclick="modalIr('${modalVista.replace('-grid', '-form')}')">${svg('mais')} Novo</button>`
+    : `<button class="btn btn-neutro" disabled>${svg('mais')} Novo</button>`;
+
+  /* pasta de nível 1: expande pelo chevron; a linha abre a grid; o + cria item */
+  const pastaHTML = (rot, no, grid, form) => `
+    <div class="pasta n1${modalVista.startsWith(grid.split('-')[0]) ? ' sel' : ''}" onclick="modalIr('${grid}')">
+      ${chevM(no)}
+      <span class="ico">${fa(mExp[no] ? 'pastaAberta' : 'pasta')}</span>
+      <span>${rot}</span>
+      <button class="add" title="Novo item"
+              onclick="event.stopPropagation();modalIr('${form}')">${svg('mais')}</button>
+    </div>`;
+
+  const itemHTML = (rot, nivel, vista) => `
+    <div class="pasta n${nivel}${modalVista === vista && modalPreenchido ? ' sel' : ''}"
+         onclick="abrirItemModal('${vista}')">
+      <span style="font-weight:bold">+</span>
+      <span>${rot}</span>
+    </div>`;
+
+  /* documentos cadastrados: cada um com sua pasta de assinantes exigidos */
+  const addAss = `
+      <button class="add" title="Novo assinante"
+              onclick="event.stopPropagation();modalIr('ass-form')">${svg('mais')}</button>`;
+
+  const docsArv = !mExp.docs ? '' : `
+    <div class="pasta n2" onclick="abrirItemModal('doc-form')">
+      ${chevM('doc1')}
+      <span style="font-weight:bold">+</span>
+      <span>Desejável</span>
+      ${addAss}
+    </div>
+    ${!mExp.doc1 ? '' : `
+    <div class="pasta n3">
+      ${chevM('ass1')}
+      <span class="ico">${fa(mExp.ass1 ? 'pastaAberta' : 'pasta')}</span>
+      <span>Assinantes exigidos</span>
+      ${addAss}
+    </div>
+    ${!mExp.ass1 ? '' : itemHTML('Responsável da etapa', 4, 'ass-form')}`}
+    <div class="pasta n2" onclick="abrirItemModal('doc-form')">
+      ${chevM('doc2')}
+      <span style="font-weight:bold">+</span>
+      <span>Desejável</span>
+      ${addAss}
+    </div>
+    ${!mExp.doc2 ? '' : `
+    <div class="pasta n3">
+      <span class="ico">${fa('pasta')}</span>
+      <span>Assinantes exigidos</span>
+      ${addAss}
+    </div>`}`;
+
+  const checksArv = !mExp.check ? '' : `
+    ${itemHTML('0 -', 2, 'check-form')}
+    ${itemHTML('0 -', 2, 'check-form')}`;
+
+  const condsArv = !mExp.cond ? '' : itemHTML('0 -', 2, 'cond-form');
+
+  return `
+  <div class="modal-overlay" onclick="if(event.target===this)fecharModalEtapa()">
+    <div class="modal">
+      <div class="modal-cab">
+        <h2>Etapa do fluxo</h2>
+        <button class="bt-fechar" onclick="fecharModalEtapa()" title="Fechar">${svg('x')}</button>
+      </div>
+      <div class="modal-corpo">
+        <div class="arvore modal-arvore scroll">
+          <div class="cab-arv" onclick="modalIr('form')" style="cursor:pointer">
+            <span class="chev-arv" style="display:flex">${fa('chevronBaixo')}</span>
+            <span class="mais" style="display:flex">${svg('mais')}</span>
+            <span class="nome-link">${!modalCriada ? 'Etapa do fluxo'
+              : modalAlvo === 'etapa2' ? 'Recebimento do pedido'
+              : modalAlvo === 'etapa1' ? 'Entrada de Protocolo'
+              : modalEditIdx !== null && etapasFluxo[modalEditIdx] ? etapasFluxo[modalEditIdx].titulo : 'Etapa do fluxo'}</span>
+          </div>
+          ${pastaHTML('Documentos', 'docs', 'doc-grid', 'doc-form')}
+          ${docsArv}
+          ${pastaHTML('Checklist', 'check', 'check-grid', 'check-form')}
+          ${checksArv}
+          ${pastaHTML('Condições (saídas)', 'cond', 'cond-grid', 'cond-form')}
+          ${condsArv}
+        </div>
+        <div class="modal-dir">
+          <div class="modal-toolbar">
+            ${btnNovo}
+            <button class="btn btn-neutro" disabled>${svg('lixeira')} Excluir</button>
+            ${btnSalvar}
+            <div style="flex:1"></div>
+            <button class="btn btn-primario">${svg('gerais')} Operações</button>
+          </div>
+          ${corpo}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function camposFluxoHTML() {
+  const p = preenchido;
+  const acoesLookup = p
+    ? [{ i: 'lapis', t: 'Editar' }, { i: 'lupa', t: 'Pesquisar' }]
+    : [{ i: 'lupa', t: 'Pesquisar' }];
+  return [
+    campo({ rot: 'Id', val: p ? '13' : '0', ro: true }),
+    campo({ rot: 'Natureza<span class="req">*</span>', cod: p ? '1042' : '',
+            val: p ? '7º TERMO ADITIVO PARA SUBSTITUIÇÃO DE VEICULO.' : '', ph: 'Pesquisar',
+            acoes: acoesLookup }),
+    campo({ rot: 'Título<span class="req">*</span>', val: p ? 'Substituição de Veículo de Patrimônio Municipal' : '' }),
+    campoArea({ rot: 'Descrição<span class="req">*</span>',
+                val: p ? 'Este é um fluxo que define todo processo administrativo referente a troca de veículos que são desapropriados por diversos motivos a serem esclarecidos.' : '' }),
+    campoSelect({ rot: 'Status<span class="req">*</span>', opcoes: ['Rascunho', 'Publicado'], ro: true }),
+    campo({ rot: 'Versão vigente<span class="req">*</span>', val: '0', ro: true }),
+    campoSelect({ rot: `Tramitação<br>obrigatória<span class="req">*</span>${svg('ajuda', 'class="ajuda-rot"')}`,
+                  opcoes: ['Não', 'Sim'] }),
+    campo({ rot: 'Localização de<br>arquivamento', cod: p ? '39' : '',
+            val: p ? 'ARQUIVO TRANSPORTE' : '', ph: 'Pesquisar', acoes: acoesLookup }),
+  ].join('');
+}
+
+function camposVersaoHTML() {
+  const p = preenchido;
+  return [
+    campo({ rot: 'Id', val: '0', ro: true }),
+    campo({ rot: 'Versão<span class="req">*</span>', val: '0', ro: true }),
+    campoSelect({ rot: 'Publicada<span class="req">*</span>', opcoes: ['Não', 'Sim'], ro: true }),
+    campo({ rot: 'Data publicação', val: '18/08/2026 13:09:13', ro: true }),
+    campo({ rot: 'Publicado por', cod: '', val: '', ph: 'Pesquisar',
+            acoes: [{ i: 'lupa', t: 'Pesquisar' }] }),
+    campoArea({ rot: 'Nota da versão', val: p ? 'Versão 1.1/2026' : '' }),
+  ].join('');
+}
+
+function arvoreHTML() {
+  /* no cadastro de um fluxo novo a árvore nasce vazia: a pasta Versões só
+     aparece depois que o formulário do fluxo é salvo. Vendo o formulário de
+     um fluxo já criado, a pasta segue lá (fechada: a grid não está à vista) */
+  if (etapa === 'fluxo') {
+    if (!fluxoCriado) return '';
+    const filhos = !expandVersoes ? '' : `
+    <div class="pasta n1">
+      <span class="chev">${fa('chevronDireita')}</span>
+      <span class="chev" style="color:#8A8A8A">${svg('checkSimples')}</span>
+      <span>10 -</span>
+    </div>
+    <div class="pasta n1">
+      <span class="chev">${fa('chevronDireita')}</span>
+      <span class="chev" style="color:#8A8A8A">${svg('checkSimples')}</span>
+      <span>11 -</span>
+    </div>`;
+    return `
+    <div class="pasta n0">
+      <span class="chev" onclick="event.stopPropagation();toggleVersoes()">${fa(expandVersoes ? 'chevronBaixo' : 'chevronDireita')}</span>
+      <span class="ico">${fa('pasta')}</span>
+      <span>Versões</span>
+      <button class="add" title="Nova versão"
+              onclick="event.stopPropagation();novaVersao()">${svg('mais')}</button>
+    </div>${filhos}`;
+  }
+
+  const addVersao = `
+      <button class="add" title="Nova versão"
+              onclick="event.stopPropagation();novaVersao()">${svg('mais')}</button>`;
+
+  /* fluxo salvo: pasta Versões selecionada (grid dela no container = ícone
+     aberto); recolhida por padrão, expande pelo chevron */
+  if (etapa === 'versoes') {
+    const filhos = !expandVersoes ? '' : `
+    <div class="pasta n1">
+      <span class="chev">${fa('chevronDireita')}</span>
+      <span class="chev" style="color:#8A8A8A">${svg('checkSimples')}</span>
+      <span>10 -</span>
+    </div>
+    <div class="pasta n1">
+      <span class="chev">${fa('chevronDireita')}</span>
+      <span class="chev" style="color:#8A8A8A">${svg('checkSimples')}</span>
+      <span>11 -</span>
+    </div>`;
+    return `
+    <div class="pasta n0 sel">
+      ${chevArv(expandVersoes, 'toggleVersoes')}
+      <span class="ico">${fa('pastaAberta')}</span>
+      <span>Versões</span>
+      ${addVersao}
+    </div>${filhos}`;
+  }
+
+  /* formulário de nova versão: o container mostra a versão, não a pasta
+     Versões — ícone dela fica fechado */
+  if (etapa === 'versao') {
+    const filho = !expandVersoes ? '' : `
+    <div class="pasta n1 sel">
+      <span class="chev">${fa('chevronDireita')}</span>
+      <span style="font-weight:bold">+</span>
+      <span>0 -${preenchido ? ' Versão 1.1/2026' : ''}</span>
+    </div>`;
+    return `
+    <div class="pasta n0">
+      ${chevArv(expandVersoes, 'toggleVersoes')}
+      <span class="ico">${fa('pasta')}</span>
+      <span>Versões</span>
+      ${addVersao}
+    </div>${filho}`;
+  }
+
+  /* etapa === 'etapas': o canvas mostra o conteúdo da pasta Etapas — só ela
+     fica com o ícone aberto */
+  const filhosVersao = !expandVersao ? '' : `
+    <div class="pasta n2 sel">
+      <span class="ico">${fa('pastaAberta')}</span>
+      <span>Etapas</span>
+    </div>
+    <div class="pasta n2">
+      <span class="ico">${fa('pasta')}</span>
+      <span>Variáveis</span>
+    </div>
+    <div class="pasta n2">
+      <span class="ico">${fa('pasta')}</span>
+      <span>Paralelismos</span>
+    </div>
+    <div class="pasta n2">
+      <span class="ico">${fa('pasta')}</span>
+      <span>Remapeamentos</span>
+    </div>`;
+  const itemVersao = !expandVersoes ? '' : `
+    <div class="pasta n1">
+      ${chevArv(expandVersao, 'toggleVersao')}
+      <span class="chev" style="color:#8A8A8A">${svg('checkSimples')}</span>
+      <span>0 - Versão 1.1/2026</span>
+    </div>${filhosVersao}`;
+  return `
+    <div class="pasta n0">
+      ${chevArv(expandVersoes, 'toggleVersoes')}
+      <span class="ico">${fa('pasta')}</span>
+      <span>Versões</span>
+      ${addVersao}
+    </div>${itemVersao}`;
+}
+
+function cadastroHTML() {
+  /* depois de salvo, o cabeçalho mostra o título dado ao fluxo, como link
+     que reabre o formulário */
+  const titulo = !fluxoCriado
+    ? `<span class="mais-fluxo" style="display:flex">${svg('mais')}</span>
+       <span class="nome nome-link" onclick="verFluxo()">Fluxo do processo</span>`
+    : `${svg('checkSimples', 'style="width:17px;height:17px"')}
+       <span class="nome nome-link" onclick="verFluxo()"
+             title="Substituição de Veículo de Patrimônio Municipal">Substituição de Veículo de Patrimônio Municipal</span>`;
+
+  const btnSalvar = preenchido
+    ? `<button class="btn btn-primario" onclick="salvarCadastro()">${svg('salvar')} Salvar${etapa === 'versao' ? '(1)' : ''}</button>`
+    : `<button class="btn btn-neutro" disabled>${svg('salvar')} Salvar</button>`;
+
+  /* na etapa 'etapas' o lado direito é o canvas do fluxograma (vazio, no
+     desenho do PO051), com o botão de Nova Etapa no topo direito */
+  /* cards das etapas criadas, no desenho do PO051, empilhados a partir do
+     alto do canvas e ligados por linhas; a cor segue o tipo da etapa e a
+     etapa de Início não marca tempo */
+  const cards = etapasFluxo.map((e, i) => `
+      ${i > 0 ? '<div class="liga-cards"></div>' : ''}
+      <div class="etapa ${classeTipo(e.tipo)}" style="position:relative;left:0;top:0;width:190px;height:112px;flex:0 0 auto"
+           onclick="abrirCard(${i})">
+        <span class="num">${i + 1}</span>
+        ${e.dias ? `<span class="dias">${svg('cronometro')}${e.dias}</span>` : ''}
+        <span class="nome">${e.titulo}</span>
+        <span class="rodape">
+          <span class="depto-lbl">DEPTO</span>
+          <span class="depto">${e.depto}</span>
+        </span>
+        <span class="ponto"></span>
+      </div>`).join('');
+
+  const card = !etapasFluxo.length ? '' : `
+    <div style="position:absolute;left:50%;top:calc(28% - 56px);transform:translateX(-50%);
+                display:flex;flex-direction:column;align-items:center">
+      ${cards}
+    </div>`;
+
+  const corpo = etapa === 'etapas'
+    ? `<div class="fluxo">
+         <div class="bpmn-wrap">${card}</div>
+         <div class="zoom-ctrl">
+           <button title="Aproximar">${svg('mais_zoom', 'stroke-width="2.6"')}</button>
+           <button title="Afastar">${svg('menos_zoom', 'stroke-width="2.6"')}</button>
+           <button title="Tela cheia">${svg('telaCheia')}</button>
+         </div>
+         <button class="nova-etapa" onclick="abrirModalEtapa()">${svg('mais')} Nova Etapa</button>
+       </div>`
+    : etapa === 'versoes'
+    ? gridModalHTML(['ID', 'VERSÃO'], [['10', '0'], ['11', '0']], true)
+    : `<div class="form scroll"${preenchido ? '' : ' onclick="preencher()"'}>
+         ${etapa === 'fluxo' ? camposFluxoHTML() : camposVersaoHTML()}
+       </div>`;
+
+  return `
+  <div class="cad">
+    <div class="cad-topo">
+      <div class="esq">
+        ${fa('chevronBaixo')}
+        ${titulo}
+      </div>
+      <div class="dir">
+        <button class="btn btn-claro" onclick="novoFluxo()">${svg('mais')} Novo</button>
+        <button class="btn btn-neutro" disabled>${svg('lixeira')} Excluir</button>
+        ${btnSalvar}
+        <div style="flex:1"></div>
+        <button class="btn btn-claro">${svg('desfazer')} Desfazer</button>
+        <button class="btn btn-primario">${svg('gerais')} Operações</button>
+      </div>
+    </div>
+
+    <div class="cad-corpo">
+      <div class="arvore scroll">${arvoreHTML()}</div>
+      ${corpo}
+    </div>
+  </div>`;
+}
+
+/* --------------------------------- shell --------------------------------- */
+
+const VTABS = [
   { id: 'pesquisa', rot: 'Pesquisa', ico: 'lupa' },
   { id: 'cadastro', rot: 'Cadastro', ico: 'lapis' },
   { id: 'notas',    rot: 'Notas',    ico: 'notas' },
   { id: 'vicenti',  rot: 'ViCenti',  ico: 'robo' },
 ];
 
-let vista = 'cadastro';
+let vista = 'pesquisa';
 
-function irPara(id) {
-  vista = id;
-  main.querySelectorAll('.vtab').forEach((b, i) => b.classList.toggle('ativa', VISTAS[i].id === id));
-  main.querySelector('.cad').hidden = id !== 'cadastro';
+function render() {
+  const vt = VTABS.map(v => `
+    <button class="vtab${v.id === vista ? ' ativa' : ''}" onclick="irPara('${v.id}')">
+      ${svg(v.ico)}<span>${v.rot}</span>
+    </button>`).join('');
 
-  const outra = main.querySelector('.vazio-vista');
-  outra.hidden = id === 'cadastro';
-  outra.textContent = (VISTAS.find(v => v.id === id) || {}).rot + ' — em construção';
+  const corpo = vista === 'pesquisa' ? pesquisaHTML()
+              : vista === 'cadastro' ? cadastroHTML()
+              : `<div class="painel" style="flex:1;display:grid;place-items:center;color:var(--txt-mute)">
+                   ${VTABS.find(v => v.id === vista).rot} — em construção
+                 </div>`;
+
+  main.querySelector('.tela')?.remove();
+  main.insertAdjacentHTML('beforeend',
+    `<div class="tela"><div class="vtabs">${vt}</div><div class="conteudo">${corpo}</div>
+     ${modalEtapa && vista === 'cadastro' ? modalEtapaHTML() : ''}</div>`);
 }
 
+function irPara(id) { vista = id; render(); }
+
+/** Clique numa linha de resultado leva ao Cadastro do fluxo. */
+function abrirCadastro(i) { irPara('cadastro'); }
+
 const main = montarShell('po050');
+render();
 
-main.insertAdjacentHTML('beforeend', `
-  <div class="tela">
-    <div class="vtabs">
-      ${VISTAS.map(v => `
-        <button class="vtab${v.id === vista ? ' ativa' : ''}" onclick="irPara('${v.id}')">
-          ${svg(v.ico)}<span>${v.rot}</span>
-        </button>`).join('')}
-    </div>
-
-    <div class="conteudo">
-      <div class="cad">
-        <div class="cad-topo">
-          <div class="esq">
-            ${svg('fluxograma')}
-            <a class="nome link" onclick="abrirProtocolo()">Protocolo - 2292416</a>
-          </div>
-          <div class="dir">
-            <button class="btn btn-claro">${svg('mais')} Novo</button>
-            <button class="btn btn-claro">${svg('lixeira')} Excluir</button>
-            <button class="btn btn-claro">${svg('salvar')} Salvar</button>
-            <div style="flex:1"></div>
-            <button class="btn btn-primario">${svg('gerais')} Operações</button>
-          </div>
-        </div>
-
-        <div class="fluxo"></div>
-      </div>
-
-      <div class="painel vazio-vista" hidden></div>
-    </div>
-  </div>`);
-
-montarFluxo(main.querySelector('.fluxo'));
+/* estado inicial via ?view=cadastro */
+const q = new URLSearchParams(location.search).get('view');
+if (q && VTABS.some(v => v.id === q)) irPara(q);
 </script>
 </body>
 </html>

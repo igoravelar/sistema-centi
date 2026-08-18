@@ -22,6 +22,7 @@ const ICO = {
   arquivo: '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14,2 14,8 20,8"/>',
   fluxo: '<rect x="2" y="3" width="7" height="6" rx="1"/><rect x="15" y="15" width="7" height="6" rx="1"/><path d="M5.5 9v5a4 4 0 0 0 4 4H15"/>',
   fluxograma: '<rect x="9" y="2" width="6" height="5" rx="1"/><rect x="2" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="6" height="5" rx="1"/><path d="M12 7v3"/><path d="M5 16v-2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v2"/>',
+  tramitacao: '<rect x="2" y="8.5" width="7" height="7" rx="1.5"/><rect x="15" y="8.5" width="7" height="7" rx="1.5"/><line x1="9" y1="12" x2="13" y2="12"/><polyline points="11.5,9.5 14,12 11.5,14.5"/>',
   lupa: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
   lapis: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/>',
   notas: '<line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/>',
@@ -60,7 +61,7 @@ function svg(nome, extra = '') {
 const MODULOS = [
   { nome: 'Gerais',              ico: 'gerais' },
   { nome: 'Protocolo',           ico: 'protocolo', href: 'protocolo.html',
-    paginas: ['protocolo.html', 'po002.html', 'po011.html', 'po050.html'] },
+    paginas: ['protocolo.html', 'po002.html', 'po011.html', 'po050.html', 'po051.html'] },
   { nome: 'Planejamento',        ico: 'planejamento',  chev: true },
   { nome: 'Compras/Licitação',   ico: 'compras',       chev: true },
   { nome: 'Folha de Pagamento',  ico: 'folha',         chev: true },
@@ -82,7 +83,8 @@ const ABAS = {
   protocolo: { ico: 'protocolo', rotulo: 'Protocolo', href: 'protocolo.html', fechavel: true },
   po002:     { ico: 'arquivo',   rotulo: 'PO002 - Protocolo', href: 'po002.html', fechavel: true },
   po011:     { ico: 'fluxo',     rotulo: 'PO011 - Central de Protocolos', href: 'po011.html', fechavel: true },
-  po050:     { ico: 'fluxograma', rotulo: 'PO031 - Tramitação de protocolo', href: 'po050.html', fechavel: true },
+  po050:     { ico: 'fluxo',      rotulo: 'PO050 - Fluxo de Processos', href: 'po050.html', fechavel: true },
+  po051:     { ico: 'tramitacao', rotulo: 'PO051 - Tramitação de Protocolo', href: 'po051.html', fechavel: true },
 };
 
 function topbarHTML() {
@@ -146,13 +148,20 @@ function guardarAbas(ids) {
   catch { /* sessão indisponível: as abas valem só nesta página */ }
 }
 
-/** Fecha a aba pelo ×. Se era a aba em foco, volta para o Início. */
+/** Fecha a aba pelo ×. Se era a aba em foco, abre a aba imediatamente à
+    esquerda; quando a vizinha é Notificações (que não é uma tela), cai na
+    aba de Início. */
 function fecharAba(id, botao) {
-  guardarAbas(abasAbertas().filter(x => x !== id));
+  const antes = abasAbertas();
+  guardarAbas(antes.filter(x => x !== id));
   const aba = botao.closest('.doctab');
   const eraAtiva = aba.classList.contains('ativa');
   aba.remove();
-  if (eraAtiva) location.href = 'index.html';
+  if (!eraAtiva) return;
+  const ordem = ['home', 'notif', ...antes];
+  let i = ordem.indexOf(id) - 1;
+  while (i > 0 && (ordem[i] === 'notif' || !ABAS[ordem[i]])) i--;
+  location.href = ABAS[ordem[i]] ? ABAS[ordem[i]].href : ABAS.home.href;
 }
 
 function doctabsHTML(atual, abertas) {

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centi · PO051 - Tramitação de Protocolo</title>
+<link rel="stylesheet" href="assets/centi.css?v=7">
+<link rel="stylesheet" href="assets/fluxo.css?v=5">
+<style>
+  /* o fluxo é o conteúdo da aba Cadastro, e o drawer ocupa 2/3 da área */
+  .cad .fluxo { --drawer-w: 66.667%; }
+  .vazio-vista { flex: 1; display: grid; place-items: center; color: var(--txt-mute); }
+  /* o título abre as informações do protocolo no drawer */
+  .cad-topo .esq .link { text-decoration: underline; cursor: pointer; transition: color .15s ease; }
+  .cad-topo .esq .link:hover { color: var(--g-dark); }
+</style>
+</head>
+<body>
+
+<div class="app"></div>
+
+<script src="assets/shell.js?v=7"></script>
+<script src="assets/fluxo.js?v=2"></script>
+<script>
+/* As abas verticais são desta tela: trocam de vista aqui dentro, sem sair do
+   PO051. O fluxo fica montado o tempo todo, só oculto, para não perder o
+   enquadramento nem o drawer aberto ao ir e voltar. */
+const VISTAS = [
+  { id: 'pesquisa', rot: 'Pesquisa', ico: 'lupa' },
+  { id: 'cadastro', rot: 'Cadastro', ico: 'lapis' },
+  { id: 'notas',    rot: 'Notas',    ico: 'notas' },
+  { id: 'vicenti',  rot: 'ViCenti',  ico: 'robo' },
+];
+
+let vista = 'cadastro';
+
+function irPara(id) {
+  vista = id;
+  main.querySelectorAll('.vtab').forEach((b, i) => b.classList.toggle('ativa', VISTAS[i].id === id));
+  main.querySelector('.cad').hidden = id !== 'cadastro';
+
+  const outra = main.querySelector('.vazio-vista');
+  outra.hidden = id === 'cadastro';
+  outra.textContent = (VISTAS.find(v => v.id === id) || {}).rot + ' — em construção';
+}
+
+const main = montarShell('po051');
+
+main.insertAdjacentHTML('beforeend', `
+  <div class="tela">
+    <div class="vtabs">
+      ${VISTAS.map(v => `
+        <button class="vtab${v.id === vista ? ' ativa' : ''}" onclick="irPara('${v.id}')">
+          ${svg(v.ico)}<span>${v.rot}</span>
+        </button>`).join('')}
+    </div>
+
+    <div class="conteudo">
+      <div class="cad">
+        <div class="cad-topo">
+          <div class="esq">
+            ${svg('fluxograma')}
+            <a class="nome link" onclick="abrirProtocolo()">Protocolo - 2292416</a>
+          </div>
+          <div class="dir">
+            <button class="btn btn-claro">${svg('mais')} Novo</button>
+            <button class="btn btn-claro">${svg('lixeira')} Excluir</button>
+            <button class="btn btn-claro">${svg('salvar')} Salvar</button>
+            <div style="flex:1"></div>
+            <button class="btn btn-primario">${svg('gerais')} Operações</button>
+          </div>
+        </div>
+
+        <div class="fluxo"></div>
+      </div>
+
+      <div class="painel vazio-vista" hidden></div>
+    </div>
+  </div>`);
+
+montarFluxo(main.querySelector('.fluxo'));
+</script>
+</body>
+</html>

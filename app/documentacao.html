@@ -169,7 +169,7 @@ body {
   stroke-linejoin: round;
 }
 
-.sidebar .grupo + .grupo { margin-top: 6px; }
+.sidebar .grupo + .grupo { margin-top: 10px; }
 
 .sidebar .grupo-titulo {
   display: flex;
@@ -212,15 +212,18 @@ body {
 
 .sidebar .grupo.fechado .dobra { grid-template-rows: 0fr; }
 
-/* submenus alinhados na linha vertical cinza */
+/* submenus alinhados na linha vertical cinza; sem margens verticais na ul,
+   para a dobra fechada colapsar a zero — o respiro fica nos itens */
 .sidebar ul {
   list-style: none;
-  margin: 2px 0 10px 12px;
+  margin: 0 0 0 12px;
   padding: 0 0 0 14px;
   border-left: 1px solid var(--cinza-linha);
   overflow: hidden;
   min-height: 0;
 }
+
+.sidebar ul li:last-child { padding-bottom: 3px; }
 
 .sidebar ul a {
   display: block;
@@ -312,12 +315,22 @@ body {
 
 /* subseção: pertence à etapa anterior, sem filete divisor */
 .pagina section.sub {
-  margin-top: 10px;
+  margin-top: 44px;
   border-top: none;
   padding-top: 0;
 }
 
 .pagina section.sub h3 { margin-top: 0; }
+
+/* marcador acima do título do subtópico */
+.pagina section.sub h3::before {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 3px;
+  margin-bottom: 7px;
+  background: #BFD634;
+}
 
 .pagina code {
   background: #F6F8EE;
@@ -340,6 +353,82 @@ body {
 }
 
 .pagina .definicao p { margin: 0; }
+
+/* fieldset de riscos: moldura verde clara com título em negrito */
+.pagina fieldset.riscos {
+  margin: 0 0 22px;
+  padding: 12px 20px 16px;
+  border: 1px solid #D5E690;
+  border-radius: 10px;
+}
+
+.pagina fieldset.riscos legend {
+  padding: 0 8px;
+  font-weight: 700;
+  color: var(--txt-strong);
+}
+
+.pagina fieldset.riscos ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.pagina fieldset.riscos li { margin: 6px 0; }
+
+.pagina fieldset.riscos li::marker { color: var(--verde); }
+
+/* cards do modelo de comercialização */
+.cards-modelo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 14px;
+  margin: 0 0 20px;
+}
+
+.cards-modelo .card {
+  background: #F5FCD9;
+  border-left: 3px solid var(--verde);
+  border-radius: 0 10px 10px 0;
+  padding: 16px 18px;
+}
+
+.cards-modelo .card h4 {
+  margin: 0 0 8px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #3F440C;
+}
+
+.cards-modelo .card p {
+  margin: 0;
+  font-size: 12.5px;
+}
+
+/* fluxo de palavras: resumo em etapas encadeadas por setas */
+.fluxo-palavras {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 20px;
+}
+
+.fluxo-palavras .palavra {
+  background: #F3FFC3;
+  border: 1px solid #C9DA86;
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: #6D8415;
+  white-space: nowrap;
+}
+
+.fluxo-palavras .seta-fluxo {
+  color: var(--verde);
+  font-weight: 700;
+}
 
 .pagina .nota {
   background: #FDFBEB;
@@ -452,12 +541,78 @@ body {
     <section id="etapa1-descricao" class="sub">
       <h3>Descrição do Produto</h3>
       <div class="definicao">
-        <p>É o 3º nível da solução de protocolo municipal da CENTI, que permite tramitar processos administrativos por fluxos configuráveis e visuais, orientando os servidores em cada etapa e permitindo que diferentes departamentos trabalhem de forma integrada e simultânea, com controle de prazos e documentos e menos esperas, retrabalhos e encaminhamentos desnecessários.</p>
+        <p>É o 3º nível da ferramenta de protocolo municipal da CENTI, que permite tramitar processos administrativos por fluxos configuráveis e visuais, orientando os servidores em cada etapa e permitindo que diferentes departamentos trabalhem de forma integrada e simultânea, com controle de prazos e documentos e menos esperas, retrabalhos e encaminhamentos desnecessários.</p>
       </div>
       <p>O Protocolo Ágil é a solução da CENTI para tornar a tramitação de processos administrativos mais simples, organizada e eficiente, eliminando esperas, retrabalhos e obstáculos que podem ser evitados no dia a dia da prefeitura.</p>
       <p>Mais do que apenas digitalizar documentos, o Protocolo Ágil orienta cada processo pelo caminho adequado, deixando claro o que precisa ser feito, por quem, em qual etapa e dentro de qual prazo, permitindo que atividades sejam realizadas simultaneamente quando possível, que decisões sejam apoiadas por checklists, documentos e regras, e que toda a comunicação e o acompanhamento aconteçam em um único ambiente.</p>
       <p>O resultado é uma gestão ágil com menos processos parados, menos idas e vindas, mais previsibilidade, rastreabilidade e controle, dando aos gestores uma visão clara da operação e aos servidores mais segurança para executar suas responsabilidades.</p>
       <p>Porque ser ágil não significa apenas fazer mais rápido: significa fazer o processo avançar, sem interrupções e pelo caminho certo.</p>
+    </section>
+
+    <section id="etapa1-problema" class="sub">
+      <h3>O Problema</h3>
+      <p>Quando a tramitação de processos não é bem gerida, os efeitos vão além do dia a dia operacional: geram risco tanto para a prefeitura quanto para a Centi. Os tópicos abaixo separam esses riscos por quem os sofre diretamente.</p>
+
+      <fieldset class="riscos">
+        <legend>Riscos para a prefeitura</legend>
+        <ul>
+          <li>Retrabalho e perda de tempo de servidor com processos parados ou sem visibilidade;</li>
+          <li>Atraso em decisões críticas — pagamentos, obras, licitações — por processos perdidos entre setores;</li>
+          <li>Exposição a glosas e questionamentos do Tribunal de Contas por falhas de rito descobertas tarde;</li>
+          <li>Insegurança jurídica em assinaturas feitas fora do sistema, por falta de alternativa para quem não tem login;</li>
+          <li>Perda de rastreabilidade: decisões e comunicações que não ficam registradas oficialmente;</li>
+          <li>Dependência de equipe técnica para qualquer implantação ou mudança, travando a modernização.</li>
+        </ul>
+      </fieldset>
+
+      <fieldset class="riscos">
+        <legend>Riscos para a Centi</legend>
+        <ul>
+          <li>Insatisfação do cliente e risco de não renovação de contrato;</li>
+          <li>Casos de referência negativos, dificultando a venda para novos municípios;</li>
+          <li>Mais chamados de suporte e maior custo operacional com problemas evitáveis;</li>
+          <li>Associação indevida da marca Centi a falhas de compliance que são do processo, não do sistema;</li>
+          <li>Menor adoção do produto, prejudicando métricas de sucesso e cases comerciais;</li>
+          <li>Perda de oportunidade de cross-sell para o SIAFIC, já que cliente insatisfeito não expande.</li>
+        </ul>
+      </fieldset>
+    </section>
+
+    <section id="etapa1-proposta" class="sub">
+      <h3>Proposta de Valor</h3>
+      <div class="fluxo-palavras">
+        <span class="palavra">ORGANIZAR</span><span class="seta-fluxo">→</span>
+        <span class="palavra">ORIENTAR</span><span class="seta-fluxo">→</span>
+        <span class="palavra">INTEGRAR</span><span class="seta-fluxo">→</span>
+        <span class="palavra">CONTROLAR</span><span class="seta-fluxo">→</span>
+        <span class="palavra">ACELERAR</span><span class="seta-fluxo">→</span>
+        <span class="palavra">ENTREGAR</span>
+      </div>
+      <p>Permitir que prefeituras organizem e acelerem a tramitação de processos administrativos, substituindo fluxos burocráticos, fragmentados e difíceis de acompanhar por uma jornada visual, estruturada e orientada, na qual cada servidor sabe o que precisa fazer, em qual etapa, com quais documentos e dentro de quais prazos. Dessa forma, a prefeitura reduz esperas, retrabalhos e encaminhamentos desnecessários, aumenta a previsibilidade e o controle sobre seus processos e proporciona uma gestão mais eficiente, transparente e moderna, com uma solução de implantação simples e acessível também para municípios de pequeno e médio porte.</p>
+    </section>
+
+    <section id="etapa1-comercializacao" class="sub">
+      <h3>Estratégia de Monetização</h3>
+      <p>Considerando que ~95% do mercado é de pequeno/médio porte e com orçamento limitado, a hipótese de partida é modelo de assinatura recorrente (mensal ou anual) por município, em faixas por porte/população. Vejam os detalhes abaixo:</p>
+
+      <div class="cards-modelo">
+        <div class="card">
+          <h4>Receita recorrente (SaaS)</h4>
+          <p>Assinatura mensal por município. Contratos públicos tendem à longa duração e renovação — o LTV do cliente público, bem atendido, é dos mais altos que existem.</p>
+        </div>
+        <div class="card">
+          <h4>Canais: venda direta e licitação</h4>
+          <p>Venda direta nos enquadramentos que o valor permite, e participação em licitações para os demais — os dois caminhos clássicos e conhecidos do setor.</p>
+        </div>
+        <div class="card">
+          <h4>Tíquete acessível, base pulverizada</h4>
+          <p>O produto foi desenhado para caber no orçamento do município pequeno — o segmento com menos concorrência real e maior volume de portas.</p>
+        </div>
+        <div class="card">
+          <h4>Expansão natural</h4>
+          <p>Câmaras, autarquias, fundações e consórcios usam a mesma estrutura — cada município conquistado abre entidades-irmãs. E o produto é a porta de entrada para o portfólio maior da Centi.</p>
+        </div>
+      </div>
     </section>
 
     <section id="etapa2">
@@ -538,7 +693,12 @@ body {
 <script>
 /* Menu lateral: etapas do projeto com submenus ancorados nas seções */
 const MENU = [
-  { titulo: '#1 Modelo de Negócios',        itens: [{ id: 'etapa1-descricao', txt: 'Descrição do Produto' }] },
+  { titulo: '#1 Modelo de Negócios',        itens: [
+    { id: 'etapa1-descricao', txt: 'Descrição do Produto' },
+    { id: 'etapa1-problema',  txt: 'O Problema' },
+    { id: 'etapa1-proposta',  txt: 'Proposta de Valor' },
+    { id: 'etapa1-comercializacao', txt: 'Estratégia de Monetização' },
+  ] },
   { titulo: '#2 Inteligência de Mercado',   itens: [{ id: 'etapa2',  txt: 'Visão geral' }] },
   { titulo: '#3 Estratégia do Produto',     itens: [{ id: 'etapa3',  txt: 'Visão geral' }] },
   { titulo: '#4 Modelagem do produto',      itens: [{ id: 'etapa4',  txt: 'Visão geral' }] },
