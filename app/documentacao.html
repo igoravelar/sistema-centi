@@ -18,11 +18,12 @@
   --txt-strong:  #333333;
   --txt-mute:    #8A8A8A;
   --topbar-h:    64px;
+  --faixa-h:     36px;
   --sidebar-w:   280px;
 }
 
 html {
-  scroll-padding-top: calc(var(--topbar-h) + 24px);
+  scroll-padding-top: calc(var(--topbar-h) + var(--faixa-h) + 24px);
 }
 
 body {
@@ -43,7 +44,38 @@ body {
   align-items: center;
   padding: 0 28px;
   background: #FFFFFF;
-  border-bottom: 2px solid var(--verde-linha);
+  z-index: 10;
+}
+
+/* faixa verde: da linha separadora do menu até a borda direita */
+.faixa {
+  position: fixed;
+  top: var(--topbar-h);
+  left: var(--sidebar-w);
+  right: 0;
+  height: var(--faixa-h);
+  display: flex;
+  align-items: center;
+  padding-left: 50px;
+  background: var(--verde-linha);
+  z-index: 10;
+}
+
+.faixa p {
+  margin: 0;
+  font-size: 14px;
+  font-style: italic;
+  color: #5D6725;
+}
+
+/* linha fina acima do menu: da borda esquerda até a linha separadora */
+.linha-menu {
+  position: fixed;
+  top: var(--topbar-h);
+  left: 0;
+  width: var(--sidebar-w);
+  height: 2px;
+  background: var(--verde-linha);
   z-index: 10;
 }
 
@@ -54,8 +86,7 @@ body {
 
 .topbar h1 {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  left: calc(var(--sidebar-w) + 50px);
   margin: 0;
   font-size: 22px;
   font-weight: 700;
@@ -84,7 +115,7 @@ body {
 /* ── menu lateral ───────────────────────────────────────── */
 .sidebar {
   position: fixed;
-  top: var(--topbar-h);
+  top: calc(var(--topbar-h) + 2px);
   bottom: 0;
   left: 0;
   width: var(--sidebar-w);
@@ -172,6 +203,15 @@ body {
   stroke-linejoin: round;
 }
 
+/* dobra do accordion: anima a abertura empurrando os itens abaixo */
+.sidebar .dobra {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows .35s ease;
+}
+
+.sidebar .grupo.fechado .dobra { grid-template-rows: 0fr; }
+
 /* submenus alinhados na linha vertical cinza */
 .sidebar ul {
   list-style: none;
@@ -179,9 +219,8 @@ body {
   padding: 0 0 0 14px;
   border-left: 1px solid var(--cinza-linha);
   overflow: hidden;
+  min-height: 0;
 }
-
-.sidebar .grupo.fechado ul { display: none; }
 
 .sidebar ul a {
   display: block;
@@ -205,7 +244,7 @@ body {
 /* ── conteúdo ───────────────────────────────────────────── */
 .conteudo {
   margin-left: var(--sidebar-w);
-  padding: var(--topbar-h) 40px 90px;
+  padding: calc(var(--topbar-h) + var(--faixa-h)) 40px 90px 50px;
 }
 
 /* ilustração de abertura: fluxograma sobre degradê verde */
@@ -225,7 +264,7 @@ body {
 
 .pagina {
   max-width: 780px;
-  margin: 0 auto;
+  margin: 0;
 }
 
 .pagina h2 {
@@ -260,6 +299,7 @@ body {
 
 .pagina .lead {
   font-size: 14.5px;
+  font-style: italic;
   color: var(--txt-mute);
   margin-bottom: 24px;
 }
@@ -270,6 +310,15 @@ body {
   padding-top: 10px;
 }
 
+/* subseção: pertence à etapa anterior, sem filete divisor */
+.pagina section.sub {
+  margin-top: 10px;
+  border-top: none;
+  padding-top: 0;
+}
+
+.pagina section.sub h3 { margin-top: 0; }
+
 .pagina code {
   background: #F6F8EE;
   border: 1px solid var(--verde-linha);
@@ -278,6 +327,19 @@ body {
   font-size: 12px;
   color: #6D8415;
 }
+
+/* box de definição: resumo objetivo destacado em verde */
+.pagina .definicao {
+  background: #F3FFC3;
+  border: 1px solid #D5E690;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin: 0 0 20px;
+  font-style: italic;
+  color: #5D6725;
+}
+
+.pagina .definicao p { margin: 0; }
 
 .pagina .nota {
   background: #FDFBEB;
@@ -289,8 +351,10 @@ body {
 
 @media (max-width: 920px) {
   .sidebar { display: none; }
+  .linha-menu { display: none; }
+  .faixa { left: 0; padding-left: 20px; }
   .conteudo { margin-left: 0; }
-  .topbar h1 { position: static; transform: none; margin-left: 18px; }
+  .topbar h1 { position: static; margin-left: 18px; }
 }
 </style>
 </head>
@@ -301,8 +365,13 @@ body {
     <img src="assets/img/marca-centi.png" alt="Centi">
   </a>
   <h1>Documentação Novo Protocolo</h1>
-  <div class="atualizado">Atualizado em: <span class="badge-data">17/08/2026</span></div>
+  <div class="atualizado">Atualizado em: <span class="badge-data">18/08/2026</span></div>
 </header>
+
+<div class="linha-menu"></div>
+<div class="faixa">
+  <p>Tramitação Inteligente de Processos Administrativos.</p>
+</div>
 
 <nav class="sidebar" id="sidebar"></nav>
 
@@ -378,7 +447,17 @@ body {
     <section id="etapa1">
       <h2>#1 Modelo de Negócios</h2>
       <p class="lead">Definição do modelo de negócios do Novo Protocolo: proposta de valor, segmentos atendidos e modelo de receita.</p>
-      <p>Conteúdo a preencher com as definições desta etapa.</p>
+    </section>
+
+    <section id="etapa1-descricao" class="sub">
+      <h3>Descrição do Produto</h3>
+      <div class="definicao">
+        <p>É o 3º nível da solução de protocolo municipal da CENTI, que permite tramitar processos administrativos por fluxos configuráveis e visuais, orientando os servidores em cada etapa e permitindo que diferentes departamentos trabalhem de forma integrada e simultânea, com controle de prazos e documentos e menos esperas, retrabalhos e encaminhamentos desnecessários.</p>
+      </div>
+      <p>O Protocolo Ágil é a solução da CENTI para tornar a tramitação de processos administrativos mais simples, organizada e eficiente, eliminando esperas, retrabalhos e obstáculos que podem ser evitados no dia a dia da prefeitura.</p>
+      <p>Mais do que apenas digitalizar documentos, o Protocolo Ágil orienta cada processo pelo caminho adequado, deixando claro o que precisa ser feito, por quem, em qual etapa e dentro de qual prazo, permitindo que atividades sejam realizadas simultaneamente quando possível, que decisões sejam apoiadas por checklists, documentos e regras, e que toda a comunicação e o acompanhamento aconteçam em um único ambiente.</p>
+      <p>O resultado é uma gestão ágil com menos processos parados, menos idas e vindas, mais previsibilidade, rastreabilidade e controle, dando aos gestores uma visão clara da operação e aos servidores mais segurança para executar suas responsabilidades.</p>
+      <p>Porque ser ágil não significa apenas fazer mais rápido: significa fazer o processo avançar, sem interrupções e pelo caminho certo.</p>
     </section>
 
     <section id="etapa2">
@@ -459,7 +538,7 @@ body {
 <script>
 /* Menu lateral: etapas do projeto com submenus ancorados nas seções */
 const MENU = [
-  { titulo: '#1 Modelo de Negócios',        itens: [{ id: 'etapa1',  txt: 'Visão geral' }] },
+  { titulo: '#1 Modelo de Negócios',        itens: [{ id: 'etapa1-descricao', txt: 'Descrição do Produto' }] },
   { titulo: '#2 Inteligência de Mercado',   itens: [{ id: 'etapa2',  txt: 'Visão geral' }] },
   { titulo: '#3 Estratégia do Produto',     itens: [{ id: 'etapa3',  txt: 'Visão geral' }] },
   { titulo: '#4 Modelagem do produto',      itens: [{ id: 'etapa4',  txt: 'Visão geral' }] },
@@ -489,9 +568,11 @@ document.getElementById('sidebar').innerHTML = `
     <div class="grupo-titulo" onclick="this.parentElement.classList.toggle('fechado')">
       ${SETA}<span>${g.titulo}</span>
     </div>
-    <ul>
-      ${g.itens.map(i => `<li><a href="#${i.id}">${i.txt}</a></li>`).join('')}
-    </ul>
+    <div class="dobra">
+      <ul>
+        ${g.itens.map(i => `<li><a href="#${i.id}">${i.txt}</a></li>`).join('')}
+      </ul>
+    </div>
   </div>`).join('');
 
 /* Filtro: esconde grupos e submenus que não contêm o texto digitado.
@@ -532,7 +613,7 @@ document.getElementById('filtro').addEventListener('input', ev => {
 
 /* Rolagem animada com desaceleração (ease-out cúbico) */
 function rolarPara(alvo) {
-  const topo = alvo.getBoundingClientRect().top + window.scrollY - 88;
+  const topo = alvo.getBoundingClientRect().top + window.scrollY - 124;
   const inicio = window.scrollY;
   const distancia = topo - inicio;
   const duracao = 650;
@@ -567,7 +648,7 @@ const links = new Map(
 function marcarAtivo() {
   let atual = secoes[0];
   for (const s of secoes) {
-    if (s.getBoundingClientRect().top <= 120) atual = s;
+    if (s.getBoundingClientRect().top <= 150) atual = s;
   }
   links.forEach(a => a.classList.remove('ativo'));
   const link = links.get(atual.id);
