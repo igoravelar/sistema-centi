@@ -662,6 +662,30 @@ function fecharDrawer() {
  * A tela que chama decide onde ele vive (modal no PO011, aba Cadastro no PO050)
  * e a largura do drawer, via --drawer-w.
  */
+/** Botão de legenda das cores dos cards, com tooltip escuro no hover. */
+function legendaCoresHTML() {
+  const itens = [
+    ['#A1BB3E', 'Etapa Tipo Início'],
+    ['#2E6FD6', 'Etapa Tipo Tarefa'],
+    ['#F5A623', 'Etapa Tipo Decisão'],
+    ['#E53935', 'Etapa Tipo Fim'],
+  ];
+  return `
+  <button class="legenda" title="Legenda das cores">
+    <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 6C0 2.68629 2.68629 0 6 0H9V9H0V6Z" fill="#A4C614"/>
+      <path d="M18 12C18 15.3137 15.3137 18 12 18L9 18L9 9L18 9L18 12Z" fill="#E53A36"/>
+      <path d="M9 0H12C15.3137 0 18 2.68629 18 6V9H9V0Z" fill="#4390FF"/>
+      <path d="M9 18L6 18C2.68629 18 -7.18831e-07 15.3137 -4.29138e-07 12L-1.66869e-07 9L9 9L9 18Z" fill="#FF9E12"/>
+      <path d="M7.48587 11.2999H8.42462V8.79554H7.48587C6.96656 8.79554 6.54712 8.3748 6.54712 7.85389C6.54712 7.33297 6.96656 6.91223 7.48587 6.91223H9.35671C9.87601 6.91223 10.2955 7.33297 10.2955 7.85389V11.2999H10.6084C11.1277 11.2999 11.5471 11.7207 11.5471 12.2416C11.5471 12.7625 11.1277 13.1833 10.6084 13.1833H7.48587C6.96656 13.1833 6.54712 12.7625 6.54712 12.2416C6.54712 11.7207 6.96656 11.2999 7.48587 11.2999Z" fill="white"/>
+      <path d="M9.04366 5.67002C9.73493 5.67002 10.2953 5.10789 10.2953 4.41448C10.2953 3.72106 9.73493 3.15894 9.04366 3.15894C8.35238 3.15894 7.79199 3.72106 7.79199 4.41448C7.79199 5.10789 8.35238 5.67002 9.04366 5.67002Z" fill="white"/>
+    </svg>
+    <span class="legenda-tip">${itens.map(([cor, txt]) => `
+      <span class="li"><span class="bo" style="background:${cor}"></span>${txt}</span>`).join('')}
+    </span>
+  </button>`;
+}
+
 function montarFluxo(container) {
   raiz = container;
   container.innerHTML = `
@@ -679,6 +703,7 @@ function montarFluxo(container) {
     <div class="zoom-ctrl">
       <button onclick="maisZoom()" title="Aproximar">${svg('mais_zoom', 'stroke-width="2.6"')}</button>
       <button onclick="menosZoom()" title="Afastar">${svg('menos_zoom', 'stroke-width="2.6"')}</button>
+      ${legendaCoresHTML()}
       <button class="cheia" onclick="alternarTelaCheia()" title="Tela cheia">${svg('telaCheia')}</button>
     </div>
 

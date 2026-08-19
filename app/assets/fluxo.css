@@ -69,6 +69,24 @@
 .zoom-ctrl button:hover { background: var(--g-soft-bg); color: var(--g-olive); border-color: var(--g-soft-bd); }
 .zoom-ctrl svg { width: 17px; height: 17px; }
 
+/* legenda das cores dos cards: tooltip escuro no hover */
+.zoom-ctrl .legenda { position: relative; overflow: visible; }
+.zoom-ctrl .legenda .legenda-tip {
+  position: absolute; left: calc(100% + 10px); bottom: 0;
+  padding: 10px 12px;
+  background: #3F440C;
+  border-radius: 10px;
+  display: none;
+  flex-direction: column; align-items: flex-start; gap: 8px;
+  white-space: nowrap;
+  z-index: 30;
+  pointer-events: none;
+  cursor: default;
+}
+.zoom-ctrl .legenda:hover .legenda-tip { display: flex; }
+.zoom-ctrl .legenda .li { display: flex; align-items: center; gap: 8px; color: #EDEEE2; font-size: 11px; font-weight: normal; }
+.zoom-ctrl .legenda .bo { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto; }
+
 /* -------------------------------- etapa -------------------------------- */
 /* o título ocupa toda a faixa entre o topo do card (onde fica a bolinha) e a
    régua do DEPTO, e se centraliza nela — daí as distâncias iguais dos dois lados */
