@@ -93,19 +93,23 @@ function topbarHTML() {
   <header class="topbar">
     <a href="index.html" title="Início"><img class="marca" src="assets/img/marca-centi.png" alt="Centi"></a>
     <div class="burger" title="Recolher menu"><i></i><i></i><i></i></div>
-    <div class="field-group" style="margin-left:30px">
-      <span class="lbl">Referência</span>
-      <select aria-label="Mês de referência">
-        <option>Agosto</option><option>Julho</option><option>Junho</option>
-      </select>
-      <input value="2026" size="4" aria-label="Ano de referência">
-    </div>
-    <div class="field-group" style="margin-left:20px">
-      <span class="lbl">Órgão</span>
-      <select style="width:286px" aria-label="Órgão">
-        <option>02 - Prefeitura Municipal de Rio Verde</option>
-        <option>01 - Câmara Municipal de Rio Verde</option>
-      </select>
+    <div class="grupos-ref">
+      <div class="field-group">
+        <span class="lbl">Referência</span>
+        <select aria-label="Mês de referência">
+          <option>Agosto</option><option>Julho</option><option>Junho</option>
+        </select>
+        <select aria-label="Ano de referência">
+          <option>2026</option><option>2025</option><option>2024</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <span class="lbl">Órgão</span>
+        <select style="width:286px" aria-label="Órgão">
+          <option>02 - Prefeitura Municipal de Rio Verde</option>
+          <option>01 - Câmara Municipal de Rio Verde</option>
+        </select>
+      </div>
     </div>
     <div class="spacer"></div>
     <span class="user">admin|3.0.209.55</span>

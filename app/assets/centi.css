@@ -134,7 +134,21 @@ a { color: inherit; text-decoration: none; }
 .field-group .lbl { background: #F3F6EF; font-weight: bold; }
 .field-group select,
 .field-group input { outline: none; }
-.field-group select { padding-right: 8px; -webkit-appearance: menulist; }
+/* a seta própria dos combos (regra global) fica a 10px da borda direita */
+.field-group select { padding-right: 32px; }
+
+/* Referência + Órgão: alinhados com o início da aba de início
+   (sidebar + moldura + recuo das abas), com 15px entre os grupos */
+.topbar { position: relative; }
+.topbar .grupos-ref {
+  position: absolute;
+  left: calc(var(--sidebar-w) + var(--moldura) + 36px);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
 
 .topbar .user { font-size: 12px; color: var(--txt); white-space: nowrap; }
 

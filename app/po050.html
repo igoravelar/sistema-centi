@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Centi · PO050 - Fluxo de Processos</title>
-<link rel="stylesheet" href="assets/centi.css?v=7">
+<link rel="stylesheet" href="assets/centi.css?v=8">
 <link rel="stylesheet" href="assets/fluxo.css?v=5">
 <style>
   /* Pesquisa: filtros à esquerda, Últimas Buscas à direita, separados por
@@ -46,6 +46,9 @@
      conforme o cadastro avança. */
   .cad-topo .esq { border-right: 1px solid var(--tab-bd); }
   .cad-corpo { flex: 1; min-height: 0; display: flex; }
+  /* na linha do cad-corpo o fluxo não pode herdar a largura do desenho
+     (min-width auto), senão empurra o botão Nova Etapa para fora da tela */
+  .cad-corpo .fluxo { min-width: 0; }
 
   .arvore { flex: 0 0 240px; overflow: auto; padding: 12px 10px; border-right: 1px solid var(--tab-bd); }
   .arvore .pasta { display: flex; align-items: center; gap: 9px; font-size: 12px; color: #5C5B5B;
@@ -168,7 +171,48 @@
   .etapa.fim .num { background: #E53935; color: #FFFFFF; }
 
   /* linha que liga os cards do fluxo */
-  .liga-cards { width: 2px; height: 56px; background: #BCC8A0; }
+  .liga-cards { width: 2px; height: 56px; background: #BCC8A0; flex: 0 0 auto; }
+
+  /* hover: o card cresce (fluxo.css) e ganha um fundo no tom da sua cor */
+  .etapa.andamento:hover { background: #F5FCD9; }
+  .etapa.tarefa:hover    { background: #E7F0FC; }
+  .etapa.decisao:hover   { background: #FEF3DF; }
+  .etapa.fim:hover       { background: #FDE9E9; }
+
+  /* tooltip do card: shape escuro à direita, com tabelas internas */
+  .tooltip-etapa {
+    position: absolute;
+    left: calc(100% + 15px);
+    top: 0;
+    width: 210px;
+    padding: 8px;
+    background: #3F440C;
+    border-radius: 10px;
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 20;
+    pointer-events: none;
+    text-align: left;
+    cursor: default;
+  }
+  .etapa:hover .tooltip-etapa { display: flex; }
+  .bpmn-wrap.arrastando .etapa:hover .tooltip-etapa { display: none; }
+
+  .tooltip-etapa .tb { border: 1px solid #626A10; border-radius: 7px; overflow: hidden; }
+  .tooltip-etapa .tb .cab {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding: 5px 9px;
+    background: #2A2D06;
+    color: #FFFFFF; font-size: 10px; font-weight: bold;
+  }
+  .tooltip-etapa .tb .cab .val { font-weight: normal; }
+  .tooltip-etapa .tb .lin {
+    padding: 5px 9px;
+    background: transparent;
+    border-top: 1px solid #626A10;
+    color: #EDEEE2; font-size: 10px; font-weight: normal; line-height: 1.4;
+  }
 
   .form { flex: 1; min-width: 0; max-width: 576px; display: flex; flex-direction: column; gap: 10px;
           overflow: auto; padding: 14px 16px; }
@@ -179,7 +223,7 @@
 
 <div class="app"></div>
 
-<script src="assets/shell.js?v=7"></script>
+<script src="assets/shell.js?v=8"></script>
 <script src="assets/fluxo.js?v=2"></script>
 <script>
 /* ícones extras desta tela */
@@ -206,20 +250,20 @@ function fa(nome) {
   return `<svg viewBox="${i.vb}" fill="currentColor" aria-hidden="true"><path d="${i.d}"/></svg>`;
 }
 
-/* Fluxos cadastrados: [id, natureza, nome, status] */
+/* Fluxos cadastrados: [id, título, natureza, status] */
 const RESULTADOS = [
-  ['1', 'ABERTURA DE LICITAÇÃO',                 'ABERTURA DE LICITAÇÃO 01', 'Publicado'],
-  ['3', 'Alvará de Funcionamento',               'Alvará de Funcionamento',  'Rascunho'],
-  ['2', 'AQUISIÇÃO - PD',                        'AQUISIÇÃO MATERIAL',       'Publicado'],
-  ['9', 'TIPO TESTE 2',                          'FLUXO TESTE 2',            'Rascunho'],
-  ['5', 'ISENÇÃO DE IPTU',                       'ISENÇÃO DE IPTU',          'Publicado'],
-  ['4', 'LICENÇA PARA CONSTRUÇÃO',               'Licença para Construção',  'Rascunho'],
-  ['8', 'PAGAMENTO DE HORAS EXTRAS',             'PAGAMENTO DE HORAS EXTRAS','Publicado'],
-  ['7', '1º TERMO ADITIVO DE PRAZO DE CONTRATO', 'TESTE 1 DE FLUXO',         'Rascunho'],
-  ['6', '1º TERMO ADITIVO',                      'TESTE MATHEUS',            'Rascunho'],
+  ['1', 'ABERTURA DE LICITAÇÃO 01',  'ABERTURA DE LICITAÇÃO',                 'Publicado'],
+  ['3', 'Alvará de Funcionamento',   'Alvará de Funcionamento',               'Rascunho'],
+  ['2', 'AQUISIÇÃO MATERIAL',        'AQUISIÇÃO - PD',                        'Publicado'],
+  ['9', 'FLUXO TESTE 2',             'TIPO TESTE 2',                          'Rascunho'],
+  ['5', 'ISENÇÃO DE IPTU',           'ISENÇÃO DE IPTU',                       'Publicado'],
+  ['4', 'Licença para Construção',   'LICENÇA PARA CONSTRUÇÃO',               'Rascunho'],
+  ['8', 'PAGAMENTO DE HORAS EXTRAS', 'PAGAMENTO DE HORAS EXTRAS',             'Publicado'],
+  ['7', 'TESTE 1 DE FLUXO',          '1º TERMO ADITIVO DE PRAZO DE CONTRATO', 'Rascunho'],
+  ['6', 'TESTE MATHEUS',             '1º TERMO ADITIVO',                      'Rascunho'],
 ];
 
-const COLUNAS = ['ID', 'NATUREZA', 'NOME', 'STATUS'];
+const COLUNAS = ['ID', 'TÍTULO', 'NATUREZA', 'STATUS'];
 
 /* ------------------------------- Pesquisa ------------------------------- */
 
@@ -230,8 +274,8 @@ function pesquisar() { pesquisou = true; render(); }
 
 function pesquisaHTML() {
   const linhas = !pesquisou ? '' : RESULTADOS.map((r, i) => `
-    <tr${i === 0 ? ' class="sel"' : ''} onclick="abrirCadastro(${i})">${r.map((c, j) =>
-      `<td class="${j === 0 ? 'num' : ''}">${c}</td>`).join('')}</tr>`).join('');
+    <tr${i === 0 ? ' class="sel"' : ''} onclick="abrirCadastro(${i})">${r.map(c =>
+      `<td>${c}</td>`).join('')}</tr>`).join('');
 
   return `
   <div class="painel filtros">
@@ -476,12 +520,171 @@ function salvarModal() {
   else if (modalVista.endsWith('-form')) modalIr(modalVista.replace('-form', '-grid'));
 }
 
+/* ------------------------- canvas: zoom e pan -------------------------
+   Mesma mecânica do PO051 (fluxo.js), com estado próprio desta tela: o
+   wrap tem overflow oculto (sem barras) e o pan é feito pela rolagem
+   programática; o zoom escala o espaçador mantendo o ponto sob o cursor. */
+
+const CANVAS_L = 594;          /* largura do desenho, como no PO051 */
+const CARD_A = 112, LIGA_A = 56;
+
+let cZoom = 1, cEscalaCaber = 1;
+let cEspacoL = 0, cEspacoA = 0, cDesvioX = 0, cDesvioY = 0;
+
+function alturaDesenho() {
+  const n = etapasFluxo.length;
+  return Math.max(400, 40 + n * CARD_A + Math.max(0, n - 1) * LIGA_A);
+}
+
+function canvasWrap() { return main.querySelector('.cad-corpo .bpmn-wrap'); }
+
+function aplicarZoomC(z, ponto) {
+  const wrap = canvasWrap();
+  if (!wrap) return;
+  const caixa = wrap.querySelector('.bpmn-zoom');
+  const espaco = wrap.querySelector('.bpmn-espaco');
+  z = Math.min(Math.max(z, cEscalaCaber), 2);
+
+  const r = wrap.getBoundingClientRect();
+  const px = ponto ? ponto.x - r.left : wrap.clientWidth / 2;
+  const py = ponto ? ponto.y - r.top : wrap.clientHeight / 2;
+  const cx = (wrap.scrollLeft + px - cDesvioX) / cZoom;
+  const cy = (wrap.scrollTop  + py - cDesvioY) / cZoom;
+
+  cZoom = z;
+  const escalaL = cEspacoL * z, escalaA = cEspacoA * z;
+  const caixaL = Math.max(escalaL, wrap.clientWidth);
+  const caixaA = Math.max(escalaA, wrap.clientHeight);
+  cDesvioX = (caixaL - escalaL) / 2;
+  cDesvioY = (caixaA - escalaA) / 2;
+
+  caixa.style.width  = Math.round(caixaL) + 'px';
+  caixa.style.height = Math.round(caixaA) + 'px';
+  espaco.style.transform = `translate(${cDesvioX}px, ${cDesvioY}px) scale(${z})`;
+
+  wrap.scrollLeft = cx * z + cDesvioX - px;
+  wrap.scrollTop  = cy * z + cDesvioY - py;
+}
+
+function maisZoomC()  { aplicarZoomC(cZoom * 1.25); }
+function menosZoomC() { aplicarZoomC(cZoom / 1.25); }
+
+/** Centraliza o último card criado no meio da área visível. */
+function centrarUltimoCard() {
+  const wrap = canvasWrap();
+  if (!wrap) return;
+  const bpmn = wrap.querySelector('.bpmn');
+  const n = etapasFluxo.length;
+  const cy = n ? 20 + (n - 1) * (CARD_A + LIGA_A) + CARD_A / 2 : alturaDesenho() / 2;
+  wrap.scrollLeft = (bpmn.offsetLeft + CANVAS_L / 2) * cZoom + cDesvioX - wrap.clientWidth / 2;
+  wrap.scrollTop  = (bpmn.offsetTop + cy) * cZoom + cDesvioY - wrap.clientHeight / 2;
+}
+
+/** Remonta a geometria do canvas após cada render e reaplica o zoom. */
+function montarCanvasEtapas() {
+  const wrap = canvasWrap();
+  if (!wrap) return;
+  const espaco = wrap.querySelector('.bpmn-espaco');
+  cEspacoL = espaco.offsetWidth;
+  cEspacoA = espaco.offsetHeight;
+  cEscalaCaber = Math.min(1,
+    (wrap.clientWidth - 40) / CANVAS_L,
+    (wrap.clientHeight - 40) / alturaDesenho());
+  const alvo = cZoom;
+  cZoom = 1; cDesvioX = 0; cDesvioY = 0;
+  aplicarZoomC(alvo);
+  centrarUltimoCard();
+}
+
+/** Tela cheia da área do fluxo. */
+function alternarTelaCheiaC() {
+  const fluxoEl = main.querySelector('.cad-corpo .fluxo');
+  if (document.fullscreenElement) document.exitFullscreen();
+  else if (fluxoEl && fluxoEl.requestFullscreen) fluxoEl.requestFullscreen();
+}
+
+document.addEventListener('fullscreenchange', () => {
+  if (vista === 'cadastro' && etapa === 'etapas') montarCanvasEtapas();
+});
+
+/** Clique e arraste no canvas: rola o fluxo inteiro (pan), como no PO051.
+    Se houve arraste, o clique é engolido para não abrir a modal do card. */
+function ativarArrastoCanvas() {
+  const wrap = main.querySelector('.cad-corpo .bpmn-wrap');
+  if (!wrap || wrap.dataset.arrasto) return;
+  wrap.dataset.arrasto = '1';
+
+  let ativo = false, arrastou = false, x0 = 0, y0 = 0, sl = 0, st = 0;
+
+  wrap.addEventListener('pointerdown', e => {
+    if (e.button !== 0) return;
+    ativo = true; arrastou = false;
+    x0 = e.clientX; y0 = e.clientY;
+    sl = wrap.scrollLeft; st = wrap.scrollTop;
+  });
+
+  wrap.addEventListener('pointermove', e => {
+    if (!ativo) return;
+    const dx = e.clientX - x0, dy = e.clientY - y0;
+    if (!arrastou) {
+      if (Math.hypot(dx, dy) < 5) return;   /* ainda pode virar clique */
+      arrastou = true;
+      wrap.classList.add('arrastando');
+      try { wrap.setPointerCapture(e.pointerId); } catch { /* segue sem captura */ }
+    }
+    wrap.scrollLeft = sl - dx;
+    wrap.scrollTop  = st - dy;
+  });
+
+  const encerrar = e => {
+    if (!ativo) return;
+    ativo = false;
+    wrap.classList.remove('arrastando');
+    if (wrap.hasPointerCapture && wrap.hasPointerCapture(e.pointerId)) wrap.releasePointerCapture(e.pointerId);
+  };
+  wrap.addEventListener('pointerup', encerrar);
+  wrap.addEventListener('pointercancel', encerrar);
+
+  /* após um arraste, o clique não chega ao card */
+  wrap.addEventListener('click', e => {
+    if (arrastou) { e.stopPropagation(); e.preventDefault(); }
+  }, true);
+}
+
 /** Classe de cor do card conforme o tipo da etapa. */
 function classeTipo(tipo) {
   return tipo === 'Início' ? 'andamento'
        : tipo === 'Tarefa' ? 'tarefa'
        : tipo === 'Decisão' ? 'decisao'
        : 'fim';
+}
+
+/** Tooltip do card: resumo da etapa em tabelas escuras (ver referência).
+    A etapa de entrada (1ª) abre zerada; as demais trazem os itens do exemplo. */
+function tooltipEtapaHTML(e, i) {
+  const frase = s => (s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
+    .replace(/\biptu\b/gi, 'IPTU');
+
+  const entrada = i === 0;
+  const docs   = entrada ? [] : DOCS_ETAPA.map(d => frase(d[1]));
+  const checks = entrada ? [] : CHECKS_ETAPA.map(c => c[1]);
+  const conds  = entrada
+    ? ['Segue para o recebimento do pedido.']
+    : ['Pedido recebido: segue para a conferência documental'];
+
+  const tabela = (titulo, valor, linhas) => `
+    <div class="tb">
+      <div class="cab"><span>${titulo}</span><span class="val">${valor}</span></div>
+      ${(linhas || []).map(l => `<div class="lin">${l}</div>`).join('')}
+    </div>`;
+
+  return `
+  <div class="tooltip-etapa">
+    ${tabela('Tipo', e.tipo)}
+    ${tabela('Documentos', docs.length, docs)}
+    ${tabela('Checklist', checks.length, checks)}
+    ${tabela('Condição de Saída', conds.length, conds)}
+  </div>`;
 }
 
 /* itens já cadastrados nas pastas da etapa */
@@ -961,21 +1164,28 @@ function cadastroHTML() {
           <span class="depto">${e.depto}</span>
         </span>
         <span class="ponto"></span>
+        ${tooltipEtapaHTML(e, i)}
       </div>`).join('');
 
   const card = !etapasFluxo.length ? '' : `
-    <div style="position:absolute;left:50%;top:calc(28% - 56px);transform:translateX(-50%);
+    <div style="position:absolute;left:50%;top:20px;transform:translateX(-50%);
                 display:flex;flex-direction:column;align-items:center">
       ${cards}
     </div>`;
 
   const corpo = etapa === 'etapas'
     ? `<div class="fluxo">
-         <div class="bpmn-wrap">${card}</div>
+         <div class="bpmn-wrap">
+           <div class="bpmn-zoom">
+             <div class="bpmn-espaco">
+               <div class="bpmn" style="height:${alturaDesenho()}px">${card}</div>
+             </div>
+           </div>
+         </div>
          <div class="zoom-ctrl">
-           <button title="Aproximar">${svg('mais_zoom', 'stroke-width="2.6"')}</button>
-           <button title="Afastar">${svg('menos_zoom', 'stroke-width="2.6"')}</button>
-           <button title="Tela cheia">${svg('telaCheia')}</button>
+           <button onclick="maisZoomC()" title="Aproximar">${svg('mais_zoom', 'stroke-width="2.6"')}</button>
+           <button onclick="menosZoomC()" title="Afastar">${svg('menos_zoom', 'stroke-width="2.6"')}</button>
+           <button onclick="alternarTelaCheiaC()" title="Tela cheia">${svg('telaCheia')}</button>
          </div>
          <button class="nova-etapa" onclick="abrirModalEtapa()">${svg('mais')} Nova Etapa</button>
        </div>`
@@ -1036,6 +1246,13 @@ function render() {
   main.insertAdjacentHTML('beforeend',
     `<div class="tela"><div class="vtabs">${vt}</div><div class="conteudo">${corpo}</div>
      ${modalEtapa && vista === 'cadastro' ? modalEtapaHTML() : ''}</div>`);
+
+  /* o canvas acompanha o crescimento do fluxo: reaplica zoom e centraliza
+     o último card criado */
+  if (vista === 'cadastro' && etapa === 'etapas') {
+    ativarArrastoCanvas();
+    montarCanvasEtapas();
+  }
 }
 
 function irPara(id) { vista = id; render(); }
