@@ -373,6 +373,46 @@ let etapa = 'fluxo';
 let preenchido = false;
 let fluxoCriado = false;   /* após o primeiro salvar, o título vira link do formulário */
 
+/* -------------------- fluxo pronto: ISENÇÃO DE IPTU --------------------
+   Jornada de edição: aberto pela linha da grid da Pesquisa, navega entre o
+   formulário do fluxo, a grid de versões e a versão publicada. */
+let fluxoSel = null;        /* null = jornada de criação; 'iptu' = fluxo pronto */
+let iptuVista = 'fluxo';    /* fluxo | versoes | versao | etapas */
+let expandIptu = false;         /* pasta Versões */
+let expandIptuVersao = false;   /* filhos do 1 - PUBLICADO */
+let expandIptuEtapas = false;   /* lista de etapas dentro de Etapas */
+
+function abrirFluxoIptu() {
+  fluxoSel = 'iptu'; iptuVista = 'fluxo';
+  expandIptu = false; expandIptuVersao = false; expandIptuEtapas = false;
+  irPara('cadastro');
+}
+function iptuIr(v) {
+  iptuVista = v;
+  if (v !== 'fluxo') expandIptu = true;
+  if (v === 'etapas') { expandIptuVersao = true; expandIptuEtapas = true; cZoom = 0; }
+  render();
+}
+function toggleIptu()        { expandIptu = !expandIptu; render(); }
+function toggleIptuVersao()  { expandIptuVersao = !expandIptuVersao; render(); }
+function toggleIptuEtapas()  { expandIptuEtapas = !expandIptuEtapas; render(); }
+function iptuLinhaVersao()   { iptuIr('versao'); }
+
+/* etapas do fluxo publicado de ISENÇÃO DE IPTU, com posição no canvas */
+const IPTU_L = 1350, IPTU_A = 1200;
+const ETAPAS_IPTU = [
+  { n: 1,  titulo: 'Início',                            tipo: 'Início',  depto: 'QUALQUER UM',        dias: null,     x: 40,   y: 20 },
+  { n: 2,  titulo: 'Recebimento do pedido',             tipo: 'Tarefa',  depto: 'PROTOCOLO CENTRAL',  dias: '2 dias', x: 270,  y: 190 },
+  { n: 3,  titulo: 'Conferência documental',            tipo: 'Tarefa',  depto: 'TRIBUTOS',           dias: '1 dia',  x: 500,  y: 360 },
+  { n: 4,  titulo: 'Renda dentro do limite?',           tipo: 'Decisão', depto: 'TRIBUTOS',           dias: '1 dia',  x: 700,  y: 530 },
+  { n: 5,  titulo: 'Possui imóvel único?',              tipo: 'Decisão', depto: 'TRIBUTOS',           dias: '1 dia',  x: 860,  y: 700 },
+  { n: 6,  titulo: 'Análise social',                    tipo: 'Tarefa',  depto: 'ASSISTÊNCIA SOCIAL', dias: '3 dias', x: 700,  y: 880 },
+  { n: 7,  titulo: 'Decisão do pedido',                 tipo: 'Tarefa',  depto: 'TRIBUTOS',           dias: '2 dias', x: 990,  y: 880 },
+  { n: 8,  titulo: 'Isenção concedida',                 tipo: 'Fim',     depto: '—',                  dias: null,     x: 760,  y: 1050 },
+  { n: 9,  titulo: 'Isenção indeferida',                tipo: 'Fim',     depto: '—',                  dias: null,     x: 1120, y: 700 },
+  { n: 10, titulo: 'Pedido encerrado por desistência',  tipo: 'Fim',     depto: '—',                  dias: null,     x: 960,  y: 530 },
+];
+
 function preencher() {
   if (preenchido) return;
   preenchido = true;
@@ -404,7 +444,159 @@ function chevArv(aberto, toggle) {
 }
 
 /** O Novo reabre o cadastro do fluxo zerado. */
-function novoFluxo() { etapa = 'fluxo'; preenchido = false; fluxoCriado = false; modalEtapa = false; etapasFluxo = []; modalEditIdx = null; irPara('cadastro'); }
+function novoFluxo() { etapa = 'fluxo'; preenchido = false; fluxoCriado = false; modalEtapa = false; etapasFluxo = []; modalEditIdx = null; fluxoSel = null; irPara('cadastro'); }
+
+/* ------------------- telas do fluxo pronto (IPTU) ------------------- */
+
+function formFluxoIptuHTML() {
+  const acoesLookup = [{ i: 'lapis', t: 'Editar' }, { i: 'lupa', t: 'Pesquisar' }];
+  return [
+    campo({ rot: 'Id', val: '5', ro: true }),
+    campo({ rot: 'Natureza<span class="req">*</span>', cod: '14', val: 'ISENÇÃO DE IPTU', acoes: acoesLookup }),
+    campo({ rot: 'Título<span class="req">*</span>', val: 'ISENÇÃO DE IPTU' }),
+    campoArea({ rot: 'Descrição<span class="req">*</span>', linhas: 4,
+                val: 'RITO DO PEDIDO DE ISENÇÃO DE IPTU: CONFERÊNCIA DOCUMENTAL NO SETOR DE TRIBUTOS, VERIFICAÇÃO DA RENDA FAMILIAR E DA TITULARIDADE DE IMÓVEL ÚNICO, ANÁLISE SOCIAL QUANDO O REQUERENTE TIVER MAIS DE UM IMÓVEL, E DECISÃO FINAL. PRAZOS EM DIAS CORRIDOS.' }),
+    campoSelect({ rot: 'Status<span class="req">*</span>', opcoes: ['Rascunho', 'Publicado'], val: 'Publicado', ro: true }),
+    campo({ rot: 'Versão vigente<span class="req">*</span>', val: '1', ro: true }),
+    campoSelect({ rot: `Tramitação<br>obrigatória<span class="req">*</span>${svg('ajuda', 'class="ajuda-rot"')}`,
+                  opcoes: ['Não', 'Sim'], val: 'Sim' }),
+    campo({ rot: 'Localização de<br>arquivamento', cod: '2', val: 'ARQUIVO CENTRAL', acoes: acoesLookup }),
+  ].join('');
+}
+
+function formVersaoIptuHTML() {
+  return [
+    campo({ rot: 'Id', val: '5', ro: true }),
+    campo({ rot: 'Versão<span class="req">*</span>', val: '1', ro: true }),
+    campoSelect({ rot: 'Publicada<span class="req">*</span>', opcoes: ['Não', 'Sim'], val: 'Sim', ro: true }),
+    campo({ rot: 'Data publicação', val: '13/08/2026 16:56:46', ro: true }),
+    campo({ rot: 'Publicado por', cod: '1', val: 'admin', ro: true, acoes: [{ i: 'lapis', t: 'Editar' }] }),
+    campoArea({ rot: 'Nota da versão', val: 'PUBLICADO' }),
+  ].join('');
+}
+
+function arvoreIptuHTML() {
+  const listaEtapas = !(expandIptuEtapas && expandIptuVersao && expandIptu) ? '' :
+    ETAPAS_IPTU.map(e => `
+    <div class="pasta n3">
+      <span class="chev">${fa('chevronDireita')}</span>
+      <span class="chev" style="color:#8A8A8A">${svg('checkSimples')}</span>
+      <span>${e.n} - ${e.titulo}</span>
+    </div>`).join('');
+
+  const pastasVersao = !(expandIptuVersao && expandIptu) ? '' : `
+    <div class="pasta n2${iptuVista === 'etapas' ? ' sel' : ''}" onclick="iptuIr('etapas')">
+      <span class="chev" onclick="event.stopPropagation();toggleIptuEtapas()">${fa(expandIptuEtapas ? 'chevronBaixo' : 'chevronDireita')}</span>
+      <span class="ico">${fa(iptuVista === 'etapas' ? 'pastaAberta' : 'pasta')}</span>
+      <span>Etapas</span>
+    </div>
+    ${listaEtapas}
+    <div class="pasta n2"><span class="ico">${fa('pasta')}</span><span>Variáveis</span></div>
+    <div class="pasta n2"><span class="ico">${fa('pasta')}</span><span>Paralelismos</span></div>
+    <div class="pasta n2"><span class="ico">${fa('pasta')}</span><span>Remapeamentos</span></div>`;
+
+  const filho = !expandIptu ? '' : `
+    <div class="pasta n1${iptuVista === 'versao' ? ' sel' : ''}" onclick="iptuIr('versao')">
+      <span class="chev" onclick="event.stopPropagation();toggleIptuVersao()">${fa(expandIptuVersao ? 'chevronBaixo' : 'chevronDireita')}</span>
+      <span class="chev" style="color:#8A8A8A">${svg('checkSimples')}</span>
+      <span>1 - PUBLICADO</span>
+    </div>${pastasVersao}`;
+
+  return `
+    <div class="pasta n0${iptuVista === 'versoes' ? ' sel' : ''}" onclick="iptuIr('versoes')">
+      <span class="chev" onclick="event.stopPropagation();toggleIptu()">${fa(expandIptu ? 'chevronBaixo' : 'chevronDireita')}</span>
+      <span class="ico">${fa(iptuVista === 'versoes' ? 'pastaAberta' : 'pasta')}</span>
+      <span>Versões</span>
+    </div>${filho}`;
+}
+
+/** Canvas do fluxo publicado: cards no nosso layout, ligados por conectores. */
+function canvasIptuHTML() {
+  const cards = ETAPAS_IPTU.map(e => `
+    <div class="etapa ${classeTipo(e.tipo)}" style="left:${e.x}px;top:${e.y}px;width:190px;height:112px">
+      <span class="num">${e.n}</span>
+      ${e.dias ? `<span class="dias">${svg('cronometro')}${e.dias}</span>` : ''}
+      <span class="nome">${e.titulo}</span>
+      <span class="rodape">
+        <span class="depto-lbl">DEPTO</span>
+        <span class="depto">${e.depto}</span>
+      </span>
+      <span class="ponto"></span>
+      ${tooltipIptuHTML(e)}
+    </div>`).join('');
+
+  /* ligações em ângulo reto, como os conectores do PO051: descem do card,
+     correm na horizontal e entram por cima do card de destino */
+  const conectores = `
+    <svg class="conectores" viewBox="0 0 ${IPTU_L} ${IPTU_A}">
+      <defs>
+        <marker id="seta-ip" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+          <polygon points="0,0 7,3.5 0,7" fill="#7E7F79"/>
+        </marker>
+      </defs>
+      <g fill="none" stroke="#7E7F79" stroke-width="1" stroke-linejoin="round" marker-end="url(#seta-ip)">
+        <path d="M135 132 V151 Q135 161 145 161 H355 Q365 161 365 171 V184"/>
+        <path d="M365 302 V321 Q365 331 375 331 H585 Q595 331 595 341 V354"/>
+        <path d="M595 472 V491 Q595 501 605 501 H785 Q795 501 795 511 V524"/>
+        <path d="M595 472 V491 Q595 501 605 501 H1045 Q1055 501 1055 511 V524"/>
+        <path d="M795 642 V661 Q795 671 805 671 H945 Q955 671 955 681 V694"/>
+        <path d="M795 642 V661 Q795 671 805 671 H1205 Q1215 671 1215 681 V694"/>
+        <path d="M955 812 V836 Q955 846 945 846 H805 Q795 846 795 856 V874"/>
+        <path d="M955 812 V836 Q955 846 965 846 H1075 Q1085 846 1085 856 V874"/>
+        <path d="M890 936 H984"/>
+        <path d="M1085 992 V1011 Q1085 1021 1075 1021 H865 Q855 1021 855 1031 V1044"/>
+      </g>
+    </svg>`;
+
+  return `
+  <div class="fluxo">
+    <div class="bpmn-wrap">
+      <div class="bpmn-zoom">
+        <div class="bpmn-espaco">
+          <div class="bpmn" style="width:${IPTU_L}px;height:${IPTU_A}px">${conectores}${cards}</div>
+        </div>
+      </div>
+    </div>
+    <div class="zoom-ctrl">
+      <button onclick="maisZoomC()" title="Aproximar">${svg('mais_zoom', 'stroke-width="2.6"')}</button>
+      <button onclick="menosZoomC()" title="Afastar">${svg('menos_zoom', 'stroke-width="2.6"')}</button>
+      <button onclick="alternarTelaCheiaC()" title="Tela cheia">${svg('telaCheia')}</button>
+    </div>
+    <button class="nova-etapa" onclick="abrirModalEtapa()">${svg('mais')} Nova Etapa</button>
+  </div>`;
+}
+
+function cadastroIptuHTML() {
+  const corpo =
+      iptuVista === 'versoes' ? gridModalHTML(['ID', 'VERSÃO'], [['5', '1']], true, 'iptuLinhaVersao')
+    : iptuVista === 'versao'  ? `<div class="form scroll">${formVersaoIptuHTML()}</div>`
+    : iptuVista === 'etapas'  ? canvasIptuHTML()
+    : `<div class="form scroll">${formFluxoIptuHTML()}</div>`;
+
+  return `
+  <div class="cad">
+    <div class="cad-topo">
+      <div class="esq">
+        ${fa('chevronBaixo')}
+        ${svg('checkSimples', 'style="width:17px;height:17px"')}
+        <span class="nome nome-link" onclick="iptuIr('fluxo')" title="ISENÇÃO DE IPTU">ISENÇÃO DE IPTU</span>
+      </div>
+      <div class="dir">
+        <button class="btn btn-claro" onclick="novoFluxo()">${svg('mais')} Novo</button>
+        <button class="btn btn-neutro" disabled>${svg('lixeira')} Excluir</button>
+        <button class="btn btn-neutro" disabled>${svg('salvar')} Salvar</button>
+        <div style="flex:1"></div>
+        <button class="btn btn-claro">${svg('desfazer')} Desfazer</button>
+        <button class="btn btn-primario">${svg('gerais')} Operações</button>
+      </div>
+    </div>
+
+    <div class="cad-corpo">
+      <div class="arvore scroll">${arvoreIptuHTML()}</div>
+      ${corpo}
+    </div>
+  </div>`;
+}
 
 /* ------------------------- modal Etapa do fluxo ------------------------- */
 
@@ -569,31 +761,43 @@ function aplicarZoomC(z, ponto) {
 function maisZoomC()  { aplicarZoomC(cZoom * 1.25); }
 function menosZoomC() { aplicarZoomC(cZoom / 1.25); }
 
-/** Centraliza o último card criado no meio da área visível. */
-function centrarUltimoCard() {
-  const wrap = canvasWrap();
-  if (!wrap) return;
-  const bpmn = wrap.querySelector('.bpmn');
-  const n = etapasFluxo.length;
-  const cy = n ? 20 + (n - 1) * (CARD_A + LIGA_A) + CARD_A / 2 : alturaDesenho() / 2;
-  wrap.scrollLeft = (bpmn.offsetLeft + CANVAS_L / 2) * cZoom + cDesvioX - wrap.clientWidth / 2;
-  wrap.scrollTop  = (bpmn.offsetTop + cy) * cZoom + cDesvioY - wrap.clientHeight / 2;
+/** Dimensões do desenho conforme o fluxo em edição. */
+function dimsCanvas() {
+  if (fluxoSel === 'iptu') return { L: IPTU_L, A: IPTU_A };
+  return { L: CANVAS_L, A: alturaDesenho() };
 }
 
-/** Remonta a geometria do canvas após cada render e reaplica o zoom. */
+/** Leva um ponto do desenho para o centro da área visível. */
+function centrarPonto(px, py) {
+  const wrap = canvasWrap();
+  const bpmn = wrap.querySelector('.bpmn');
+  wrap.scrollLeft = (bpmn.offsetLeft + px) * cZoom + cDesvioX - wrap.clientWidth / 2;
+  wrap.scrollTop  = (bpmn.offsetTop + py) * cZoom + cDesvioY - wrap.clientHeight / 2;
+}
+
+/** Remonta a geometria do canvas após cada render e reaplica o zoom.
+    No fluxo pronto, enquadra o desenho inteiro; na criação, centraliza o
+    último card criado. */
 function montarCanvasEtapas() {
   const wrap = canvasWrap();
   if (!wrap) return;
   const espaco = wrap.querySelector('.bpmn-espaco');
   cEspacoL = espaco.offsetWidth;
   cEspacoA = espaco.offsetHeight;
+  const { L, A } = dimsCanvas();
   cEscalaCaber = Math.min(1,
-    (wrap.clientWidth - 40) / CANVAS_L,
-    (wrap.clientHeight - 40) / alturaDesenho());
+    (wrap.clientWidth - 40) / L,
+    (wrap.clientHeight - 40) / A);
   const alvo = cZoom;
   cZoom = 1; cDesvioX = 0; cDesvioY = 0;
   aplicarZoomC(alvo);
-  centrarUltimoCard();
+  if (fluxoSel === 'iptu') {
+    centrarPonto(L / 2, A / 2);
+  } else {
+    const n = etapasFluxo.length;
+    const cy = n ? 20 + (n - 1) * (CARD_A + LIGA_A) + CARD_A / 2 : A / 2;
+    centrarPonto(L / 2, cy);
+  }
 }
 
 /** Tela cheia da área do fluxo. */
@@ -659,19 +863,15 @@ function classeTipo(tipo) {
        : 'fim';
 }
 
-/** Tooltip do card: resumo da etapa em tabelas escuras (ver referência).
-    A etapa de entrada (1ª) abre zerada; as demais trazem os itens do exemplo. */
-function tooltipEtapaHTML(e, i) {
-  const frase = s => (s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
+/* -------------------------- tooltips dos cards -------------------------- */
+
+function fraseTooltip(s) {
+  return (s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
     .replace(/\biptu\b/gi, 'IPTU');
+}
 
-  const entrada = i === 0;
-  const docs   = entrada ? [] : DOCS_ETAPA.map(d => frase(d[1]));
-  const checks = entrada ? [] : CHECKS_ETAPA.map(c => c[1]);
-  const conds  = entrada
-    ? ['Segue para o recebimento do pedido.']
-    : ['Pedido recebido: segue para a conferência documental'];
-
+/** Monta o shape escuro com as tabelas Tipo/Documentos/Checklist/Condição. */
+function tooltipTabelasHTML(tipo, docs, checks, conds) {
   const tabela = (titulo, valor, linhas) => `
     <div class="tb">
       <div class="cab"><span>${titulo}</span><span class="val">${valor}</span></div>
@@ -680,11 +880,38 @@ function tooltipEtapaHTML(e, i) {
 
   return `
   <div class="tooltip-etapa">
-    ${tabela('Tipo', e.tipo)}
+    ${tabela('Tipo', tipo)}
     ${tabela('Documentos', docs.length, docs)}
     ${tabela('Checklist', checks.length, checks)}
     ${tabela('Condição de Saída', conds.length, conds)}
   </div>`;
+}
+
+/** Tooltip da jornada de criação: a etapa de entrada (1ª) abre zerada; as
+    demais trazem os itens do exemplo. */
+function tooltipEtapaHTML(e, i) {
+  const entrada = i === 0;
+  return tooltipTabelasHTML(
+    e.tipo,
+    entrada ? [] : DOCS_ETAPA.map(d => fraseTooltip(d[1])),
+    entrada ? [] : CHECKS_ETAPA.map(c => c[1]),
+    entrada ? ['Segue para o recebimento do pedido.']
+            : ['Pedido recebido: segue para a conferência documental']);
+}
+
+/** Tooltip do fluxo pronto (IPTU): conteúdo de exemplo conforme o tipo. */
+function tooltipIptuHTML(e) {
+  if (e.tipo === 'Início')
+    return tooltipTabelasHTML('Início', [], [], ['Segue para o recebimento do pedido.']);
+  if (e.tipo === 'Decisão')
+    return tooltipTabelasHTML('Decisão', [], [],
+      ['Sim: avança para a próxima etapa', 'Não: encaminha para o indeferimento']);
+  if (e.tipo === 'Fim')
+    return tooltipTabelasHTML('Fim', [], [], []);
+  return tooltipTabelasHTML('Tarefa',
+    DOCS_ETAPA.map(d => fraseTooltip(d[1])),
+    CHECKS_ETAPA.map(c => c[1]),
+    ['Pedido recebido: segue para a conferência documental']);
 }
 
 /* itens já cadastrados nas pastas da etapa */
@@ -692,11 +919,11 @@ const DOCS_ETAPA   = [['30', 'REQUERIMENTO DE ISENÇÃO'], ['31', 'CARNÊ DE IPT
 const CHECKS_ETAPA = [['1', 'O requerimento está assinado pelo requerente?'], ['2', 'O carnê do IPTU corresponde ao imóvel do pedido?']];
 const CONDS_ETAPA  = [['1'], ['2']];
 
-function gridModalHTML(colunas, linhas, comCheck) {
+function gridModalHTML(colunas, linhas, comCheck, aoClicar) {
   const ths = (comCheck ? '<th class="cb"><input type="checkbox"></th>' : '') +
     colunas.map(c => `<th>${c} <span class="funil">${svg('funil')}</span></th>`).join('');
-  const trs = linhas.map(l => `
-    <tr>${comCheck ? '<td class="cb"><input type="checkbox"></td>' : ''}${l.map((v, i) =>
+  const trs = linhas.map((l, n) => `
+    <tr${aoClicar ? ` onclick="${aoClicar}(${n})"` : ''}>${comCheck ? '<td class="cb"><input type="checkbox" onclick="event.stopPropagation()"></td>' : ''}${l.map((v, i) =>
       `<td class="${i === 0 ? 'num' : ''}">${v}</td>`).join('')}</tr>`).join('');
   return `
   <div class="modal-grid scroll">
@@ -1134,6 +1361,8 @@ function arvoreHTML() {
 }
 
 function cadastroHTML() {
+  if (fluxoSel === 'iptu') return cadastroIptuHTML();
+
   /* depois de salvo, o cabeçalho mostra o título dado ao fluxo, como link
      que reabre o formulário */
   const titulo = !fluxoCriado
@@ -1247,9 +1476,10 @@ function render() {
     `<div class="tela"><div class="vtabs">${vt}</div><div class="conteudo">${corpo}</div>
      ${modalEtapa && vista === 'cadastro' ? modalEtapaHTML() : ''}</div>`);
 
-  /* o canvas acompanha o crescimento do fluxo: reaplica zoom e centraliza
-     o último card criado */
-  if (vista === 'cadastro' && etapa === 'etapas') {
+  /* o canvas acompanha o fluxo aberto: reaplica zoom e enquadra */
+  if (vista === 'cadastro' &&
+      ((fluxoSel === 'iptu' && iptuVista === 'etapas') ||
+       (fluxoSel !== 'iptu' && etapa === 'etapas'))) {
     ativarArrastoCanvas();
     montarCanvasEtapas();
   }
@@ -1257,8 +1487,13 @@ function render() {
 
 function irPara(id) { vista = id; render(); }
 
-/** Clique numa linha de resultado leva ao Cadastro do fluxo. */
-function abrirCadastro(i) { irPara('cadastro'); }
+/** Clique numa linha de resultado leva ao Cadastro do fluxo; a linha da
+    ISENÇÃO DE IPTU abre o fluxo pronto para edição. */
+function abrirCadastro(i) {
+  if (RESULTADOS[i] && RESULTADOS[i][0] === '5') { abrirFluxoIptu(); return; }
+  fluxoSel = null;
+  irPara('cadastro');
+}
 
 const main = montarShell('po050');
 render();
