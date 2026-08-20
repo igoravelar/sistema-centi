@@ -508,6 +508,97 @@ body {
   font-weight: 700;
 }
 
+/* variante vertical do fluxo de palavras */
+.fluxo-palavras.vertical {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.fluxo-palavras.vertical .palavra {
+  min-width: 190px;
+  text-align: center;
+}
+
+/* estágios de evolução: pílula do estágio + descrição, encadeados por setas */
+.escada-evolucao { margin: 0 0 22px; }
+
+.escada-evolucao .estagio {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.escada-evolucao .estagio .rotulo {
+  flex: 0 0 160px;
+  text-align: center;
+  background: #F3FFC3;
+  border: 1px solid #C9DA86;
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: #6D8415;
+}
+
+.escada-evolucao .estagio p { margin: 3px 0 0; }
+
+.escada-evolucao .seta-baixo {
+  width: 160px;
+  padding: 2px 0;
+  text-align: center;
+  color: var(--verde);
+  font-weight: 700;
+}
+
+/* cards numerados dos diferenciais competitivos */
+.cards-num {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 14px;
+  margin: 0 0 20px;
+}
+
+.cards-num .card {
+  border: 1px solid var(--cinza-linha);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.cards-num .card .num {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  color: var(--verde);
+}
+
+.cards-num .card h4 {
+  margin: 2px 0 8px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #3F440C;
+}
+
+.cards-num .card p {
+  margin: 0;
+  font-size: 12.5px;
+}
+
+/* blocos de lista lado a lado (escopo x fora do escopo, grupos de métricas) */
+.colunas-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 14px;
+  margin: 0 0 22px;
+}
+
+.colunas-2 fieldset.riscos { margin: 0; }
+
+/* variante neutra da moldura: o que fica fora do escopo */
+.pagina fieldset.riscos.fora { border-color: var(--cinza-linha); }
+.pagina fieldset.riscos.fora li::marker { color: #C4C4C4; }
+
 .pagina .nota {
   background: #FDFBEB;
   border: 1px solid #F0E6B2;
@@ -940,7 +1031,329 @@ body {
     <section id="etapa3">
       <h2>#3 Estratégia do Produto</h2>
       <p class="lead">Visão do produto, diferenciais competitivos e roadmap estratégico.</p>
-      <p>Conteúdo a preencher com as definições desta etapa.</p>
+    </section>
+
+    <section id="etapa3-objetivo" class="sub">
+      <h3>Objetivo da etapa</h3>
+      <p>Definir a direção estratégica do Protocolo Ágil, estabelecendo <b>o que o produto pretende ser, para quem será desenvolvido, como irá se diferenciar e em qual sequência suas capacidades serão construídas</b>.</p>
+      <p>A estratégia parte das conclusões obtidas no Modelo de Negócios e na Inteligência de Mercado e serve como referência para Produto, Tecnologia, UX/UI, Comercial, Marketing e Customer Success.</p>
+    </section>
+
+    <section id="etapa3-visao" class="sub">
+      <h3>Visão do Produto</h3>
+      <p>O Protocolo Ágil será a plataforma da Centi especializada em <b>organizar, orientar e acelerar a tramitação de processos administrativos municipais</b>.</p>
+      <p>Mais do que digitalizar documentos ou substituir o protocolo físico, o produto deve funcionar como um <b>motor de execução dos processos</b>, indicando o caminho adequado, orientando cada responsável, controlando prazos e permitindo que atividades sejam executadas de forma integrada e simultânea quando possível.</p>
+
+      <h4>Visão de futuro</h4>
+      <blockquote>
+        <p>Fazer com que nenhum processo administrativo fique parado por falta de orientação, informação ou encaminhamento.</p>
+      </blockquote>
+
+      <p>A ambição do produto é transformar a tramitação administrativa de uma sequência burocrática e fragmentada em uma <b>jornada visual, previsível, rastreável e inteligente</b>.</p>
+    </section>
+
+    <section id="etapa3-papel" class="sub">
+      <h3>Papel estratégico no portfólio Centi</h3>
+      <p>O Protocolo Ágil deve funcionar como uma <b>porta de entrada da Centi na operação administrativa dos municípios</b>.</p>
+      <p>Enquanto o SIAFIC concentra-se na gestão financeira, contábil e fiscal, o Protocolo Ágil atua sobre o <b>fluxo operacional dos processos e documentos administrativos</b>.</p>
+      <p>A estratégia permite criar uma relação complementar:</p>
+
+      <div class="fluxo-palavras">
+        <span class="palavra">PROTOCOLO ÁGIL</span><span class="seta-fluxo">→</span>
+        <span class="palavra">OPERAÇÃO ADMINISTRATIVA</span><span class="seta-fluxo">→</span>
+        <span class="palavra">SIAFIC</span><span class="seta-fluxo">→</span>
+        <span class="palavra">GESTÃO FINANCEIRA E FISCAL</span>
+      </div>
+
+      <p>Dessa forma, o produto não deve ser tratado como uma solução isolada, mas como parte da estratégia de expansão do portfólio Centi dentro dos municípios.</p>
+    </section>
+
+    <section id="etapa3-posicionamento" class="sub">
+      <h3>Posicionamento</h3>
+
+      <h4>Categoria</h4>
+      <div class="definicao">
+        <p>Plataforma SaaS de tramitação inteligente de processos administrativos municipais.</p>
+      </div>
+
+      <h4>Público prioritário</h4>
+      <p><b>Prefeituras de pequeno e médio porte</b>, especialmente aquelas que precisam substituir processos manuais, fragmentados ou pouco estruturados por uma solução digital simples de implantar e utilizar.</p>
+
+      <h4>Problema central</h4>
+      <blockquote>
+        <p>Processos administrativos ficam parados, retornam desnecessariamente entre departamentos e dependem excessivamente de conhecimento individual para avançar.</p>
+      </blockquote>
+
+      <h4>Promessa</h4>
+      <blockquote>
+        <p>O Protocolo Ágil mostra o caminho e faz o processo avançar.</p>
+      </blockquote>
+
+      <h4>Território competitivo</h4>
+      <p>O produto deve ocupar o espaço entre:</p>
+      <div class="fluxo-palavras">
+        <span class="palavra">SIMPLICIDADE DE USO</span><span class="seta-fluxo">+</span>
+        <span class="palavra">ESPECIALIZAÇÃO EM PROCESSOS</span><span class="seta-fluxo">+</span>
+        <span class="palavra">ACESSIBILIDADE PARA MUNICÍPIOS MENORES</span><span class="seta-fluxo">+</span>
+        <span class="palavra">AUTOMAÇÃO PROGRESSIVA</span>
+      </div>
+      <p>A estratégia não é competir com grandes suites de gestão pública pela quantidade de módulos, mas pela <b>qualidade e simplicidade da tramitação</b>.</p>
+    </section>
+
+    <section id="etapa3-publicos" class="sub">
+      <h3>Públicos estratégicos</h3>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Público</th><th>Papel</th><th>Principal necessidade</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Prefeitura</b></td><td>Cliente</td><td>Eficiência, controle e previsibilidade</td></tr>
+            <tr><td><b>Gestor</b></td><td>Decisor</td><td>Visibilidade e indicadores</td></tr>
+            <tr><td><b>Servidor</b></td><td>Usuário principal</td><td>Saber o que fazer e quando fazer</td></tr>
+            <tr><td><b>Cidadão</b></td><td>Beneficiário</td><td>Solicitar e acompanhar sem burocracia</td></tr>
+            <tr><td><b>Administrador</b></td><td>Configurador</td><td>Criar e alterar fluxos sem depender de TI</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>A estratégia de produto deve considerar que <b>quem compra, quem utiliza e quem se beneficia da solução são públicos diferentes</b>.</p>
+    </section>
+
+    <section id="etapa3-jtbd" class="sub">
+      <h3>Jobs-to-be-Done prioritários</h3>
+
+      <h4>Servidor</h4>
+      <blockquote>
+        <p>“Preciso saber exatamente o que fazer com este processo para que ele avance corretamente.”</p>
+      </blockquote>
+
+      <h4>Gestor</h4>
+      <blockquote>
+        <p>“Preciso saber onde estão meus processos, quais estão atrasados e onde estão os gargalos.”</p>
+      </blockquote>
+
+      <h4>Administrador</h4>
+      <blockquote>
+        <p>“Preciso configurar e ajustar os fluxos dos processos sem depender constantemente da equipe técnica.”</p>
+      </blockquote>
+
+      <h4>Cidadão</h4>
+      <blockquote>
+        <p>“Preciso solicitar algo à prefeitura e acompanhar o andamento sem precisar ir presencialmente ou descobrir onde meu processo está.”</p>
+      </blockquote>
+
+      <h4>Prefeitura</h4>
+      <blockquote>
+        <p>“Preciso reduzir burocracia, retrabalho e tempo de tramitação sem aumentar a complexidade operacional.”</p>
+      </blockquote>
+    </section>
+
+    <section id="etapa3-diferenciais" class="sub">
+      <h3>Diferenciais competitivos</h3>
+      <p>A estratégia competitiva do Protocolo Ágil será baseada em cinco pilares:</p>
+
+      <div class="cards-num">
+        <div class="card">
+          <span class="num">01</span>
+          <h4>Fluxo visual</h4>
+          <p>O processo deve ser compreendido visualmente, permitindo identificar etapas, responsáveis, decisões e caminhos possíveis.</p>
+        </div>
+        <div class="card">
+          <span class="num">02</span>
+          <h4>Orientação operacional</h4>
+          <p>O sistema não deve apenas informar onde o processo está. Deve indicar <b>o que precisa ser feito a seguir</b>.</p>
+        </div>
+        <div class="card">
+          <span class="num">03</span>
+          <h4>Tramitação inteligente</h4>
+          <p>Atividades que podem ocorrer simultaneamente devem ser executadas em paralelo, reduzindo esperas e encaminhamentos desnecessários.</p>
+        </div>
+        <div class="card">
+          <span class="num">04</span>
+          <h4>Configuração acessível</h4>
+          <p>A prefeitura deve conseguir adaptar seus processos e fluxos sem depender continuamente de desenvolvimento técnico.</p>
+        </div>
+        <div class="card">
+          <span class="num">05</span>
+          <h4>Evolução para automação e IA</h4>
+          <p>A arquitetura do produto deve permitir que tarefas repetitivas sejam progressivamente automatizadas e que o ViCenti possa atuar como camada de inteligência sobre os processos.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="etapa3-principios" class="sub">
+      <h3>Princípios do Produto</h3>
+      <p>As decisões futuras de produto deverão seguir os seguintes princípios:</p>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Princípio</th><th>Diretriz</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Simples antes de complexo</b></td><td>A solução deve reduzir a complexidade percebida pelo usuário</td></tr>
+            <tr><td><b>Orientar antes de cobrar</b></td><td>O sistema deve explicar o próximo passo antes de exigir uma ação</td></tr>
+            <tr><td><b>Fluxo antes de tela</b></td><td>A experiência deve refletir o processo, não a estrutura interna do sistema</td></tr>
+            <tr><td><b>Automatizar antes de repetir</b></td><td>Tarefas previsíveis devem ser candidatas à automação</td></tr>
+            <tr><td><b>Configurar antes de desenvolver</b></td><td>Regras de negócio devem ser parametrizáveis sempre que possível</td></tr>
+            <tr><td><b>Integrar antes de isolar</b></td><td>O produto deve se conectar ao ecossistema Centi e aos sistemas municipais</td></tr>
+            <tr><td><b>Rastreabilidade por padrão</b></td><td>Toda movimentação relevante deve ser registrada</td></tr>
+            <tr><td><b>Mobile quando necessário</b></td><td>A experiência deve considerar servidores e cidadãos fora do desktop</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="etapa3-evolucao" class="sub">
+      <h3>Estratégia de evolução</h3>
+      <p>A evolução do Protocolo Ágil será organizada em cinco estágios:</p>
+
+      <div class="escada-evolucao">
+        <div class="estagio">
+          <span class="rotulo">DIGITALIZAR</span>
+          <p>Eliminar a dependência do papel e centralizar documentos e solicitações.</p>
+        </div>
+        <div class="seta-baixo">↓</div>
+        <div class="estagio">
+          <span class="rotulo">ORGANIZAR</span>
+          <p>Estruturar processos, departamentos, responsáveis, prazos e documentos.</p>
+        </div>
+        <div class="seta-baixo">↓</div>
+        <div class="estagio">
+          <span class="rotulo">ORIENTAR</span>
+          <p>Mostrar ao servidor o próximo passo e as condições necessárias para executá-lo.</p>
+        </div>
+        <div class="seta-baixo">↓</div>
+        <div class="estagio">
+          <span class="rotulo">AUTOMATIZAR</span>
+          <p>Reduzir tarefas manuais, encaminhamentos e decisões repetitivas.</p>
+        </div>
+        <div class="seta-baixo">↓</div>
+        <div class="estagio">
+          <span class="rotulo">INTELIGÊNCIA</span>
+          <p>Utilizar dados e IA para antecipar gargalos, recomendar ações, analisar documentos e apoiar decisões.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="etapa3-mvp" class="sub">
+      <h3>Estratégia de MVP</h3>
+      <p>O MVP deve validar a hipótese central do produto:</p>
+
+      <blockquote>
+        <p>“Uma prefeitura consegue configurar e executar processos administrativos digitais com mais clareza, controle e velocidade utilizando o Protocolo Ágil?”</p>
+      </blockquote>
+
+      <p>O MVP deve priorizar as capacidades essenciais para testar essa hipótese.</p>
+
+      <div class="colunas-2">
+        <fieldset class="riscos">
+          <legend>Núcleo do MVP</legend>
+          <ul>
+            <li>Cadastro e configuração de fluxos;</li>
+            <li>definição de etapas;</li>
+            <li>definição de departamentos e responsáveis;</li>
+            <li>tramitação entre etapas;</li>
+            <li>controle de prazos;</li>
+            <li>documentos e anexos;</li>
+            <li>histórico e rastreabilidade;</li>
+            <li>execução de atividades;</li>
+            <li>acompanhamento do processo;</li>
+            <li>visão administrativa dos processos.</li>
+          </ul>
+        </fieldset>
+        <fieldset class="riscos fora">
+          <legend>Não prioritário no MVP</legend>
+          <ul>
+            <li>IA avançada;</li>
+            <li>automações complexas;</li>
+            <li>grande quantidade de integrações;</li>
+            <li>aplicativos nativos;</li>
+            <li>módulos periféricos;</li>
+            <li>funcionalidades que não contribuam diretamente para validar a tramitação.</li>
+          </ul>
+        </fieldset>
+      </div>
+    </section>
+
+    <section id="etapa3-roadmap" class="sub">
+      <h3>Roadmap Estratégico</h3>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Fase</th><th>Objetivo</th><th>Capacidades</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>MVP</b></td><td>Fazer o processo tramitar</td><td>Fluxos + etapas + responsáveis + documentos + prazos</td></tr>
+            <tr><td><b>V1</b></td><td>Tornar a tramitação mais eficiente</td><td>Paralelismo + regras + checklists + notificações + indicadores</td></tr>
+            <tr><td><b>V2</b></td><td>Automatizar a operação</td><td>Automações + integrações + gatilhos + tarefas automáticas</td></tr>
+            <tr><td><b>V3</b></td><td>Tornar o processo inteligente</td><td>IA + recomendações + análise documental + previsão de gargalos</td></tr>
+            <tr><td><b>V4</b></td><td>Expandir o ecossistema</td><td>Integrações avançadas + novos órgãos + novos serviços públicos</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>O roadmap deverá ser revisado a partir dos resultados obtidos nos pilotos, evitando que a evolução do produto seja orientada apenas por hipóteses internas.</p>
+    </section>
+
+    <section id="etapa3-metricas" class="sub">
+      <h3>Métricas estratégicas do produto</h3>
+      <p>A estratégia deverá ser acompanhada por indicadores que demonstrem se o produto realmente está cumprindo sua promessa.</p>
+
+      <div class="colunas-2">
+        <fieldset class="riscos">
+          <legend>Eficiência</legend>
+          <ul>
+            <li>Tempo médio de tramitação;</li>
+            <li>tempo médio por etapa;</li>
+            <li>percentual de processos dentro do prazo;</li>
+            <li>redução de retrabalho;</li>
+            <li>redução de encaminhamentos.</li>
+          </ul>
+        </fieldset>
+        <fieldset class="riscos">
+          <legend>Adoção</legend>
+          <ul>
+            <li>Processos criados;</li>
+            <li>usuários ativos;</li>
+            <li>frequência de utilização;</li>
+            <li>percentual de processos realizados integralmente no sistema.</li>
+          </ul>
+        </fieldset>
+        <fieldset class="riscos">
+          <legend>Qualidade</legend>
+          <ul>
+            <li>Processos devolvidos;</li>
+            <li>etapas reabertas;</li>
+            <li>erros de tramitação;</li>
+            <li>chamados de suporte relacionados ao fluxo.</li>
+          </ul>
+        </fieldset>
+        <fieldset class="riscos">
+          <legend>Resultado</legend>
+          <ul>
+            <li>Redução do tempo total de processo;</li>
+            <li>satisfação dos servidores;</li>
+            <li>satisfação dos cidadãos;</li>
+            <li>taxa de renovação dos municípios;</li>
+            <li>expansão para novos departamentos.</li>
+          </ul>
+        </fieldset>
+      </div>
+    </section>
+
+    <section id="etapa3-decisao" class="sub">
+      <h3>Decisão estratégica</h3>
+      <p>A estratégia do Protocolo Ágil é <b>não competir pela quantidade de funcionalidades</b>, mas pela capacidade de transformar processos administrativos complexos em fluxos simples, visuais e orientados.</p>
+
+      <blockquote>
+        <p>O produto não deve apenas registrar onde o processo está. Deve ajudar a prefeitura a fazer o processo avançar.</p>
+      </blockquote>
+
+      <p>Essa diretriz deverá orientar as próximas etapas de <b>Modelagem do Produto, Arquitetura Tecnológica, UX/UI, IA, Validação e Comercialização</b>.</p>
     </section>
 
     <section id="etapa4">
@@ -1025,7 +1438,21 @@ const MENU = [
     { id: 'etapa2-oportunidade', txt: 'Oportunidade para a Centi' },
     { id: 'etapa2-implicacoes',  txt: 'Implicações estratégicas' },
   ] },
-  { titulo: '#3 Estratégia do Produto',     itens: [{ id: 'etapa3',  txt: 'Visão geral' }] },
+  { titulo: '#3 Estratégia do Produto',     itens: [
+    { id: 'etapa3-objetivo',      txt: 'Objetivo da etapa' },
+    { id: 'etapa3-visao',         txt: 'Visão do Produto' },
+    { id: 'etapa3-papel',         txt: 'Papel estratégico no portfólio' },
+    { id: 'etapa3-posicionamento',txt: 'Posicionamento' },
+    { id: 'etapa3-publicos',      txt: 'Públicos estratégicos' },
+    { id: 'etapa3-jtbd',          txt: 'Jobs-to-be-Done prioritários' },
+    { id: 'etapa3-diferenciais',  txt: 'Diferenciais competitivos' },
+    { id: 'etapa3-principios',    txt: 'Princípios do Produto' },
+    { id: 'etapa3-evolucao',      txt: 'Estratégia de evolução' },
+    { id: 'etapa3-mvp',           txt: 'Estratégia de MVP' },
+    { id: 'etapa3-roadmap',       txt: 'Roadmap Estratégico' },
+    { id: 'etapa3-metricas',      txt: 'Métricas estratégicas' },
+    { id: 'etapa3-decisao',       txt: 'Decisão estratégica' },
+  ] },
   { titulo: '#4 Modelagem do produto',      itens: [{ id: 'etapa4',  txt: 'Visão geral' }] },
   { titulo: '#5 Arquitetura Tecnológica',   itens: [{ id: 'etapa5',  txt: 'Visão geral' }] },
   { titulo: '#6 Design System e UX/UI',     itens: [{ id: 'etapa6',  txt: 'Visão geral' }] },
