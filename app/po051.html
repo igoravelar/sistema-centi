@@ -82,6 +82,82 @@
   .res-topo .dir { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 13px; }
   .res-topo select { height: 29px; border: 1px solid var(--fld-bd); border-radius: 4px; padding: 0 8px; background: #FFFFFF; color: var(--txt); }
   .res-corpo { flex: 1; min-height: 0; margin: 0 12px 12px; background: #FFFFFF; border: 1px solid var(--tab-bd); border-radius: 4px; overflow: auto; }
+
+  /* --------------------- modal do item da etapa ---------------------
+     Aberta ao clicar numa linha das grids de Documentos, Checklist ou
+     Regras do drawer: pastas do item à esquerda, formulário à direita.
+     Mesmo desenho da modal Etapa do fluxo do PO050. */
+  .modal-overlay {
+    position: absolute;
+    inset: calc(var(--moldura) + var(--tab-h)) var(--moldura) var(--moldura) calc(var(--moldura) + 30px);
+    background: rgba(0,0,0,.4);
+    border-radius: 5px;
+    display: flex; align-items: stretch;
+    padding: 20px;
+    z-index: 10;
+  }
+  .modal {
+    flex: 1; min-width: 0;
+    background: #FFFFFF;
+    border-radius: 5px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .modal-cab { flex: 0 0 52px; display: flex; align-items: center; gap: 10px; padding: 0 18px; }
+  .modal-cab h2 { margin: 0; flex: 1; font-size: 16px; font-weight: normal; color: var(--txt-strong); }
+
+  .modal-corpo {
+    flex: 1; min-height: 0;
+    display: flex;
+    margin: 0 14px 14px;
+    border: 1px solid var(--tab-bd); border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .arvore { flex: 0 0 240px; overflow: auto; padding: 12px 10px; border-right: 1px solid var(--tab-bd); }
+  .arvore .pasta { position: relative; display: flex; align-items: center; gap: 9px; font-size: 12px;
+                   color: #5C5B5B; padding: 7px 4px; border-radius: 4px; cursor: pointer; }
+  .arvore .pasta:hover { background: #F1F5E4; }
+  .arvore .pasta .chev { flex: 0 0 13px; display: flex; }
+  .arvore .pasta .chev svg { width: 13px; height: 13px; color: var(--g); }
+  .arvore .pasta .ico { flex: 0 0 15px; display: flex; }
+  .arvore .pasta .ico svg { width: 15px; height: 15px; color: var(--g); }
+  .arvore .pasta .rot-no { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .arvore .n1 { padding-left: 22px; }
+  .arvore .n2 { padding-left: 44px; }
+  .arvore .pasta.sel { background: var(--g-soft-bg); color: var(--g-olive); font-weight: bold; }
+
+  /* botão + que aparece ao passar o mouse na linha da pasta */
+  .arvore .pasta .add {
+    position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+    width: 22px; height: 22px; padding: 0;
+    border: 1px solid var(--g-soft-bd); border-radius: 50%;
+    background: var(--g-soft-bg); color: var(--g-olive);
+    display: none; place-items: center;
+  }
+  .arvore .pasta:hover .add { display: grid; }
+  .arvore .pasta .add:hover { background: #5D6725; color: #FFFFFF; }
+  .arvore .pasta .add svg { width: 12px; height: 12px; }
+
+  /* raiz da árvore: o próprio item da linha clicada */
+  .modal-arvore .cab-arv { display: flex; align-items: center; gap: 7px; padding: 6px 4px 10px;
+                           font-size: 12.5px; font-weight: bold; color: #5C5B5B; cursor: pointer; }
+  .modal-arvore .cab-arv svg { width: 14px; height: 14px; flex: 0 0 auto; color: var(--g); }
+  .modal-arvore .cab-arv .nome-item { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+                                      text-decoration: underline; }
+  .modal-arvore .cab-arv:hover .nome-item { color: var(--g-dark); }
+
+  .modal-dir { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  /* faixa de ações: um cinza acima do cinza do formulário */
+  .modal-toolbar { flex: 0 0 49px; display: flex; align-items: center; gap: 10px; padding: 0 14px;
+                   background: var(--panel-2); }
+  .modal-form { flex: 1; min-height: 0; overflow: auto; padding: 14px 16px;
+                background: var(--panel-1); display: flex; flex-direction: column; gap: 10px; }
+  .modal-form .campo { max-width: 1100px; }
+
+  /* grid de itens de uma pasta do item (assinaturas, anotações, ...) */
+  .modal-grid { flex: 1; min-height: 0; overflow: auto; padding: 14px 16px; background: var(--panel-1); }
+  .modal-grid .grid { background: #FFFFFF; border: 1px solid var(--tab-bd); border-radius: 4px; overflow: hidden; }
 </style>
 </head>
 <body>
@@ -89,7 +165,7 @@
 <div class="app"></div>
 
 <script src="assets/shell.js?v=9"></script>
-<script src="assets/fluxo.js?v=3"></script>
+<script src="assets/fluxo.js?v=4"></script>
 <script>
 /* As abas verticais são desta tela: trocam de vista aqui dentro, sem sair do
    PO051. O fluxo fica montado o tempo todo, só oculto, para não perder o
@@ -319,7 +395,7 @@ function montarFluxoProt() {
 
 /* ------------------------------- drawer ------------------------------- */
 
-const ABAS_P = ['Dados', 'Documentos', 'Checklist', 'Condições'];
+const ABAS_P = ['Dados', 'Documentos', 'Checklist', 'Regras'];
 let abaP = 'Dados';
 
 function drawerProtocoloHTML() {
@@ -361,8 +437,10 @@ const DOCS_PROT = [
   { id: 2, descricao: 'CARNÊ DE IPTU',           obrigatorio: 'Sim', situacao: 'Não informado' },
 ];
 const CHECK_PROT = [
-  { id: 1, situacao: 'Não iniciado' },
-  { id: 2, situacao: 'Não iniciado' },
+  { id: 1, descricao: 'O requerimento está assinado pelo requerente ou procurador?',
+    obrigatorio: 'Sim', situacao: 'Não iniciado' },
+  { id: 2, descricao: 'A documentação anexada está legível e completa?',
+    obrigatorio: 'Sim', situacao: 'Não iniciado' },
 ];
 const COND_PROT = [
   { id: 1, descricao: 'Pedido recebido: segue para a próxima etapa' },
@@ -378,16 +456,19 @@ function corpoEtapaP(n) {
       { rot: 'SITUAÇÃO', w: '130px' },
     ],
     celulas: d => [d.id, d.descricao, d.obrigatorio, d.situacao],
+    aoClicar: d => `abrirItemProt('doc', '${d.id}')`,
   });
   if (abaP === 'Checklist') return gridHTML({
     col: 'checklist', itens: CHECK_PROT,
     colunas: [{ rot: 'ID', w: '72px', num: true }, { rot: 'SITUAÇÃO', w: '1fr' }],
     celulas: c => [c.id, c.situacao],
+    aoClicar: c => `abrirItemProt('check', '${c.id}')`,
   });
-  if (abaP === 'Condições') return gridHTML({
+  if (abaP === 'Regras') return gridHTML({
     col: 'condicoes', itens: COND_PROT,
     colunas: [{ rot: 'ID', w: '72px', num: true }, { rot: 'DESCRIÇÃO', w: '1fr' }],
     celulas: c => [c.id, c.descricao],
+    aoClicar: c => `abrirItemProt('cond', '${c.id}')`,
   });
 
   const e = ETAPAS_PROT[n - 1];
@@ -489,6 +570,305 @@ function fecharDrawerP() {
   main.querySelectorAll('.cad .etapa').forEach(el => el.classList.remove('aberta', 'sel'));
   /* recentraliza deslizando assim que o drawer devolve a largura */
   aoDrawerAssentar(d, () => montarCanvasP(true));
+}
+
+/* --------------------- modal do item da etapa ---------------------
+   Clicar numa linha das grids de Documentos, Checklist ou Regras abre a
+   modal daquele item: as pastas dele à esquerda e o formulário à direita,
+   no mesmo desenho da modal Etapa do fluxo do PO050. */
+
+/* ícones sólidos da árvore (mesmo conjunto do PO050) */
+const FA = {
+  pasta: { vb: '0 0 512 512', d: 'M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z' },
+  pastaAberta: { vb: '0 0 576 512', d: 'M572.694 292.093L500.27 416.248A63.997 63.997 0 0 1 444.989 448H45.025c-18.523 0-30.064-20.093-20.731-36.093l72.424-124.155A64 64 0 0 1 152 256h399.964c18.523 0 30.064 20.093 20.73 36.093zM152 224h328v-48c0-26.51-21.49-48-48-48H272l-64-64H48C21.49 64 0 85.49 0 112v278.046l69.077-118.418C86.214 242.25 118.179 224 152 224z' },
+  chevronBaixo: { vb: '0 0 512 512', d: 'M504 256c0 137-111 248-248 248S8 393 8 256 119 8 256 8s248 111 248 248zM273 369.9l135.5-135.5c9.4-9.4 9.4-24.6 0-33.9l-17-17c-9.4-9.4-24.6-9.4-33.9 0L256 285.1 154.4 183.5c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L239 369.9c9.4 9.4 24.6 9.4 34 0z' },
+  chevronDireita: { vb: '0 0 512 512', d: 'M256 8c137 0 248 111 248 248S393 504 256 504 8 393 8 256 119 8 256 8zm113.9 231L234.4 103.5c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L285.1 256 183.5 357.6c-9.4 9.4-9.4 24.6 0 33.9l17 17c9.4 9.4 24.6 9.4 33.9 0L369.9 273c9.4-9.4 9.4-24.6 0-34z' },
+};
+
+function fa(nome) {
+  const i = FA[nome];
+  return `<svg viewBox="${i.vb}" fill="currentColor" aria-hidden="true"><path d="${i.d}"/></svg>`;
+}
+
+/* ícone "file-up" do Lucide, para o campo Arquivo */
+Object.assign(ICO, {
+  upload: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><polyline points="14,2 14,8 20,8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9,15 12,12 15,15"/>',
+});
+TITULO_ACAO.upload = 'Anexar arquivo';
+
+const DATA_DOC = '20/08/2026 12:40:34';
+
+/* pastas de cada tipo de item, na ordem em que aparecem na árvore */
+const PASTAS_ITEM = {
+  doc:   [{ id: 'ass',  rot: 'Assinaturas',        vista: 'ass'  },
+          { id: 'sig',  rot: 'Usuários sigilosos', vista: 'sig'  }],
+  check: [{ id: 'anot', rot: 'Anotações',          vista: 'anot' }],
+  cond:  [{ id: 'var',  rot: 'Variáveis avaliadas', vista: 'var' }],
+};
+
+const TITULO_ITEM = { doc: 'Documento do processo', check: 'Item do checklist', cond: 'Condição de saída' };
+
+/* conteúdo das pastas: cada item vira uma linha na grid e um nó na árvore */
+const ASSINATURAS_DOC = [{ id: '1', tipo: 'Responsável da etapa', situacao: 'Pendente' }];
+const SIGILOSOS_DOC   = [];
+const ANOTACOES_CHECK = [{ id: '1', anotacao: 'Conferido com o documento original.', usuario: 'MARIANA DA CRUZ PARRA' }];
+const VARIAVEIS_COND  = [{ id: '1', variavel: 'pedidoRecebido', valor: 'Sim' }];
+
+const ITENS_PASTA = { ass: ASSINATURAS_DOC, sig: SIGILOSOS_DOC, anot: ANOTACOES_CHECK, var: VARIAVEIS_COND };
+
+/* rótulo de cada item da pasta na árvore */
+const ROTULO_PASTA = {
+  ass:  i => `${i.id} - ${i.tipo}`,
+  sig:  i => `${i.id} - ${i.usuario}`,
+  anot: i => `${i.id} - ${i.anotacao}`,
+  var:  i => `${i.id} - ${i.variavel}`,
+};
+
+let itemAbertoP = null;   /* { tipo, id } da linha clicada; null = modal fechada */
+let mVistaP = 'form';     /* form | <pasta>-grid | <pasta>-form */
+let mNovoP = false;       /* formulário de pasta aberto pelo Novo (vem em branco) */
+let mExpP = {};           /* pastas expandidas na árvore */
+
+function itemDaLinhaP() {
+  const { tipo, id } = itemAbertoP;
+  const col = tipo === 'doc' ? DOCS_PROT : tipo === 'check' ? CHECK_PROT : COND_PROT;
+  return col.find(i => String(i.id) === String(id));
+}
+
+/** Abre a modal da linha clicada numa das grids do drawer. */
+function abrirItemProt(tipo, id) {
+  itemAbertoP = { tipo, id };
+  mVistaP = 'form'; mNovoP = false; mExpP = {};
+  renderModalP();
+}
+
+function fecharModalP() {
+  itemAbertoP = null;
+  renderModalP();
+}
+
+function modalIrP(vista, novo = false) {
+  mVistaP = vista; mNovoP = novo;
+  renderModalP();
+}
+
+function mToggleP(no) { mExpP[no] = !mExpP[no]; renderModalP(); }
+
+/** Salvar: no formulário do item, marca a linha como resolvida e fecha a
+    modal; nos formulários das pastas, volta para a grid da pasta. */
+function salvarModalP() {
+  if (mVistaP === 'form') {
+    const it = itemDaLinhaP();
+    if (itemAbertoP.tipo === 'doc') it.situacao = 'Anexado';
+    if (itemAbertoP.tipo === 'check') it.situacao = 'Concluído';
+    fecharModalP();
+    const corpo = main.querySelector('.cad .drawer-corpo');
+    if (corpo) corpo.innerHTML = corpoEtapaP(etapaSelP);
+    return;
+  }
+  modalIrP(mVistaP.replace('-form', '-grid'));
+}
+
+/* ------------------------- formulários da modal ------------------------- */
+
+function formDocProtHTML() {
+  const d = itemDaLinhaP();
+  return [
+    campoHTML({ rot: 'Id', val: '0', ro: true }),
+    campoHTML({ rot: 'Tipo<span class="req">*</span>', cod: '3107', codL: true, val: d.descricao,
+                acoes: ['lapis', 'lupa'] }),
+    campoHTML({ rot: 'Sequencial<br>documento', val: '0' }),
+    campoHTML({ rot: 'Descrição<span class="req">*</span>', val: '' }),
+    campoHTML({ rot: 'Arquivo<span class="req">*</span>', val: '', acoes: ['upload'] }),
+    campoHTML({ rot: 'Número<br>documento', val: '' }),
+    campoHTML({ rot: 'Data', val: DATA_DOC, acoes: ['calendario'] }),
+    campoHTML({ rot: 'Repartição', val: 'PROTOCOLO CENTRAL', ro: true }),
+    campoHTML({ rot: 'Tipo andamento', val: 'Saída', opcoes: ['Saída', 'Entrada'], ro: true }),
+    campoHTML({ rot: 'Usuário', val: 'MARIANA DA CRUZ PARRA', ro: true }),
+    campoHTML({ rot: 'Status<span class="req">*</span>', val: 'Aprovado',
+                opcoes: ['Aprovado', 'Pendente', 'Rejeitado'], ro: true }),
+    campoHTML({ rot: 'Confere original', val: 'Não', opcoes: ['Não', 'Sim'], ro: true }),
+    campoHTML({ rot: 'Qtd. paginas', val: '0' }),
+    campoHTML({ rot: 'Documento<br>sigiloso', val: 'Não', opcoes: ['Não', 'Sim'] }),
+  ].join('');
+}
+
+function formCheckProtHTML() {
+  const c = itemDaLinhaP();
+  return [
+    campoHTML({ rot: 'Id', val: String(49 + Number(c.id)), ro: true }),
+    campoHTML({ rot: 'Ordem<span class="req">*</span>', val: c.id, ro: true }),
+    campoHTML({ rot: 'Descrição<span class="req">*</span>', val: c.descricao, ro: true }),
+    campoHTML({ rot: 'Obrigatório', val: c.obrigatorio, opcoes: ['Não', 'Sim'], ro: true }),
+    campoHTML({ rot: 'Situação<span class="req">*</span>', val: c.situacao,
+                opcoes: ['Não iniciado', 'Conforme', 'Não conforme'] }),
+    campoHTML({ rot: 'Anotação', val: '', area: true }),
+    campoHTML({ rot: 'Verificado por', cod: '', codL: true, val: '', ph: 'Pesquisar', lupa: true }),
+    campoHTML({ rot: 'Data<br>verificação', val: '', ph: 'dd/mm/yyyy', acoes: ['calendario'] }),
+  ].join('');
+}
+
+function formCondProtHTML() {
+  const c = itemDaLinhaP();
+  return [
+    campoHTML({ rot: 'Id', val: String(29 + Number(c.id)), ro: true }),
+    campoHTML({ rot: 'Ordem de<br>avaliação<span class="req">*</span>', val: c.id, ro: true }),
+    campoHTML({ rot: 'Variável', cod: '', codL: true, val: 'pedidoRecebido', ro: true, lupa: true }),
+    campoHTML({ rot: 'Operador', val: 'Igual', opcoes: ['Igual', 'Diferente', 'Maior que', 'Menor que'], ro: true }),
+    campoHTML({ rot: 'Valor', val: 'Sim', ro: true }),
+    campoHTML({ rot: 'Etapa destino<span class="req">*</span>', cod: '38', codL: true,
+                val: 'Gerar Dispensa', ro: true, lupa: true }),
+    campoHTML({ rot: 'Descrição<br>legível<span class="req">*</span>', val: c.descricao, ro: true }),
+    campoHTML({ rot: 'Resultado<span class="req">*</span>', val: 'Não avaliada',
+                opcoes: ['Não avaliada', 'Atendida', 'Não atendida'] }),
+  ].join('');
+}
+
+function formPastaHTML(pasta) {
+  const n = mNovoP;
+  if (pasta === 'ass') return [
+    campoHTML({ rot: 'Id', val: n ? '0' : '1', ro: true }),
+    campoHTML({ rot: 'Tipo de<br>assinante<span class="req">*</span>',
+                val: n ? 'Responsável da etapa' : ASSINATURAS_DOC[0].tipo,
+                opcoes: ['Responsável da etapa', 'Requerente', 'Repartição responsável'] }),
+    campoHTML({ rot: 'Assinante', cod: '', codL: true, val: n ? '' : 'MARIANA DA CRUZ PARRA',
+                ph: 'Pesquisar', lupa: true }),
+    campoHTML({ rot: 'Situação<span class="req">*</span>', val: n ? 'Pendente' : ASSINATURAS_DOC[0].situacao,
+                opcoes: ['Pendente', 'Assinado', 'Dispensado'] }),
+    campoHTML({ rot: 'Data<br>assinatura', val: '', ph: 'dd/mm/yyyy', acoes: ['calendario'] }),
+  ].join('');
+
+  if (pasta === 'sig') return [
+    campoHTML({ rot: 'Id', val: '0', ro: true }),
+    campoHTML({ rot: 'Usuário<span class="req">*</span>', cod: '', codL: true, val: '',
+                ph: 'Pesquisar', lupa: true }),
+  ].join('');
+
+  if (pasta === 'anot') return [
+    campoHTML({ rot: 'Id', val: n ? '0' : '1', ro: true }),
+    campoHTML({ rot: 'Anotação<span class="req">*</span>', val: n ? '' : ANOTACOES_CHECK[0].anotacao, area: true }),
+    campoHTML({ rot: 'Usuário', val: n ? '' : ANOTACOES_CHECK[0].usuario, ro: true }),
+    campoHTML({ rot: 'Data', val: n ? '' : DATA_DOC, ro: true }),
+  ].join('');
+
+  return [
+    campoHTML({ rot: 'Id', val: n ? '0' : '1', ro: true }),
+    campoHTML({ rot: 'Variável<span class="req">*</span>', cod: '', codL: true,
+                val: n ? '' : VARIAVEIS_COND[0].variavel, ph: 'Pesquisar', lupa: true }),
+    campoHTML({ rot: 'Valor', val: n ? '' : VARIAVEIS_COND[0].valor }),
+  ].join('');
+}
+
+/* grids das pastas, no mesmo componente das grids do drawer */
+function gridPastaHTML(pasta) {
+  if (pasta === 'ass') return gridHTML({
+    col: 'assinaturas', itens: ASSINATURAS_DOC,
+    colunas: [{ rot: 'ID', w: '72px', num: true }, { rot: 'TIPO DE ASSINANTE', w: '1fr' },
+              { rot: 'SITUAÇÃO', w: '130px' }],
+    celulas: a => [a.id, a.tipo, a.situacao],
+    aoClicar: () => `modalIrP('ass-form')`,
+  });
+  if (pasta === 'sig') return gridHTML({
+    col: 'sigilosos', itens: SIGILOSOS_DOC,
+    colunas: [{ rot: 'ID', w: '72px', num: true }, { rot: 'USUÁRIO', w: '1fr' }],
+    celulas: u => [u.id, u.usuario],
+    aoClicar: () => `modalIrP('sig-form')`,
+  });
+  if (pasta === 'anot') return gridHTML({
+    col: 'anotacoes', itens: ANOTACOES_CHECK,
+    colunas: [{ rot: 'ID', w: '72px', num: true }, { rot: 'ANOTAÇÃO', w: '1fr' },
+              { rot: 'USUÁRIO', w: '220px' }],
+    celulas: a => [a.id, a.anotacao, a.usuario],
+    aoClicar: () => `modalIrP('anot-form')`,
+  });
+  return gridHTML({
+    col: 'variaveis', itens: VARIAVEIS_COND,
+    colunas: [{ rot: 'ID', w: '72px', num: true }, { rot: 'VARIÁVEL', w: '1fr' },
+              { rot: 'VALOR', w: '150px' }],
+    celulas: v => [v.id, v.variavel, v.valor],
+    aoClicar: () => `modalIrP('var-form')`,
+  });
+}
+
+/* ---------------------------- modal completa ---------------------------- */
+
+function modalItemHTML() {
+  const { tipo } = itemAbertoP;
+  const it = itemDaLinhaP();
+  const pastas = PASTAS_ITEM[tipo];
+  const emGrid = mVistaP.endsWith('-grid');
+  const pastaAtual = mVistaP === 'form' ? null : mVistaP.split('-')[0];
+
+  const rotRaiz = tipo === 'doc' ? `${DATA_DOC} -` : `${it.id} - ${it.descricao}`;
+
+  const arvore = pastas.map(p => {
+    const filhos = !mExpP[p.id] ? '' : ITENS_PASTA[p.vista].map(i => `
+      <div class="pasta n2${mVistaP === `${p.vista}-form` && !mNovoP ? ' sel' : ''}"
+           onclick="modalIrP('${p.vista}-form')">
+        <span style="font-weight:bold">+</span>
+        <span class="rot-no">${ROTULO_PASTA[p.vista](i)}</span>
+      </div>`).join('');
+
+    return `
+      <div class="pasta n1${pastaAtual === p.vista ? ' sel' : ''}" onclick="modalIrP('${p.vista}-grid')">
+        <span class="chev" onclick="event.stopPropagation();mToggleP('${p.id}')">${fa(mExpP[p.id] ? 'chevronBaixo' : 'chevronDireita')}</span>
+        <span class="ico">${fa(mExpP[p.id] ? 'pastaAberta' : 'pasta')}</span>
+        <span class="rot-no">${p.rot}</span>
+        <button class="add" title="Novo item"
+                onclick="event.stopPropagation();modalIrP('${p.vista}-form', true)">${svg('mais')}</button>
+      </div>${filhos}`;
+  }).join('');
+
+  const corpo = emGrid
+    ? `<div class="modal-grid scroll">${gridPastaHTML(pastaAtual)}</div>`
+    : `<div class="modal-form scroll">${
+        mVistaP === 'form'
+          ? (tipo === 'doc' ? formDocProtHTML() : tipo === 'check' ? formCheckProtHTML() : formCondProtHTML())
+          : formPastaHTML(pastaAtual)}</div>`;
+
+  const btnNovo = emGrid
+    ? `<button class="btn btn-claro" onclick="modalIrP('${pastaAtual}-form', true)">${svg('mais')} Novo</button>`
+    : `<button class="btn btn-neutro" disabled>${svg('mais')} Novo</button>`;
+
+  const btnSalvar = emGrid
+    ? `<button class="btn btn-neutro" disabled>${svg('salvar')} Salvar</button>`
+    : `<button class="btn btn-primario" onclick="salvarModalP()">${svg('salvar')} Salvar(1)</button>`;
+
+  return `
+  <div class="modal-overlay" onclick="if(event.target===this)fecharModalP()">
+    <div class="modal">
+      <div class="modal-cab">
+        <h2>${TITULO_ITEM[tipo]}</h2>
+        <button class="bt-fechar" onclick="fecharModalP()" title="Fechar">${svg('x')}</button>
+      </div>
+      <div class="modal-corpo">
+        <div class="arvore modal-arvore scroll">
+          <div class="cab-arv" onclick="modalIrP('form')">
+            <span>${fa('chevronBaixo')}</span>
+            <span style="font-weight:bold">+</span>
+            <span class="nome-item" title="${rotRaiz}">${rotRaiz}</span>
+          </div>
+          ${arvore}
+        </div>
+        <div class="modal-dir">
+          <div class="modal-toolbar">
+            ${btnNovo}
+            <button class="btn btn-neutro" disabled>${svg('lixeira')} Excluir</button>
+            ${btnSalvar}
+            <div style="flex:1"></div>
+            <button class="btn btn-primario">${svg('gerais')} Operações</button>
+          </div>
+          ${corpo}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderModalP() {
+  const tela = main.querySelector('.tela');
+  tela.querySelector('.modal-overlay')?.remove();
+  if (itemAbertoP) tela.insertAdjacentHTML('beforeend', modalItemHTML());
 }
 
 /* --------------------- canvas: zoom e pan (como no PO050) --------------------- */

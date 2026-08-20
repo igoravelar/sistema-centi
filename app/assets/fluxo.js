@@ -192,7 +192,8 @@ function campoHTML({ rot, val = '', cod, ro = false, lupa = false, area = false,
     ? `<input class="cx cod${codL ? ' cod-l' : ''}${ro ? ' ro' : ''}" value="${cod}" ${ro ? 'readonly' : ''}>` : '';
 
   const entrada = opcoes
-    ? `<select class="cx">${opcoes.map(o => `<option${o === val ? ' selected' : ''}>${o}</option>`).join('')}</select>`
+    ? `<select class="cx${ro ? ' ro' : ''}" ${ro ? 'disabled' : ''}>${
+        opcoes.map(o => `<option${o === val ? ' selected' : ''}>${o}</option>`).join('')}</select>`
     : area
       ? `<textarea class="cx" rows="4" placeholder="${ph}">${val}</textarea>`
       : `<input class="cx${ro ? ' ro' : ''}" value="${val}" placeholder="${ph}" ${ro ? 'readonly' : ''}>`;
