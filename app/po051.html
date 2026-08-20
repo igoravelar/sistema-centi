@@ -44,6 +44,54 @@
   /* linha separadora entre o título do drawer e o conteúdo */
   .cad .drawer-topo.topo-linha { border-bottom: 1px solid var(--tab-bd); padding-bottom: 16px; }
 
+  /* ------------------- barra de título da etapa -------------------
+     Faixa superior do drawer da etapa: número e nome à esquerda, badges de
+     situação e de previsão à direita, e o fechar na ponta. O filete cinza
+     separa a barra da régua de abas, como no drawer do protocolo. */
+  .cad .barra-titulo {
+    display: flex; align-items: center; gap: 10px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--tab-bd);
+  }
+  .cad .barra-titulo .drawer-titulo { flex: 1; min-width: 0; }
+  .cad .barra-titulo .drawer-titulo h3 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* aqui o fechar entra na linha, no fim da barra, e não solto no canto —
+     e volta ao aspecto verde claro do botão padrão, um pouco maior */
+  .cad .barra-titulo .bt-fechar {
+    position: static; flex: 0 0 auto;
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    background: #FFFFFF;
+    border-color: var(--g-soft-bd2);
+    color: var(--g-olive);
+  }
+  .cad .barra-titulo .bt-fechar:hover {
+    background: var(--g-soft-bg);
+    border-color: var(--g);
+    color: var(--g-dark);
+  }
+  .cad .barra-titulo .bt-fechar svg { width: 12px; height: 12px; }
+
+  .cad .badge-etapa {
+    flex: 0 0 auto;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 11px;
+    background: #FFFFFF;
+    border: 1px solid var(--tab-bd);
+    border-radius: 999px;
+    font-size: 10px; color: var(--txt);
+    white-space: nowrap;
+  }
+  .cad .badge-etapa b { font-weight: bold; color: var(--txt-strong); }
+
+  /* farol da situação: mesma leitura de cor do fluxograma */
+  .cad .badge-etapa .farol {
+    width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%;
+  }
+  .cad .badge-etapa .farol.concluida  { background: #A1BB3E; }
+  .cad .badge-etapa .farol.andamento  { background: #F5A623; }
+  .cad .badge-etapa .farol.aguardando { background: #C4C4C4; }
+
   /* ------------------------------- Pesquisa -------------------------------
      Mesmo desenho da Pesquisa do PO050: filtros à esquerda, Últimas Buscas à
      direita com divisória vertical, e a grid preenchida só após Pesquisar. */
@@ -484,7 +532,8 @@ function corpoEtapaP(n) {
     campoHTML({ rot: 'Id', val: String(14 + n), ro: true }),
     campoHTML({ rot: 'Etapa<span class="req">*</span>', cod: String(n), val: e.titulo, lupa: true }),
     campoHTML({ rot: 'Geração<span class="req">*</span>', val: '1', ro: true }),
-    campoHTML({ rot: 'Status<span class="req">*</span>', val: n === 1 ? 'Concluída' : 'Não iniciada' }),
+    campoHTML({ rot: 'Status<span class="req">*</span>', val: situacaoEtapaP(n),
+                opcoes: ['Aguardando', 'Em Andamento', 'Concluída'] }),
     campoHTML({ rot: 'Data Início', val: '01/01/2026 - 00:00:00', ro: true }),
     campoHTML({ rot: 'Data<br>Conclusão', val: '01/01/2026 - 00:00:00', ro: true }),
     campoHTML({ rot: 'Data Prevista', val: '14/03/2026' }),
@@ -493,23 +542,57 @@ function corpoEtapaP(n) {
   ].join('');
 }
 
+/* Situação da etapa no protocolo aberto: a 1 já foi concluída, a 2 é a que
+   está em andamento e as seguintes aguardam. É o que alimenta o farol da
+   barra de título e o campo Status da aba Dados. */
+const SITUACOES_P = { 1: 'Concluída', 2: 'Em Andamento' };
+const CLASSE_SITUACAO = { 'Concluída': 'concluida', 'Em Andamento': 'andamento', 'Aguardando': 'aguardando' };
+
+function situacaoEtapaP(n) { return SITUACOES_P[n] || 'Aguardando'; }
+
+const PREVISAO_ETAPA = '01/10/2026';
+const PREVISAO_FIM   = '30/11/2026';
+
+/** Botões de navegação do rodapé: a primeira etapa não tem anterior e a de
+    Fim não tem próxima — nesses casos o botão fica apagado, sem clique. */
+function btEtapa(lado, n) {
+  const anterior = lado === 'anterior';
+  const rot = anterior ? 'Etapa Anterior' : 'Próxima Etapa';
+  const ico = anterior ? svg('voltar') : svg('seta');
+  const ativo = anterior ? n > 1 : n < ETAPAS_PROT.length;
+  if (!ativo) return `<button class="btn btn-neutro" disabled>${anterior ? ico + ' ' + rot : rot + ' ' + ico}</button>`;
+  return `<button class="btn btn-claro" onclick="abrirEtapaProt(${anterior ? n - 1 : n + 1})">${
+    anterior ? ico + ' ' + rot : rot + ' ' + ico}</button>`;
+}
+
 function drawerEtapaHTML(n) {
   const e = ETAPAS_PROT[n - 1];
   const abas = ABAS_P.map(a => `
     <button class="${a === abaP ? 'ativa' : ''}" onclick="trocarAbaP('${a}')">${a}</button>`).join('');
+  const sit = situacaoEtapaP(n);
   return `
     <div class="drawer-topo">
-      <button class="bt-fechar" onclick="fecharDrawerP()" title="Fechar">${svg('x')}</button>
-      <div class="drawer-titulo">
-        <span class="num">${e.n}</span>
-        <h3>${e.titulo}</h3>
+      <div class="barra-titulo">
+        <div class="drawer-titulo">
+          <span class="num">${e.n}</span>
+          <h3>${e.titulo}</h3>
+        </div>
+        <span class="badge-etapa">
+          <span class="farol ${CLASSE_SITUACAO[sit]}"></span><b>${sit}</b>
+        </span>
+        <span class="badge-etapa">
+          Previsão Etapa: <b>${PREVISAO_ETAPA}</b> | Fim: <b>${PREVISAO_FIM}</b>
+        </span>
+        <button class="bt-fechar" onclick="fecharDrawerP()" title="Fechar">${svg('x')}</button>
       </div>
       <div class="drawer-abas">${abas}</div>
     </div>
     <div class="drawer-corpo scroll">${corpoEtapaP(n)}</div>
     <div class="drawer-rodape">
+      ${btEtapa('anterior', n)}
       <button class="btn btn-claro" onclick="abrirRemessaP('devolver')">${svg('voltar')} Devolver Protocolo</button>
       <button class="btn btn-claro" onclick="abrirRemessaP('tramitar')">${svg('check')} Tramitar Protocolo</button>
+      ${btEtapa('proxima', n)}
     </div>`;
 }
 
