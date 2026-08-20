@@ -17,7 +17,7 @@
   /* aqui o topo não tem uma segunda coluna para alinhar (como a árvore do
      PO050): o título cresce pelo conteúdo, sem o limite fixo de 240px nem
      truncamento — nem "Protocolo - X" nem a instrução precisam disso */
-  .cad-topo .esq { flex: 0 0 auto; overflow: visible; }
+  .cad-topo .esq { flex: 0 0 auto; overflow: visible; border-right: 1px solid var(--tab-bd); }
   .cad-topo .esq .nome { overflow: visible; text-overflow: clip; }
 
   /* cadastro sem protocolo aberto: instrução em itálico, sem link */
@@ -85,7 +85,7 @@
 
   /* --------------------- modal do item da etapa ---------------------
      Aberta ao clicar numa linha das grids de Documentos, Checklist ou
-     Regras do drawer: pastas do item à esquerda, formulário à direita.
+     Regras de Saída do drawer: pastas do item à esquerda, formulário à direita.
      Mesmo desenho da modal Etapa do fluxo do PO050. */
   .modal-overlay {
     position: absolute;
@@ -154,6 +154,13 @@
   .modal-form { flex: 1; min-height: 0; overflow: auto; padding: 14px 16px;
                 background: var(--panel-1); display: flex; flex-direction: column; gap: 10px; }
   .modal-form .campo { max-width: 1100px; }
+
+  /* corpo da modal Enviar Remessa: uma coluna de campos e o Processar embaixo */
+  .modal-corpo.remessa { flex-direction: column; background: var(--panel-1); }
+  .remessa-campos { flex: 1; min-height: 0; overflow: auto; padding: 14px 16px;
+                    display: flex; flex-direction: column; gap: 10px; }
+  .remessa-campos .campo { max-width: 1100px; }
+  .remessa-rodape { flex: 0 0 52px; display: flex; align-items: center; padding: 0 16px 12px; }
 
   /* grid de itens de uma pasta do item (assinaturas, anotações, ...) */
   .modal-grid { flex: 1; min-height: 0; overflow: auto; padding: 14px 16px; background: var(--panel-1); }
@@ -395,7 +402,7 @@ function montarFluxoProt() {
 
 /* ------------------------------- drawer ------------------------------- */
 
-const ABAS_P = ['Dados', 'Documentos', 'Checklist', 'Regras'];
+const ABAS_P = ['Dados', 'Documentos', 'Checklist', 'Regras de Saída'];
 let abaP = 'Dados';
 
 function drawerProtocoloHTML() {
@@ -464,7 +471,7 @@ function corpoEtapaP(n) {
     celulas: c => [c.id, c.situacao],
     aoClicar: c => `abrirItemProt('check', '${c.id}')`,
   });
-  if (abaP === 'Regras') return gridHTML({
+  if (abaP === 'Regras de Saída') return gridHTML({
     col: 'condicoes', itens: COND_PROT,
     colunas: [{ rot: 'ID', w: '72px', num: true }, { rot: 'DESCRIÇÃO', w: '1fr' }],
     celulas: c => [c.id, c.descricao],
@@ -500,7 +507,8 @@ function drawerEtapaHTML(n) {
     </div>
     <div class="drawer-corpo scroll">${corpoEtapaP(n)}</div>
     <div class="drawer-rodape">
-      <button class="btn btn-claro">${svg('check')} Concluir etapa</button>
+      <button class="btn btn-claro" onclick="abrirRemessaP('devolver')">${svg('voltar')} Devolver Protocolo</button>
+      <button class="btn btn-claro" onclick="abrirRemessaP('tramitar')">${svg('check')} Tramitar Protocolo</button>
     </div>`;
 }
 
@@ -573,7 +581,7 @@ function fecharDrawerP() {
 }
 
 /* --------------------- modal do item da etapa ---------------------
-   Clicar numa linha das grids de Documentos, Checklist ou Regras abre a
+   Clicar numa linha das grids de Documentos, Checklist ou Regras de Saída abre a
    modal daquele item: as pastas dele à esquerda e o formulário à direita,
    no mesmo desenho da modal Etapa do fluxo do PO050. */
 
@@ -871,6 +879,69 @@ function renderModalP() {
   if (itemAbertoP) tela.insertAdjacentHTML('beforeend', modalItemHTML());
 }
 
+/* ------------------------- modal Enviar Remessa -------------------------
+   Os dois botões do rodapé do drawer abrem a mesma remessa: Tramitar leva o
+   protocolo à repartição da etapa seguinte (Concluir Etapa) e Devolver o
+   manda de volta à da etapa anterior (Retornar Etapa), já com a marca de
+   devolução na mesma repartição. */
+
+const TITULO_REMESSA = { tramitar: 'Concluir Etapa', devolver: 'Retornar Etapa' };
+
+let remessaAbertaP = null;   /* 'tramitar' | 'devolver' | null */
+
+function abrirRemessaP(modo) { remessaAbertaP = modo; renderRemessaP(); }
+function fecharRemessaP() { remessaAbertaP = null; renderRemessaP(); }
+
+/** Repartição de destino: etapa seguinte ao tramitar, anterior ao devolver.
+    Nas pontas do fluxo não há vizinha, e o destino é a própria etapa. */
+function destinoRemessaP(modo) {
+  const i = etapaSelP - 1;
+  const vizinha = modo === 'devolver' ? ETAPAS_PROT[i - 1] : ETAPAS_PROT[i + 1];
+  const etapa = vizinha || ETAPAS_PROT[i];
+  return { cod: String(etapa.n), depto: etapa.depto };
+}
+
+function camposRemessaHTML(modo) {
+  const r = RESULTADOS_P[protAberto];
+  const destino = destinoRemessaP(modo);
+  return [
+    campoHTML({ rot: 'Protocolos<span class="req">*</span>', cod: '', codL: true, area: true,
+                val: `${r[0]}-${r[3]}`, lupa: true }),
+    campoHTML({ rot: 'Repartição de<br>destino<span class="req">*</span>', cod: destino.cod, codL: true,
+                val: destino.depto, lupa: true }),
+    campoHTML({ rot: 'Observações<span class="req">*</span>', val: '', area: true }),
+    campoHTML({ rot: 'Devolver mesma<br>repartição', val: modo === 'devolver' ? 'Sim' : 'Não',
+                opcoes: ['Não', 'Sim'] }),
+    campoHTML({ rot: 'Tipo saída', val: 'PDF', opcoes: ['PDF', 'HTML', 'Excel'] }),
+    campoHTML({ rot: 'Assíncrono', val: 'Não', opcoes: ['Não', 'Sim'] }),
+  ].join('');
+}
+
+function modalRemessaHTML() {
+  const modo = remessaAbertaP;
+  return `
+  <div class="modal-overlay" onclick="if(event.target===this)fecharRemessaP()">
+    <div class="modal">
+      <div class="modal-cab">
+        <h2>${TITULO_REMESSA[modo]}</h2>
+        <button class="bt-fechar" onclick="fecharRemessaP()" title="Fechar">${svg('x')}</button>
+      </div>
+      <div class="modal-corpo remessa">
+        <div class="remessa-campos scroll">${camposRemessaHTML(modo)}</div>
+        <div class="remessa-rodape">
+          <button class="btn btn-claro" onclick="fecharRemessaP()">${svg('gerais')} Processar</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderRemessaP() {
+  const tela = main.querySelector('.tela');
+  tela.querySelector('.modal-overlay')?.remove();
+  if (remessaAbertaP) tela.insertAdjacentHTML('beforeend', modalRemessaHTML());
+}
+
 /* --------------------- canvas: zoom e pan (como no PO050) --------------------- */
 
 let pZoom = 1, pEscalaCaber = 1;
@@ -975,7 +1046,11 @@ function centralizarEtapaP(n) {
   aplicarZoomP(ZOOM_ETAPA);   /* recalcula pDesvioX/Y para o zoom fixo */
 
   const alturaTopo = topoDrawer ? topoDrawer.getBoundingClientRect().height : 0;
-  const x     = (bpmn.offsetLeft + coluna.offsetLeft + card.offsetLeft + card.offsetWidth / 2) * pZoom + pDesvioX;
+  /* a coluna de cards fica em left:50% com translateX(-50%): offsetLeft ignora
+     o transform, então metade da largura dela entra na conta à mão — sem isso
+     o card estaciona meia coluna à esquerda e encosta na borda do canvas */
+  const xColuna = coluna.offsetLeft - coluna.offsetWidth / 2;
+  const x     = (bpmn.offsetLeft + xColuna + card.offsetLeft + card.offsetWidth / 2) * pZoom + pDesvioX;
   const yTopo = (bpmn.offsetTop  + coluna.offsetTop  + card.offsetTop) * pZoom + pDesvioY;
 
   const alvoSL = x - larguraCanvasP() / 2;
@@ -1108,6 +1183,9 @@ main.insertAdjacentHTML('beforeend', `
         <div class="cad-topo">
           <div class="esq">${tituloCadEsqHTML()}</div>
           <div class="dir">
+            <button class="btn btn-claro">${svg('mais')} Novo</button>
+            <button class="btn btn-neutro" disabled>${svg('lixeira')} Excluir</button>
+            <button class="btn btn-neutro" disabled>${svg('salvar')} Salvar</button>
             <div style="flex:1"></div>
             <button class="btn btn-primario">${svg('gerais')} Operações</button>
           </div>
