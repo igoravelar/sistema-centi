@@ -4,7 +4,7 @@
 Pacote de handoff do **Design System Centi** (guideline de componentes) e da primeira tela do sistema construída a partir dele (**PO002 - Protocolo**, modos Pesquisa e Cadastro). Serve de base para a construção de novas telas, aplicativos e portais Centi.
 
 ## Sobre os arquivos de design
-Os arquivos `.dc.html` deste pacote são **referências de design criadas em HTML** — protótipos que mostram aparência e comportamento pretendidos, não código de produção para copiar diretamente. A tarefa é **recriar estes designs no ambiente do codebase alvo** usando seus padrões estabelecidos. Stack alvo definida pelo time: **Material UI v9 (React)** com tema Centi + **Font Awesome 5** para ícones. Os HTMLs usam uma runtime própria (`support.js`) apenas para preview — ignore-a na implementação.
+Os arquivos `.dc.html` deste pacote são **referências de design criadas em HTML** — protótipos que mostram aparência e comportamento pretendidos, não código de produção para copiar diretamente. A tarefa é **recriar estes designs no ambiente do codebase alvo** usando seus padrões estabelecidos. Stack alvo definida pelo time: **Material UI v9 (React)** com tema Centi + **Font Awesome 5** para ícones. Os HTMLs usam uma runtime própria (`support.js`) apenas para preview — ignore-a na implementação. Os `.dc.html`, o `support.js` e o `uploads/` ficam em `app/`, junto do protótipo navegável, para serem servidos na mesma raiz da publicação.
 
 ## Fidelidade
 **Alta fidelidade (hifi)**: cores, tipografia, espaçamentos e interações são finais. Recriar pixel-perfect com MUI v9 customizado pelo tema abaixo.

@@ -24,6 +24,8 @@ python3 -m http.server 5173
 Caminhos de navegação:
 
 - **index (Início)** é a tela que abre por padrão
+- **index** → botão `Design System` abre o `Centi Design System.dc.html`; a marca da
+  Centi no topo dele volta para a index
 - **sidebar → Protocolo** abre o `protocolo.html`
 - **protocolo** → item `Protocolo PO002` abre o `po002.html`; `Tela Protocolo PO011` abre o `po011.html`
 - **po002 · Pesquisa** → clique numa linha de resultado leva ao Cadastro
@@ -62,6 +64,10 @@ app/
   protocolo.html        Menu Protocolo
   po002.html            PO002 (Pesquisa + Cadastro)
   po011.html            PO011 (fluxo BPMN + drawer)
+  Centi Design System.dc.html   guideline de componentes (referência de design)
+  Tela Protocolo.dc.html        PO002 no design system (referência de design)
+  support.js            runtime de preview dos .dc.html
+  uploads/              imagens usadas pelos .dc.html
   assets/
     centi.css           tokens, shell e componentes (campos, botões, tabela, abas)
     inicio.css          cards do Centi Cast da tela de Início
