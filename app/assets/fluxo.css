@@ -157,6 +157,32 @@
 .etapa.andamento.aberta .depto-lbl, .etapa.andamento.aberta .dias { color: #DFF19C; }
 .etapa.andamento.aberta .num { background: var(--g-stroke); }
 
+/* cores por tipo de etapa (PO050/PO051): Tarefa azul, Decisão laranja,
+   Fim vermelho — o Início usa o verde padrão (andamento) */
+.etapa.tarefa, .etapa.decisao, .etapa.fim {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F7F7F7 100%);
+}
+.etapa.tarefa .depto, .etapa.decisao .depto, .etapa.fim .depto { color: #5C5B5B; }
+.etapa.tarefa .depto-lbl, .etapa.tarefa .dias,
+.etapa.decisao .depto-lbl, .etapa.decisao .dias,
+.etapa.fim .depto-lbl, .etapa.fim .dias { color: #9A9A9A; }
+.etapa.tarefa .ponto, .etapa.decisao .ponto, .etapa.fim .ponto { background: #7E7F79; }
+.etapa.tarefa { border: 2px solid var(--selecao); }
+.etapa.tarefa .nome { color: var(--selecao); }
+.etapa.tarefa .num { background: var(--selecao); color: #FFFFFF; }
+.etapa.decisao { border: 2px solid #F5A623; }
+.etapa.decisao .nome { color: #F5A623; }
+.etapa.decisao .num { background: #F5A623; color: #FFFFFF; }
+.etapa.fim { border: 2px solid #E53935; }
+.etapa.fim .nome { color: #E53935; }
+.etapa.fim .num { background: #E53935; color: #FFFFFF; }
+
+/* card selecionado com o drawer aberto, para qualquer tipo */
+.etapa.aberta { background: linear-gradient(180deg, #ADC84A 0%, #8FAA31 100%); border-color: var(--g-stroke); }
+.etapa.aberta .nome, .etapa.aberta .depto { color: #FFFFFF; }
+.etapa.aberta .depto-lbl, .etapa.aberta .dias { color: #DFF19C; }
+.etapa.aberta .num { background: var(--g-stroke); color: #FFFFFF; }
+
 /* branco — etapa não habilitada para tramitar */
 .etapa.bloqueada { background: linear-gradient(180deg, #FFFFFF 0%, #F4F4F4 100%); border: 1px solid var(--fld-bd); }
 .etapa.bloqueada .nome, .etapa.bloqueada .depto { color: var(--txt); }

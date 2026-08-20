@@ -13,13 +13,82 @@
   /* o título abre as informações do protocolo no drawer */
   .cad-topo .esq .link { text-decoration: underline; cursor: pointer; transition: color .15s ease; }
   .cad-topo .esq .link:hover { color: var(--g-dark); }
+
+  /* aqui o topo não tem uma segunda coluna para alinhar (como a árvore do
+     PO050): o título cresce pelo conteúdo, sem o limite fixo de 240px nem
+     truncamento — nem "Protocolo - X" nem a instrução precisam disso */
+  .cad-topo .esq { flex: 0 0 auto; overflow: visible; }
+  .cad-topo .esq .nome { overflow: visible; text-overflow: clip; }
+
+  /* cadastro sem protocolo aberto: instrução em itálico, sem link */
+  .cad-topo .esq .nome-vazio {
+    font-style: italic;
+    font-weight: normal;
+    color: #5C5B5B;
+    text-decoration: none;
+    cursor: default;
+  }
+
+  /* linha que liga os cards do fluxo do protocolo */
+  .liga-prot { width: 2px; height: 56px; background: #BCC8A0; flex: 0 0 auto; }
+
+  /* o reenquadre ao abrir/fechar o drawer desliza o fluxo suavemente */
+  .cad .bpmn-espaco.anim { transition: transform .28s ease; }
+
+  /* folga extra embaixo do desenho: sem ela a rolagem acaba antes e as
+     últimas etapas parariam mais baixas que as demais ao serem abertas —
+     com a folga, todo card selecionado para na mesma altura */
+  .cad .bpmn-espaco { padding-bottom: 100vh; }
+
+  /* linha separadora entre o título do drawer e o conteúdo */
+  .cad .drawer-topo.topo-linha { border-bottom: 1px solid var(--tab-bd); padding-bottom: 16px; }
+
+  /* ------------------------------- Pesquisa -------------------------------
+     Mesmo desenho da Pesquisa do PO050: filtros à esquerda, Últimas Buscas à
+     direita com divisória vertical, e a grid preenchida só após Pesquisar. */
+  .pesq { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 6px; }
+  .filtros { padding: 14px 16px; display: flex; gap: 16px; }
+  .filtros-esq { flex: 1; min-width: 0; border-right: 1px solid var(--tab-bd);
+                 margin: -14px 0; padding: 14px 16px 14px 0; }
+  .filtros-grid { display: grid; grid-template-columns: 240px 240px 1fr 30px; gap: 10px 12px; }
+  .filtros-grid .cab { font-size: 11.5px; font-weight: bold; color: var(--txt); text-align: left; }
+  .filtros-grid select, .filtros-grid input {
+    height: 32px; border: 1px solid var(--fld-bd); border-radius: 4px;
+    padding: 0 10px; color: var(--txt); background: #FFFFFF; outline: none; width: 100%;
+  }
+  .filtros-grid select:focus, .filtros-grid input:focus { border-color: var(--g); }
+  .filtros .remover { border: 0; background: none; color: #E53935; display: grid; place-items: center; }
+  .filtros .remover svg { width: 15px; height: 15px; }
+  .filtros .divisor { height: 1px; background: var(--tab-bd); margin-top: 14px; }
+  .filtros .acoes { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+
+  .ultimas {
+    flex: 0 0 330px;
+    /* trava o slot em 330px: sem isso o texto comprido das buscas alarga o
+       box por cima dos filtros; o excesso vira reticências nos itens */
+    min-width: 0; max-width: 330px; overflow: hidden;
+    background: #FFFFFF; border: 1px solid var(--tab-bd); border-radius: 5px; padding: 10px 14px;
+  }
+  .ultimas h3 { margin: 0 0 8px; font-size: 13px; font-weight: bold; color: var(--txt); display: flex; align-items: center; gap: 8px; }
+  .ultimas h3 svg { width: 14px; height: 14px; }
+  .ultimas ul { margin: 0; padding: 0; }
+  .ultimas li { list-style: none; font-size: 12px; padding: 5px 0; color: var(--txt);
+                overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+  .ultimas li:hover { color: var(--g-dark); }
+
+  .res-topo { display: flex; align-items: center; gap: 12px; padding: 12px 16px; flex: 0 0 auto; }
+  .res-topo h2 { margin: 0; font-size: 18px; font-weight: bold; color: var(--txt); }
+  .res-topo .conta { font-size: 13px; color: var(--txt); }
+  .res-topo .dir { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  .res-topo select { height: 29px; border: 1px solid var(--fld-bd); border-radius: 4px; padding: 0 8px; background: #FFFFFF; color: var(--txt); }
+  .res-corpo { flex: 1; min-height: 0; margin: 0 12px 12px; background: #FFFFFF; border: 1px solid var(--tab-bd); border-radius: 4px; overflow: auto; }
 </style>
 </head>
 <body>
 
 <div class="app"></div>
 
-<script src="assets/shell.js?v=8"></script>
+<script src="assets/shell.js?v=9"></script>
 <script src="assets/fluxo.js?v=3"></script>
 <script>
 /* As abas verticais são desta tela: trocam de vista aqui dentro, sem sair do
@@ -32,16 +101,613 @@ const VISTAS = [
   { id: 'vicenti',  rot: 'ViCenti',  ico: 'robo' },
 ];
 
-let vista = 'cadastro';
+let vista = 'pesquisa';
+
+/* ------------------------------- Pesquisa ------------------------------- */
+
+const COLUNAS_P = ['ID', 'PROTOCOLO', 'DATA', 'INTERESSADO', 'CPF/CNPJ',
+                   'PROCESSO/ANO', 'SOLICITANTE', 'ASSUNTO', 'DESCRIÇÃO'];
+
+const RESULTADOS_P = [
+  ['2292436','116511','19/08/2026','54.468.317 ANA JULIA NUNES DE OLIVEIRA.','54.468.317/0001-86','116511/2026','','Alvará de Funcionamento','TESTE 13 - JULLIA'],
+  ['2292435','116510','19/08/2026','MARCOS HENRIQUE PEREIRA DE OLIVEIRA','','116510/2026','','PAGAMENTO DE HORAS EXTRAS','TESTE'],
+  ['2292434','116509','19/08/2026','BEATRIZ DE SOUZA VICENTIM','179.044.937-56','116509/2026','','PAGAMENTO DE HORAS EXTRAS','TESTE 10 - JULLIA'],
+  ['2292433','116508','19/08/2026','JOAO ALVES PEREIRA','','116508/2026','','PAGAMENTO DE HORAS EXTRAS','TESTE 9 - JULLIA'],
+  ['2292432','116507','18/08/2026','','','116507/2026','','PAGAMENTO DE HORAS EXTRAS','TESTE 8 - JULLIA'],
+  ['2292431','116506','18/08/2026','RENATO ALVES RIBEIRO','','116506/2026','','PAGAMENTO DE HORAS EXTRAS','TESTE 7 - JULLIA'],
+  ['2292430','116505','18/08/2026','MARIANA DA CRUZ PARRA','','116505/2026','','FOLGAS - PD','TESTE 6 - JULLIA'],
+  ['2292429','116504','18/08/2026','ANA PAULA MAHALMANN MUNIZ MIRANDA','303.182.893-34','116504/2026','','MATERIAL DE CONSUMO','TESTE 5 - JULLIA'],
+  ['2292426','116501','18/08/2026','ZZNET PRESTACAO DE SERVICOS LTDA.','53.585.794/0001-69','116501/2026','','PAGAMENTO DE HORAS EXTRAS','TESTE 4 - JULLIA'],
+  ['2292419','116494','18/08/2026','DIEGO BORGES SAITO 01185150129','31.633.623/0001-25','116494/2026','','AQUISIÇÃO - PD','TESTE FLUXO PROCESSO DIGITAL INTELIGENTE'],
+  ['2292418','116493','18/08/2026','ZOLMAR VALE','137.086.271-72','116493/2026','','PAGAMENTO DE HORAS EXTRAS','TESTE - JULLIA 2'],
+  ['2292417','116492','17/08/2026','ANTONIO ALBERTO DE LIMA','','116492/2026','','PAGAMENTO DE HORAS EXTRAS','TESTE JULLIA - FLUXO DE PAGAMENTO DE HORAS'],
+  ['2292416','116491','14/08/2026','DIEGO BORGES DA SILVA','027.546.941-70','116491/2026','','ISENÇÃO DE IPTU','123123123'],
+  ['2292415','116490','13/08/2026','EMANUELLA','075.930.191-36','116490/2026','EMANUELLA','ATUALIZAÇÃO CADASTRAL (PESSOA FÍSICA)','TESTEZINHO'],
+  ['2292414','116489','07/08/2026','DIEGO BORGES SAITO 01185150129','31.633.623/0001-25','116489/2026','','AQUISIÇÃO - PD','TESTE FLUXO DISPENSA'],
+  ['2292413','116488','07/08/2026','DIEGO BORGES SAITO 01185150129','31.633.623/0001-25','116488/2026','','ABERTURA DE LICITAÇÃO','TESTE FLUXO COMPLETO'],
+  ['2292412','116487','07/08/2026','MATHEUS CARVALHO GOMES','325.690.648-66','116487/2026','','ABERTURA DE LICITAÇÃO','INICIAR PROCESSO LICITATÓRIO PARA AQUISIÇÃO'],
+  ['2292411','116486','06/08/2026','DIEGO BORGES SAITO 01185150129','31.633.623/0001-25','116486/2026','','ABERTURA DE LICITAÇÃO','TESTE FLUXO PROTOCOLO INTELIGENTE'],
+  ['2292410','116485','06/08/2026','DIEGO BORGES SAITO','011.851.501-29','116485/2026','','ABERTURA DE LICITAÇÃO','PROTOCOLO 03'],
+  ['2292409','116484','06/08/2026','DIEGO BORGES SAITO','011.851.501-29','116484/2026','','ABERTURA DE LICITAÇÃO','TESTE PROTOCOLO 02'],
+  ['2292408','116483','06/08/2026','','','116483/2026','','ABERTURA DE LICITAÇÃO','PROTOCOLO INTELIGENTE TESTE PRIMEIRO'],
+  ['2292407','116482','06/08/2026','DIEGO BORGES SAITO','011.851.501-29','116482/2026','JOAO LAZARO DA CUNHA','ABERTURA DE LICITAÇÃO','PROTOCOLO INTELIGENTE TESTE PRIMEIRO'],
+];
+
+const ULTIMAS_P = [
+  '19/08/2026 - 12:10: Protocolo - Igual - , Somente ano logado? - Igual - Sim',
+  '14/08/2026 - 18:17: Protocolo - Igual - , Somente ano logado? - Igual - Sim',
+  '12/08/2026 - 14:41: Protocolo - Igual - , Somente ano logado? - Igual - Sim',
+  '11/08/2026 - 15:11: Protocolo - Igual - 116483, Somente ano logado? - Igual - Sim',
+];
+
+/* a grid nasce vazia; o botão Pesquisar traz os resultados */
+let pesquisou = false;
+
+function pesquisar() {
+  pesquisou = true;
+  main.querySelector('.pesq').innerHTML = pesquisaHTML();
+}
+
+/* clique simples seleciona a linha; um novo clique na linha já selecionada
+   abre o fluxo do protocolo na aba Cadastro */
+let protSel = null;
+
+function clicarLinha(i) {
+  if (protSel === i) { abrirFluxoProt(i); return; }
+  protSel = i;
+  main.querySelectorAll('.pesq tbody tr').forEach((tr, n) => tr.classList.toggle('sel', n === i));
+}
+
+function pesquisaHTML() {
+  const linhas = !pesquisou ? '' : RESULTADOS_P.map((r, i) => `
+    <tr${i === protSel ? ' class="sel"' : ''} onclick="clicarLinha(${i})">${r.map((c, j) =>
+      `<td class="${j <= 1 ? 'num' : ''}">${c}</td>`).join('')}</tr>`).join('');
+
+  return `
+  <div class="painel filtros">
+    <div class="filtros-esq">
+      <div class="filtros-grid">
+        <div class="cab">Campo</div><div class="cab">Operação</div><div class="cab">Valor</div><div></div>
+
+        <select><option>Protocolo</option><option>Id</option><option>Interessado</option><option>Data</option></select>
+        <select><option>Igual</option><option>Contendo</option><option>Diferente</option></select>
+        <input placeholder="">
+        <div></div>
+
+        <select><option>Somente ano logado?</option><option>Todos os anos</option></select>
+        <select><option>Igual</option><option>Diferente</option></select>
+        <select><option>Sim</option><option>Não</option></select>
+        <button class="remover" title="Remover filtro">${svg('lixeira')}</button>
+      </div>
+
+      <div class="divisor"></div>
+
+      <div class="acoes">
+        <button class="btn btn-claro">${svg('mais')} Adicionar Filtro</button>
+        <button class="btn btn-claro">${svg('borracha')} Limpar Filtros</button>
+        <div style="flex:1"></div>
+        <button class="btn btn-primario" onclick="pesquisar()">${svg('lupa')} Pesquisar</button>
+        <button class="btn btn-neutro">${svg('salvar')} Salvar Filtros</button>
+      </div>
+    </div>
+
+    <aside class="ultimas">
+      <h3>${svg('relogio')} Últimas Buscas ${svg('ajuda', 'style="width:13px;height:13px;margin-left:auto"')}</h3>
+      <ul>${ULTIMAS_P.map(u => `<li title="${u}">${u}</li>`).join('')}</ul>
+    </aside>
+  </div>
+
+  <div class="painel resultado">
+    <div class="res-topo">
+      <h2>Resultados</h2>
+      <span class="conta">${pesquisou ? `Exibindo ${RESULTADOS_P.length} de ${RESULTADOS_P.length}` : 'Nenhum resultado encontrado.'}</span>
+      <div class="dir">
+        <span>Mostrar:</span>
+        <select><option>50</option><option>100</option></select>
+        <button class="btn btn-claro">${svg('download')} Exportar</button>
+      </div>
+    </div>
+    <div class="res-corpo scroll">
+      <table class="tabela">
+        <thead><tr>${COLUNAS_P.map(c => `<th>${c}</th>`).join('')}</tr></thead>
+        <tbody>${linhas}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+/* ----------------------- fluxo do protocolo aberto -----------------------
+   Fluxo do processo de AQUISIÇÃO - PD, no layout de cards do PO050; o clique
+   num card abre as informações da etapa no drawer da direita. */
+
+let protAberto = null;   /* índice da linha aberta; null = instrução */
+let etapaSelP = null;
+
+const ETAPAS_PROT = [
+  { n: 1, titulo: 'Início',                        tipo: 'Início', depto: 'QUALQUER UM',                                    dias: null },
+  { n: 2, titulo: 'Pedido',                        tipo: 'Tarefa', depto: 'DEPARTAMENTO DE COMPRAS - SEC. ADMINISTRAÇÃO',   dias: '1 dia' },
+  { n: 3, titulo: 'Gerar Dispensa',                tipo: 'Tarefa', depto: 'DEPARTAMENTO DE LICITAÇÃO - SEC ADMINISTRAÇÃO',  dias: '2 dias' },
+  { n: 4, titulo: 'Publicar Dispensa Colare PNCP', tipo: 'Tarefa', depto: 'COMISSÃO DE PRESTAÇÃO DE CONTAS - CMDCA - PD',   dias: '1 dia' },
+  { n: 5, titulo: 'Gerar Autorização Empenho',     tipo: 'Tarefa', depto: 'DEPARTAMENTO DE COMPRAS - SEC. ADMINISTRAÇÃO',   dias: '1 dia' },
+  { n: 6, titulo: 'Gerar Empenho',                 tipo: 'Tarefa', depto: 'CONTABILIDADE - SEC ADMINISTRAÇÃO',              dias: '2 dias' },
+  { n: 7, titulo: 'Fim',                           tipo: 'Fim',    depto: 'PREFEITURA MUNICIPAL DE RIO VERDE',              dias: null },
+];
+
+const PROT_L = 594;
+const PROT_A = 40 + ETAPAS_PROT.length * 112 + (ETAPAS_PROT.length - 1) * 56;
+
+function classeTipoP(tipo) {
+  return tipo === 'Início' ? 'andamento'
+       : tipo === 'Tarefa' ? 'tarefa'
+       : tipo === 'Decisão' ? 'decisao'
+       : 'fim';
+}
+
+/** Título do topo do Cadastro: sem protocolo aberto, uma instrução em
+    itálico (sem link); com um aberto, o link "Protocolo - X" de sempre. */
+function tituloCadEsqHTML() {
+  if (protAberto === null) return `
+    ${svg('fluxograma')}
+    <span class="nome nome-vazio">Selecione um protocolo na aba de Pesquisa.</span>`;
+  const r = RESULTADOS_P[protAberto];
+  return `
+    ${svg('fluxograma')}
+    <a class="nome link" onclick="abrirProtocoloP()">Protocolo - ${r[0]}</a>`;
+}
+
+/** Canvas vazio (sem protocolo aberto): só o fundo pontilhado do fluxo e os
+    controles de zoom, como referência visual — nada para navegar ainda. */
+function canvasVazioHTML() {
+  return `
+    <div class="bpmn-wrap"></div>
+    <div class="zoom-ctrl">
+      <button title="Aproximar">${svg('mais_zoom', 'stroke-width="2.6"')}</button>
+      <button title="Afastar">${svg('menos_zoom', 'stroke-width="2.6"')}</button>
+      ${legendaCoresHTML()}
+      <button title="Tela cheia">${svg('telaCheia')}</button>
+    </div>`;
+}
+
+function abrirFluxoProt(i) {
+  protAberto = i; etapaSelP = null;
+  irPara('cadastro');      /* mostra o .cad antes de medir o canvas */
+  montarFluxoProt();
+  abrirProtocoloP();
+}
+
+function montarFluxoProt() {
+  const r = RESULTADOS_P[protAberto];
+  main.querySelector('.cad-topo .esq').innerHTML = tituloCadEsqHTML();
+
+  const cards = ETAPAS_PROT.map(e => `
+    ${e.n > 1 ? '<div class="liga-prot"></div>' : ''}
+    <div class="etapa ${classeTipoP(e.tipo)}" data-n="${e.n}"
+         style="position:relative;left:0;top:0;width:190px;height:112px;flex:0 0 auto"
+         onclick="abrirEtapaProt(${e.n})">
+      <span class="num">${e.n}</span>
+      ${e.dias ? `<span class="dias">${svg('cronometro')}${e.dias}</span>` : ''}
+      <span class="nome">${e.titulo}</span>
+      <span class="rodape">
+        <span class="depto-lbl">DEPTO</span>
+        <span class="depto">${e.depto}</span>
+      </span>
+      <span class="ponto"></span>
+    </div>`).join('');
+
+  main.querySelector('.cad .fluxo').innerHTML = `
+    <div class="bpmn-wrap">
+      <div class="bpmn-zoom">
+        <div class="bpmn-espaco">
+          <div class="bpmn" style="height:${PROT_A}px">
+            <div style="position:absolute;left:50%;top:20px;transform:translateX(-50%);
+                        display:flex;flex-direction:column;align-items:center">${cards}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="zoom-ctrl">
+      <button onclick="maisZoomP()" title="Aproximar">${svg('mais_zoom', 'stroke-width="2.6"')}</button>
+      <button onclick="menosZoomP()" title="Afastar">${svg('menos_zoom', 'stroke-width="2.6"')}</button>
+      ${legendaCoresHTML()}
+      <button onclick="telaCheiaP()" title="Tela cheia">${svg('telaCheia')}</button>
+    </div>
+    <aside class="drawer"></aside>`;
+
+  ativarArrastoProt();
+  montarCanvasP();
+}
+
+/* ------------------------------- drawer ------------------------------- */
+
+const ABAS_P = ['Dados', 'Documentos', 'Checklist', 'Condições'];
+let abaP = 'Dados';
+
+function drawerProtocoloHTML() {
+  const r = RESULTADOS_P[protAberto];
+  const ano = (r[5].split('/')[1] || '2026');
+  const campos = [
+    campoHTML({ rot: 'Id', val: r[0], ro: true }),
+    campoHTML({ rot: 'Protocolo<span class="req">*</span>', val: r[1] }),
+    campoHTML({ rot: 'Ano<br>protocolo<span class="req">*</span>', val: ano }),
+    campoHTML({ rot: 'Data<br>protocolo', val: r[2], ro: true }),
+    campoHTML({ rot: 'Interessado/<br>Beneficiário<span class="req">*</span>', cod: '476701', codL: true,
+                val: r[3], acoes: ['lapis', 'lupa', 'olho'] }),
+    campoHTML({ rot: 'Solicitante/<br>Requerente', cod: '', codL: true, val: r[6], ph: 'Pesquisar', lupa: true }),
+    campoHTML({ rot: 'Natureza<span class="req">*</span>', cod: '21', codL: true, val: r[7],
+                acoes: ['lapis', 'lupa'] }),
+    campoHTML({ rot: 'Protocolo<br>origem', cod: '', codL: true, val: '', ph: 'Pesquisar', lupa: true }),
+    campoHTML({ rot: 'Observação<span class="req">*</span>', val: r[8], area: true, lupa: true }),
+    campoHTML({ rot: 'Data do<br>documento', val: '', ph: 'dd/mm/yyyy', acoes: ['calendario'] }),
+    campoHTML({ rot: 'Valor', val: '10,00' }),
+    campoHTML({ rot: 'Número<br>documento', val: '' }),
+    campoHTML({ rot: 'Repartição', val: 'PROTOCOLO CENTRAL', ro: true }),
+    campoHTML({ rot: 'Apensar<br>automático?<span class="req">*</span>', val: 'Não', opcoes: ['Não', 'Sim'] }),
+    campoHTML({ rot: 'Sigiloso<span class="req">*</span>', val: 'Não', opcoes: ['Não', 'Sim'] }),
+  ].join('');
+
+  return `
+    <div class="drawer-topo topo-linha">
+      <button class="bt-fechar" onclick="fecharDrawerP()" title="Fechar">${svg('x')}</button>
+      <div class="drawer-titulo">
+        <h3>Protocolo - ${r[0]}</h3>
+      </div>
+    </div>
+    <div class="drawer-corpo scroll">${campos}</div>`;
+}
+
+/* itens de exemplo das grids do drawer (mesmo componente gridHTML do fluxo.js) */
+const DOCS_PROT = [
+  { id: 1, descricao: 'REQUERIMENTO DE ISENÇÃO', obrigatorio: 'Sim', situacao: 'Não informado' },
+  { id: 2, descricao: 'CARNÊ DE IPTU',           obrigatorio: 'Sim', situacao: 'Não informado' },
+];
+const CHECK_PROT = [
+  { id: 1, situacao: 'Não iniciado' },
+  { id: 2, situacao: 'Não iniciado' },
+];
+const COND_PROT = [
+  { id: 1, descricao: 'Pedido recebido: segue para a próxima etapa' },
+];
+
+function corpoEtapaP(n) {
+  if (abaP === 'Documentos') return gridHTML({
+    col: 'documentos', itens: DOCS_PROT,
+    colunas: [
+      { rot: 'ID', w: '80px', num: true },
+      { rot: 'DESCRIÇÃO DOCUMENTO', w: '1fr' },
+      { rot: 'OBRIGATÓRIO', w: '110px' },
+      { rot: 'SITUAÇÃO', w: '130px' },
+    ],
+    celulas: d => [d.id, d.descricao, d.obrigatorio, d.situacao],
+  });
+  if (abaP === 'Checklist') return gridHTML({
+    col: 'checklist', itens: CHECK_PROT,
+    colunas: [{ rot: 'ID', w: '72px', num: true }, { rot: 'SITUAÇÃO', w: '1fr' }],
+    celulas: c => [c.id, c.situacao],
+  });
+  if (abaP === 'Condições') return gridHTML({
+    col: 'condicoes', itens: COND_PROT,
+    colunas: [{ rot: 'ID', w: '72px', num: true }, { rot: 'DESCRIÇÃO', w: '1fr' }],
+    celulas: c => [c.id, c.descricao],
+  });
+
+  const e = ETAPAS_PROT[n - 1];
+  return [
+    campoHTML({ rot: 'Id', val: String(14 + n), ro: true }),
+    campoHTML({ rot: 'Etapa<span class="req">*</span>', cod: String(n), val: e.titulo, lupa: true }),
+    campoHTML({ rot: 'Geração<span class="req">*</span>', val: '1', ro: true }),
+    campoHTML({ rot: 'Status<span class="req">*</span>', val: n === 1 ? 'Concluída' : 'Não iniciada' }),
+    campoHTML({ rot: 'Data Início', val: '01/01/2026 - 00:00:00', ro: true }),
+    campoHTML({ rot: 'Data<br>Conclusão', val: '01/01/2026 - 00:00:00', ro: true }),
+    campoHTML({ rot: 'Data Prevista', val: '14/03/2026' }),
+    campoHTML({ rot: 'Concluído por', cod: '', val: '', ph: 'Pesquisar', lupa: true }),
+    campoHTML({ rot: 'Resultado da<br>decisão', val: '' }),
+  ].join('');
+}
+
+function drawerEtapaHTML(n) {
+  const e = ETAPAS_PROT[n - 1];
+  const abas = ABAS_P.map(a => `
+    <button class="${a === abaP ? 'ativa' : ''}" onclick="trocarAbaP('${a}')">${a}</button>`).join('');
+  return `
+    <div class="drawer-topo">
+      <button class="bt-fechar" onclick="fecharDrawerP()" title="Fechar">${svg('x')}</button>
+      <div class="drawer-titulo">
+        <span class="num">${e.n}</span>
+        <h3>${e.titulo}</h3>
+      </div>
+      <div class="drawer-abas">${abas}</div>
+    </div>
+    <div class="drawer-corpo scroll">${corpoEtapaP(n)}</div>
+    <div class="drawer-rodape">
+      <button class="btn btn-claro">${svg('check')} Concluir etapa</button>
+    </div>`;
+}
+
+function drawerP() { return main.querySelector('.cad .drawer'); }
+
+/**
+ * Mostra o conteúdo do drawer. `aoAnimar` roda uma vez, depois que o drawer
+ * termina de entrar (1ª abertura) ou de trocar de conteúdo (já aberto) —
+ * é aí que decidimos se o canvas reenquadra o fluxo inteiro ou só centraliza
+ * o card clicado, mantendo o zoom atual.
+ */
+function mostrarDrawer(html, aoAnimar) {
+  const d = drawerP();
+  if (d.classList.contains('aberto')) {
+    d.classList.add('trocando');
+    setTimeout(() => { d.innerHTML = html; d.classList.remove('trocando'); aoAnimar(); }, 150);
+  } else {
+    d.innerHTML = html;
+    d.classList.add('aberto');
+    aoDrawerAssentar(d, aoAnimar);
+  }
+}
+
+/** Roda `fn` uma única vez, quando o drawer terminar de tomar (ou devolver) a
+    largura. O drawer transiciona transform, margin-right e opacity: só o fim
+    de `margin-right` garante que a área do fluxo já tem a largura final —
+    escutar qualquer transitionend mediria o canvas no meio do caminho. */
+function aoDrawerAssentar(d, fn) {
+  let feito = false;
+  const rodar = () => { if (feito) return; feito = true; d.removeEventListener('transitionend', naTransicao); fn(); };
+  const naTransicao = e => { if (e.target === d && e.propertyName === 'margin-right') rodar(); };
+  d.addEventListener('transitionend', naTransicao);
+  setTimeout(rodar, 340);   /* rede de segurança se a transição não ocorrer */
+}
+
+function abrirProtocoloP() {
+  etapaSelP = null;
+  main.querySelectorAll('.cad .etapa').forEach(el => el.classList.remove('aberta', 'sel'));
+  mostrarDrawer(drawerProtocoloHTML(), () => montarCanvasP(true));
+}
+
+/** Clique num card: mantém o zoom atual e só centraliza aquele card próximo
+    do topo do espaço livre ao lado do drawer — é essa animação (sem reenquadrar
+    o fluxo inteiro) que dá a sensação de destaque no card clicado. */
+function abrirEtapaProt(n) {
+  etapaSelP = n; abaP = 'Dados';
+  main.querySelectorAll('.cad .etapa').forEach(el => {
+    const desta = +el.dataset.n === n;
+    el.classList.toggle('sel', desta);
+    el.classList.toggle('aberta', desta);
+  });
+  mostrarDrawer(drawerEtapaHTML(n), () => centralizarEtapaP(n));
+}
+
+function trocarAbaP(a) {
+  if (a === abaP) return;
+  abaP = a;
+  main.querySelectorAll('.cad .drawer-abas button')
+      .forEach((b, i) => b.classList.toggle('ativa', ABAS_P[i] === a));
+  main.querySelector('.cad .drawer-corpo').innerHTML = corpoEtapaP(etapaSelP);
+}
+
+function fecharDrawerP() {
+  const d = drawerP();
+  d.classList.remove('aberto');
+  etapaSelP = null;
+  main.querySelectorAll('.cad .etapa').forEach(el => el.classList.remove('aberta', 'sel'));
+  /* recentraliza deslizando assim que o drawer devolve a largura */
+  aoDrawerAssentar(d, () => montarCanvasP(true));
+}
+
+/* --------------------- canvas: zoom e pan (como no PO050) --------------------- */
+
+let pZoom = 1, pEscalaCaber = 1;
+let pEspacoL = 0, pEspacoA = 0, pDesvioX = 0, pDesvioY = 0;
+
+function wrapP() { return main.querySelector('.cad .bpmn-wrap'); }
+
+/**
+ * Largura útil do canvas. Não usa `wrap.clientWidth` porque o drawer leva
+ * 280ms para tomar/devolver a sua faixa: durante a animação o clientWidth
+ * ainda é o antigo, e enquadrar por ele joga o fluxo para fora da vista.
+ * Aqui a conta é feita pelo destino: largura do fluxo menos a do drawer
+ * quando ele está aberto.
+ */
+function larguraCanvasP() {
+  const fluxo = main.querySelector('.cad .fluxo');
+  const d = drawerP();
+  if (!fluxo) return 0;
+  const total = fluxo.clientWidth;
+  const aberto = d && d.classList.contains('aberto');
+  return aberto ? total - d.offsetWidth : total;
+}
+
+function aplicarZoomP(z, ponto) {
+  const wrap = wrapP();
+  if (!wrap) return;
+  const caixa = wrap.querySelector('.bpmn-zoom');
+  const espaco = wrap.querySelector('.bpmn-espaco');
+  if (!caixa || !espaco) return;   /* canvas vazio: nada para escalar */
+  z = Math.min(Math.max(z, pEscalaCaber), 2);
+
+  const rc = wrap.getBoundingClientRect();
+  const largura = larguraCanvasP();
+  const px = ponto ? ponto.x - rc.left : largura / 2;
+  const py = ponto ? ponto.y - rc.top : wrap.clientHeight / 2;
+  const cx = (wrap.scrollLeft + px - pDesvioX) / pZoom;
+  const cy = (wrap.scrollTop  + py - pDesvioY) / pZoom;
+
+  pZoom = z;
+  const escalaL = pEspacoL * z, escalaA = pEspacoA * z;
+  const caixaL = Math.max(escalaL, largura);
+  const caixaA = Math.max(escalaA, wrap.clientHeight);
+  pDesvioX = (caixaL - escalaL) / 2;
+  pDesvioY = (caixaA - escalaA) / 2;
+
+  caixa.style.width  = Math.round(caixaL) + 'px';
+  caixa.style.height = Math.round(caixaA) + 'px';
+  espaco.style.transform = `translate(${pDesvioX}px, ${pDesvioY}px) scale(${z})`;
+
+  wrap.scrollLeft = cx * z + pDesvioX - px;
+  wrap.scrollTop  = cy * z + pDesvioY - py;
+}
+
+function maisZoomP()  { aplicarZoomP(pZoom * 1.25); }
+function menosZoomP() { aplicarZoomP(pZoom / 1.25); }
+
+/** Desliza a rolagem do canvas até o alvo, com desaceleração (easeOut cúbico:
+    começa rápido e "estaciona" devagar antes de parar). Um clique novo antes
+    da animação anterior terminar precisa cancelá-la — senão as duas ficam
+    disputando o scroll a cada frame e o resultado final fica errado. */
+let deslizarToken = 0;
+
+function deslizarScroll(wrap, sl, st) {
+  const meu = ++deslizarToken;
+  const sl0 = wrap.scrollLeft, st0 = wrap.scrollTop;
+  const t0 = performance.now(), dur = 280;
+  function passo(t) {
+    if (meu !== deslizarToken) return;   /* uma animação mais nova assumiu */
+    const p = Math.min((t - t0) / dur, 1);
+    const e = 1 - Math.pow(1 - p, 3);
+    wrap.scrollLeft = sl0 + (sl - sl0) * e;
+    wrap.scrollTop  = st0 + (st - st0) * e;
+    if (p < 1) requestAnimationFrame(passo);
+  }
+  requestAnimationFrame(passo);
+}
+
+/* etapa selecionada: sempre no mesmo tamanho (zoom fixo, 1:1) e sempre na
+   mesma posição — centralizado na horizontal, com o topo do card alinhado
+   logo abaixo da régua de abas do drawer (Dados/Documentos/...) */
+const ZOOM_ETAPA = 1;
+const GAP_ETAPA_TOPO = 26;
+
+/** Fixa o zoom da etapa e desliza (easeOut, via deslizarScroll) até o card
+    clicado ocupar sempre o mesmo tamanho e a mesma posição, não importa o
+    zoom em que o fluxo estava nem o tamanho do card no desenho. */
+function centralizarEtapaP(n) {
+  const wrap = wrapP();
+  if (!wrap) return;
+  const bpmn = wrap.querySelector('.bpmn');
+  const coluna = bpmn && bpmn.firstElementChild;   /* wrapper absoluto que empilha os cards */
+  const card = wrap.querySelector(`.etapa[data-n="${n}"]`);
+  const topoDrawer = drawerP().querySelector('.drawer-topo');
+  if (!bpmn || !coluna || !card) return;
+
+  const slAntes = wrap.scrollLeft, stAntes = wrap.scrollTop;
+
+  const espaco = wrap.querySelector('.bpmn-espaco');
+  espaco.classList.add('anim');
+  setTimeout(() => espaco.classList.remove('anim'), 320);
+
+  aplicarZoomP(ZOOM_ETAPA);   /* recalcula pDesvioX/Y para o zoom fixo */
+
+  const alturaTopo = topoDrawer ? topoDrawer.getBoundingClientRect().height : 0;
+  const x     = (bpmn.offsetLeft + coluna.offsetLeft + card.offsetLeft + card.offsetWidth / 2) * pZoom + pDesvioX;
+  const yTopo = (bpmn.offsetTop  + coluna.offsetTop  + card.offsetTop) * pZoom + pDesvioY;
+
+  const alvoSL = x - larguraCanvasP() / 2;
+  const alvoST = yTopo - alturaTopo - GAP_ETAPA_TOPO;
+
+  /* aplicarZoomP já reposicionou o scroll (para ancorar o zoom no centro);
+     desfaz esse salto e anima do ponto onde o usuário estava até o alvo */
+  wrap.scrollLeft = slAntes; wrap.scrollTop = stAntes;
+  deslizarScroll(wrap, alvoSL, alvoST);
+}
+
+function montarCanvasP(animar) {
+  const wrap = wrapP();
+  if (!wrap || protAberto === null) return;
+  /* transitionend e o fallback de 320ms podem chegar juntos: um só vale */
+  if (animar) {
+    if (montarCanvasP.ultimo && performance.now() - montarCanvasP.ultimo < 200) return;
+    montarCanvasP.ultimo = performance.now();
+  }
+  const espaco = wrap.querySelector('.bpmn-espaco');
+  if (!espaco) return;   /* canvas ainda vazio (nenhum protocolo montado) */
+  const slAntes = wrap.scrollLeft, stAntes = wrap.scrollTop;
+
+  if (animar) {
+    espaco.classList.add('anim');
+    setTimeout(() => espaco.classList.remove('anim'), 320);
+  }
+
+  pEspacoL = espaco.offsetWidth;
+  pEspacoA = espaco.offsetHeight;
+  pEscalaCaber = Math.min(1,
+    (larguraCanvasP() - 40) / PROT_L,
+    (wrap.clientHeight - 40) / PROT_A);
+  pZoom = 1; pDesvioX = 0; pDesvioY = 0;
+  aplicarZoomP(pEscalaCaber);   /* enquadra o fluxo inteiro */
+
+  const bpmn = wrap.querySelector('.bpmn');
+  const alvoSL = (bpmn.offsetLeft + PROT_L / 2) * pZoom + pDesvioX - larguraCanvasP() / 2;
+  const alvoST = (bpmn.offsetTop + PROT_A / 2) * pZoom + pDesvioY - wrap.clientHeight / 2;
+
+  if (animar) {
+    wrap.scrollLeft = slAntes; wrap.scrollTop = stAntes;
+    deslizarScroll(wrap, alvoSL, alvoST);
+  } else {
+    wrap.scrollLeft = alvoSL; wrap.scrollTop = alvoST;
+  }
+}
+
+function telaCheiaP() {
+  const fluxoEl = main.querySelector('.cad .fluxo');
+  if (document.fullscreenElement) document.exitFullscreen();
+  else if (fluxoEl && fluxoEl.requestFullscreen) fluxoEl.requestFullscreen();
+}
+
+document.addEventListener('fullscreenchange', () => {
+  if (protAberto !== null) montarCanvasP();
+});
+
+function ativarArrastoProt() {
+  const wrap = wrapP();
+  if (!wrap || wrap.dataset.arrasto) return;
+  wrap.dataset.arrasto = '1';
+
+  let ativo = false, arrastou = false, x0 = 0, y0 = 0, sl = 0, st = 0;
+
+  wrap.addEventListener('pointerdown', e => {
+    if (e.button !== 0) return;
+    ativo = true; arrastou = false;
+    x0 = e.clientX; y0 = e.clientY;
+    sl = wrap.scrollLeft; st = wrap.scrollTop;
+  });
+
+  wrap.addEventListener('pointermove', e => {
+    if (!ativo) return;
+    const dx = e.clientX - x0, dy = e.clientY - y0;
+    if (!arrastou) {
+      if (Math.hypot(dx, dy) < 5) return;
+      arrastou = true;
+      wrap.classList.add('arrastando');
+      try { wrap.setPointerCapture(e.pointerId); } catch { /* segue sem captura */ }
+    }
+    wrap.scrollLeft = sl - dx;
+    wrap.scrollTop  = st - dy;
+  });
+
+  const encerrar = e => {
+    if (!ativo) return;
+    ativo = false;
+    wrap.classList.remove('arrastando');
+    if (wrap.hasPointerCapture && wrap.hasPointerCapture(e.pointerId)) wrap.releasePointerCapture(e.pointerId);
+  };
+  wrap.addEventListener('pointerup', encerrar);
+  wrap.addEventListener('pointercancel', encerrar);
+
+  wrap.addEventListener('click', e => {
+    if (arrastou) { e.stopPropagation(); e.preventDefault(); }
+  }, true);
+}
+
+/* --------------------------------- vistas --------------------------------- */
 
 function irPara(id) {
   vista = id;
   main.querySelectorAll('.vtab').forEach((b, i) => b.classList.toggle('ativa', VISTAS[i].id === id));
   main.querySelector('.cad').hidden = id !== 'cadastro';
+  main.querySelector('.pesq').hidden = id !== 'pesquisa';
 
   const outra = main.querySelector('.vazio-vista');
-  outra.hidden = id === 'cadastro';
+  outra.hidden = id === 'cadastro' || id === 'pesquisa';
   outra.textContent = (VISTAS.find(v => v.id === id) || {}).rot + ' — em construção';
+
+  if (id === 'cadastro' && protAberto !== null) montarCanvasP();
 }
 
 const main = montarShell('po051');
@@ -56,29 +722,27 @@ main.insertAdjacentHTML('beforeend', `
     </div>
 
     <div class="conteudo">
-      <div class="cad">
+      <div class="pesq">${pesquisaHTML()}</div>
+
+      <div class="cad" hidden>
         <div class="cad-topo">
-          <div class="esq">
-            ${svg('fluxograma')}
-            <a class="nome link" onclick="abrirProtocolo()">Protocolo - 2292416</a>
-          </div>
+          <div class="esq">${tituloCadEsqHTML()}</div>
           <div class="dir">
-            <button class="btn btn-claro">${svg('mais')} Novo</button>
-            <button class="btn btn-claro">${svg('lixeira')} Excluir</button>
-            <button class="btn btn-claro">${svg('salvar')} Salvar</button>
             <div style="flex:1"></div>
             <button class="btn btn-primario">${svg('gerais')} Operações</button>
           </div>
         </div>
 
-        <div class="fluxo"></div>
+        <div class="fluxo">${canvasVazioHTML()}</div>
       </div>
 
       <div class="painel vazio-vista" hidden></div>
     </div>
   </div>`);
 
-montarFluxo(main.querySelector('.fluxo'));
+/* estado inicial via ?view=cadastro (abre com a instrução, sem fluxo) */
+const q = new URLSearchParams(location.search);
+if (q.get('view') && VISTAS.some(v => v.id === q.get('view'))) irPara(q.get('view'));
 </script>
 </body>
 </html>
