@@ -377,6 +377,84 @@ body {
 
 .pagina fieldset.riscos li::marker { color: var(--verde); }
 
+/* título de terceiro nível dentro de um subtópico */
+.pagina > section > h4 {
+  margin: 26px 0 10px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--txt-strong);
+}
+
+/* tabelas do conteúdo: cabeçalho em negrito e linhas separadas por filete */
+.pagina table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 22px;
+  font-size: 12.5px;
+}
+
+.pagina table th {
+  text-align: left;
+  font-weight: 700;
+  color: var(--txt-strong);
+  padding: 10px 14px 10px 0;
+  border-bottom: 1px solid var(--cinza-linha);
+  vertical-align: bottom;
+}
+
+.pagina table td {
+  padding: 12px 14px 12px 0;
+  border-bottom: 1px solid #EFEFEF;
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.pagina table tr:last-child td { border-bottom: none; }
+.pagina table th:last-child, .pagina table td:last-child { padding-right: 0; }
+/* coluna de números alinhada à direita (indicadores divulgados) */
+.pagina table .dir { text-align: right; }
+
+/* rolagem só na tabela, para a página nunca rolar na horizontal */
+.pagina .tabela-rolagem { overflow-x: auto; }
+
+/* bolinha colorida do nível de ameaça */
+.pagina .nivel { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+.pagina .nivel::before {
+  content: '';
+  width: 10px; height: 10px; border-radius: 50%;
+  flex: 0 0 auto;
+}
+.pagina .nivel.alta::before     { background: #E53935; }
+.pagina .nivel.media-alta::before { background: #F5822A; }
+.pagina .nivel.media::before    { background: #F5A623; }
+.pagina .nivel.indireta::before { background: #F2D53C; }
+
+/* listas do conteúdo */
+.pagina ul.lista { margin: 0 0 18px; padding-left: 18px; }
+.pagina ul.lista li { margin: 6px 0; }
+.pagina ul.lista li::marker { color: var(--verde); }
+
+/* citação de posicionamento/diretriz */
+.pagina blockquote {
+  margin: 0 0 22px;
+  padding: 2px 0 2px 18px;
+  border-left: 4px solid var(--verde);
+  color: var(--txt-strong);
+}
+
+.pagina blockquote p { margin: 0; font-weight: 700; }
+
+/* seta de evolução em destaque (Digitalizar → Tramitar → ...) */
+.pagina .marco {
+  margin: 0 0 18px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #3F440C;
+}
+
+/* nota de rodapé de tabela */
+.pagina .nota-tab { font-size: 12px; color: var(--txt-mute); margin: -8px 0 22px; }
+
 /* cards do modelo de comercialização */
 .cards-modelo {
   display: grid;
@@ -618,7 +696,245 @@ body {
     <section id="etapa2">
       <h2>#2 Inteligência de Mercado</h2>
       <p class="lead">Análise do mercado, concorrentes e tendências que orientam o posicionamento do produto.</p>
-      <p>Conteúdo a preencher com as definições desta etapa.</p>
+    </section>
+
+    <section id="etapa2-mercado" class="sub">
+      <h3>Visão de mercado</h3>
+      <p>O Protocolo Ágil está inserido no mercado de <b>GovTechs e soluções SaaS para digitalização da gestão pública</b>, especificamente no segmento de <b>protocolo, processos administrativos, tramitação eletrônica e workflows municipais</b>.</p>
+      <p>O mercado passa por uma evolução de sistemas que apenas digitalizam documentos para plataformas capazes de <b>orientar fluxos, controlar prazos, integrar departamentos, automatizar tarefas e oferecer rastreabilidade de ponta a ponta</b>.</p>
+      <p>A oportunidade da Centi está em transformar o protocolo de um simples ponto de entrada documental em um <b>motor de tramitação inteligente</b>, conectando cidadão, servidor e gestão municipal em uma única jornada.</p>
+    </section>
+
+    <section id="etapa2-cenario" class="sub">
+      <h3>Cenário competitivo</h3>
+      <p>O mercado possui três grupos principais de concorrentes:</p>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Grupo</th><th>Principais players</th><th>Característica</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Especialistas em processos digitais</b></td>
+              <td>1Doc, Aprova</td>
+              <td>Foco direto em protocolo, atendimento, processos e automação</td>
+            </tr>
+            <tr>
+              <td><b>Suites de gestão pública</b></td>
+              <td>Fiorilli, IPM, Betha, Elotech, Thema</td>
+              <td>Protocolo e processos integrados a um ecossistema maior de gestão municipal</td>
+            </tr>
+            <tr>
+              <td><b>Soluções institucionais</b></td>
+              <td>SEI / ProPEN / Protocolo GOV.BR</td>
+              <td>Alternativas públicas para digitalização e tramitação de processos</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>A <b>1Doc</b> é o principal benchmark direto do Protocolo Ágil, com mais de 900 organizações e entidades declaradas atualmente e presença nos 26 estados. A plataforma reúne protocolo, processo administrativo, ouvidoria, requerimentos, carta de serviços e outros canais em um único ecossistema.</p>
+      <p>A <b>Aprova</b> é outro concorrente direto relevante, com mais de 130 prefeituras atendidas e posicionamento baseado em processos configuráveis, automação e inteligência artificial.</p>
+      <p>A <b>OM30</b>, por meio do Doc+ Simples, atua principalmente em gestão documental, processos digitais, workflows e conformidade, representando uma concorrência adjacente importante.</p>
+      <p>Entre as suites de gestão pública, destacam-se a <b>Fiorilli</b>, presente em 1.344 cidades e 2.755 órgãos públicos segundo dados divulgados pela própria empresa, e a <b>IPM</b>, que declara mais de 850 órgãos públicos atendidos pelo Atende.Net.</p>
+      <p>A <b>Thema</b> também possui uma solução específica de Processos Digitais, contemplando processo eletrônico, protocolo digital, gerenciamento de documentos, assinaturas e controle de fluxos.</p>
+    </section>
+
+    <section id="etapa2-concorrentes" class="sub">
+      <h3>Principais concorrentes</h3>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Player</th><th>Posicionamento</th><th>Força competitiva</th><th>Ameaça ao Protocolo Ágil</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>1Doc</b></td><td>Protocolo + comunicação + processos</td>
+              <td>Forte presença e produto especializado</td>
+              <td><span class="nivel alta">Alta</span></td>
+            </tr>
+            <tr>
+              <td><b>Aprova</b></td><td>Processos + automação + IA</td>
+              <td>Tecnologia e workflows configuráveis</td>
+              <td><span class="nivel alta">Alta</span></td>
+            </tr>
+            <tr>
+              <td><b>OM30</b></td><td>Gestão documental + processos + workflows</td>
+              <td>Amplitude documental e serviços</td>
+              <td><span class="nivel media-alta">Média/Alta</span></td>
+            </tr>
+            <tr>
+              <td><b>Thema</b></td><td>Processo + protocolo + documentos</td>
+              <td>Integração com gestão pública</td>
+              <td><span class="nivel media-alta">Média/Alta</span></td>
+            </tr>
+            <tr>
+              <td><b>IPM</b></td><td>Suite de gestão municipal</td>
+              <td>Grande base instalada e integração</td>
+              <td><span class="nivel media">Média</span></td>
+            </tr>
+            <tr>
+              <td><b>Fiorilli</b></td><td>Suite de gestão municipal</td>
+              <td>Forte presença em municípios</td>
+              <td><span class="nivel media">Média</span></td>
+            </tr>
+            <tr>
+              <td><b>Betha</b></td><td>Suite de gestão municipal</td>
+              <td>Ecossistema consolidado</td>
+              <td><span class="nivel media">Média</span></td>
+            </tr>
+            <tr>
+              <td><b>Elotech</b></td><td>Gestão + Governo Digital</td>
+              <td>Integração com outros sistemas</td>
+              <td><span class="nivel media">Média</span></td>
+            </tr>
+            <tr>
+              <td><b>SEI / ProPEN</b></td><td>Processo eletrônico institucional</td>
+              <td>Legitimidade e alternativa pública</td>
+              <td><span class="nivel indireta">Indireta</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="nota-tab"><b>Nota:</b> a classificação de ameaça representa uma avaliação estratégica da Centi, considerando proximidade do produto, posicionamento e capacidade competitiva. Não representa market share.</p>
+    </section>
+
+    <section id="etapa2-comercializa" class="sub">
+      <h3>Como o mercado comercializa</h3>
+      <p>O modelo predominante é <b>B2G SaaS — Business to Government + Software as a Service</b>.</p>
+      <p>Na prática, o fornecedor comercializa a solução para a prefeitura, normalmente por meio de uma combinação de <b>assinatura, implantação, treinamento, suporte e serviços adicionais</b>.</p>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Elemento</th><th>Padrão observado</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Cliente</td><td>Prefeitura, Câmara, autarquia ou órgão público</td></tr>
+            <tr><td>Modelo</td><td>B2G</td></tr>
+            <tr><td>Tecnologia</td><td>SaaS / Cloud</td></tr>
+            <tr><td>Contratação</td><td>Venda direta quando aplicável + licitação</td></tr>
+            <tr><td>Cobrança</td><td>Recorrente, normalmente mensal ou anual</td></tr>
+            <tr><td>Implantação</td><td>Parametrização + treinamento + migração quando necessária</td></tr>
+            <tr><td>Expansão</td><td>Novos módulos, órgãos e entidades</td></tr>
+            <tr><td>Venda</td><td>Consultiva, demonstração e proposta comercial</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>A 1Doc, por exemplo, apresenta planos estruturados por módulos e direciona a prefeitura para solicitação de orçamento. Seu plano inclui Protocolo Cidadão, enquanto planos superiores adicionam outros módulos.</p>
+      <p>A Aprova utiliza uma abordagem semelhante de venda consultiva, direcionando o município para demonstração e orçamento da plataforma.</p>
+    </section>
+
+    <section id="etapa2-estrutura" class="sub">
+      <h3>Estrutura competitiva do mercado</h3>
+      <p>O mercado não apresenta dados públicos suficientemente padronizados para afirmar percentuais de market share por empresa. Os players divulgam métricas diferentes — cidades, órgãos públicos, organizações, usuários ou população impactada — tornando inadequada uma divisão percentual sem uma base independente.</p>
+      <p>Entretanto, os dados públicos demonstram uma característica importante: <b>o mercado é pulverizado entre grandes suites de gestão municipal e especialistas em processos digitais</b>.</p>
+
+      <h4>Presença divulgada pelos principais players</h4>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Player</th><th class="dir">Indicador público divulgado</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Fiorilli</td><td class="dir">1.344 cidades</td></tr>
+            <tr><td>IPM</td><td class="dir">+850 órgãos públicos</td></tr>
+            <tr><td>1Doc</td><td class="dir">+900 organizações e entidades</td></tr>
+            <tr><td>Aprova</td><td class="dir">+130 cidades</td></tr>
+            <tr><td>Thema</td><td class="dir">Presença em órgãos públicos nos três poderes</td></tr>
+            <tr><td>OM30</td><td class="dir">Presença em soluções de gestão pública</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Os números acima <b>não representam market share</b> e não são diretamente comparáveis, pois cada empresa utiliza uma métrica diferente. Servem apenas como indicador de escala e presença competitiva.</p>
+    </section>
+
+    <section id="etapa2-tendencia" class="sub">
+      <h3>Tendência do mercado</h3>
+      <p>A evolução competitiva indica uma mudança de paradigma:</p>
+      <p class="marco">Digitalizar → Tramitar → Automatizar → Inteligência</p>
+      <p>Os sistemas mais avançados deixam de apenas substituir o papel e passam a:</p>
+      <ul class="lista">
+        <li>configurar workflows;</li>
+        <li>orientar o servidor sobre a próxima ação;</li>
+        <li>controlar prazos;</li>
+        <li>permitir atividades simultâneas;</li>
+        <li>integrar departamentos;</li>
+        <li>oferecer rastreabilidade;</li>
+        <li>automatizar tarefas;</li>
+        <li>aplicar inteligência artificial.</li>
+      </ul>
+      <p>A Aprova, por exemplo, já posiciona sua plataforma com IA para análise de documentos e automação de tarefas.</p>
+      <p>A Thema trabalha com fluxos configuráveis, protocolo digital, acesso externo e assinaturas eletrônicas.</p>
+      <p>Esse movimento valida a direção estratégica do Protocolo Ágil: <b>competir não apenas como protocolo eletrônico, mas como plataforma de tramitação inteligente.</b></p>
+    </section>
+
+    <section id="etapa2-oportunidade" class="sub">
+      <h3>Oportunidade para a Centi</h3>
+      <p>O mercado apresenta uma oportunidade de posicionamento entre dois extremos:</p>
+
+      <div class="cards-modelo">
+        <div class="card">
+          <h4>Suites completas de gestão pública</h4>
+          <p>Amplas, integradas e com grande base instalada.</p>
+        </div>
+        <div class="card">
+          <h4>Plataformas especializadas</h4>
+          <p>Mais focadas em processos, protocolo e digitalização.</p>
+        </div>
+      </div>
+
+      <p>O Protocolo Ágil pode ocupar um espaço próprio ao combinar:</p>
+      <div class="fluxo-palavras">
+        <span class="palavra">SIMPLICIDADE</span><span class="seta-fluxo">+</span>
+        <span class="palavra">WORKFLOW VISUAL</span><span class="seta-fluxo">+</span>
+        <span class="palavra">ORIENTAÇÃO AO SERVIDOR</span><span class="seta-fluxo">+</span>
+        <span class="palavra">CONTROLE</span><span class="seta-fluxo">+</span>
+        <span class="palavra">VELOCIDADE</span><span class="seta-fluxo">+</span>
+        <span class="palavra">ACESSIBILIDADE</span>
+      </div>
+      <p>A principal diferenciação não deve ser apenas "digitalizar o protocolo", mas <b>fazer o processo avançar pelo caminho correto</b>.</p>
+
+      <h4>Posicionamento competitivo</h4>
+      <blockquote>
+        <p>Enquanto sistemas tradicionais digitalizam documentos e grandes suites concentram múltiplas funções, o Protocolo Ágil deve ser posicionado como uma plataforma especializada em fazer processos administrativos avançarem de forma simples, orientada e rastreável.</p>
+      </blockquote>
+    </section>
+
+    <section id="etapa2-implicacoes" class="sub">
+      <h3>Implicações estratégicas</h3>
+      <p>A inteligência de mercado gera cinco direcionamentos para o produto:</p>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Insight</th><th>Decisão para a Centi</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1Doc é o principal benchmark direto</td><td>Estudar profundamente UX, módulos, comercialização e jornada</td></tr>
+            <tr><td>Aprova avança em automação e IA</td><td>Incorporar automação como evolução natural do produto</td></tr>
+            <tr><td>Suites possuem grande base instalada</td><td>Explorar integração em vez de competir inicialmente como ERP</td></tr>
+            <tr><td>Mercado utiliza venda consultiva B2G</td><td>Estruturar produto e comercial para demonstração + implantação + recorrência</td></tr>
+            <tr><td>Pequenos e médios municípios são pouco atendidos por soluções especializadas</td><td>Priorizar simplicidade, preço acessível e implantação rápida</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Síntese estratégica</h4>
+      <div class="definicao">
+        <p>O mercado é competitivo, mas ainda existe espaço para uma solução especializada, simples e acessível, especialmente para municípios pequenos e médios. A vantagem da Centi não deve estar em possuir o maior número de módulos, mas em entregar uma experiência superior de tramitação: orientar, integrar, controlar e acelerar.</p>
+      </div>
+
+      <p><b>Diretriz:</b></p>
+      <blockquote>
+        <p>Não competir para ser o maior sistema da prefeitura. Competir para ser o sistema que melhor faz o processo andar.</p>
+      </blockquote>
     </section>
 
     <section id="etapa3">
@@ -699,7 +1015,16 @@ const MENU = [
     { id: 'etapa1-proposta',  txt: 'Proposta de Valor' },
     { id: 'etapa1-comercializacao', txt: 'Estratégia de Monetização' },
   ] },
-  { titulo: '#2 Inteligência de Mercado',   itens: [{ id: 'etapa2',  txt: 'Visão geral' }] },
+  { titulo: '#2 Inteligência de Mercado',   itens: [
+    { id: 'etapa2-mercado',      txt: 'Visão de mercado' },
+    { id: 'etapa2-cenario',      txt: 'Cenário competitivo' },
+    { id: 'etapa2-concorrentes', txt: 'Principais concorrentes' },
+    { id: 'etapa2-comercializa', txt: 'Como o mercado comercializa' },
+    { id: 'etapa2-estrutura',    txt: 'Estrutura competitiva' },
+    { id: 'etapa2-tendencia',    txt: 'Tendência do mercado' },
+    { id: 'etapa2-oportunidade', txt: 'Oportunidade para a Centi' },
+    { id: 'etapa2-implicacoes',  txt: 'Implicações estratégicas' },
+  ] },
   { titulo: '#3 Estratégia do Produto',     itens: [{ id: 'etapa3',  txt: 'Visão geral' }] },
   { titulo: '#4 Modelagem do produto',      itens: [{ id: 'etapa4',  txt: 'Visão geral' }] },
   { titulo: '#5 Arquitetura Tecnológica',   itens: [{ id: 'etapa5',  txt: 'Visão geral' }] },
