@@ -97,7 +97,7 @@
   cursor: pointer;
   z-index: 2;
   transform-origin: center;
-  transition: transform .18s ease, box-shadow .18s ease;
+  transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
 }
 .etapa .dias {
   position: absolute; top: 7px; left: 10px;
@@ -105,6 +105,13 @@
   font-size: 9px;
 }
 .etapa .dias svg { width: 11px; height: 11px; }
+
+/* a situação da etapa fica no canto oposto ao prazo, texto e farol */
+.etapa .estado {
+  position: absolute; top: 7px; right: 10px;
+  display: flex; align-items: center; gap: 5px;
+  font-size: 9px;
+}
 
 /* o padding-top desconta os 14px em que a bolinha invade o card, para que a
    faixa de centralização comece na base dela e não na borda */
@@ -157,31 +164,117 @@
 .etapa.andamento.aberta .depto-lbl, .etapa.andamento.aberta .dias { color: #DFF19C; }
 .etapa.andamento.aberta .num { background: var(--g-stroke); }
 
-/* cores por tipo de etapa (PO050/PO051): Tarefa azul, Decisão laranja,
-   Fim vermelho — o Início usa o verde padrão (andamento) */
-.etapa.tarefa, .etapa.decisao, .etapa.fim {
-  background: linear-gradient(180deg, #FFFFFF 0%, #F7F7F7 100%);
-}
-.etapa.tarefa .depto, .etapa.decisao .depto, .etapa.fim .depto { color: #5C5B5B; }
-.etapa.tarefa .depto-lbl, .etapa.tarefa .dias,
-.etapa.decisao .depto-lbl, .etapa.decisao .dias,
-.etapa.fim .depto-lbl, .etapa.fim .dias { color: #9A9A9A; }
-.etapa.tarefa .ponto, .etapa.decisao .ponto, .etapa.fim .ponto { background: #7E7F79; }
-.etapa.tarefa { border: 2px solid var(--selecao); }
-.etapa.tarefa .nome { color: var(--selecao); }
-.etapa.tarefa .num { background: var(--selecao); color: #FFFFFF; }
-.etapa.decisao { border: 2px solid #F5A623; }
-.etapa.decisao .nome { color: #F5A623; }
-.etapa.decisao .num { background: #F5A623; color: #FFFFFF; }
-.etapa.fim { border: 2px solid #E53935; }
-.etapa.fim .nome { color: #E53935; }
-.etapa.fim .num { background: #E53935; color: #FFFFFF; }
+/* ---------------------- cores por tipo de etapa (PO050/PO051) ----------------
+   Início azul, Tarefa verde, Decisão laranja, Fim vermelho. Cada tipo declara a
+   sua paleta em variáveis, e as regras abaixo — do card no desenho e do título
+   no drawer — são escritas uma vez só em cima delas:
+     --tipo        cor do tipo: contorno, bolinha e título do card
+     --tipo-nome   quando o título precisa de um tom mais escuro para ler bem
+     --tipo-topo   topo do fundo do card aberto (--tipo-fundo é a base)
+     --tipo-forte  tom escuro: contorno e bolinha do card aberto
+     --tipo-claro  tom claro: DEPTO e prazo sobre o card aberto */
+.etapa.inicio,  .drawer-titulo.inicio  { --tipo: var(--selecao); --tipo-topo: #5B93E4; --tipo-fundo: #2E6FD6; --tipo-forte: #245BB0; --tipo-claro: #D6E4FA; }
+.etapa.tarefa,  .drawer-titulo.tarefa  { --tipo: var(--g); --tipo-nome: var(--g-mid); --tipo-topo: #ADC84A; --tipo-fundo: #8FAA31; --tipo-forte: var(--g-stroke); --tipo-claro: #DFF19C; }
+.etapa.decisao, .drawer-titulo.decisao { --tipo: #F5A623; --tipo-topo: #F8C05E; --tipo-fundo: #E09512; --tipo-forte: #C67C0A; --tipo-claro: #FDE8C4; }
+.etapa.fim,     .drawer-titulo.fim     { --tipo: #4F4F4F; --tipo-topo: #6E6E6E; --tipo-fundo: #454545; --tipo-forte: #2E2E2E; --tipo-claro: #D8D8D8; }
 
-/* card selecionado com o drawer aberto, para qualquer tipo */
-.etapa.aberta { background: linear-gradient(180deg, #ADC84A 0%, #8FAA31 100%); border-color: var(--g-stroke); }
+.etapa.inicio, .etapa.tarefa, .etapa.decisao, .etapa.fim {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F7F7F7 100%);
+  border: 2px solid var(--tipo);
+}
+.etapa.inicio .nome, .etapa.tarefa .nome,
+.etapa.decisao .nome, .etapa.fim .nome { color: var(--tipo-nome, var(--tipo)); }
+.etapa.inicio .num, .etapa.tarefa .num,
+.etapa.decisao .num, .etapa.fim .num { background: var(--tipo); color: #FFFFFF; }
+.etapa.inicio .depto, .etapa.tarefa .depto,
+.etapa.decisao .depto, .etapa.fim .depto { color: #5C5B5B; }
+.etapa.inicio .depto-lbl, .etapa.inicio .dias, .etapa.inicio .estado,
+.etapa.tarefa .depto-lbl, .etapa.tarefa .dias, .etapa.tarefa .estado,
+.etapa.decisao .depto-lbl, .etapa.decisao .dias, .etapa.decisao .estado,
+.etapa.fim .depto-lbl, .etapa.fim .dias, .etapa.fim .estado { color: #9A9A9A; }
+.etapa.inicio .ponto, .etapa.tarefa .ponto,
+.etapa.decisao .ponto, .etapa.fim .ponto { background: #7E7F79; }
+
+/* cinza — etapa concluída (PO051): o contorno e a bolinha continuam sendo os do
+   tipo, para não perder a leitura de Início/Tarefa/Decisão/Fim; só o fundo e os
+   textos apagam. O fundo branco, por contraste, é a etapa ainda por executar */
+.etapa.finalizada { background: #E9E9E9; }
+.etapa.finalizada .nome,
+.etapa.finalizada .depto,
+.etapa.finalizada .depto-lbl,
+.etapa.finalizada .dias,
+.etapa.finalizada .estado { color: #919191; }
+
+/* apagada — etapa não iniciada: continua clicável, e volta ao cheio no hover e
+   com o drawer aberto, para não se confundir com um card desabilitado */
+.etapa.naoiniciada { opacity: .45; }
+.etapa.naoiniciada:hover,
+.etapa.naoiniciada.aberta { opacity: 1; }
+
+/* anel animado em volta da etapa que precisa ser executada. O anel é a moldura
+   que sobra da máscara (a camada do content-box é descontada da do border-box),
+   e o que gira por baixo dela é um cone de cor que vai do cheio ao transparente
+   ao longo da volta — daí o rastro ser um degradê contínuo, sem emenda. Quem
+   gira é só o <i> de dentro: a moldura fica parada, no contorno do card. */
+.etapa .spin {
+  position: absolute; inset: -15px;
+  border-radius: 25px;
+  padding: 2px;                     /* espessura do anel */
+  pointer-events: none; overflow: hidden;
+  -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  mask-composite: exclude;
+}
+.etapa .spin i {
+  position: absolute; left: 50%; top: 50%;
+  width: 260%; height: 260%;
+  /* o giro é horário, então a frente do rastro é o fim do cone: a cor chega
+     cheia em 360deg e corta seco na emenda (0deg) — a cabeça. Os 150deg antes
+     dela são a cauda, se esvaindo; o resto da volta fica limpo */
+  background: conic-gradient(transparent 0deg, transparent 210deg, currentColor 360deg);
+  animation: girar-etapa 2.6s linear infinite;
+}
+@keyframes girar-etapa {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* o anel usa a cor do tipo da etapa; com o card aberto passa ao tom escuro do
+   tipo — branco desapareceria, já que o anel corre por fora do card, sobre o
+   fundo claro do desenho */
+.etapa .spin        { color: var(--tipo, var(--g)); }
+.etapa.aberta .spin { color: var(--tipo-forte, var(--g-stroke)); }
+
+/* card selecionado com o drawer aberto: fundo na cor do próprio tipo — verde só
+   na Tarefa, que é a verde. Sem tipo (fluxo por estado do PO011) cai no verde */
+.etapa.aberta {
+  background: linear-gradient(180deg, var(--tipo-topo, #ADC84A) 0%, var(--tipo-fundo, #8FAA31) 100%);
+  border-color: var(--tipo-forte, var(--g-stroke));
+}
 .etapa.aberta .nome, .etapa.aberta .depto { color: #FFFFFF; }
-.etapa.aberta .depto-lbl, .etapa.aberta .dias { color: #DFF19C; }
-.etapa.aberta .num { background: var(--g-stroke); color: #FFFFFF; }
+.etapa.aberta .depto-lbl, .etapa.aberta .dias,
+.etapa.aberta .estado { color: var(--tipo-claro, #DFF19C); }
+.etapa.aberta .num { background: var(--tipo-forte, var(--g-stroke)); color: #FFFFFF; }
+
+/* atraso na previsão: o protocolo passou do prazo da etapa. Só o contorno (e o
+   anel, quando é a etapa a executar) vai a vermelho — a bolinha continua na cor
+   do tipo, para não perder de vista que etapa é. Concluída em atraso segue
+   vermelha. Vem depois de .aberta para valer também no card selecionado. */
+.etapa.atrasada { border-color: #E53935; }
+.etapa.atrasada .spin { color: #E53935; }
+
+/* farol da situação da etapa: mesma leitura de cor no card e no drawer */
+.farol {
+  width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%;
+  background: #C4C4C4;
+}
+.farol.naoiniciada  { background: #C4C4C4; }
+.farol.andamento    { background: var(--g); }
+.farol.pulada       { background: #F2D648; }
+.farol.naoaplicavel { background: #FFFFFF; box-shadow: inset 0 0 0 1px #C4C4C4; }
+.farol.concluida    { background: #29B6F6; }
+.farol.retroativa   { background: #8E5BD9; }
 
 /* branco — etapa não habilitada para tramitar */
 .etapa.bloqueada { background: linear-gradient(180deg, #FFFFFF 0%, #F4F4F4 100%); border: 1px solid var(--fld-bd); }
@@ -190,13 +283,16 @@
 .etapa.bloqueada .num { background: #7E7F79; color: #FFFFFF; }
 .etapa.bloqueada .ponto { background: #7E7F79; }
 
+/* contorno de card selecionado que não abre em cor (fluxo por estado do PO011);
+   onde o clique já pinta o card no tom do tipo, a classe não é usada */
+.etapa.sel { outline: 2px solid var(--g); outline-offset: 3px; }
+
 /* hover: só cresce e volta ao tamanho original, sem oscilar */
 .etapa:hover {
   transform: scale(1.07);
   box-shadow: 0 6px 18px rgba(93,106,56,.28);
   z-index: 3;
 }
-.etapa.sel { outline: 2px solid var(--g); outline-offset: 3px; }
 
 /* -------------------------------- drawer -------------------------------- */
 /* fechado, o drawer fica deslocado para fora e com margem negativa, para que a
@@ -238,12 +334,17 @@
 .drawer-topo { flex: 0 0 auto; padding: 20px 20px 0; position: relative; }
 .drawer-topo .bt-fechar { position: absolute; top: 11px; right: 11px; background: #FFFFFF; border-color: var(--fld-bd); color: var(--txt); }
 .drawer-titulo { display: flex; align-items: center; gap: 10px; }
+/* a bolinha e o título seguem a cor do tipo da etapa (a classe do tipo vem no
+   .drawer-titulo); sem tipo, ficam no verde padrão */
 .drawer-titulo .num {
   width: 29px; height: 29px; flex: 0 0 29px; border-radius: 50%;
-  background: var(--g); color: #FFFFFF;
+  background: var(--tipo, var(--g)); color: #FFFFFF;
   display: grid; place-items: center; font-size: 13px; font-weight: bold;
 }
-.drawer-titulo h3 { margin: 0; font-size: 14px; font-weight: bold; color: var(--g-mid); }
+.drawer-titulo h3 {
+  margin: 0; font-size: 14px; font-weight: bold;
+  color: var(--tipo-nome, var(--tipo, var(--g-mid)));
+}
 
 .drawer-abas { display: flex; margin-top: 19px; }
 .drawer-abas button {

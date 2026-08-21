@@ -666,10 +666,10 @@ function fecharDrawer() {
 /** Botão de legenda das cores dos cards, com tooltip escuro no hover. */
 function legendaCoresHTML() {
   const itens = [
-    ['#A1BB3E', 'Etapa Tipo Início'],
-    ['#2E6FD6', 'Etapa Tipo Tarefa'],
+    ['#2E6FD6', 'Etapa Tipo Início'],
+    ['#A1BB3E', 'Etapa Tipo Tarefa'],
     ['#F5A623', 'Etapa Tipo Decisão'],
-    ['#E53935', 'Etapa Tipo Fim'],
+    ['#4F4F4F', 'Etapa Tipo Fim'],
   ];
   return `
   <button class="legenda" title="Legenda das cores">

@@ -6,7 +6,7 @@
 <title>Centi · PO050 - Fluxo de Processos</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
 <link rel="stylesheet" href="assets/centi.css?v=8">
-<link rel="stylesheet" href="assets/fluxo.css?v=6">
+<link rel="stylesheet" href="assets/fluxo.css?v=11">
 <style>
   /* Pesquisa: filtros à esquerda, Últimas Buscas à direita, separados por
      uma linha vertical cinza */
@@ -149,35 +149,15 @@
   .nome-link { text-decoration: underline; cursor: pointer; transition: color .15s ease; }
   .nome-link:hover { color: var(--g); }
 
-  /* cores dos cards por tipo de etapa: Início é o verde padrão (andamento);
-     Tarefa azul, Decisão laranja, Fim vermelho */
-  .etapa.tarefa, .etapa.decisao, .etapa.fim {
-    background: linear-gradient(180deg, #FFFFFF 0%, #F7F7F7 100%);
-  }
-  .etapa.tarefa .depto, .etapa.decisao .depto, .etapa.fim .depto { color: #5C5B5B; }
-  .etapa.tarefa .depto-lbl, .etapa.tarefa .dias,
-  .etapa.decisao .depto-lbl, .etapa.decisao .dias,
-  .etapa.fim .depto-lbl, .etapa.fim .dias { color: #9A9A9A; }
-  .etapa.tarefa .ponto, .etapa.decisao .ponto, .etapa.fim .ponto { background: #7E7F79; }
-
-  .etapa.tarefa { border: 2px solid var(--selecao); }
-  .etapa.tarefa .nome { color: var(--selecao); }
-  .etapa.tarefa .num { background: var(--selecao); color: #FFFFFF; }
-
-  .etapa.decisao { border: 2px solid #F5A623; }
-  .etapa.decisao .nome { color: #F5A623; }
-  .etapa.decisao .num { background: #F5A623; color: #FFFFFF; }
-
-  .etapa.fim { border: 2px solid #E53935; }
-  .etapa.fim .nome { color: #E53935; }
-  .etapa.fim .num { background: #E53935; color: #FFFFFF; }
+  /* as cores dos cards por tipo de etapa vêm do fluxo.css (Início azul, Tarefa
+     verde, Decisão laranja, Fim vermelho) */
 
   /* linha que liga os cards do fluxo */
   .liga-cards { width: 2px; height: 56px; background: #BCC8A0; flex: 0 0 auto; }
 
   /* hover: o card cresce (fluxo.css) e ganha um fundo no tom da sua cor */
-  .etapa.andamento:hover { background: #F5FCD9; }
-  .etapa.tarefa:hover    { background: #E7F0FC; }
+  .etapa.inicio:hover    { background: #E7F0FC; }
+  .etapa.tarefa:hover    { background: #F5FCD9; }
   .etapa.decisao:hover   { background: #FEF3DF; }
   .etapa.fim:hover       { background: #FDE9E9; }
 
@@ -226,7 +206,7 @@
 <div class="app"></div>
 
 <script src="assets/shell.js?v=9"></script>
-<script src="assets/fluxo.js?v=4"></script>
+<script src="assets/fluxo.js?v=6"></script>
 <script>
 /* ícones extras desta tela */
 Object.assign(ICO, {
@@ -860,7 +840,7 @@ function ativarArrastoCanvas() {
 
 /** Classe de cor do card conforme o tipo da etapa. */
 function classeTipo(tipo) {
-  return tipo === 'Início' ? 'andamento'
+  return tipo === 'Início' ? 'inicio'
        : tipo === 'Tarefa' ? 'tarefa'
        : tipo === 'Decisão' ? 'decisao'
        : 'fim';

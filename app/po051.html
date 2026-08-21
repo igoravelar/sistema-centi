@@ -6,7 +6,7 @@
 <title>Centi · PO051 - Tramitação de Protocolo</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
 <link rel="stylesheet" href="assets/centi.css?v=8">
-<link rel="stylesheet" href="assets/fluxo.css?v=6">
+<link rel="stylesheet" href="assets/fluxo.css?v=11">
 <style>
   /* o fluxo é o conteúdo da aba Cadastro, e o drawer ocupa 2/3 da área */
   .cad .fluxo { --drawer-w: 66.667%; }
@@ -30,8 +30,15 @@
     cursor: default;
   }
 
-  /* linha que liga os cards do fluxo do protocolo */
+  /* linha que liga os cards do fluxo do protocolo; no trecho que sai de uma
+     etapa concluída ela continua verde, mas afina para 1px */
   .liga-prot { width: 2px; height: 56px; background: #BCC8A0; flex: 0 0 auto; }
+  .liga-prot.fina { width: 1px; }
+  /* do card em andamento para baixo o caminho é previsto, não percorrido:
+     mesma cor, em tracejado */
+  .liga-prot.tracejada {
+    background: repeating-linear-gradient(180deg, #BCC8A0 0 6px, transparent 6px 12px);
+  }
 
   /* o reenquadre ao abrir/fechar o drawer desliza o fluxo suavemente */
   .cad .bpmn-espaco.anim { transition: transform .28s ease; }
@@ -84,13 +91,6 @@
   }
   .cad .badge-etapa b { font-weight: bold; color: var(--txt-strong); }
 
-  /* farol da situação: mesma leitura de cor do fluxograma */
-  .cad .badge-etapa .farol {
-    width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%;
-  }
-  .cad .badge-etapa .farol.concluida  { background: #A1BB3E; }
-  .cad .badge-etapa .farol.andamento  { background: #F5A623; }
-  .cad .badge-etapa .farol.aguardando { background: #C4C4C4; }
 
   /* ------------------------------- Pesquisa -------------------------------
      Mesmo desenho da Pesquisa do PO050: filtros à esquerda, Últimas Buscas à
@@ -221,7 +221,7 @@
 <div class="app"></div>
 
 <script src="assets/shell.js?v=9"></script>
-<script src="assets/fluxo.js?v=4"></script>
+<script src="assets/fluxo.js?v=6"></script>
 <script>
 /* As abas verticais são desta tela: trocam de vista aqui dentro, sem sair do
    PO051. O fluxo fica montado o tempo todo, só oculto, para não perder o
@@ -355,25 +355,82 @@ function pesquisaHTML() {
 let protAberto = null;   /* índice da linha aberta; null = instrução */
 let etapaSelP = null;
 
-const ETAPAS_PROT = [
-  { n: 1, titulo: 'Início',                        tipo: 'Início', depto: 'QUALQUER UM',                                    dias: null },
-  { n: 2, titulo: 'Pedido',                        tipo: 'Tarefa', depto: 'DEPARTAMENTO DE COMPRAS - SEC. ADMINISTRAÇÃO',   dias: '1 dia' },
-  { n: 3, titulo: 'Gerar Dispensa',                tipo: 'Tarefa', depto: 'DEPARTAMENTO DE LICITAÇÃO - SEC ADMINISTRAÇÃO',  dias: '2 dias' },
-  { n: 4, titulo: 'Publicar Dispensa Colare PNCP', tipo: 'Tarefa', depto: 'COMISSÃO DE PRESTAÇÃO DE CONTAS - CMDCA - PD',   dias: '1 dia' },
-  { n: 5, titulo: 'Gerar Autorização Empenho',     tipo: 'Tarefa', depto: 'DEPARTAMENTO DE COMPRAS - SEC. ADMINISTRAÇÃO',   dias: '1 dia' },
-  { n: 6, titulo: 'Gerar Empenho',                 tipo: 'Tarefa', depto: 'CONTABILIDADE - SEC ADMINISTRAÇÃO',              dias: '2 dias' },
-  { n: 7, titulo: 'Fim',                           tipo: 'Fim',    depto: 'PREFEITURA MUNICIPAL DE RIO VERDE',              dias: null },
+/* Fluxos de exemplo do protocolo. `prazo` é o tempo previsto da etapa em dias e
+   `corridos` é quanto o protocolo já ficou na repartição; passando do prazo, o
+   card marca atraso.
+
+   O FLUXO_VALIDACAO é o cenário de conferência das cores — os quatro tipos de
+   etapa, os seis estados do farol e os dois casos de atraso — e abre no
+   protocolo 2292436. Os demais protocolos abrem o FLUXO_SIMPLES, a tramitação
+   de AQUISIÇÃO - PD. */
+const FLUXO_VALIDACAO = [
+  { n: 1, titulo: 'Início',                        tipo: 'Início',  depto: 'QUALQUER UM',                                   prazo: 1, corridos: 1, situacao: 'Concluída' },
+  { n: 2, titulo: 'Pedido',                        tipo: 'Tarefa',  depto: 'DEPARTAMENTO DE COMPRAS - SEC. ADMINISTRAÇÃO',  prazo: 2, corridos: 2, situacao: 'Concluída Retroativa' },
+  { n: 3, titulo: 'Gerar Dispensa',                tipo: 'Tarefa',  depto: 'DEPARTAMENTO DE LICITAÇÃO - SEC ADMINISTRAÇÃO', prazo: 2, corridos: 5, situacao: 'Concluída' },
+  { n: 4, titulo: 'Valor exige análise ampliada?', tipo: 'Decisão', depto: 'TRIBUTAÇÃO',                                    prazo: 1, corridos: 1, situacao: 'Pulada' },
+  { n: 5, titulo: 'Parecer do Controle Interno',   tipo: 'Tarefa',  depto: 'CONTROLE INTERNO',                              prazo: 1, corridos: 0, situacao: 'Não Aplicável' },
+  { n: 6, titulo: 'Gerar Autorização Empenho',     tipo: 'Tarefa',  depto: 'DEPARTAMENTO DE COMPRAS - SEC. ADMINISTRAÇÃO',  prazo: 2, corridos: 4, situacao: 'Em Andamento' },
+  { n: 7, titulo: 'Decisão do Pedido',             tipo: 'Decisão', depto: 'TRIBUTAÇÃO',                                    prazo: 1, corridos: 0, situacao: 'Não Iniciada' },
+  { n: 8, titulo: 'Fim',                           tipo: 'Fim',     depto: 'PREFEITURA MUNICIPAL DE RIO VERDE',             prazo: 1, corridos: 0, situacao: 'Não Iniciada' },
 ];
 
-const PROT_L = 594;
-const PROT_A = 40 + ETAPAS_PROT.length * 112 + (ETAPAS_PROT.length - 1) * 56;
+const FLUXO_SIMPLES = [
+  { n: 1, titulo: 'Início',                        tipo: 'Início', depto: 'QUALQUER UM',                                   prazo: 1, corridos: 1, situacao: 'Concluída' },
+  { n: 2, titulo: 'Pedido',                        tipo: 'Tarefa', depto: 'DEPARTAMENTO DE COMPRAS - SEC. ADMINISTRAÇÃO',  prazo: 1, corridos: 1, situacao: 'Em Andamento' },
+  { n: 3, titulo: 'Gerar Dispensa',                tipo: 'Tarefa', depto: 'DEPARTAMENTO DE LICITAÇÃO - SEC ADMINISTRAÇÃO', prazo: 2, corridos: 0, situacao: 'Não Iniciada' },
+  { n: 4, titulo: 'Publicar Dispensa Colare PNCP', tipo: 'Tarefa', depto: 'COMISSÃO DE PRESTAÇÃO DE CONTAS - CMDCA - PD',  prazo: 1, corridos: 0, situacao: 'Não Iniciada' },
+  { n: 5, titulo: 'Gerar Autorização Empenho',     tipo: 'Tarefa', depto: 'DEPARTAMENTO DE COMPRAS - SEC. ADMINISTRAÇÃO',  prazo: 1, corridos: 0, situacao: 'Não Iniciada' },
+  { n: 6, titulo: 'Gerar Empenho',                 tipo: 'Tarefa', depto: 'CONTABILIDADE - SEC ADMINISTRAÇÃO',             prazo: 2, corridos: 0, situacao: 'Não Iniciada' },
+  { n: 7, titulo: 'Fim',                           tipo: 'Fim',    depto: 'PREFEITURA MUNICIPAL DE RIO VERDE',             prazo: 1, corridos: 0, situacao: 'Não Iniciada' },
+];
 
+/* qual fluxo cada protocolo abre; sem entrada aqui, abre o simples */
+const FLUXOS_PROT = { '2292436': FLUXO_VALIDACAO };
+
+/* etapas do protocolo aberto: definido em abrirFluxoProt, pelo id da linha */
+let ETAPAS_PROT = FLUXO_SIMPLES;
+
+const PROT_L = 594;
+/* a altura do desenho acompanha a quantidade de etapas do fluxo aberto */
+function alturaProtP() { return 40 + ETAPAS_PROT.length * 112 + (ETAPAS_PROT.length - 1) * 56; }
+
+/** Classe de cor do card conforme o tipo da etapa: Início azul, Tarefa verde,
+    Decisão laranja, Fim vermelho (paleta no fluxo.css). */
 function classeTipoP(tipo) {
-  return tipo === 'Início' ? 'andamento'
+  return tipo === 'Início' ? 'inicio'
        : tipo === 'Tarefa' ? 'tarefa'
        : tipo === 'Decisão' ? 'decisao'
        : 'fim';
 }
+
+/* todos os cards do fluxo do protocolo têm a mesma medida; a largura acomoda o
+   prazo à esquerda e a situação à direita sem encostar na bolinha do meio */
+const CARD_L = 260, CARD_A = 112;
+
+/** Estado do card a partir da situação da etapa: concluída (nas duas formas)
+    fica cinza — o tipo mantém contorno e bolinha —, a que está em andamento é a
+    que precisa ser executada (fundo branco, com o anel girando em volta) e a
+    não iniciada fica apagada, ainda clicável. Pulada e Não Aplicável ficam no
+    card branco, sem apagar: quem conta a história ali é o farol. */
+function classeEstadoP(n) {
+  const sit = situacaoEtapaP(n);
+  return sit === 'Concluída' || sit === 'Concluída Retroativa' ? 'finalizada'
+       : sit === 'Em Andamento' ? 'executar'
+       : sit === 'Não Iniciada' ? 'naoiniciada'
+       : '';
+}
+
+/** Prazo previsto da etapa, como aparece no canto do card. */
+function prazoEtapaP(e) { return `${e.prazo} ${e.prazo === 1 ? 'dia' : 'dias'}`; }
+
+/** Atraso da previsão: o protocolo ficou na repartição mais do que o prazo da
+    etapa. Vale também depois de concluída — a etapa concluída em atraso segue
+    marcada. */
+function atrasadaP(e) { return e.corridos > e.prazo; }
+
+/* situações em que o fluxo já passou pela etapa: o trecho de linha até ela é
+   caminho percorrido, e não previsto */
+const RESOLVIDAS_P = ['Concluída', 'Concluída Retroativa', 'Pulada', 'Não Aplicável'];
 
 /** Título do topo do Cadastro: sem protocolo aberto, uma instrução em
     itálico (sem link); com um aberto, o link "Protocolo - X" de sempre. */
@@ -402,6 +459,7 @@ function canvasVazioHTML() {
 
 function abrirFluxoProt(i) {
   protAberto = i; etapaSelP = null;
+  ETAPAS_PROT = FLUXOS_PROT[RESULTADOS_P[i][0]] || FLUXO_SIMPLES;
   irPara('cadastro');      /* mostra o .cad antes de medir o canvas */
   montarFluxoProt();
   abrirProtocoloP();
@@ -411,26 +469,37 @@ function montarFluxoProt() {
   const r = RESULTADOS_P[protAberto];
   main.querySelector('.cad-topo .esq').innerHTML = tituloCadEsqHTML();
 
-  const cards = ETAPAS_PROT.map(e => `
-    ${e.n > 1 ? '<div class="liga-prot"></div>' : ''}
-    <div class="etapa ${classeTipoP(e.tipo)}" data-n="${e.n}"
-         style="position:relative;left:0;top:0;width:190px;height:112px;flex:0 0 auto"
+  const cards = ETAPAS_PROT.map(e => {
+    const estado = classeEstadoP(e.n);
+    const sit = situacaoEtapaP(e.n);
+    const classes = [classeTipoP(e.tipo), estado, atrasadaP(e) ? 'atrasada' : ''];
+    /* o trecho de linha acima do card sai da etapa anterior: caminho já
+       percorrido vem fino; daí em diante é previsto, e vem tracejado */
+    const antes = e.n > 1 ? situacaoEtapaP(e.n - 1) : '';
+    const liga = !antes ? '' : RESOLVIDAS_P.includes(antes) ? ' fina' : ' tracejada';
+    return `
+    ${e.n > 1 ? `<div class="liga-prot${liga}"></div>` : ''}
+    <div class="etapa ${classes.filter(Boolean).join(' ')}" data-n="${e.n}"
+         style="position:relative;left:0;top:0;width:${CARD_L}px;height:${CARD_A}px;flex:0 0 auto"
          onclick="abrirEtapaProt(${e.n})">
+      ${estado === 'executar' ? '<span class="spin"><i></i></span>' : ''}
       <span class="num">${e.n}</span>
-      ${e.dias ? `<span class="dias">${svg('cronometro')}${e.dias}</span>` : ''}
+      <span class="dias">${svg('cronometro')}${prazoEtapaP(e)}</span>
+      <span class="estado">${sit}<i class="farol ${CLASSE_SITUACAO[sit]}"></i></span>
       <span class="nome">${e.titulo}</span>
       <span class="rodape">
         <span class="depto-lbl">DEPTO</span>
         <span class="depto">${e.depto}</span>
       </span>
       <span class="ponto"></span>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
   main.querySelector('.cad .fluxo').innerHTML = `
     <div class="bpmn-wrap">
       <div class="bpmn-zoom">
         <div class="bpmn-espaco">
-          <div class="bpmn" style="height:${PROT_A}px">
+          <div class="bpmn" style="height:${alturaProtP()}px">
             <div style="position:absolute;left:50%;top:20px;transform:translateX(-50%);
                         display:flex;flex-direction:column;align-items:center">${cards}</div>
           </div>
@@ -533,7 +602,7 @@ function corpoEtapaP(n) {
     campoHTML({ rot: 'Etapa<span class="req">*</span>', cod: String(n), val: e.titulo, lupa: true }),
     campoHTML({ rot: 'Geração<span class="req">*</span>', val: '1', ro: true }),
     campoHTML({ rot: 'Status<span class="req">*</span>', val: situacaoEtapaP(n),
-                opcoes: ['Aguardando', 'Em Andamento', 'Concluída'] }),
+                opcoes: SITUACOES_P }),
     campoHTML({ rot: 'Data Início', val: '01/01/2026 - 00:00:00', ro: true }),
     campoHTML({ rot: 'Data<br>Conclusão', val: '01/01/2026 - 00:00:00', ro: true }),
     campoHTML({ rot: 'Data Prevista', val: '14/03/2026' }),
@@ -542,13 +611,19 @@ function corpoEtapaP(n) {
   ].join('');
 }
 
-/* Situação da etapa no protocolo aberto: a 1 já foi concluída, a 2 é a que
-   está em andamento e as seguintes aguardam. É o que alimenta o farol da
-   barra de título e o campo Status da aba Dados. */
-const SITUACOES_P = { 1: 'Concluída', 2: 'Em Andamento' };
-const CLASSE_SITUACAO = { 'Concluída': 'concluida', 'Em Andamento': 'andamento', 'Aguardando': 'aguardando' };
+/* Situação da etapa (vem de ETAPAS_PROT): alimenta o farol no card, o farol da
+   barra de título do drawer e o campo Status da aba Dados. As cores dos faróis
+   estão no fluxo.css. */
+const SITUACOES_P = ['Não Iniciada', 'Em Andamento', 'Pulada', 'Não Aplicável',
+                     'Concluída', 'Concluída Retroativa'];
+const CLASSE_SITUACAO = { 'Não Iniciada': 'naoiniciada', 'Em Andamento': 'andamento',
+                          'Pulada': 'pulada', 'Não Aplicável': 'naoaplicavel',
+                          'Concluída': 'concluida', 'Concluída Retroativa': 'retroativa' };
 
-function situacaoEtapaP(n) { return SITUACOES_P[n] || 'Aguardando'; }
+function situacaoEtapaP(n) {
+  const e = ETAPAS_PROT[n - 1];
+  return (e && e.situacao) || 'Não Iniciada';
+}
 
 const PREVISAO_ETAPA = '01/10/2026';
 const PREVISAO_FIM   = '30/11/2026';
@@ -573,7 +648,7 @@ function drawerEtapaHTML(n) {
   return `
     <div class="drawer-topo">
       <div class="barra-titulo">
-        <div class="drawer-titulo">
+        <div class="drawer-titulo ${classeTipoP(e.tipo)}">
           <span class="num">${e.n}</span>
           <h3>${e.titulo}</h3>
         </div>
@@ -630,7 +705,7 @@ function aoDrawerAssentar(d, fn) {
 
 function abrirProtocoloP() {
   etapaSelP = null;
-  main.querySelectorAll('.cad .etapa').forEach(el => el.classList.remove('aberta', 'sel'));
+  main.querySelectorAll('.cad .etapa').forEach(el => el.classList.remove('aberta'));
   mostrarDrawer(drawerProtocoloHTML(), () => montarCanvasP(true));
 }
 
@@ -639,10 +714,9 @@ function abrirProtocoloP() {
     o fluxo inteiro) que dá a sensação de destaque no card clicado. */
 function abrirEtapaProt(n) {
   etapaSelP = n; abaP = 'Dados';
+  /* o card aberto se destaca pelo fundo na cor do tipo, sem contorno extra */
   main.querySelectorAll('.cad .etapa').forEach(el => {
-    const desta = +el.dataset.n === n;
-    el.classList.toggle('sel', desta);
-    el.classList.toggle('aberta', desta);
+    el.classList.toggle('aberta', +el.dataset.n === n);
   });
   mostrarDrawer(drawerEtapaHTML(n), () => centralizarEtapaP(n));
 }
@@ -659,7 +733,7 @@ function fecharDrawerP() {
   const d = drawerP();
   d.classList.remove('aberto');
   etapaSelP = null;
-  main.querySelectorAll('.cad .etapa').forEach(el => el.classList.remove('aberta', 'sel'));
+  main.querySelectorAll('.cad .etapa').forEach(el => el.classList.remove('aberta'));
   /* recentraliza deslizando assim que o drawer devolve a largura */
   aoDrawerAssentar(d, () => montarCanvasP(true));
 }
@@ -1169,13 +1243,13 @@ function montarCanvasP(animar) {
   pEspacoA = espaco.offsetHeight;
   pEscalaCaber = Math.min(1,
     (larguraCanvasP() - 40) / PROT_L,
-    (wrap.clientHeight - 40) / PROT_A);
+    (wrap.clientHeight - 40) / alturaProtP());
   pZoom = 1; pDesvioX = 0; pDesvioY = 0;
   aplicarZoomP(pEscalaCaber);   /* enquadra o fluxo inteiro */
 
   const bpmn = wrap.querySelector('.bpmn');
   const alvoSL = (bpmn.offsetLeft + PROT_L / 2) * pZoom + pDesvioX - larguraCanvasP() / 2;
-  const alvoST = (bpmn.offsetTop + PROT_A / 2) * pZoom + pDesvioY - wrap.clientHeight / 2;
+  const alvoST = (bpmn.offsetTop + alturaProtP() / 2) * pZoom + pDesvioY - wrap.clientHeight / 2;
 
   if (animar) {
     wrap.scrollLeft = slAntes; wrap.scrollTop = stAntes;
