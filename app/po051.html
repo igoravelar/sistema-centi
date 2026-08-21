@@ -6,7 +6,7 @@
 <title>Centi · PO051 - Tramitação de Protocolo</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
 <link rel="stylesheet" href="assets/centi.css?v=8">
-<link rel="stylesheet" href="assets/fluxo.css?v=11">
+<link rel="stylesheet" href="assets/fluxo.css?v=13">
 <style>
   /* o fluxo é o conteúdo da aba Cadastro, e o drawer ocupa 2/3 da área */
   .cad .fluxo { --drawer-w: 66.667%; }
@@ -221,7 +221,7 @@
 <div class="app"></div>
 
 <script src="assets/shell.js?v=9"></script>
-<script src="assets/fluxo.js?v=6"></script>
+<script src="assets/fluxo.js?v=8"></script>
 <script>
 /* As abas verticais são desta tela: trocam de vista aqui dentro, sem sair do
    PO051. O fluxo fica montado o tempo todo, só oculto, para não perder o
@@ -305,6 +305,16 @@ function pesquisaHTML() {
         <select><option>Igual</option><option>Contendo</option><option>Diferente</option></select>
         <input placeholder="">
         <div></div>
+
+        <select><option>Departamento</option><option>Repartição</option><option>Natureza</option></select>
+        <select><option>Igual</option><option>Contendo</option><option>Diferente</option></select>
+        <input placeholder="">
+        <button class="remover" title="Remover filtro">${svg('lixeira')}</button>
+
+        <select><option>Em Análise</option><option>Arquivado</option><option>Tramitação obrigatória</option></select>
+        <select><option>Igual</option><option>Diferente</option></select>
+        <select><option>Sim</option><option>Não</option></select>
+        <button class="remover" title="Remover filtro">${svg('lixeira')}</button>
 
         <select><option>Somente ano logado?</option><option>Todos os anos</option></select>
         <select><option>Igual</option><option>Diferente</option></select>
@@ -452,8 +462,9 @@ function canvasVazioHTML() {
     <div class="zoom-ctrl">
       <button title="Aproximar">${svg('mais_zoom', 'stroke-width="2.6"')}</button>
       <button title="Afastar">${svg('menos_zoom', 'stroke-width="2.6"')}</button>
-      ${legendaCoresHTML()}
+      <button title="Centralizar fluxograma">${svg('centralizar')}</button>
       <button title="Tela cheia">${svg('telaCheia')}</button>
+      ${legendaCoresHTML(true)}
     </div>`;
 }
 
@@ -509,8 +520,9 @@ function montarFluxoProt() {
     <div class="zoom-ctrl">
       <button onclick="maisZoomP()" title="Aproximar">${svg('mais_zoom', 'stroke-width="2.6"')}</button>
       <button onclick="menosZoomP()" title="Afastar">${svg('menos_zoom', 'stroke-width="2.6"')}</button>
-      ${legendaCoresHTML()}
+      <button onclick="centralizarFluxoP()" title="Centralizar fluxograma">${svg('centralizar')}</button>
       <button onclick="telaCheiaP()" title="Tela cheia">${svg('telaCheia')}</button>
+      ${legendaCoresHTML(true)}
     </div>
     <aside class="drawer"></aside>`;
 
@@ -1259,6 +1271,11 @@ function montarCanvasP(animar) {
   }
 }
 
+/** Botão de centralizar: reenquadra o fluxograma inteiro na área visível. Com o
+    drawer aberto, a conta é feita sobre a janela que sobra para o desenho —
+    larguraCanvasP desconta o drawer. */
+function centralizarFluxoP() { montarCanvasP(true); }
+
 function telaCheiaP() {
   const fluxoEl = main.querySelector('.cad .fluxo');
   if (document.fullscreenElement) document.exitFullscreen();
@@ -1344,8 +1361,6 @@ main.insertAdjacentHTML('beforeend', `
           <div class="esq">${tituloCadEsqHTML()}</div>
           <div class="dir">
             <button class="btn btn-claro">${svg('mais')} Novo</button>
-            <button class="btn btn-neutro" disabled>${svg('lixeira')} Excluir</button>
-            <button class="btn btn-neutro" disabled>${svg('salvar')} Salvar</button>
             <div style="flex:1"></div>
             <button class="btn btn-primario">${svg('gerais')} Operações</button>
           </div>

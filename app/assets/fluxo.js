@@ -14,6 +14,11 @@ Object.assign(ICO, {
   funil:      '<polygon points="21 4 3 4 10 12.5 10 19 14 21 14 12.5 21 4"/>',
   telaCheia:  '<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>',
   sairTelaCheia: '<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>',
+  /* quatro setas apontando para o centro: enquadrar o desenho inteiro */
+  centralizar: '<path d="M3.5 3.5 9 9"/><path d="M9 5.5V9H5.5"/>'
+             + '<path d="M20.5 3.5 15 9"/><path d="M15 5.5V9h3.5"/>'
+             + '<path d="M3.5 20.5 9 15"/><path d="M9 18.5V15H5.5"/>'
+             + '<path d="M20.5 20.5 15 15"/><path d="M15 18.5V15h3.5"/>',
 });
 
 /* ------------------------------ dados do fluxo ------------------------------ */
@@ -664,25 +669,38 @@ function fecharDrawer() {
  * e a largura do drawer, via --drawer-w.
  */
 /** Botão de legenda das cores dos cards, com tooltip escuro no hover. */
-function legendaCoresHTML() {
-  const itens = [
-    ['#2E6FD6', 'Etapa Tipo Início'],
-    ['#A1BB3E', 'Etapa Tipo Tarefa'],
-    ['#F5A623', 'Etapa Tipo Decisão'],
-    ['#4F4F4F', 'Etapa Tipo Fim'],
-  ];
+/* Legenda das cores. `execucao` liga o grupo do estado de execução, que só faz
+   sentido onde há um protocolo tramitando (PO051); nas telas de cadastro do
+   fluxo a legenda fica só nos tipos de etapa. */
+const LEGENDA_EXECUCAO = [
+  ['concluida',   'Concluída'],
+  ['executando',  'Onde o processo está'],
+  ['naoiniciada', 'Não iniciada'],
+];
+const LEGENDA_TIPOS = [
+  ['inicio',  'Início'],
+  ['tarefa',  'Tarefa'],
+  ['decisao', 'Decisão'],
+  ['fim',     'Fim'],
+];
+
+/* "circle-info" do Font Awesome (fontawesome.com/icons/circle-info), traçado
+   oficial — daí o preenchimento, e não o contorno dos demais ícones da barra */
+const ICO_INFO = '<svg viewBox="0 0 512 512" fill="currentColor" stroke="none" aria-hidden="true">'
+  + '<path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24'
+  + 's10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24'
+  + 's10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>';
+
+function legendaCoresHTML(execucao = false) {
+  const grupo = (titulo, itens) => `
+      <span class="gr">${titulo}</span>
+      ${itens.map(([cls, txt]) => `<span class="li"><i class="bo ${cls}"></i>${txt}</span>`).join('')}`;
   return `
   <button class="legenda" title="Legenda das cores">
-    <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0 6C0 2.68629 2.68629 0 6 0H9V9H0V6Z" fill="#A4C614"/>
-      <path d="M18 12C18 15.3137 15.3137 18 12 18L9 18L9 9L18 9L18 12Z" fill="#E53A36"/>
-      <path d="M9 0H12C15.3137 0 18 2.68629 18 6V9H9V0Z" fill="#4390FF"/>
-      <path d="M9 18L6 18C2.68629 18 -7.18831e-07 15.3137 -4.29138e-07 12L-1.66869e-07 9L9 9L9 18Z" fill="#FF9E12"/>
-      <path d="M7.48587 11.2999H8.42462V8.79554H7.48587C6.96656 8.79554 6.54712 8.3748 6.54712 7.85389C6.54712 7.33297 6.96656 6.91223 7.48587 6.91223H9.35671C9.87601 6.91223 10.2955 7.33297 10.2955 7.85389V11.2999H10.6084C11.1277 11.2999 11.5471 11.7207 11.5471 12.2416C11.5471 12.7625 11.1277 13.1833 10.6084 13.1833H7.48587C6.96656 13.1833 6.54712 12.7625 6.54712 12.2416C6.54712 11.7207 6.96656 11.2999 7.48587 11.2999Z" fill="white"/>
-      <path d="M9.04366 5.67002C9.73493 5.67002 10.2953 5.10789 10.2953 4.41448C10.2953 3.72106 9.73493 3.15894 9.04366 3.15894C8.35238 3.15894 7.79199 3.72106 7.79199 4.41448C7.79199 5.10789 8.35238 5.67002 9.04366 5.67002Z" fill="white"/>
-    </svg>
-    <span class="legenda-tip">${itens.map(([cor, txt]) => `
-      <span class="li"><span class="bo" style="background:${cor}"></span>${txt}</span>`).join('')}
+    ${ICO_INFO}
+    <span class="legenda-tip">
+      ${execucao ? grupo('EXECUÇÃO', LEGENDA_EXECUCAO) : ''}
+      ${grupo('TIPO DE ETAPA', LEGENDA_TIPOS)}
     </span>
   </button>`;
 }
@@ -704,8 +722,8 @@ function montarFluxo(container) {
     <div class="zoom-ctrl">
       <button onclick="maisZoom()" title="Aproximar">${svg('mais_zoom', 'stroke-width="2.6"')}</button>
       <button onclick="menosZoom()" title="Afastar">${svg('menos_zoom', 'stroke-width="2.6"')}</button>
-      ${legendaCoresHTML()}
       <button class="cheia" onclick="alternarTelaCheia()" title="Tela cheia">${svg('telaCheia')}</button>
+      ${legendaCoresHTML()}
     </div>
 
     <aside class="drawer"></aside>`;

@@ -69,23 +69,44 @@
 .zoom-ctrl button:hover { background: var(--g-soft-bg); color: var(--g-olive); border-color: var(--g-soft-bd); }
 .zoom-ctrl svg { width: 17px; height: 17px; }
 
-/* legenda das cores dos cards: tooltip escuro no hover */
+/* legenda das cores dos cards: painel claro no hover, em grupos */
 .zoom-ctrl .legenda { position: relative; overflow: visible; }
 .zoom-ctrl .legenda .legenda-tip {
   position: absolute; left: calc(100% + 10px); bottom: 0;
-  padding: 10px 12px;
-  background: #3F440C;
-  border-radius: 10px;
+  padding: 16px 18px;
+  background: #FFFFFF;
+  border: 1px solid var(--tab-bd);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(70,80,40,.16);
   display: none;
-  flex-direction: column; align-items: flex-start; gap: 8px;
+  flex-direction: column; align-items: flex-start; gap: 11px;
   white-space: nowrap;
   z-index: 30;
   pointer-events: none;
   cursor: default;
 }
 .zoom-ctrl .legenda:hover .legenda-tip { display: flex; }
-.zoom-ctrl .legenda .li { display: flex; align-items: center; gap: 8px; color: #EDEEE2; font-size: 11px; font-weight: normal; }
-.zoom-ctrl .legenda .bo { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto; }
+/* título do grupo; do segundo em diante, com uma folga maior acima */
+.zoom-ctrl .legenda .gr {
+  font-size: 10px; font-weight: bold; letter-spacing: .09em;
+  color: var(--txt-mute);
+}
+.zoom-ctrl .legenda .gr ~ .gr { margin-top: 7px; }
+.zoom-ctrl .legenda .li {
+  display: flex; align-items: center; gap: 10px;
+  color: var(--txt); font-size: 13px; font-weight: normal;
+}
+.zoom-ctrl .legenda .bo { width: 11px; height: 11px; border-radius: 50%; flex: 0 0 auto; }
+
+/* as bolinhas repetem a paleta dos cards: os quatro tipos de etapa e, na
+   execução, as três marcas que o desenho usa no fundo do card */
+.zoom-ctrl .legenda .bo.inicio  { background: var(--selecao); }
+.zoom-ctrl .legenda .bo.tarefa  { background: var(--g); }
+.zoom-ctrl .legenda .bo.decisao { background: #F5A623; }
+.zoom-ctrl .legenda .bo.fim     { background: #4F4F4F; }
+.zoom-ctrl .legenda .bo.concluida   { background: #E9E9E9; box-shadow: inset 0 0 0 1px #C4C4C4; }
+.zoom-ctrl .legenda .bo.executando  { background: #FFFFFF; box-shadow: inset 0 0 0 2px #7E7F79; }
+.zoom-ctrl .legenda .bo.naoiniciada { background: #C4C4C4; }
 
 /* -------------------------------- etapa -------------------------------- */
 /* o título ocupa toda a faixa entre o topo do card (onde fica a bolinha) e a

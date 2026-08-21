@@ -6,7 +6,7 @@
 <title>Centi · PO050 - Fluxo de Processos</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
 <link rel="stylesheet" href="assets/centi.css?v=8">
-<link rel="stylesheet" href="assets/fluxo.css?v=11">
+<link rel="stylesheet" href="assets/fluxo.css?v=13">
 <style>
   /* Pesquisa: filtros à esquerda, Últimas Buscas à direita, separados por
      uma linha vertical cinza */
@@ -206,7 +206,7 @@
 <div class="app"></div>
 
 <script src="assets/shell.js?v=9"></script>
-<script src="assets/fluxo.js?v=6"></script>
+<script src="assets/fluxo.js?v=8"></script>
 <script>
 /* ícones extras desta tela */
 Object.assign(ICO, {
@@ -542,8 +542,8 @@ function canvasIptuHTML() {
     <div class="zoom-ctrl">
       <button onclick="maisZoomC()" title="Aproximar">${svg('mais_zoom', 'stroke-width="2.6"')}</button>
       <button onclick="menosZoomC()" title="Afastar">${svg('menos_zoom', 'stroke-width="2.6"')}</button>
-      ${legendaCoresHTML()}
       <button onclick="alternarTelaCheiaC()" title="Tela cheia">${svg('telaCheia')}</button>
+      ${legendaCoresHTML()}
     </div>
     <button class="nova-etapa" onclick="abrirModalEtapa()">${svg('mais')} Nova Etapa</button>
   </div>`;
@@ -1397,8 +1397,8 @@ function cadastroHTML() {
          <div class="zoom-ctrl">
            <button onclick="maisZoomC()" title="Aproximar">${svg('mais_zoom', 'stroke-width="2.6"')}</button>
            <button onclick="menosZoomC()" title="Afastar">${svg('menos_zoom', 'stroke-width="2.6"')}</button>
-           ${legendaCoresHTML()}
            <button onclick="alternarTelaCheiaC()" title="Tela cheia">${svg('telaCheia')}</button>
+           ${legendaCoresHTML()}
          </div>
          <button class="nova-etapa" onclick="abrirModalEtapa()">${svg('mais')} Nova Etapa</button>
        </div>`
