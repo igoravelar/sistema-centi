@@ -24,7 +24,7 @@
 }
 
 html {
-  scroll-padding-top: calc(var(--topbar-h) + var(--faixa-h) + 24px);
+  scroll-padding-top: calc(var(--topbar-h) + var(--faixa-h) + 62px);
 }
 
 body {
@@ -67,6 +67,34 @@ body {
   font-size: 14px;
   font-style: italic;
   color: #5D6725;
+}
+
+/* barra do tópico em rolagem: sai de trás da faixa do slogan com o título do
+   tópico que está sendo lido */
+.barra-topico {
+  position: fixed;
+  top: calc(var(--topbar-h) + var(--faixa-h));
+  left: var(--sidebar-w);
+  right: 0;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  padding-left: 50px;
+  background: #5D6725;
+  color: #FFFFFF;
+  z-index: 9;
+  opacity: 0;
+  transform: translateY(-100%);
+  pointer-events: none;
+  transition: opacity .18s ease, transform .22s ease;
+}
+
+.barra-topico.visivel { opacity: 1; transform: none; }
+
+.barra-topico p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 /* linha fina acima do menu: da borda esquerda até a linha separadora */
@@ -781,23 +809,47 @@ body {
 
 .mini-tela img { display: block; width: 100%; }
 
+/* sombra verde que avança na imagem a partir do canto da lupa */
+.mini-tela::after {
+  content: '';
+  position: absolute;
+  right: 0; bottom: 0;
+  width: 150px; height: 130px;
+  background: radial-gradient(circle at 100% 100%,
+              rgba(63,68,12,.60) 0%, rgba(63,68,12,.32) 40%, rgba(63,68,12,0) 74%);
+  pointer-events: none;
+}
+
+/* shape verde escuro no canto, atrás do botão */
+.mini-tela .canto {
+  position: absolute;
+  right: 0; bottom: 0;
+  z-index: 1;
+  width: 120px; height: 104px;
+  background: #5D6725;
+  border-radius: 100% 0 0 0;
+  pointer-events: none;
+}
+
 .mini-tela .lupa {
   position: absolute;
-  right: 10px; bottom: 10px;
-  width: 34px; height: 34px;
+  right: 11px; bottom: 11px;
+  z-index: 2;
+  width: 52px; height: 52px;
   display: grid; place-items: center;
   padding: 0;
-  background: rgba(255,255,255,.92);
-  border: 1px solid var(--verde-linha);
-  border-radius: 8px;
+  background: #FFFFFF;
+  border: 0;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0,0,0,.22);
   color: #6D8415;
   cursor: zoom-in;
 }
 
-.mini-tela .lupa:hover { background: var(--verde); border-color: var(--verde); color: #FFFFFF; }
+.mini-tela .lupa:hover { background: var(--verde); color: #FFFFFF; }
 
 .mini-tela .lupa svg {
-  width: 16px; height: 16px;
+  width: 23px; height: 23px;
   fill: none; stroke: currentColor; stroke-width: 2;
   stroke-linecap: round; stroke-linejoin: round;
 }
@@ -860,6 +912,7 @@ body {
   .sidebar { display: none; }
   .linha-menu { display: none; }
   .faixa { left: 0; padding-left: 20px; }
+  .barra-topico { left: 0; padding-left: 20px; }
   .conteudo { margin-left: 0; }
   .topbar h1 { position: static; margin-left: 18px; }
 }
@@ -879,6 +932,8 @@ body {
 <div class="faixa">
   <p>Tramitação Inteligente de Processos Administrativos.</p>
 </div>
+
+<div class="barra-topico" id="barra-topico"><p></p></div>
 
 <nav class="sidebar" id="sidebar"></nav>
 
@@ -1877,6 +1932,7 @@ body {
         <div class="mini-tela" onclick="ampliarTela(this)">
           <img src="assets/img/po050-fluxo-processos.png"
                alt="PO050 - Fluxo de Processos: coluna de pastas do fluxo ISENÇÃO DE IPTU e o fluxograma das dez etapas">
+          <span class="canto"></span>
           <button class="lupa" title="Ampliar a tela" aria-label="Ampliar a tela">
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
           </button>
@@ -2490,7 +2546,9 @@ document.getElementById('filtro').addEventListener('input', ev => {
 
 /* Rolagem animada com desaceleração (ease-out cúbico) */
 function rolarPara(alvo) {
-  const topo = alvo.getBoundingClientRect().top + window.scrollY - 124;
+  /* num subtópico a barra do tópico está visível e cobriria o título */
+  const folga = alvo.classList.contains('sub') ? 124 + 38 : 124;
+  const topo = alvo.getBoundingClientRect().top + window.scrollY - folga;
   const inicio = window.scrollY;
   const distancia = topo - inicio;
   const duracao = 650;
@@ -2516,6 +2574,48 @@ document.querySelectorAll('.sidebar a').forEach(a => {
   });
 });
 
+/* ------------------------- barra do tópico em rolagem -------------------------
+   A barra mostra o título do tópico que está sendo lido. Ela só aparece depois
+   que o próprio título sai da tela por cima e desaparece quando a ilustração do
+   tópico seguinte encosta nela — aí o vazio dá lugar ao novo título, quando o
+   H2 dele passar por baixo da faixa. */
+const barraTopico = document.getElementById('barra-topico');
+const rotuloTopico = barraTopico.querySelector('p');
+
+const raizCSS = getComputedStyle(document.documentElement);
+const medida = v => parseFloat(raizCSS.getPropertyValue(v));
+/* borda de baixo da barra: é ela que define quando o título sumiu e quando a
+   ilustração de baixo chegou */
+const BASE_BARRA = medida('--topbar-h') + medida('--faixa-h') + 38;
+
+const topicos = [...document.querySelectorAll('.pagina section')]
+  .filter(sec => sec.querySelector('h2'))
+  .map(sec => ({ sec, h2: sec.querySelector('h2'), titulo: sec.querySelector('h2').textContent.trim() }));
+
+/* onde cada tópico termina para a barra: a ilustração do próximo, quando existe,
+   ou a própria seção seguinte */
+topicos.forEach((t, i) => {
+  const prox = topicos[i + 1];
+  if (!prox) { t.fim = null; return; }
+  const antes = prox.sec.previousElementSibling;
+  t.fim = antes && antes.classList.contains('ilustracao') ? antes : prox.sec;
+});
+
+function atualizarBarraTopico() {
+  let ativo = null;
+  for (const t of topicos) {
+    if (t.h2.getBoundingClientRect().bottom <= BASE_BARRA) ativo = t;
+  }
+  if (ativo && ativo.fim && ativo.fim.getBoundingClientRect().top <= BASE_BARRA) ativo = null;
+
+  if (ativo) {
+    if (rotuloTopico.textContent !== ativo.titulo) rotuloTopico.textContent = ativo.titulo;
+    barraTopico.classList.add('visivel');
+  } else {
+    barraTopico.classList.remove('visivel');
+  }
+}
+
 /* Destaca no menu a seção visível durante a rolagem */
 const secoes = [...document.querySelectorAll('.pagina section')];
 const links = new Map(
@@ -2532,8 +2632,10 @@ function marcarAtivo() {
   if (link) link.classList.add('ativo');
 }
 
-document.addEventListener('scroll', marcarAtivo, { passive: true });
+document.addEventListener('scroll', () => { marcarAtivo(); atualizarBarraTopico(); }, { passive: true });
+window.addEventListener('resize', atualizarBarraTopico);
 marcarAtivo();
+atualizarBarraTopico();
 
 /* ------------------------- imagem de tela ampliada -------------------------
    A miniatura (ou a lupa dela) abre a imagem em cima da página escurecida;
