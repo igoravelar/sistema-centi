@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Centi · Documentação Novo Protocolo</title>
+<title>Centi · Documentação Protocolo 3.0</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -254,7 +254,7 @@ body {
 /* ilustração de abertura: fluxograma sobre degradê verde */
 .ilustracao {
   height: 150px;
-  margin: 50px 0;
+  margin: 50px 0 30px;
   padding: 30px;
   border-radius: 20px;
   background: linear-gradient(90deg, #9dbb1d, #5d6725);
@@ -292,6 +292,10 @@ body {
 
 .pagina .ilustracao + section h2 { margin-top: 0; }
 
+/* entre um tópico e o seguinte, a ilustração se afasta bem do conteúdo de
+   cima e fica perto do título a que se refere */
+.pagina section + .ilustracao { margin-top: 110px; }
+
 .pagina h3 {
   margin: 40px 0 10px;
   font-size: 18px;
@@ -322,6 +326,45 @@ body {
 }
 
 .pagina section.sub h3 { margin-top: 0; }
+
+/* faixa de estágio: título dos três estágios operacionais em destaque */
+.pagina .estagio-titulo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 22px;
+  padding: 14px 20px;
+  background: linear-gradient(90deg, #F3FFC3, #FFFFFF);
+  border-left: 5px solid var(--verde);
+  border-radius: 0 12px 12px 0;
+}
+
+.pagina .estagio-titulo .num {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--verde);
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.pagina .estagio-titulo .lbl {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #8BA81D;
+}
+
+.pagina .estagio-titulo h3 { margin: 0; font-size: 17px; }
+/* dentro da faixa o marcador verde do subtópico não faz sentido — precisa
+   vencer a especificidade da regra `section.sub h3::before` */
+.pagina section.sub .estagio-titulo h3::before { display: none; }
 
 /* marcador acima do título do subtópico */
 .pagina section.sub h3::before {
@@ -563,6 +606,10 @@ body {
   font-weight: 700;
 }
 
+/* variante com rótulo mais largo, para estágios de nome comprido */
+.escada-evolucao.larga .estagio .rotulo { flex: 0 0 210px; }
+.escada-evolucao.larga .seta-baixo { width: 210px; }
+
 /* cards numerados dos diferenciais competitivos */
 .cards-num {
   display: grid;
@@ -610,6 +657,197 @@ body {
 .pagina fieldset.riscos.fora { border-color: var(--cinza-linha); }
 .pagina fieldset.riscos.fora li::marker { color: #C4C4C4; }
 
+/* coluna centralizada (matriz de responsabilidades) */
+.pagina table .centro { text-align: center; }
+
+/* marca de sim/não da matriz de responsabilidades */
+.pagina table .marca { font-weight: 700; }
+.pagina table .marca.sim { color: var(--verde); }
+.pagina table .marca.nao { color: #C8C8C8; }
+
+/* cadeia de usuários: nó, seta e o que acontece entre um nó e o próximo */
+.cadeia { margin: 0 0 22px; }
+
+.cadeia .no {
+  width: 230px;
+  text-align: center;
+  background: #F3FFC3;
+  border: 1px solid #C9DA86;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: #6D8415;
+}
+
+.cadeia .no.fim {
+  background: #FFFFFF;
+  border-color: var(--cinza-linha);
+  color: var(--txt-strong);
+}
+
+.cadeia .liga { display: flex; align-items: center; gap: 12px; }
+
+.cadeia .liga .seta {
+  width: 230px;
+  text-align: center;
+  padding: 3px 0;
+  color: var(--verde);
+  font-weight: 700;
+}
+
+.cadeia .liga .rot { font-size: 12px; font-style: italic; color: var(--txt-mute); }
+
+/* camadas da arquitetura conceitual, empilhadas e ligadas por setas */
+.camadas { margin: 0 0 22px; }
+
+.camadas .camada {
+  background: #F5FCD9;
+  border: 1px solid #D5E690;
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+
+.camadas .camada h4 {
+  margin: 0 0 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #3F440C;
+}
+
+.camadas .camada p { margin: 0; font-size: 12.5px; }
+
+.camadas .seta-baixo {
+  padding: 4px 0;
+  text-align: center;
+  color: var(--verde);
+  font-weight: 700;
+}
+
+/* ficha de tela: miniatura do protótipo com o nome e o código da tela */
+.pagina fieldset.tela {
+  margin: 0 0 22px;
+  padding: 10px 14px 14px;
+  border: 1px solid var(--cinza-linha);
+  border-radius: 10px;
+}
+
+.pagina fieldset.tela legend {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--txt-strong);
+}
+
+.pagina fieldset.tela legend .estrela { width: 13px; height: 13px; fill: #8A8A8A; }
+
+.pagina fieldset.tela legend .ico {
+  width: 26px; height: 26px;
+  display: grid; place-items: center;
+  background: #F1F1F1;
+  border-radius: 6px;
+}
+
+.pagina fieldset.tela legend .ico svg {
+  width: 14px; height: 14px;
+  fill: none; stroke: #5C5B5B; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+.pagina fieldset.tela legend .cod {
+  background: #EFEFEF;
+  color: #6E6E6E;
+  border-radius: 6px;
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+/* miniatura clicável, com a lupa no canto inferior direito */
+.mini-tela {
+  position: relative;
+  border: 1px solid var(--cinza-linha);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.mini-tela img { display: block; width: 100%; }
+
+.mini-tela .lupa {
+  position: absolute;
+  right: 10px; bottom: 10px;
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  padding: 0;
+  background: rgba(255,255,255,.92);
+  border: 1px solid var(--verde-linha);
+  border-radius: 8px;
+  color: #6D8415;
+  cursor: zoom-in;
+}
+
+.mini-tela .lupa:hover { background: var(--verde); border-color: var(--verde); color: #FFFFFF; }
+
+.mini-tela .lupa svg {
+  width: 16px; height: 16px;
+  fill: none; stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* modal da imagem ampliada, escurecendo a página */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  padding: 40px;
+  background: rgba(0,0,0,.72);
+}
+
+.lightbox[hidden] { display: none; }
+
+.lightbox figure { margin: 0; max-width: 100%; max-height: 100%; }
+
+.lightbox img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 130px);
+  border-radius: 8px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.45);
+}
+
+.lightbox figcaption {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 12.5px;
+  color: #F3FFC3;
+}
+
+.lightbox .fechar {
+  position: absolute;
+  top: 18px; right: 22px;
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  background: #FFFFFF;
+  border: 0;
+  border-radius: 8px;
+  color: var(--txt);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.lightbox .fechar:hover { background: var(--verde); color: #FFFFFF; }
+
 .pagina .nota {
   background: #FDFBEB;
   border: 1px solid #F0E6B2;
@@ -633,8 +871,8 @@ body {
   <a class="marca" href="index.html" title="Voltar ao início">
     <img src="assets/img/marca-centi.png" alt="Centi">
   </a>
-  <h1>Documentação Novo Protocolo</h1>
-  <div class="atualizado">Atualizado em: <span class="badge-data">20/08/2026</span></div>
+  <h1>Documentação Protocolo 3.0</h1>
+  <div class="atualizado">Atualizado em: <span class="badge-data">21/08/2026</span></div>
 </header>
 
 <div class="linha-menu"></div>
@@ -723,8 +961,8 @@ body {
       <div class="definicao">
         <p>É o 3º nível da ferramenta de protocolo municipal da CENTI, que permite tramitar processos administrativos por fluxos configuráveis e visuais, orientando os servidores em cada etapa e permitindo que diferentes departamentos trabalhem de forma integrada e simultânea, com controle de prazos e documentos e menos esperas, retrabalhos e encaminhamentos desnecessários.</p>
       </div>
-      <p>O Protocolo Ágil é a solução da CENTI para tornar a tramitação de processos administrativos mais simples, organizada e eficiente, eliminando esperas, retrabalhos e obstáculos que podem ser evitados no dia a dia da prefeitura.</p>
-      <p>Mais do que apenas digitalizar documentos, o Protocolo Ágil orienta cada processo pelo caminho adequado, deixando claro o que precisa ser feito, por quem, em qual etapa e dentro de qual prazo, permitindo que atividades sejam realizadas simultaneamente quando possível, que decisões sejam apoiadas por checklists, documentos e regras, e que toda a comunicação e o acompanhamento aconteçam em um único ambiente.</p>
+      <p>O Protocolo 3.0 é a solução da CENTI para tornar a tramitação de processos administrativos mais simples, organizada e eficiente, eliminando esperas, retrabalhos e obstáculos que podem ser evitados no dia a dia da prefeitura.</p>
+      <p>Mais do que apenas digitalizar documentos, o Protocolo 3.0 orienta cada processo pelo caminho adequado, deixando claro o que precisa ser feito, por quem, em qual etapa e dentro de qual prazo, permitindo que atividades sejam realizadas simultaneamente quando possível, que decisões sejam apoiadas por checklists, documentos e regras, e que toda a comunicação e o acompanhamento aconteçam em um único ambiente.</p>
       <p>O resultado é uma gestão ágil com menos processos parados, menos idas e vindas, mais previsibilidade, rastreabilidade e controle, dando aos gestores uma visão clara da operação e aos servidores mais segurança para executar suas responsabilidades.</p>
       <p>Porque ser ágil não significa apenas fazer mais rápido: significa fazer o processo avançar, sem interrupções e pelo caminho certo.</p>
     </section>
@@ -795,6 +1033,61 @@ body {
       </div>
     </section>
 
+    <div class="ilustracao">
+      <svg viewBox="0 0 720 90" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+
+        <!-- shapes: lupa, escala dos players, quadrante de posicionamento,
+             concorrentes de portes diferentes e o alvo da oportunidade -->
+        <g fill="none" stroke="#F3FFC3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="42" cy="36" r="19"/>
+          <circle cx="42" cy="36" r="7" fill="#C6E628" stroke="none"/>
+          <line x1="56" y1="50" x2="70" y2="64"/>
+
+          <rect x="104" y="58" width="15" height="20" rx="3" fill="#DFF08F" fill-opacity=".25"/>
+          <rect x="126" y="47" width="15" height="31" rx="3" fill="#DFF08F" fill-opacity=".3"/>
+          <rect x="148" y="34" width="15" height="44" rx="3" fill="#C6E628" fill-opacity=".32"/>
+          <rect x="170" y="22" width="15" height="56" rx="3" fill="#C6E628" fill-opacity=".4"/>
+          <line x1="98" y1="80" x2="191" y2="80"/>
+
+          <rect x="228" y="12" width="80" height="66" rx="9" fill="#E8EF9E" fill-opacity=".18"/>
+          <line x1="268" y1="12" x2="268" y2="78"/>
+          <line x1="228" y1="45" x2="308" y2="45"/>
+          <circle cx="288" cy="28" r="6" fill="#C6E628" stroke="none"/>
+          <circle cx="250" cy="27" r="3"/>
+          <circle cx="248" cy="62" r="4"/>
+
+          <rect x="348" y="32" width="50" height="26" rx="8" fill="#DFF08F" fill-opacity=".22"/>
+          <rect x="410" y="22" width="58" height="46" rx="9" fill="#C6E628" fill-opacity=".28"/>
+          <rect x="480" y="35" width="40" height="20" rx="7" fill="#DFF08F" fill-opacity=".2"/>
+
+          <circle cx="586" cy="45" r="20"/>
+          <circle cx="586" cy="45" r="11"/>
+          <circle cx="586" cy="45" r="4" fill="#C6E628" stroke="none"/>
+        </g>
+
+        <!-- linhas, setas e a curva de tendência -->
+        <g fill="none" stroke="#F3FFC3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="66" y1="28" x2="98" y2="28"/>
+          <path d="M91 23 l7 5 -7 5"/>
+
+          <line x1="191" y1="45" x2="224" y2="45"/>
+          <path d="M217 40 l7 5 -7 5"/>
+
+          <line x1="308" y1="45" x2="344" y2="45"/>
+          <path d="M337 40 l7 5 -7 5"/>
+
+          <line x1="520" y1="45" x2="562" y2="45"/>
+          <path d="M555 40 l7 5 -7 5"/>
+
+          <polyline points="626,68 652,54 674,60 704,26"/>
+          <path d="M696 25 l8 1 -1 8"/>
+          <circle cx="652" cy="54" r="2.5" fill="#DFF08F" stroke="none"/>
+          <circle cx="674" cy="60" r="2.5" fill="#DFF08F" stroke="none"/>
+          <line x1="620" y1="80" x2="710" y2="80" stroke-dasharray="1 8"/>
+        </g>
+      </svg>
+    </div>
+
     <section id="etapa2">
       <h2>#2 Inteligência de Mercado</h2>
       <p class="lead">Análise do mercado, concorrentes e tendências que orientam o posicionamento do produto.</p>
@@ -802,7 +1095,7 @@ body {
 
     <section id="etapa2-mercado" class="sub">
       <h3>Visão de mercado</h3>
-      <p>O Protocolo Ágil está inserido no mercado de <b>GovTechs e soluções SaaS para digitalização da gestão pública</b>, especificamente no segmento de <b>protocolo, processos administrativos, tramitação eletrônica e workflows municipais</b>.</p>
+      <p>O Protocolo 3.0 está inserido no mercado de <b>GovTechs e soluções SaaS para digitalização da gestão pública</b>, especificamente no segmento de <b>protocolo, processos administrativos, tramitação eletrônica e workflows municipais</b>.</p>
       <p>O mercado passa por uma evolução de sistemas que apenas digitalizam documentos para plataformas capazes de <b>orientar fluxos, controlar prazos, integrar departamentos, automatizar tarefas e oferecer rastreabilidade de ponta a ponta</b>.</p>
       <p>A oportunidade da Centi está em transformar o protocolo de um simples ponto de entrada documental em um <b>motor de tramitação inteligente</b>, conectando cidadão, servidor e gestão municipal em uma única jornada.</p>
     </section>
@@ -836,7 +1129,7 @@ body {
         </table>
       </div>
 
-      <p>A <b>1Doc</b> é o principal benchmark direto do Protocolo Ágil, com mais de 900 organizações e entidades declaradas atualmente e presença nos 26 estados. A plataforma reúne protocolo, processo administrativo, ouvidoria, requerimentos, carta de serviços e outros canais em um único ecossistema.</p>
+      <p>A <b>1Doc</b> é o principal benchmark direto do Protocolo 3.0, com mais de 900 organizações e entidades declaradas atualmente e presença nos 26 estados. A plataforma reúne protocolo, processo administrativo, ouvidoria, requerimentos, carta de serviços e outros canais em um único ecossistema.</p>
       <p>A <b>Aprova</b> é outro concorrente direto relevante, com mais de 130 prefeituras atendidas e posicionamento baseado em processos configuráveis, automação e inteligência artificial.</p>
       <p>A <b>OM30</b>, por meio do Doc+ Simples, atua principalmente em gestão documental, processos digitais, workflows e conformidade, representando uma concorrência adjacente importante.</p>
       <p>Entre as suites de gestão pública, destacam-se a <b>Fiorilli</b>, presente em 1.344 cidades e 2.755 órgãos públicos segundo dados divulgados pela própria empresa, e a <b>IPM</b>, que declara mais de 850 órgãos públicos atendidos pelo Atende.Net.</p>
@@ -849,7 +1142,7 @@ body {
       <div class="tabela-rolagem">
         <table>
           <thead>
-            <tr><th>Player</th><th>Posicionamento</th><th>Força competitiva</th><th>Ameaça ao Protocolo Ágil</th></tr>
+            <tr><th>Player</th><th>Posicionamento</th><th>Força competitiva</th><th>Ameaça ao Protocolo 3.0</th></tr>
           </thead>
           <tbody>
             <tr>
@@ -974,7 +1267,7 @@ body {
       </ul>
       <p>A Aprova, por exemplo, já posiciona sua plataforma com IA para análise de documentos e automação de tarefas.</p>
       <p>A Thema trabalha com fluxos configuráveis, protocolo digital, acesso externo e assinaturas eletrônicas.</p>
-      <p>Esse movimento valida a direção estratégica do Protocolo Ágil: <b>competir não apenas como protocolo eletrônico, mas como plataforma de tramitação inteligente.</b></p>
+      <p>Esse movimento valida a direção estratégica do Protocolo 3.0: <b>competir não apenas como protocolo eletrônico, mas como plataforma de tramitação inteligente.</b></p>
     </section>
 
     <section id="etapa2-oportunidade" class="sub">
@@ -992,7 +1285,7 @@ body {
         </div>
       </div>
 
-      <p>O Protocolo Ágil pode ocupar um espaço próprio ao combinar:</p>
+      <p>O Protocolo 3.0 pode ocupar um espaço próprio ao combinar:</p>
       <div class="fluxo-palavras">
         <span class="palavra">SIMPLICIDADE</span><span class="seta-fluxo">+</span>
         <span class="palavra">WORKFLOW VISUAL</span><span class="seta-fluxo">+</span>
@@ -1005,7 +1298,7 @@ body {
 
       <h4>Posicionamento competitivo</h4>
       <blockquote>
-        <p>Enquanto sistemas tradicionais digitalizam documentos e grandes suites concentram múltiplas funções, o Protocolo Ágil deve ser posicionado como uma plataforma especializada em fazer processos administrativos avançarem de forma simples, orientada e rastreável.</p>
+        <p>Enquanto sistemas tradicionais digitalizam documentos e grandes suites concentram múltiplas funções, o Protocolo 3.0 deve ser posicionado como uma plataforma especializada em fazer processos administrativos avançarem de forma simples, orientada e rastreável.</p>
       </blockquote>
     </section>
 
@@ -1039,6 +1332,59 @@ body {
       </blockquote>
     </section>
 
+    <div class="ilustracao">
+      <svg viewBox="0 0 720 90" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+
+        <!-- shapes: bússola da direção estratégica, degraus do roadmap,
+             bandeira da visão de futuro e os públicos ao redor do produto -->
+        <g fill="none" stroke="#F3FFC3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="40" cy="45" r="20"/>
+          <line x1="31" y1="54" x2="49" y2="36"/>
+          <circle cx="40" cy="45" r="3.5" fill="#C6E628" stroke="none"/>
+
+          <rect x="104" y="60" width="56" height="20" rx="7" fill="#DFF08F" fill-opacity=".2"/>
+          <rect x="182" y="46" width="56" height="20" rx="7" fill="#DFF08F" fill-opacity=".26"/>
+          <rect x="260" y="32" width="56" height="20" rx="7" fill="#C6E628" fill-opacity=".3"/>
+          <rect x="338" y="18" width="56" height="20" rx="7" fill="#C6E628" fill-opacity=".38"/>
+
+          <line x1="430" y1="14" x2="430" y2="74"/>
+          <path d="M430 17 h34 v20 h-34" fill="#C6E628" fill-opacity=".3"/>
+          <circle cx="430" cy="78" r="4" fill="#DFF08F" stroke="none"/>
+
+          <circle cx="612" cy="45" r="15" fill="#C6E628" fill-opacity=".3"/>
+          <circle cx="560" cy="20" r="7"/>
+          <circle cx="664" cy="20" r="7"/>
+          <circle cx="560" cy="70" r="7"/>
+          <circle cx="664" cy="70" r="7"/>
+        </g>
+
+        <!-- linhas e setas: a estratégia sobe pelos degraus até a visão -->
+        <g fill="none" stroke="#F3FFC3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="62" y1="45" x2="98" y2="45"/>
+          <path d="M91 40 l7 5 -7 5"/>
+
+          <path d="M160 70 h12 v-14 h6"/>
+          <path d="M171 51 l7 5 -7 5"/>
+
+          <path d="M238 56 h12 v-14 h6"/>
+          <path d="M249 37 l7 5 -7 5"/>
+
+          <path d="M316 42 h12 v-14 h6"/>
+          <path d="M327 23 l7 5 -7 5"/>
+
+          <line x1="394" y1="28" x2="424" y2="28"/>
+          <path d="M417 23 l7 5 -7 5"/>
+
+          <line x1="438" y1="52" x2="592" y2="52" stroke-dasharray="1 8"/>
+
+          <line x1="567" y1="25" x2="600" y2="38"/>
+          <line x1="657" y1="25" x2="624" y2="38"/>
+          <line x1="567" y1="65" x2="600" y2="52"/>
+          <line x1="657" y1="65" x2="624" y2="52"/>
+        </g>
+      </svg>
+    </div>
+
     <section id="etapa3">
       <h2>#3 Estratégia do Produto</h2>
       <p class="lead">Visão do produto, diferenciais competitivos e roadmap estratégico.</p>
@@ -1046,13 +1392,13 @@ body {
 
     <section id="etapa3-objetivo" class="sub">
       <h3>Objetivo da etapa</h3>
-      <p>Definir a direção estratégica do Protocolo Ágil, estabelecendo <b>o que o produto pretende ser, para quem será desenvolvido, como irá se diferenciar e em qual sequência suas capacidades serão construídas</b>.</p>
+      <p>Definir a direção estratégica do Protocolo 3.0, estabelecendo <b>o que o produto pretende ser, para quem será desenvolvido, como irá se diferenciar e em qual sequência suas capacidades serão construídas</b>.</p>
       <p>A estratégia parte das conclusões obtidas no Modelo de Negócios e na Inteligência de Mercado e serve como referência para Produto, Tecnologia, UX/UI, Comercial, Marketing e Customer Success.</p>
     </section>
 
     <section id="etapa3-visao" class="sub">
       <h3>Visão do Produto</h3>
-      <p>O Protocolo Ágil será a plataforma da Centi especializada em <b>organizar, orientar e acelerar a tramitação de processos administrativos municipais</b>.</p>
+      <p>O Protocolo 3.0 será a plataforma da Centi especializada em <b>organizar, orientar e acelerar a tramitação de processos administrativos municipais</b>.</p>
       <p>Mais do que digitalizar documentos ou substituir o protocolo físico, o produto deve funcionar como um <b>motor de execução dos processos</b>, indicando o caminho adequado, orientando cada responsável, controlando prazos e permitindo que atividades sejam executadas de forma integrada e simultânea quando possível.</p>
 
       <h4>Visão de futuro</h4>
@@ -1065,12 +1411,12 @@ body {
 
     <section id="etapa3-papel" class="sub">
       <h3>Papel estratégico no portfólio Centi</h3>
-      <p>O Protocolo Ágil deve funcionar como uma <b>porta de entrada da Centi na operação administrativa dos municípios</b>.</p>
-      <p>Enquanto o SIAFIC concentra-se na gestão financeira, contábil e fiscal, o Protocolo Ágil atua sobre o <b>fluxo operacional dos processos e documentos administrativos</b>.</p>
+      <p>O Protocolo 3.0 deve funcionar como uma <b>porta de entrada da Centi na operação administrativa dos municípios</b>.</p>
+      <p>Enquanto o SIAFIC concentra-se na gestão financeira, contábil e fiscal, o Protocolo 3.0 atua sobre o <b>fluxo operacional dos processos e documentos administrativos</b>.</p>
       <p>A estratégia permite criar uma relação complementar:</p>
 
       <div class="fluxo-palavras">
-        <span class="palavra">PROTOCOLO ÁGIL</span><span class="seta-fluxo">→</span>
+        <span class="palavra">PROTOCOLO 3.0</span><span class="seta-fluxo">→</span>
         <span class="palavra">OPERAÇÃO ADMINISTRATIVA</span><span class="seta-fluxo">→</span>
         <span class="palavra">SIAFIC</span><span class="seta-fluxo">→</span>
         <span class="palavra">GESTÃO FINANCEIRA E FISCAL</span>
@@ -1089,10 +1435,10 @@ body {
 
       <h4>Público prioritário</h4>
       <p><b>Grandes prefeituras</b> que buscam modernizar e evoluir sua organização interna de tramitação de processos, substituindo fluxos fragmentados por uma operação <b>mais estruturada, rastreável, simples, integrada e escalável</b>.</p>
-      <p>Esse público tende a possuir maior maturidade administrativa e tecnológica, estrutura interna consolidada e capacidade para conduzir projetos de transformação dos processos municipais, tornando-se estratégico para a adoção do Protocolo Ágil como uma plataforma de evolução da tramitação administrativa.</p>
+      <p>Esse público tende a possuir maior maturidade administrativa e tecnológica, estrutura interna consolidada e capacidade para conduzir projetos de transformação dos processos municipais, tornando-se estratégico para a adoção do Protocolo 3.0 como uma plataforma de evolução da tramitação administrativa.</p>
 
       <h5>Oportunidade de entrada</h5>
-      <p><b>Pequenas e médias prefeituras</b> representam uma importante oportunidade de entrada e expansão do produto. A simplicidade de operação, a facilidade de implantação e um <b>ticket de entrada acessível</b> permitem que o Protocolo Ágil se adapte a diferentes níveis de maturidade administrativa e tecnológica, democratizando o acesso à digitalização e à tramitação inteligente de processos.</p>
+      <p><b>Pequenas e médias prefeituras</b> representam uma importante oportunidade de entrada e expansão do produto. A simplicidade de operação, a facilidade de implantação e um <b>ticket de entrada acessível</b> permitem que o Protocolo 3.0 se adapte a diferentes níveis de maturidade administrativa e tecnológica, democratizando o acesso à digitalização e à tramitação inteligente de processos.</p>
       <p><b>Estratégia:</b> grandes prefeituras como <b>público prioritário de posicionamento e transformação</b>; pequenas e médias prefeituras como <b>mercado de entrada, escala e expansão</b>.</p>
 
       <h4>Problema central</h4>
@@ -1102,7 +1448,7 @@ body {
 
       <h4>Promessa</h4>
       <blockquote>
-        <p>O Protocolo Ágil mostra o caminho e faz o processo avançar.</p>
+        <p>O Protocolo 3.0 mostra o caminho e faz o processo avançar.</p>
       </blockquote>
 
       <h4>Território competitivo</h4>
@@ -1168,7 +1514,7 @@ body {
 
     <section id="etapa3-diferenciais" class="sub">
       <h3>Diferenciais competitivos</h3>
-      <p>A estratégia competitiva do Protocolo Ágil será baseada em cinco pilares:</p>
+      <p>A estratégia competitiva do Protocolo 3.0 será baseada em cinco pilares:</p>
 
       <div class="cards-num">
         <div class="card">
@@ -1224,7 +1570,7 @@ body {
 
     <section id="etapa3-evolucao" class="sub">
       <h3>Estratégia de evolução</h3>
-      <p>A evolução do Protocolo Ágil será organizada em cinco estágios:</p>
+      <p>A evolução do Protocolo 3.0 será organizada em cinco estágios:</p>
 
       <div class="escada-evolucao">
         <div class="estagio">
@@ -1259,7 +1605,7 @@ body {
       <p>O MVP deve validar a hipótese central do produto:</p>
 
       <blockquote>
-        <p>“Uma prefeitura consegue configurar e executar processos administrativos digitais com mais clareza, controle e velocidade utilizando o Protocolo Ágil?”</p>
+        <p>“Uma prefeitura consegue configurar e executar processos administrativos digitais com mais clareza, controle e velocidade utilizando o Protocolo 3.0?”</p>
       </blockquote>
 
       <p>O MVP deve priorizar as capacidades essenciais para testar essa hipótese.</p>
@@ -1303,11 +1649,10 @@ body {
             <tr><th>Fase</th><th>Objetivo</th><th>Capacidades</th></tr>
           </thead>
           <tbody>
-            <tr><td><b>MVP</b></td><td>Fazer o processo tramitar</td><td>Fluxos + etapas + responsáveis + documentos + prazos</td></tr>
-            <tr><td><b>V1</b></td><td>Tornar a tramitação mais eficiente</td><td>Paralelismo + regras + checklists + notificações + indicadores</td></tr>
-            <tr><td><b>V2</b></td><td>Automatizar a operação</td><td>Automações + integrações + gatilhos + tarefas automáticas</td></tr>
-            <tr><td><b>V3</b></td><td>Tornar o processo inteligente</td><td>IA + recomendações + análise documental + previsão de gargalos</td></tr>
-            <tr><td><b>V4</b></td><td>Expandir o ecossistema</td><td>Integrações avançadas + novos órgãos + novos serviços públicos</td></tr>
+            <tr><td><b>MVP</b></td><td>Fazer o processo tramitar</td><td>Fluxos + etapas + responsáveis + documentos + checklist + regras + prazos</td></tr>
+            <tr><td><b>V1</b></td><td>Tornar a tramitação mais eficiente</td><td>Paralelismo + Regularidades + Apensar + notificações + indicadores</td></tr>
+            <tr><td><b>V2</b></td><td>Automatizar a operação e tornar o processo inteligente</td><td>ViCenti IA + Automações + recomendações + previsão de gargalos</td></tr>
+            <tr><td><b>V3</b></td><td>Expandir o ecossistema</td><td>Integrações + Análise documental + Conexões com módulos (Portal Social)</td></tr>
           </tbody>
         </table>
       </div>
@@ -1363,7 +1708,7 @@ body {
 
     <section id="etapa3-decisao" class="sub">
       <h3>Decisão estratégica</h3>
-      <p>A estratégia do Protocolo Ágil é <b>não competir pela quantidade de funcionalidades</b>, mas pela capacidade de transformar processos administrativos complexos em fluxos simples, visuais e orientados.</p>
+      <p>A estratégia do Protocolo 3.0 é <b>não competir pela quantidade de funcionalidades</b>, mas pela capacidade de transformar processos administrativos complexos em fluxos simples, visuais e orientados.</p>
 
       <blockquote>
         <p>O produto não deve apenas registrar onde o processo está. Deve ajudar a prefeitura a fazer o processo avançar.</p>
@@ -1372,10 +1717,590 @@ body {
       <p>Essa diretriz deverá orientar as próximas etapas de <b>Modelagem do Produto, Arquitetura Tecnológica, UX/UI, IA, Validação e Comercialização</b>.</p>
     </section>
 
+    <div class="ilustracao">
+      <svg viewBox="0 0 720 90" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+
+        <!-- shapes: as três personas, as camadas do MVP, a tela prototipada
+             e o aceite da validação -->
+        <g fill="none" stroke="#F3FFC3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="40" cy="30" r="9" fill="#C6E628" stroke="none"/>
+          <circle cx="40" cy="30" r="9"/>
+          <path d="M26 64 a14 14 0 0 1 28 0"/>
+
+          <circle cx="118" cy="30" r="9"/>
+          <path d="M104 64 a14 14 0 0 1 28 0"/>
+
+          <circle cx="196" cy="30" r="9"/>
+          <path d="M182 64 a14 14 0 0 1 28 0"/>
+
+          <rect x="272" y="5" width="118" height="20" rx="7" fill="#E8EF9E" fill-opacity=".2"/>
+          <rect x="272" y="35" width="118" height="20" rx="7" fill="#DFF08F" fill-opacity=".26"/>
+          <rect x="272" y="65" width="118" height="20" rx="7" fill="#C6E628" fill-opacity=".32"/>
+
+          <rect x="452" y="14" width="112" height="62" rx="9" fill="#DFF08F" fill-opacity=".18"/>
+          <line x1="452" y1="31" x2="564" y2="31"/>
+          <circle cx="463" cy="22" r="2.5" fill="#DFF08F" stroke="none"/>
+          <circle cx="473" cy="22" r="2.5" fill="#DFF08F" stroke="none"/>
+
+          <circle cx="662" cy="45" r="20"/>
+          <path d="M652 45 l7 8 15 -17"/>
+        </g>
+
+        <!-- linhas e setas: quem capacita, quem configura, quem executa -->
+        <g fill="none" stroke="#F3FFC3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="56" y1="45" x2="98" y2="45"/>
+          <path d="M91 40 l7 5 -7 5"/>
+
+          <line x1="134" y1="45" x2="176" y2="45"/>
+          <path d="M169 40 l7 5 -7 5"/>
+
+          <line x1="214" y1="45" x2="266" y2="45"/>
+          <path d="M259 40 l7 5 -7 5"/>
+
+          <path d="M325 27 l6 5 6 -5"/>
+          <path d="M325 57 l6 5 6 -5"/>
+
+          <line x1="390" y1="45" x2="446" y2="45"/>
+          <path d="M439 40 l7 5 -7 5"/>
+
+          <line x1="466" y1="46" x2="546" y2="46"/>
+          <line x1="466" y1="60" x2="522" y2="60"/>
+
+          <line x1="564" y1="45" x2="636" y2="45" stroke-dasharray="1 8"/>
+          <path d="M629 40 l7 5 -7 5"/>
+        </g>
+      </svg>
+    </div>
+
     <section id="etapa4">
-      <h2>#4 Modelagem do produto</h2>
-      <p class="lead">Detalhamento funcional do produto: fluxos, telas e regras de negócio.</p>
-      <p>Conteúdo a preencher com as definições desta etapa. As telas já prototipadas incluem o menu do módulo, a <code>PO030 - Fluxo de Processos</code> e a <code>PO031 - Tramitação de protocolo</code>.</p>
+      <h2>#4 Modelagem do Produto</h2>
+      <p class="lead">Detalhamento funcional do produto: estágios, personas, telas e regras de negócio do MVP.</p>
+    </section>
+
+    <section id="etapa4-objetivo" class="sub">
+      <h3>Objetivo da etapa</h3>
+      <p><b>Transformar a visão estratégica do Protocolo 3.0 em um produto comercializável</b>, materializando suas principais regras, fluxos, perfis de usuário e experiências de utilização em uma primeira versão funcional — o MVP.</p>
+      <div class="nota">
+        <p>Esta etapa conecta a estratégia definida anteriormente à construção efetiva do produto, estabelecendo <b>como o Protocolo 3.0 será utilizado, por quem, em quais situações e quais capacidades serão necessárias para realizar sua proposta de valor</b>.</p>
+      </div>
+    </section>
+
+    <section id="etapa4-acao" class="sub">
+      <h3>Ação estratégica</h3>
+
+      <h4>Benchmarking funcional e conversa com o público</h4>
+      <p>A modelagem será orientada por benchmarking funcional e contato com os públicos envolvidos na operação dos processos administrativos.</p>
+      <p>O objetivo não é apenas comparar funcionalidades existentes no mercado, mas compreender <b>como os diferentes perfis de usuários executam suas atividades, quais dificuldades enfrentam, quais informações precisam consultar e quais decisões precisam tomar durante a tramitação de um processo</b>.</p>
+
+      <p>As conversas com o público deverão servir para validar:</p>
+      <ul class="lista">
+        <li>compreensão dos fluxos;</li>
+        <li>adequação das etapas;</li>
+        <li>responsabilidades de cada usuário;</li>
+        <li>regras de negócio;</li>
+        <li>informações necessárias em cada etapa;</li>
+        <li>clareza da interface;</li>
+        <li>facilidade de configuração;</li>
+        <li>aderência às diferentes realidades municipais;</li>
+        <li>percepção de valor da solução.</li>
+      </ul>
+
+      <p>A validação nesta etapa deverá ocorrer sobre o <b>modelo e o protótipo do produto</b>, antes da implantação em uma prefeitura como projeto piloto.</p>
+    </section>
+
+    <section id="etapa4-estrutura" class="sub">
+      <h3>Estrutura funcional do MVP</h3>
+      <p>O MVP do Protocolo 3.0 está organizado em <b>três grandes estágios operacionais</b>, que representam o ciclo fundamental de um processo administrativo dentro da plataforma:</p>
+
+      <div class="escada-evolucao larga">
+        <div class="estagio">
+          <span class="rotulo">01. CRIAR / EDITAR FLUXO</span>
+          <p>Configurar o processo: etapas, responsáveis, documentos, checklists, condições e regras.</p>
+        </div>
+        <div class="seta-baixo">↓</div>
+        <div class="estagio">
+          <span class="rotulo">02. CRIAR PROTOCOLO</span>
+          <p>Iniciar o processo a partir de um fluxo já configurado.</p>
+        </div>
+        <div class="seta-baixo">↓</div>
+        <div class="estagio">
+          <span class="rotulo">03. TRAMITAR / CONCLUIR</span>
+          <p>Executar o processo, etapa por etapa, até a sua conclusão.</p>
+        </div>
+      </div>
+
+      <p>Esses três estágios representam uma evolução contínua:</p>
+      <div class="fluxo-palavras">
+        <span class="palavra">CONFIGURAR O PROCESSO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">INICIAR O PROCESSO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">EXECUTAR O PROCESSO</span>
+      </div>
+
+      <p>O modelo permite separar claramente a responsabilidade de quem <b>define como o processo deve funcionar</b> daquela de quem <b>executa o processo no dia a dia</b>.</p>
+    </section>
+
+    <section id="etapa4-estagios" class="sub">
+      <h3>Estágios Operacionais</h3>
+
+      <div class="estagio-titulo">
+        <span class="num">01</span>
+        <div>
+          <span class="lbl">1º Estágio</span>
+          <h3>Criar / Editar Fluxo do Processo</h3>
+        </div>
+      </div>
+      <p>Este estágio corresponde à <b>modelagem do processo administrativo</b>.</p>
+      <p>Antes que um protocolo seja criado, é necessário estabelecer o caminho que ele deverá percorrer, quais etapas existirão, quem será responsável por cada uma delas, quais documentos serão necessários e quais condições determinarão sua evolução.</p>
+
+      <p>A construção do fluxo contempla:</p>
+      <ul class="lista">
+        <li>criação de uma nova versão do fluxo;</li>
+        <li>edição e organização das etapas;</li>
+        <li>definição dos responsáveis;</li>
+        <li>inclusão dos documentos necessários;</li>
+        <li>definição de checklists;</li>
+        <li>configurações de regras de saída, variáveis e caminhos possíveis do protocolo.</li>
+      </ul>
+
+      <h4>Tela principal</h4>
+
+      <fieldset class="tela">
+        <legend>
+          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <span class="ico">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="5" rx="1"/><rect x="2" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="6" height="5" rx="1"/><path d="M12 7v3"/><path d="M5 16v-2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v2"/></svg>
+          </span>
+          Fluxo de Processos
+          <span class="cod">PO050</span>
+        </legend>
+
+        <div class="mini-tela" onclick="ampliarTela(this)">
+          <img src="assets/img/po050-fluxo-processos.png"
+               alt="PO050 - Fluxo de Processos: coluna de pastas do fluxo ISENÇÃO DE IPTU e o fluxograma das dez etapas">
+          <button class="lupa" title="Ampliar a tela" aria-label="Ampliar a tela">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
+          </button>
+        </div>
+      </fieldset>
+
+      <p>A <code>PO050</code> representa o ambiente de criação e edição do fluxo, funcionando como o principal espaço de configuração do processo.</p>
+      <p>A modelagem busca substituir progressivamente a dependência de múltiplas telas e configurações fragmentadas por uma experiência mais integrada e visual.</p>
+
+      <h4>Conceito de versão</h4>
+      <p>A criação ou alteração de um fluxo deverá ocorrer inicialmente em uma <b>versão em rascunho</b>.</p>
+      <p>Isso permite que o usuário responsável possa estruturar, revisar e validar as alterações antes que uma nova configuração seja efetivamente disponibilizada para utilização.</p>
+
+      <h4>Etapas</h4>
+      <p>Cada processo é composto por etapas que representam as atividades necessárias para sua conclusão. Cada etapa poderá possuir:</p>
+      <div class="fluxo-palavras">
+        <span class="palavra">RESPONSÁVEL</span>
+        <span class="palavra">DEPARTAMENTO</span>
+        <span class="palavra">DOCUMENTOS</span>
+        <span class="palavra">CHECKLIST</span>
+        <span class="palavra">CONDIÇÕES</span>
+        <span class="palavra">REGRAS</span>
+        <span class="palavra">VARIÁVEIS</span>
+        <span class="palavra">PRAZOS</span>
+        <span class="palavra">AÇÕES PARA CONCLUSÃO</span>
+      </div>
+
+      <h4>Regras e variáveis</h4>
+      <p>As regras determinam o comportamento do processo diante de diferentes situações.</p>
+      <p>As variáveis permitem que o fluxo seja adaptado às informações específicas de cada protocolo, possibilitando que diferentes circunstâncias conduzam o processo por caminhos distintos.</p>
+
+      <h4>Objetivo deste estágio</h4>
+      <blockquote>
+        <p>Permitir que a prefeitura transforme sua regra de negócio em um fluxo administrativo estruturado, configurável e rastreável.</p>
+      </blockquote>
+    </section>
+
+    <section id="etapa4-estagio2" class="sub">
+      <div class="estagio-titulo">
+        <span class="num">02</span>
+        <div>
+          <span class="lbl">2º Estágio</span>
+          <h3>Criar Protocolo</h3>
+        </div>
+      </div>
+      <p>O segundo estágio representa o <b>início efetivo de um processo administrativo</b>.</p>
+      <p>Após o fluxo estar configurado, um usuário poderá criar um novo protocolo utilizando uma estrutura previamente definida.</p>
+
+      <p>A criação do protocolo contempla:</p>
+      <ul class="lista">
+        <li>identificação do tipo de processo;</li>
+        <li>cadastro das informações iniciais;</li>
+        <li>inclusão dos documentos necessários;</li>
+        <li>aplicação das regras definidas no fluxo;</li>
+        <li>geração do protocolo;</li>
+        <li>encaminhamento para a primeira etapa.</li>
+      </ul>
+
+      <p>O objetivo é fazer com que a criação do protocolo seja simples e orientada, reduzindo erros e garantindo que as informações necessárias estejam disponíveis desde o início.</p>
+
+      <h4>Cadastro inicial</h4>
+      <p>O cadastro inicial deverá reunir somente as informações necessárias para iniciar corretamente o processo, evitando sobrecarregar o usuário com campos ou decisões que pertencem a etapas posteriores.</p>
+
+      <h4>Guia e orientação</h4>
+      <p>O protocolo deverá apresentar ao usuário as informações necessárias para sua correta abertura, incluindo documentos, requisitos e orientações relacionadas ao processo.</p>
+      <p>Essa abordagem transforma o protocolo de um simples formulário de entrada em uma <b>porta orientada para a execução do processo</b>.</p>
+
+      <h4>Objetivo deste estágio</h4>
+      <blockquote>
+        <p>Permitir que um processo seja iniciado de forma simples, completa e aderente ao fluxo previamente configurado.</p>
+      </blockquote>
+    </section>
+
+    <section id="etapa4-estagio3" class="sub">
+      <div class="estagio-titulo">
+        <span class="num">03</span>
+        <div>
+          <span class="lbl">3º Estágio</span>
+          <h3>Tramitar / Concluir Etapas do Protocolo</h3>
+        </div>
+      </div>
+      <p>O terceiro estágio representa a <b>execução operacional do processo</b>.</p>
+      <p>É nesta etapa que os servidores recebem, analisam, executam e concluem as atividades atribuídas a eles.</p>
+
+      <p>O usuário deverá conseguir:</p>
+      <ul class="lista">
+        <li>localizar seus protocolos;</li>
+        <li>filtrar protocolos por departamento;</li>
+        <li>visualizar o detalhamento do processo;</li>
+        <li>consultar documentos;</li>
+        <li>verificar checklist;</li>
+        <li>analisar condições e regras;</li>
+        <li>executar as atividades da etapa;</li>
+        <li>encaminhar o processo;</li>
+        <li>concluir a etapa;</li>
+        <li>acompanhar o histórico da tramitação.</li>
+      </ul>
+
+      <h4>Localização e filtragem</h4>
+      <p>A tela de tramitação deverá permitir que o servidor encontre rapidamente os processos sob sua responsabilidade.</p>
+      <p>A filtragem por departamento e demais critérios permite organizar o trabalho e reduzir o tempo gasto na localização dos protocolos.</p>
+
+      <h4>Detalhamento do processo</h4>
+      <p>O detalhamento deverá concentrar as informações necessárias para a tomada de decisão do servidor, permitindo consultar o contexto do processo sem precisar navegar por diversas telas. Entre as informações relevantes estão:</p>
+      <ul class="lista">
+        <li>dados do protocolo;</li>
+        <li>documentos;</li>
+        <li>checklist;</li>
+        <li>condições;</li>
+        <li>histórico;</li>
+        <li>informações da etapa;</li>
+        <li>orientações;</li>
+        <li>ações disponíveis.</li>
+      </ul>
+
+      <h4>Execução da etapa</h4>
+      <p>A experiência deverá deixar claro:</p>
+      <div class="fluxo-palavras">
+        <span class="palavra">ONDE O PROCESSO ESTÁ</span><span class="seta-fluxo">→</span>
+        <span class="palavra">O QUE PRECISA SER FEITO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">QUAIS INFORMAÇÕES SÃO NECESSÁRIAS</span><span class="seta-fluxo">→</span>
+        <span class="palavra">O QUE ACONTECE DEPOIS</span>
+      </div>
+      <p>Esse princípio é central para a proposta do Protocolo 3.0.</p>
+
+      <h4>Objetivo deste estágio</h4>
+      <blockquote>
+        <p>Permitir que cada servidor saiba o que precisa fazer, execute sua atividade e encaminhe o processo corretamente para a próxima etapa.</p>
+      </blockquote>
+    </section>
+
+    <section id="etapa4-perfis" class="sub">
+      <h3>Perfis de usuários</h3>
+      <p>O MVP foi estruturado considerando três principais tipos de usuários, com diferentes níveis de responsabilidade e conhecimento sobre o sistema.</p>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Perfil</th><th>Responsabilidade</th><th>Acesso principal</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Consultor Técnico Centi</b></td>
+              <td>Configura, orienta e acompanha a implantação conceitual</td>
+              <td>Criação e edição de fluxos</td>
+            </tr>
+            <tr>
+              <td><b>Gestor / Líder Técnico da Prefeitura</b></td>
+              <td>Administra os fluxos e atua como multiplicador interno</td>
+              <td>Criação/edição de fluxos + operação</td>
+            </tr>
+            <tr>
+              <td><b>Servidor Público</b></td>
+              <td>Executa as atividades dos processos</td>
+              <td>Criação e tramitação de protocolos</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Essa separação é fundamental para que o produto consiga atender diferentes níveis de maturidade e conhecimento tecnológico dentro de uma prefeitura.</p>
+    </section>
+
+    <section id="etapa4-persona1" class="sub">
+      <h3>Persona 01 — Consultor Técnico Centi</h3>
+
+      <h4>Papel</h4>
+      <p>O Consultor Técnico Centi é o <b>mentor da utilização do Protocolo 3.0 dentro da prefeitura</b>.</p>
+      <p>É o profissional responsável por apoiar a construção inicial dos fluxos, orientar a prefeitura sobre as possibilidades do produto e estimular a utilização correta e completa da ferramenta.</p>
+
+      <h4>Responsabilidades</h4>
+      <ul class="lista">
+        <li>criar e editar fluxos;</li>
+        <li>orientar a definição das etapas;</li>
+        <li>auxiliar na configuração de checklists;</li>
+        <li>apoiar a definição de regras e variáveis;</li>
+        <li>esclarecer dúvidas sobre o funcionamento da ferramenta;</li>
+        <li>orientar boas práticas de utilização;</li>
+        <li>identificar oportunidades de melhoria nos fluxos;</li>
+        <li>estimular a adoção dos recursos disponíveis.</li>
+      </ul>
+
+      <h4>Característica principal</h4>
+      <p>O Consultor Técnico possui <b>alto conhecimento do produto</b> e atua como facilitador da transformação dos processos da prefeitura.</p>
+      <p>Ele não deve simplesmente configurar o sistema para o cliente, mas também <b>ensinar, orientar e provocar a evolução da operação municipal</b>.</p>
+
+      <h4>Objetivo</h4>
+      <blockquote>
+        <p>Garantir que a prefeitura compreenda o potencial do Protocolo 3.0 e consiga transformar suas regras de negócio em processos digitais bem estruturados.</p>
+      </blockquote>
+    </section>
+
+    <section id="etapa4-persona2" class="sub">
+      <h3>Persona 02 — Gestor / Líder Técnico da Prefeitura</h3>
+
+      <h4>Papel</h4>
+      <p>O Gestor ou Líder Técnico é o <b>responsável interno pela evolução dos processos dentro da prefeitura</b>.</p>
+      <p>Após receber capacitação, ele deve possuir autonomia suficiente para criar novos fluxos, editar fluxos existentes e apoiar os demais usuários.</p>
+      <p>Além da função de gestão dos fluxos, esse usuário também pode criar e tramitar processos relacionados ao seu departamento.</p>
+
+      <h4>Responsabilidades</h4>
+      <ul class="lista">
+        <li>criar novos fluxos;</li>
+        <li>editar fluxos existentes;</li>
+        <li>definir etapas e responsáveis;</li>
+        <li>ajustar regras e variáveis;</li>
+        <li>acompanhar a operação;</li>
+        <li>criar protocolos;</li>
+        <li>tramitar processos;</li>
+        <li>apoiar os servidores;</li>
+        <li>disseminar conhecimento dentro da prefeitura.</li>
+      </ul>
+
+      <h4>Característica principal</h4>
+      <p>O Gestor/Líder Técnico funciona como um <b>multiplicador de conhecimento</b>.</p>
+      <p>A estratégia é reduzir progressivamente a dependência da prefeitura em relação à equipe da Centi para alterações simples de configuração.</p>
+
+      <h4>Objetivo</h4>
+      <blockquote>
+        <p>Dar autonomia à prefeitura para evoluir seus próprios processos e manter a plataforma aderente às mudanças de suas regras de negócio.</p>
+      </blockquote>
+    </section>
+
+    <section id="etapa4-persona3" class="sub">
+      <h3>Persona 03 — Servidor Público</h3>
+
+      <h4>Papel</h4>
+      <p>O Servidor Público é o <b>principal usuário operacional do Protocolo 3.0</b>.</p>
+      <p>Seu foco não está na configuração do sistema, mas na execução das atividades necessárias para que os processos avancem.</p>
+
+      <h4>Responsabilidades</h4>
+      <ul class="lista">
+        <li>criar protocolos;</li>
+        <li>receber processos;</li>
+        <li>analisar informações;</li>
+        <li>consultar documentos;</li>
+        <li>executar checklists;</li>
+        <li>cumprir as condições da etapa;</li>
+        <li>realizar as atividades atribuídas;</li>
+        <li>encaminhar processos;</li>
+        <li>concluir etapas.</li>
+      </ul>
+
+      <h4>Característica principal</h4>
+      <p>Esse usuário possui <b>menor necessidade de conhecimento técnico sobre a plataforma</b>.</p>
+      <p>Por isso, sua experiência deve ser altamente orientada, apresentando somente as informações e ações necessárias para executar sua atividade.</p>
+      <p>Seu principal ambiente de trabalho será a <code>PO051</code>, concebida para concentrar as tarefas operacionais de criação e tramitação dos protocolos.</p>
+
+      <h4>Objetivo</h4>
+      <blockquote>
+        <p>Permitir que o servidor execute seu trabalho corretamente sem precisar compreender a complexidade existente por trás da configuração do processo.</p>
+      </blockquote>
+    </section>
+
+    <section id="etapa4-relacao" class="sub">
+      <h3>Relação entre os usuários</h3>
+      <p>O modelo cria uma cadeia de conhecimento e operação:</p>
+
+      <div class="cadeia">
+        <div class="no">CONSULTOR CENTI</div>
+        <div class="liga"><span class="seta">↓</span><span class="rot">capacita e orienta</span></div>
+        <div class="no">GESTOR / LÍDER TÉCNICO</div>
+        <div class="liga"><span class="seta">↓</span><span class="rot">configura e multiplica conhecimento</span></div>
+        <div class="no">SERVIDOR PÚBLICO</div>
+        <div class="liga"><span class="seta">↓</span><span class="rot">executa</span></div>
+        <div class="no fim">PROCESSO ADMINISTRATIVO</div>
+      </div>
+
+      <p>Essa estrutura permite que a Centi atue como <b>habilitadora da transformação</b>, e não como dependência permanente da operação.</p>
+    </section>
+
+    <section id="etapa4-matriz" class="sub">
+      <h3>Relação entre os estágios e personas</h3>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr>
+              <th>Estágio</th>
+              <th class="centro">Consultor Centi</th>
+              <th class="centro">Gestor Prefeitura</th>
+              <th class="centro">Servidor Público</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Criar / editar fluxo</td>
+              <td class="centro"><span class="marca sim">✓</span></td>
+              <td class="centro"><span class="marca sim">✓</span></td>
+              <td class="centro"><span class="marca nao">—</span></td></tr>
+            <tr><td>Criar protocolo</td>
+              <td class="centro"><span class="marca nao">—</span></td>
+              <td class="centro"><span class="marca sim">✓</span></td>
+              <td class="centro"><span class="marca sim">✓</span></td></tr>
+            <tr><td>Tramitar protocolo</td>
+              <td class="centro"><span class="marca nao">—</span></td>
+              <td class="centro"><span class="marca sim">✓</span></td>
+              <td class="centro"><span class="marca sim">✓</span></td></tr>
+            <tr><td>Configurar regras</td>
+              <td class="centro"><span class="marca sim">✓</span></td>
+              <td class="centro"><span class="marca sim">✓</span></td>
+              <td class="centro"><span class="marca nao">—</span></td></tr>
+            <tr><td>Definir checklist</td>
+              <td class="centro"><span class="marca sim">✓</span></td>
+              <td class="centro"><span class="marca sim">✓</span></td>
+              <td class="centro"><span class="marca nao">—</span></td></tr>
+            <tr><td>Executar checklist</td>
+              <td class="centro"><span class="marca nao">—</span></td>
+              <td class="centro"><span class="marca sim">✓</span></td>
+              <td class="centro"><span class="marca sim">✓</span></td></tr>
+            <tr><td>Criar novos fluxos</td>
+              <td class="centro"><span class="marca sim">✓</span></td>
+              <td class="centro"><span class="marca sim">✓</span></td>
+              <td class="centro"><span class="marca nao">—</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>A matriz representa o <b>modelo de responsabilidade do MVP</b> e deverá ser refinada conforme as validações com usuários e as definições de segurança e permissões do produto.</p>
+    </section>
+
+    <section id="etapa4-telas" class="sub">
+      <h3>Evolução das telas</h3>
+      <p>O MVP do Protocolo 3.0 representa também uma evolução da experiência atual do sistema Centi.</p>
+      <p>Algumas das funcionalidades atualmente distribuídas em telas legadas — como <code>PO050</code>, <code>PO002</code> e <code>PO011</code> — estão sendo reorganizadas em uma experiência mais integrada e orientada.</p>
+      <p>A estratégia não consiste apenas em reproduzir as funcionalidades existentes em novas interfaces, mas em <b>reorganizar a experiência a partir da lógica do processo</b>.</p>
+
+      <h4>De</h4>
+      <div class="fluxo-palavras">
+        <span class="palavra">TELAS</span><span class="seta-fluxo">→</span>
+        <span class="palavra">CAMPOS</span><span class="seta-fluxo">→</span>
+        <span class="palavra">AÇÕES</span><span class="seta-fluxo">→</span>
+        <span class="palavra">ENCAMINHAMENTOS</span>
+      </div>
+
+      <h4>Para</h4>
+      <div class="fluxo-palavras">
+        <span class="palavra">PROCESSO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">ETAPA</span><span class="seta-fluxo">→</span>
+        <span class="palavra">CONTEXTO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">AÇÃO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">PRÓXIMO PASSO</span>
+      </div>
+
+      <p>Essa mudança representa uma evolução de UX e também de conceito de produto.</p>
+      <p>O objetivo é reduzir a fragmentação da experiência atual e fazer com que o sistema reflita a lógica real da tramitação administrativa.</p>
+    </section>
+
+    <section id="etapa4-arquitetura" class="sub">
+      <h3>Arquitetura conceitual do MVP</h3>
+      <p>O modelo funcional pode ser resumido em três camadas:</p>
+
+      <div class="camadas">
+        <div class="camada">
+          <h4>Configuração</h4>
+          <p>Fluxos · Etapas · Regras · Checklist · Documentos · Variáveis · Condições</p>
+        </div>
+        <div class="seta-baixo">↓</div>
+        <div class="camada">
+          <h4>Protocolo</h4>
+          <p>Cadastro · Documentos · Requisitos · Identificação · Início do processo</p>
+        </div>
+        <div class="seta-baixo">↓</div>
+        <div class="camada">
+          <h4>Tramitação</h4>
+          <p>Executar · Conferir · Encaminhar · Acompanhar · Concluir · Rastrear</p>
+        </div>
+      </div>
+
+      <p>Essa arquitetura conceitual estabelece a base para a construção do MVP e para as próximas definições de arquitetura tecnológica, UX/UI e regras de negócio.</p>
+    </section>
+
+    <section id="etapa4-criterio" class="sub">
+      <h3>Critério de sucesso do MVP</h3>
+      <p>O MVP será considerado conceitualmente validado quando demonstrar que os três principais perfis conseguem realizar suas responsabilidades com clareza:</p>
+
+      <div class="cards-modelo">
+        <div class="card">
+          <h4>Consultor Centi</h4>
+          <p>Consegue estruturar e orientar o fluxo.</p>
+        </div>
+        <div class="card">
+          <h4>Gestor da Prefeitura</h4>
+          <p>Consegue assumir a gestão e evolução dos fluxos.</p>
+        </div>
+        <div class="card">
+          <h4>Servidor Público</h4>
+          <p>Consegue criar, executar e tramitar protocolos sem depender de conhecimento técnico sobre a configuração do sistema.</p>
+        </div>
+      </div>
+
+      <p>A hipótese central a ser validada é:</p>
+      <blockquote>
+        <p>É possível transformar regras administrativas municipais em fluxos digitais configuráveis e permitir que diferentes perfis de usuários executem esses processos de forma simples, orientada e rastreável.</p>
+      </blockquote>
+    </section>
+
+    <section id="etapa4-entregaveis" class="sub">
+      <h3>Entregáveis da etapa</h3>
+      <p>Ao final desta etapa, deverão estar disponíveis:</p>
+      <ul class="lista">
+        <li><b>Modelo funcional do MVP</b>;</li>
+        <li>fluxos principais mapeados;</li>
+        <li>perfis e permissões definidos;</li>
+        <li>personas estruturadas;</li>
+        <li>regras de negócio iniciais;</li>
+        <li>etapas e responsabilidades definidas;</li>
+        <li>estrutura de documentos e checklists;</li>
+        <li>protótipos das principais telas;</li>
+        <li>relação entre telas atuais e novas experiências;</li>
+        <li>hipóteses a serem validadas com usuários;</li>
+        <li>critérios para evolução do MVP.</li>
+      </ul>
+
+      <div class="nota">
+        <p>A conclusão desta etapa <b>não significa que o produto está validado em produção</b>. Ela representa a construção da primeira versão estruturada do produto, que deverá ser submetida à validação com usuários e posteriormente utilizada em um <b>projeto piloto real</b>.</p>
+      </div>
+    </section>
+
+    <section id="etapa4-resultado" class="sub">
+      <h3>Resultado esperado</h3>
+      <p>Ao final da Modelagem do Produto, a Centi deverá ter clareza sobre <b>como o Protocolo 3.0 funciona, quem utiliza cada parte da solução, quais responsabilidades cada perfil possui e como o processo percorre a plataforma desde sua configuração até sua conclusão</b>.</p>
+      <div class="definicao">
+        <p>A partir desse ponto, o produto deixa de ser apenas uma visão estratégica e passa a possuir estrutura funcional suficiente para ser demonstrado, testado, validado e posteriormente transformado em uma solução comercializável.</p>
+      </div>
     </section>
 
     <section id="etapa5">
@@ -1435,6 +2360,14 @@ body {
   </div>
 </main>
 
+<div class="lightbox" id="lightbox" hidden onclick="fecharTela(event)">
+  <figure>
+    <img src="" alt="">
+    <figcaption></figcaption>
+  </figure>
+  <button class="fechar" onclick="fecharTela()" title="Fechar" aria-label="Fechar">✕</button>
+</div>
+
 <script>
 /* Menu lateral: etapas do projeto com submenus ancorados nas seções */
 const MENU = [
@@ -1469,7 +2402,23 @@ const MENU = [
     { id: 'etapa3-metricas',      txt: 'Métricas estratégicas' },
     { id: 'etapa3-decisao',       txt: 'Decisão estratégica' },
   ] },
-  { titulo: '#4 Modelagem do produto',      itens: [{ id: 'etapa4',  txt: 'Visão geral' }] },
+  { titulo: '#4 Modelagem do Produto',      itens: [
+    { id: 'etapa4-objetivo',    txt: 'Objetivo da etapa' },
+    { id: 'etapa4-acao',        txt: 'Ação estratégica' },
+    { id: 'etapa4-estrutura',   txt: 'Estrutura funcional do MVP' },
+    { id: 'etapa4-estagios',    txt: 'Estágios Operacionais' },
+    { id: 'etapa4-perfis',      txt: 'Perfis de usuários' },
+    { id: 'etapa4-persona1',    txt: 'Persona 01 · Consultor Centi' },
+    { id: 'etapa4-persona2',    txt: 'Persona 02 · Gestor da Prefeitura' },
+    { id: 'etapa4-persona3',    txt: 'Persona 03 · Servidor Público' },
+    { id: 'etapa4-relacao',     txt: 'Relação entre os usuários' },
+    { id: 'etapa4-matriz',      txt: 'Estágios e personas' },
+    { id: 'etapa4-telas',       txt: 'Evolução das telas' },
+    { id: 'etapa4-arquitetura', txt: 'Arquitetura conceitual' },
+    { id: 'etapa4-criterio',    txt: 'Critério de sucesso do MVP' },
+    { id: 'etapa4-entregaveis', txt: 'Entregáveis da etapa' },
+    { id: 'etapa4-resultado',   txt: 'Resultado esperado' },
+  ] },
   { titulo: '#5 Arquitetura Tecnológica',   itens: [{ id: 'etapa5',  txt: 'Visão geral' }] },
   { titulo: '#6 Design System e UX/UI',     itens: [{ id: 'etapa6',  txt: 'Visão geral' }] },
   { titulo: '#7 Skill Inovação (IA/ViCenti)', itens: [{ id: 'etapa7', txt: 'Visão geral' }] },
@@ -1585,6 +2534,31 @@ function marcarAtivo() {
 
 document.addEventListener('scroll', marcarAtivo, { passive: true });
 marcarAtivo();
+
+/* ------------------------- imagem de tela ampliada -------------------------
+   A miniatura (ou a lupa dela) abre a imagem em cima da página escurecida;
+   o fundo, o botão de fechar e o Esc voltam para a leitura. */
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = lightbox.querySelector('img');
+const lightboxCap = lightbox.querySelector('figcaption');
+
+function ampliarTela(mini) {
+  const img = mini.querySelector('img');
+  const legenda = mini.closest('fieldset').querySelector('legend');
+  lightboxImg.src = img.src;
+  lightboxImg.alt = img.alt;
+  lightboxCap.textContent = legenda.textContent.trim().replace(/\s+/g, ' ');
+  lightbox.hidden = false;
+}
+
+function fecharTela(ev) {
+  if (ev && ev.target.closest('figure') && !ev.target.closest('.fechar')) return;
+  lightbox.hidden = true;
+}
+
+document.addEventListener('keydown', ev => {
+  if (ev.key === 'Escape') lightbox.hidden = true;
+});
 </script>
 </body>
 </html>
