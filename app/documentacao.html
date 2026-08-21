@@ -141,6 +141,39 @@ body {
   border-radius: 999px;
 }
 
+/* botão do menu sanduíche: só existe na versão estreita */
+.bt-menu {
+  display: none;
+  width: 38px; height: 38px;
+  place-items: center;
+  padding: 0;
+  background: #F6F8EE;
+  border: 1px solid var(--verde-linha);
+  border-radius: 9px;
+  color: #5D6725;
+  cursor: pointer;
+}
+
+.bt-menu svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.bt-menu .ico-fechar { display: none; }
+body.menu-aberto .bt-menu .ico-abrir { display: none; }
+body.menu-aberto .bt-menu .ico-fechar { display: block; }
+
+/* fundo escurecido enquanto o menu está aberto */
+.fundo-menu {
+  display: none;
+  position: fixed;
+  top: var(--topbar-h);
+  left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 15;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+
+.fundo-menu.aberto { opacity: 1; pointer-events: auto; }
+
 /* ── menu lateral ───────────────────────────────────────── */
 .sidebar {
   position: fixed;
@@ -909,12 +942,74 @@ body {
 }
 
 @media (max-width: 920px) {
-  .sidebar { display: none; }
+  /* topo em duas linhas: marca e sanduíche em cima, título e data embaixo.
+     Como as faixas fixas e o recuo do conteúdo saem de --topbar-h, basta
+     redefinir a variável para tudo acompanhar a nova altura. */
+  :root { --topbar-h: 96px; }
+
+  .topbar {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      "marca  .      menu"
+      "titulo titulo data";
+    align-items: center;
+    row-gap: 6px;
+    padding: 0 16px;
+  }
+
+  .topbar .marca { grid-area: marca; }
+  .bt-menu { grid-area: menu; display: grid; }
+
+  .topbar h1 {
+    grid-area: titulo;
+    position: static;
+    left: auto;
+    font-size: 17px;
+    line-height: 1.25;
+    white-space: normal;
+  }
+
+  /* na data sobra só a pílula, para o título ter a linha inteira */
+  .topbar .atualizado { grid-area: data; margin-left: 0; font-size: 0; }
+  .topbar .atualizado .badge-data { font-size: 11px; }
+
   .linha-menu { display: none; }
   .faixa { left: 0; padding-left: 20px; }
+  .faixa p { font-size: 13px; }
   .barra-topico { left: 0; padding-left: 20px; }
-  .conteudo { margin-left: 0; }
-  .topbar h1 { position: static; margin-left: 18px; }
+  .barra-topico p { font-size: 12px; }
+  .conteudo { margin-left: 0; padding-left: 20px; padding-right: 20px; }
+
+  /* o menu passa a ser uma gaveta que entra pela esquerda */
+  .sidebar {
+    display: block;
+    width: 300px;
+    max-width: 86vw;
+    z-index: 20;
+    border-right: 0;
+    box-shadow: 8px 0 26px rgba(60,70,40,.22);
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+  }
+
+  .sidebar.aberto { transform: none; }
+  .fundo-menu { display: block; }
+
+  /* ilustrações mais baixas, para não comerem a tela */
+  .ilustracao { height: 104px; margin: 40px 0 22px; padding: 16px; border-radius: 14px; }
+  .pagina section + .ilustracao { margin-top: 70px; }
+
+  .pagina h2 { font-size: 19px; }
+  .pagina h3 { font-size: 16px; }
+
+  /* miniatura de tela: o shape do canto encolhe junto */
+  .mini-tela::after { width: 90px; height: 80px; }
+  .mini-tela .canto { width: 76px; height: 66px; }
+  .mini-tela .lupa { width: 36px; height: 36px; right: 8px; bottom: 8px; border-radius: 9px; }
+  .mini-tela .lupa svg { width: 17px; height: 17px; }
+
+  .lightbox { padding: 16px; }
 }
 </style>
 </head>
@@ -926,6 +1021,11 @@ body {
   </a>
   <h1>Documentação Protocolo 3.0</h1>
   <div class="atualizado">Atualizado em: <span class="badge-data">21/08/2026</span></div>
+  <button class="bt-menu" id="bt-menu" onclick="alternarMenu()"
+          aria-label="Abrir o menu" aria-expanded="false" aria-controls="sidebar">
+    <svg class="ico-abrir" viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+    <svg class="ico-fechar" viewBox="0 0 24 24" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+  </button>
 </header>
 
 <div class="linha-menu"></div>
@@ -934,6 +1034,8 @@ body {
 </div>
 
 <div class="barra-topico" id="barra-topico"><p></p></div>
+
+<div class="fundo-menu" id="fundo-menu" onclick="fecharMenu()"></div>
 
 <nav class="sidebar" id="sidebar"></nav>
 
@@ -2547,7 +2649,8 @@ document.getElementById('filtro').addEventListener('input', ev => {
 /* Rolagem animada com desaceleração (ease-out cúbico) */
 function rolarPara(alvo) {
   /* num subtópico a barra do tópico está visível e cobriria o título */
-  const folga = alvo.classList.contains('sub') ? 124 + 38 : 124;
+  const topoFixo = medida('--topbar-h') + medida('--faixa-h') + 24;
+  const folga = alvo.classList.contains('sub') ? topoFixo + 38 : topoFixo;
   const topo = alvo.getBoundingClientRect().top + window.scrollY - folga;
   const inicio = window.scrollY;
   const distancia = topo - inicio;
@@ -2570,9 +2673,30 @@ document.querySelectorAll('.sidebar a').forEach(a => {
     const alvo = document.getElementById(a.getAttribute('href').slice(1));
     if (!alvo) return;
     history.replaceState(null, '', a.getAttribute('href'));
+    fecharMenu();
     rolarPara(alvo);
   });
 });
+
+/* --------------------------- menu em gaveta (mobile) ---------------------------
+   Na largura estreita o menu sai da esquerda por cima do conteúdo, com o fundo
+   escurecido; o sanduíche vira um X e a busca continua dentro do menu. */
+const menuLateral = document.getElementById('sidebar');
+const fundoMenu = document.getElementById('fundo-menu');
+const btMenu = document.getElementById('bt-menu');
+
+function alternarMenu() {
+  const aberto = !document.body.classList.contains('menu-aberto');
+  document.body.classList.toggle('menu-aberto', aberto);
+  menuLateral.classList.toggle('aberto', aberto);
+  fundoMenu.classList.toggle('aberto', aberto);
+  btMenu.setAttribute('aria-expanded', String(aberto));
+  btMenu.setAttribute('aria-label', aberto ? 'Fechar o menu' : 'Abrir o menu');
+}
+
+function fecharMenu() {
+  if (document.body.classList.contains('menu-aberto')) alternarMenu();
+}
 
 /* ------------------------- barra do tópico em rolagem -------------------------
    A barra mostra o título do tópico que está sendo lido. Ela só aparece depois
@@ -2582,11 +2706,11 @@ document.querySelectorAll('.sidebar a').forEach(a => {
 const barraTopico = document.getElementById('barra-topico');
 const rotuloTopico = barraTopico.querySelector('p');
 
-const raizCSS = getComputedStyle(document.documentElement);
-const medida = v => parseFloat(raizCSS.getPropertyValue(v));
+const medida = v => parseFloat(getComputedStyle(document.documentElement).getPropertyValue(v));
 /* borda de baixo da barra: é ela que define quando o título sumiu e quando a
-   ilustração de baixo chegou */
-const BASE_BARRA = medida('--topbar-h') + medida('--faixa-h') + 38;
+   ilustração de baixo chegou. É lida a cada uso porque o topo é mais alto na
+   largura estreita, onde o título quebra em duas linhas. */
+const baseBarra = () => medida('--topbar-h') + medida('--faixa-h') + 38;
 
 const topicos = [...document.querySelectorAll('.pagina section')]
   .filter(sec => sec.querySelector('h2'))
@@ -2602,11 +2726,12 @@ topicos.forEach((t, i) => {
 });
 
 function atualizarBarraTopico() {
+  const base = baseBarra();
   let ativo = null;
   for (const t of topicos) {
-    if (t.h2.getBoundingClientRect().bottom <= BASE_BARRA) ativo = t;
+    if (t.h2.getBoundingClientRect().bottom <= base) ativo = t;
   }
-  if (ativo && ativo.fim && ativo.fim.getBoundingClientRect().top <= BASE_BARRA) ativo = null;
+  if (ativo && ativo.fim && ativo.fim.getBoundingClientRect().top <= base) ativo = null;
 
   if (ativo) {
     if (rotuloTopico.textContent !== ativo.titulo) rotuloTopico.textContent = ativo.titulo;
@@ -2659,7 +2784,9 @@ function fecharTela(ev) {
 }
 
 document.addEventListener('keydown', ev => {
-  if (ev.key === 'Escape') lightbox.hidden = true;
+  if (ev.key !== 'Escape') return;
+  lightbox.hidden = true;
+  fecharMenu();
 });
 </script>
 </body>
