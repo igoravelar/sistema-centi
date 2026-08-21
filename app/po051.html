@@ -6,7 +6,7 @@
 <title>Centi · PO051 - Tramitação de Protocolo</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
 <link rel="stylesheet" href="assets/centi.css?v=8">
-<link rel="stylesheet" href="assets/fluxo.css?v=13">
+<link rel="stylesheet" href="assets/fluxo.css?v=14">
 <style>
   /* o fluxo é o conteúdo da aba Cadastro, e o drawer ocupa 2/3 da área */
   .cad .fluxo { --drawer-w: 66.667%; }
@@ -30,15 +30,37 @@
     cursor: default;
   }
 
-  /* linha que liga os cards do fluxo do protocolo; no trecho que sai de uma
-     etapa concluída ela continua verde, mas afina para 1px */
+  /* linha que liga os cards do fluxo do protocolo: 2px verdes no trecho já
+     percorrido e, do card em andamento para baixo, o mesmo verde em tracejado
+     — dali para frente o caminho é previsto, e não percorrido */
   .liga-prot { width: 2px; height: 56px; background: #BCC8A0; flex: 0 0 auto; }
-  .liga-prot.fina { width: 1px; }
-  /* do card em andamento para baixo o caminho é previsto, não percorrido:
-     mesma cor, em tracejado */
   .liga-prot.tracejada {
     background: repeating-linear-gradient(180deg, #BCC8A0 0 6px, transparent 6px 12px);
   }
+
+  /* ------------- sinalização das etapas (regra própria do PO051) -------------
+     Aqui a cor do card não conta o tipo da etapa — Início, Tarefa, Decisão e
+     Fim são todos verdes — e sim o andamento: cinza na concluída, verde cheio
+     na etapa da vez e branco nas que ainda não começaram. Basta trocar a
+     paleta que o fluxo.css lê nas variáveis do tipo; as regras de lá seguem
+     valendo, e as outras telas continuam com as quatro cores. */
+  .cad .etapa {
+    --tipo: var(--g); --tipo-nome: var(--g-mid);
+    --tipo-topo: #ADC84A; --tipo-fundo: #8FAA31;
+    --tipo-forte: var(--g-stroke); --tipo-claro: #DFF19C;
+  }
+
+  /* etapa da vez: o card inteiro verde, o mesmo desenho do card selecionado */
+  .cad .etapa.executar {
+    background: linear-gradient(180deg, var(--tipo-topo) 0%, var(--tipo-fundo) 100%);
+    border-color: var(--tipo-forte);
+  }
+  .cad .etapa.executar .nome,
+  .cad .etapa.executar .depto { color: #FFFFFF; }
+  .cad .etapa.executar .depto-lbl { color: var(--tipo-claro); }
+  .cad .etapa.executar .num { background: var(--tipo-forte); color: #FFFFFF; }
+  /* o atraso da previsão continua marcando o contorno, mesmo na etapa da vez */
+  .cad .etapa.executar.atrasada { border-color: #E53935; }
 
   /* o reenquadre ao abrir/fechar o drawer desliza o fluxo suavemente */
   .cad .bpmn-espaco.anim { transition: transform .28s ease; }
@@ -456,9 +478,6 @@ function classeEstadoP(n) {
        : '';
 }
 
-/** Prazo previsto da etapa, como aparece no canto do card. */
-function prazoEtapaP(e) { return `${e.prazo} ${e.prazo === 1 ? 'dia' : 'dias'}`; }
-
 /** Atraso da previsão: o protocolo ficou na repartição mais do que o prazo da
     etapa. Vale também depois de concluída — a etapa concluída em atraso segue
     marcada. */
@@ -507,22 +526,17 @@ function montarFluxoProt() {
   main.querySelector('.cad-topo .esq').innerHTML = tituloCadEsqHTML();
 
   const cards = ETAPAS_PROT.map(e => {
-    const estado = classeEstadoP(e.n);
-    const sit = situacaoEtapaP(e.n);
-    const classes = [classeTipoP(e.tipo), estado, atrasadaP(e) ? 'atrasada' : ''];
+    const classes = [classeTipoP(e.tipo), classeEstadoP(e.n), atrasadaP(e) ? 'atrasada' : ''];
     /* o trecho de linha acima do card sai da etapa anterior: caminho já
-       percorrido vem fino; daí em diante é previsto, e vem tracejado */
+       percorrido vem cheio; daí em diante é previsto, e vem tracejado */
     const antes = e.n > 1 ? situacaoEtapaP(e.n - 1) : '';
-    const liga = !antes ? '' : RESOLVIDAS_P.includes(antes) ? ' fina' : ' tracejada';
+    const liga = antes && !RESOLVIDAS_P.includes(antes) ? ' tracejada' : '';
     return `
     ${e.n > 1 ? `<div class="liga-prot${liga}"></div>` : ''}
     <div class="etapa ${classes.filter(Boolean).join(' ')}" data-n="${e.n}"
          style="position:relative;left:0;top:0;width:${CARD_L}px;height:${CARD_A}px;flex:0 0 auto"
          onclick="abrirEtapaProt(${e.n})">
-      ${estado === 'executar' ? '<span class="spin"><i></i></span>' : ''}
       <span class="num">${e.n}</span>
-      <span class="dias">${svg('cronometro')}${prazoEtapaP(e)}</span>
-      <span class="estado">${sit}<i class="farol ${CLASSE_SITUACAO[sit]}"></i></span>
       <span class="nome">${e.titulo}</span>
       <span class="rodape">
         <span class="depto-lbl">DEPTO</span>
