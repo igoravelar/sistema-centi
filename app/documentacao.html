@@ -952,10 +952,10 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
     grid-template-columns: auto 1fr auto;
     grid-template-areas:
       "marca  .      menu"
-      "titulo titulo data";
+      "titulo titulo titulo";
     align-items: center;
     row-gap: 6px;
-    padding: 0 16px;
+    padding: 0 10px 0 16px;
   }
 
   .topbar .marca { grid-area: marca; }
@@ -968,11 +968,11 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
     font-size: 17px;
     line-height: 1.25;
     white-space: normal;
+    text-align: center;
   }
 
-  /* na data sobra só a pílula, para o título ter a linha inteira */
-  .topbar .atualizado { grid-area: data; margin-left: 0; font-size: 0; }
-  .topbar .atualizado .badge-data { font-size: 11px; }
+  /* a data de atualização não cabe na tela estreita */
+  .topbar .atualizado { display: none; }
 
   .linha-menu { display: none; }
   .faixa { left: 0; padding-left: 20px; }
@@ -981,15 +981,17 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
   .barra-topico p { font-size: 12px; }
   .conteudo { margin-left: 0; padding-left: 20px; padding-right: 20px; }
 
-  /* o menu passa a ser uma gaveta que entra pela esquerda */
+  /* o menu passa a ser uma gaveta que entra pela direita */
   .sidebar {
     display: block;
     width: 300px;
     max-width: 86vw;
+    left: auto;
+    right: 0;
     z-index: 20;
     border-right: 0;
-    box-shadow: 8px 0 26px rgba(60,70,40,.22);
-    transform: translateX(-100%);
+    border-left: 1px solid var(--cinza-linha);
+    transform: translateX(100%);
     transition: transform .25s ease;
   }
 
