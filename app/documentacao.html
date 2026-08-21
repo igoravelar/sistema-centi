@@ -842,6 +842,9 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
 .mini-tela img { display: block; width: 100%; }
 
+/* miniatura solta dentro do tópico (fora do fieldset da tela) */
+.pagina > section > .mini-tela { margin: 18px 0 24px; }
+
 /* sombra verde que avança na imagem a partir do canto da lupa */
 .mini-tela::after {
   content: '';
@@ -2047,19 +2050,26 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <p>A <code>PO050</code> representa o ambiente de criação e edição do fluxo, funcionando como o principal espaço de configuração do processo.</p>
       <p>A modelagem busca substituir progressivamente a dependência de múltiplas telas e configurações fragmentadas por uma experiência mais integrada e visual.</p>
 
-      <h4>Conceito de versão</h4>
+      <h4>Conceito de versão e etapas</h4>
+
+      <div class="mini-tela" data-legenda="Fluxo de Processos PO050" onclick="ampliarTela(this)">
+        <img src="assets/img/po050-versoes-pastas.png"
+             alt="PO050 - Fluxo de Processos: a versão publicada do fluxo ISENÇÃO DE IPTU e, dentro dela, as pastas Etapas, Variáveis, Paralelismos e Remapeamentos">
+        <span class="canto"></span>
+        <button class="lupa" title="Ampliar a tela" aria-label="Ampliar a tela">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
+        </button>
+      </div>
+
       <p>A criação ou alteração de um fluxo deverá ocorrer inicialmente em uma <b>versão em rascunho</b>.</p>
       <p>Isso permite que o usuário responsável possa estruturar, revisar e validar as alterações antes que uma nova configuração seja efetivamente disponibilizada para utilização.</p>
-
-      <h4>Etapas</h4>
       <p>Cada processo é composto por etapas que representam as atividades necessárias para sua conclusão. Cada etapa poderá possuir:</p>
       <div class="fluxo-palavras">
         <span class="palavra">RESPONSÁVEL</span>
         <span class="palavra">DEPARTAMENTO</span>
         <span class="palavra">DOCUMENTOS</span>
         <span class="palavra">CHECKLIST</span>
-        <span class="palavra">CONDIÇÕES</span>
-        <span class="palavra">REGRAS</span>
+        <span class="palavra">REGRAS DE SAÍDA</span>
         <span class="palavra">VARIÁVEIS</span>
         <span class="palavra">PRAZOS</span>
         <span class="palavra">AÇÕES PARA CONCLUSÃO</span>
@@ -2774,10 +2784,14 @@ const lightboxCap = lightbox.querySelector('figcaption');
 
 function ampliarTela(mini) {
   const img = mini.querySelector('img');
-  const legenda = mini.closest('fieldset').querySelector('legend');
+  /* a legenda vem do fieldset da tela; a miniatura solta no tópico não tem
+     fieldset, e traz a sua em data-legenda (sem isso, nada abria) */
+  const fs = mini.closest('fieldset');
+  const legenda = mini.dataset.legenda
+    || (fs ? fs.querySelector('legend').textContent : img.alt);
   lightboxImg.src = img.src;
   lightboxImg.alt = img.alt;
-  lightboxCap.textContent = legenda.textContent.trim().replace(/\s+/g, ' ');
+  lightboxCap.textContent = legenda.trim().replace(/\s+/g, ' ');
   lightbox.hidden = false;
 }
 

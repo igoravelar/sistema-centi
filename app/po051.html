@@ -196,6 +196,19 @@
                                       text-decoration: underline; }
   .modal-arvore .cab-arv:hover .nome-item { color: var(--g-dark); }
 
+  /* pasta ainda sem conteúdo: pastinha cinza, como na tela do sistema */
+  .arvore .pasta.vazia .ico svg { color: #9A9A9A; }
+
+  /* raiz da modal de Novo Protocolo: só rótulo, sem link para outra vista */
+  .modal-arvore .cab-arv.estatica { cursor: default; }
+  .modal-arvore .cab-arv.estatica .nome-item { text-decoration: none; }
+  .modal-arvore .cab-arv.estatica:hover .nome-item { color: #5C5B5B; }
+  /* protocolo novo (sem id ainda): a marca de inclusão vem no azul do sistema */
+  .modal-arvore .cab-arv .marca.novo svg { color: var(--selecao); }
+
+  /* botão só de ícone na faixa de ações da modal */
+  .modal-toolbar .btn.so-ico { padding: 0 10px; }
+
   .modal-dir { flex: 1; min-width: 0; display: flex; flex-direction: column; }
   /* faixa de ações: um cinza acima do cinza do formulário */
   .modal-toolbar { flex: 0 0 49px; display: flex; align-items: center; gap: 10px; padding: 0 14px;
@@ -394,8 +407,21 @@ const FLUXO_SIMPLES = [
   { n: 7, titulo: 'Fim',                           tipo: 'Fim',    depto: 'PREFEITURA MUNICIPAL DE RIO VERDE',             prazo: 1, corridos: 0, situacao: 'Não Iniciada' },
 ];
 
+/* Fluxo de ABERTURA DE LICITAÇÃO: é o do protocolo 2292410, o que a modal de
+   Novo Protocolo cria. Recém-criado, ele já saiu do Início — concluído na
+   abertura — e está na segunda etapa, a que precisa ser executada agora. */
+const FLUXO_LICITACAO = [
+  { n: 1, titulo: 'Início',                        tipo: 'Início',  depto: 'QUALQUER UM',                                    prazo: 1, corridos: 1, situacao: 'Concluída' },
+  { n: 2, titulo: 'Elaborar Termo de Referência',  tipo: 'Tarefa',  depto: 'DEPARTAMENTO DE COMPRAS - SEC. ADMINISTRAÇÃO',   prazo: 3, corridos: 1, situacao: 'Em Andamento' },
+  { n: 3, titulo: 'Reserva Orçamentária',          tipo: 'Tarefa',  depto: 'CONTABILIDADE - SEC ADMINISTRAÇÃO',              prazo: 2, corridos: 0, situacao: 'Não Iniciada' },
+  { n: 4, titulo: 'Parecer Jurídico',              tipo: 'Tarefa',  depto: 'PROCURADORIA GERAL DO MUNICÍPIO',                prazo: 5, corridos: 0, situacao: 'Não Iniciada' },
+  { n: 5, titulo: 'Autoriza a abertura?',          tipo: 'Decisão', depto: 'GABINETE DO PREFEITO',                           prazo: 2, corridos: 0, situacao: 'Não Iniciada' },
+  { n: 6, titulo: 'Publicar Edital',               tipo: 'Tarefa',  depto: 'DEPARTAMENTO DE LICITAÇÃO - SEC ADMINISTRAÇÃO',  prazo: 3, corridos: 0, situacao: 'Não Iniciada' },
+  { n: 7, titulo: 'Fim',                           tipo: 'Fim',     depto: 'PREFEITURA MUNICIPAL DE RIO VERDE',              prazo: 1, corridos: 0, situacao: 'Não Iniciada' },
+];
+
 /* qual fluxo cada protocolo abre; sem entrada aqui, abre o simples */
-const FLUXOS_PROT = { '2292436': FLUXO_VALIDACAO };
+const FLUXOS_PROT = { '2292436': FLUXO_VALIDACAO, '2292410': FLUXO_LICITACAO };
 
 /* etapas do protocolo aberto: definido em abrirFluxoProt, pelo id da linha */
 let ETAPAS_PROT = FLUXO_SIMPLES;
@@ -761,6 +787,8 @@ const FA = {
   pastaAberta: { vb: '0 0 576 512', d: 'M572.694 292.093L500.27 416.248A63.997 63.997 0 0 1 444.989 448H45.025c-18.523 0-30.064-20.093-20.731-36.093l72.424-124.155A64 64 0 0 1 152 256h399.964c18.523 0 30.064 20.093 20.73 36.093zM152 224h328v-48c0-26.51-21.49-48-48-48H272l-64-64H48C21.49 64 0 85.49 0 112v278.046l69.077-118.418C86.214 242.25 118.179 224 152 224z' },
   chevronBaixo: { vb: '0 0 512 512', d: 'M504 256c0 137-111 248-248 248S8 393 8 256 119 8 256 8s248 111 248 248zM273 369.9l135.5-135.5c9.4-9.4 9.4-24.6 0-33.9l-17-17c-9.4-9.4-24.6-9.4-33.9 0L256 285.1 154.4 183.5c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L239 369.9c9.4 9.4 24.6 9.4 34 0z' },
   chevronDireita: { vb: '0 0 512 512', d: 'M256 8c137 0 248 111 248 248S393 504 256 504 8 393 8 256 119 8 256 8zm113.9 231L234.4 103.5c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L285.1 256 183.5 357.6c-9.4 9.4-9.4 24.6 0 33.9l17 17c9.4 9.4 24.6 9.4 33.9 0L369.9 273c9.4-9.4 9.4-24.6 0-34z' },
+  maisCirculo: { vb: '0 0 512 512', d: 'M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6 0-12-5.4-12-12v-92h-92c-6.6 0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6 0 12 5.4 12 12v92h92c6.6 0 12 5.4 12 12v56z' },
+  check: { vb: '0 0 512 512', d: 'M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 448c-110.532 0-200-89.451-200-200 0-110.532 89.451-200 200-200 110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200zm140.204-254.804c4.686 4.686 4.686 12.284 0 16.971l-159.196 159.196c-4.686 4.686-12.284 4.686-16.971 0l-72.708-72.708c-4.686-4.686-4.686-12.284 0-16.971l16.97-16.97c4.686-4.686 12.284-4.686 16.971 0l47.253 47.253 133.741-133.741c4.686-4.686 12.284-4.686 16.971 0l16.969 16.97z' },
 };
 
 function fa(nome) {
@@ -1047,8 +1075,148 @@ function modalItemHTML() {
 
 function renderModalP() {
   const tela = main.querySelector('.tela');
-  tela.querySelector('.modal-overlay')?.remove();
+  /* :not(.novo-prot) para não derrubar a modal de Novo Protocolo, que tem
+     render próprio e mora no mesmo lugar */
+  tela.querySelector('.modal-overlay:not(.novo-prot)')?.remove();
   if (itemAbertoP) tela.insertAdjacentHTML('beforeend', modalItemHTML());
+}
+
+/* ------------------------ modal de Novo Protocolo ------------------------
+   Abre pelo Novo da aba Cadastro: a árvore do protocolo à esquerda e o
+   formulário à direita. Vem em branco, como um cadastro novo, e o clique em
+   qualquer campo preenche com um protocolo de exemplo — o atalho que o
+   protótipo usa para mostrar a tela cheia sem ninguém digitar. */
+
+/* pastas do protocolo; `chev` abre quando há conteúdo e `vazia` deixa a
+   pastinha cinza, como nas que ainda não têm nada */
+const PASTAS_PROT = [
+  { rot: 'Andamentos',                chev: true },
+  { rot: 'Documentos' },
+  { rot: 'Checklist da etapa',        chev: true },
+  { rot: 'Movimentação',              chev: true },
+  { rot: 'Apensar' },
+  { rot: 'Protocolos relacionados' },
+  { rot: 'Regularidade' },
+  { rot: 'Atividade' },
+  { rot: 'Ateste controle interno',   vazia: true },
+  { rot: 'Protocolos links download', vazia: true },
+  { rot: 'Observador' },
+  { rot: 'Etapas do fluxo',           vazia: true },
+  { rot: 'Assinatura eletrônica' },
+];
+
+/* protocolo de exemplo que o clique traz para o formulário */
+const PROT_NOVO = {
+  id: '2292410', protocolo: '116485', ano: '2026', data: '06/08/2026',
+  interessadoCod: '1784066', interessado: 'DIEGO BORGES SAITO',
+  naturezaCod: '137', natureza: 'ABERTURA DE LICITAÇÃO',
+  observacao: 'PROTOCOLO 03', valor: '0,00',
+  reparticao: 'Secretaria Infraestrutura e Desenvolvimento Urbano',
+  statusCI: 'Não atestado', tipoAndamento: 'Aguardando Saida',
+  situacao: 'Em Andamento', remessa: '2923130', paginas: '0',
+};
+
+const DATA_HOJE_P = '21/08/2026';
+
+let novoProtAberto = false;   /* modal aberta */
+let novoProtCheio = false;    /* já preenchida pelo clique no formulário */
+
+function abrirNovoProtP()     { novoProtAberto = true; novoProtCheio = false; renderNovoProtP(); }
+function fecharNovoProtP()    { novoProtAberto = false; renderNovoProtP(); }
+function preencherNovoProtP() { if (!novoProtCheio) { novoProtCheio = true; renderNovoProtP(); } }
+
+function camposNovoProtHTML() {
+  const c = novoProtCheio, p = PROT_NOVO;
+  return [
+    campoHTML({ rot: 'Id', val: c ? p.id : '0', ro: true }),
+    campoHTML({ rot: 'Protocolo<span class="req">*</span>', val: c ? p.protocolo : '0', ro: true }),
+    campoHTML({ rot: 'Ano protocolo<span class="req">*</span>', val: c ? p.ano : '0', ro: true }),
+    campoHTML({ rot: 'Data protocolo', val: c ? p.data : DATA_HOJE_P, ro: true }),
+    campoHTML({ rot: 'Interessado/<br>Beneficiário<span class="req">*</span>',
+                cod: c ? p.interessadoCod : '', codL: true, val: c ? p.interessado : '',
+                ph: 'Pesquisar', acoes: c ? ['lapis', 'lupa', 'olho'] : ['lupa', 'olho'] }),
+    campoHTML({ rot: 'Solicitante/<br>Requerente', cod: '', codL: true, val: '', ph: 'Pesquisar', lupa: true }),
+    campoHTML({ rot: 'Natureza<span class="req">*</span>', cod: c ? p.naturezaCod : '', codL: true,
+                val: c ? p.natureza : '', ph: 'Pesquisar', acoes: c ? ['lapis', 'lupa'] : ['lupa'] }),
+    campoHTML({ rot: 'Protocolo origem', cod: '', codL: true, val: '', ph: 'Pesquisar', lupa: true }),
+    campoHTML({ rot: 'Observação<span class="req">*</span>', val: c ? p.observacao : '', area: true, lupa: true }),
+    campoHTML({ rot: 'Data do<br>documento', val: '', ph: 'dd/mm/yyyy', acoes: ['calendario'] }),
+    campoHTML({ rot: 'Valor', val: c ? p.valor : '0,0000' }),
+    campoHTML({ rot: 'Número<br>documento', val: '' }),
+    campoHTML({ rot: 'Repartição', val: c ? p.reparticao : '', ro: true }),
+    campoHTML({ rot: 'Notificar por<br>email/SMS<span class="req">*</span>', val: 'Não', opcoes: ['Não', 'Sim'] }),
+    campoHTML({ rot: 'Apensar<br>automático?<span class="req">*</span>', val: 'Não', opcoes: ['Não', 'Sim'] }),
+    campoHTML({ rot: 'Sigiloso<span class="req">*</span>', val: 'Não', opcoes: ['Não', 'Sim'] }),
+    campoHTML({ rot: 'Status controle<br>interno', val: c ? p.statusCI : '',
+                opcoes: [c ? p.statusCI : ''], ro: true }),
+    campoHTML({ rot: 'Tipo andamento', val: c ? p.tipoAndamento : '', ro: true }),
+    campoHTML({ rot: 'Situação', val: c ? p.situacao : '', ro: true }),
+    campoHTML({ rot: 'Remessa', val: c ? p.remessa : '', ro: true }),
+    campoHTML({ rot: 'Solicitação portal', val: 'Não', opcoes: ['Não', 'Sim'], ro: true }),
+    campoHTML({ rot: 'Total páginas<br>docume...', val: c ? p.paginas : '0', ro: true }),
+  ].join('');
+}
+
+function modalNovoProtHTML() {
+  const raiz = novoProtCheio ? `Protocolo - ${PROT_NOVO.id}` : 'Protocolo';
+  /* as pastas só ganham seta quando o protocolo existe: em branco não há o
+     que abrir dentro delas */
+  const arvore = PASTAS_PROT.map(f => `
+      <div class="pasta n1${f.vazia ? ' vazia' : ''}">
+        <span class="chev">${novoProtCheio && f.chev ? fa('chevronDireita') : ''}</span>
+        <span class="ico">${fa('pasta')}</span>
+        <span class="rot-no">${f.rot}</span>
+      </div>`).join('');
+
+  return `
+  <div class="modal-overlay novo-prot" onclick="if(event.target===this)fecharNovoProtP()">
+    <div class="modal">
+      <div class="modal-cab">
+        <h2>Protocolo</h2>
+        <button class="bt-fechar" onclick="fecharNovoProtP()" title="Fechar">${svg('x')}</button>
+      </div>
+      <div class="modal-corpo">
+        <div class="arvore modal-arvore scroll">
+          <div class="cab-arv estatica">
+            <span>${fa('chevronBaixo')}</span>
+            <span class="marca${novoProtCheio ? '' : ' novo'}">${fa(novoProtCheio ? 'check' : 'maisCirculo')}</span>
+            <span class="nome-item" title="${raiz}">${raiz}</span>
+          </div>
+          ${arvore}
+        </div>
+        <div class="modal-dir">
+          <div class="modal-toolbar">
+            ${novoProtCheio
+              ? `<button class="btn btn-claro" onclick="salvarNovoProtP()">${svg('salvar')} Salvar</button>`
+              : `<button class="btn btn-neutro" disabled>${svg('salvar')} Salvar</button>`}
+            <div style="flex:1"></div>
+            <button class="btn btn-neutro so-ico" disabled title="Sigiloso">${svg('olho')}</button>
+            <button class="btn btn-primario">${svg('gerais')} Operações</button>
+          </div>
+          <div class="modal-form scroll"${novoProtCheio ? '' : ' onclick="preencherNovoProtP()"'}>
+            ${camposNovoProtHTML()}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/** Salvar da modal: o protocolo passa a existir, a modal fecha e o Cadastro
+    abre o fluxo dele — com o Início já concluído e a segunda etapa em
+    andamento, que é onde o protocolo está agora. */
+function salvarNovoProtP() {
+  if (!novoProtCheio) return;
+  fecharNovoProtP();
+  const linha = RESULTADOS_P.findIndex(r => r[0] === PROT_NOVO.id);
+  abrirFluxoProt(linha);
+  abrirEtapaProt(2);
+}
+
+function renderNovoProtP() {
+  const tela = main.querySelector('.tela');
+  tela.querySelector('.modal-overlay.novo-prot')?.remove();
+  if (novoProtAberto) tela.insertAdjacentHTML('beforeend', modalNovoProtHTML());
 }
 
 /* ------------------------- modal Enviar Remessa -------------------------
@@ -1110,7 +1278,7 @@ function modalRemessaHTML() {
 
 function renderRemessaP() {
   const tela = main.querySelector('.tela');
-  tela.querySelector('.modal-overlay')?.remove();
+  tela.querySelector('.modal-overlay:not(.novo-prot)')?.remove();
   if (remessaAbertaP) tela.insertAdjacentHTML('beforeend', modalRemessaHTML());
 }
 
@@ -1360,7 +1528,7 @@ main.insertAdjacentHTML('beforeend', `
         <div class="cad-topo">
           <div class="esq">${tituloCadEsqHTML()}</div>
           <div class="dir">
-            <button class="btn btn-claro">${svg('mais')} Novo</button>
+            <button class="btn btn-claro" onclick="abrirNovoProtP()">${svg('mais')} Novo</button>
             <div style="flex:1"></div>
             <button class="btn btn-primario">${svg('gerais')} Operações</button>
           </div>
