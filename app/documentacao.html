@@ -679,6 +679,53 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
   font-size: 12.5px;
 }
 
+/* cards do critério de sucesso: a persona e a medalha em cima, o título no
+   meio e o que ela consegue fazer embaixo */
+.cards-persona {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin: 0 0 20px;
+}
+
+.cards-persona .card {
+  background: #F5FCD9;
+  border: 1px solid var(--verde-linha);
+  border-radius: 15px;
+  padding: 18px;
+}
+
+.cards-persona .icos {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+}
+
+.cards-persona .ico-persona {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--verde);
+  color: #FFFFFF;
+}
+
+.cards-persona .ico-persona svg { width: 21px; height: 21px; fill: currentColor; }
+
+.cards-persona .medalha { width: 22px; height: 22px; fill: #8BA81D; }
+
+.cards-persona .card h4 {
+  margin: 0 0 6px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #3F440C;
+}
+
+.cards-persona .card p { margin: 0; font-size: 12.5px; }
+
 /* fluxo de palavras: resumo em etapas encadeadas por setas */
 .fluxo-palavras {
   display: flex;
@@ -2660,16 +2707,28 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <h3>Critério de sucesso do MVP</h3>
       <p>O MVP será considerado conceitualmente validado quando demonstrar que os três principais perfis conseguem realizar suas responsabilidades com clareza:</p>
 
-      <div class="cards-modelo">
+      <div class="cards-persona">
         <div class="card">
+          <div class="icos">
+            <span class="ico-persona"><svg viewBox="0 0 84.34 92.2" aria-hidden="true"><path d="M2.69,63.54c-5.1-8.14,3.33-9.53,12.37-6.19,6.98,2.58,6.75,7.42,14.85,8.93-7.95,6-21.09,5.15-27.22-2.74"/><path d="M41.35,92.2c-18.3,0-34.08-10.77-41.35-26.32,13.65,11.85,28.09,7.88,35.53-.44,8.04-9,17.54-18.25,29.54-19.2,28.08-2.22,21.67,22.56,4.85,36.02-8.06,6.44-18.42,9.94-28.57,9.94"/><path d="M81.66,28.66c5.1,8.14-3.33,9.53-12.37,6.19-6.98-2.58-6.75-7.42-14.85-8.93,7.95-6,21.09-5.15,27.22,2.75"/><path d="M42.99,0c18.3,0,34.08,10.77,41.35,26.32-13.65-11.85-28.09-7.88-35.53.44-8.04,9-17.54,18.25-29.54,19.2C-8.81,48.18-2.41,23.4,14.42,9.94,22.48,3.49,32.84,0,42.99,0"/></svg></span>
+            <svg class="medalha" viewBox="0 0 512 512" aria-hidden="true"><path d="M4.1 38.2C1.4 34.2 0 29.4 0 24.6C0 11 11 0 24.6 0L133.9 0c11.2 0 21.7 5.9 27.4 15.5l68.5 114.1c-48.2 6.1-91.3 28.6-123.4 61.9L4.1 38.2zm503.7 0L405.6 191.5c-32.1-33.3-75.2-55.8-123.4-61.9L350.7 15.5C356.5 5.9 366.9 0 378.1 0L487.4 0C501 0 512 11 512 24.6c0 4.8-1.4 9.6-4.1 13.6zM80 336a176 176 0 1 1 352 0A176 176 0 1 1 80 336zm184.4-94.9c-3.4-7-13.3-7-16.8 0l-22.4 45.4c-1.4 2.8-4 4.7-7 5.1L168 298.9c-7.7 1.1-10.7 10.5-5.2 16l36.3 35.4c2.2 2.2 3.2 5.2 2.7 8.3l-8.6 49.9c-1.3 7.6 6.7 13.5 13.6 9.9l44.8-23.6c2.7-1.4 6-1.4 8.7 0l44.8 23.6c6.9 3.6 14.9-2.2 13.6-9.9l-8.6-49.9c-.5-3 .5-6.1 2.7-8.3l36.3-35.4c5.6-5.4 2.5-14.8-5.2-16l-50.1-7.3c-3-.4-5.7-2.4-7-5.1l-22.4-45.4z"/></svg>
+          </div>
           <h4>Consultor Centi</h4>
           <p>Consegue estruturar e orientar o fluxo.</p>
         </div>
         <div class="card">
+          <div class="icos">
+            <span class="ico-persona"><svg viewBox="0 0 448 512" aria-hidden="true"><path d="M96 128a128 128 0 1 0 256 0A128 128 0 1 0 96 128zm94.5 200.2l18.6 31L175.8 483.1l-36-146.9c-2-8.1-9.8-13.4-17.9-11.3C51.9 342.4 0 405.8 0 481.3c0 17 13.8 30.7 30.7 30.7l131.7 0c0 0 0 0 .1 0l5.5 0 112 0 5.5 0c0 0 0 0 .1 0l131.7 0c17 0 30.7-13.8 30.7-30.7c0-75.5-51.9-138.9-121.9-156.4c-8.1-2-15.9 3.3-17.9 11.3l-36 146.9L238.9 359.2l18.6-31c6.4-10.7-1.3-24.2-13.7-24.2L224 304l-19.7 0c-12.4 0-20.1 13.6-13.7 24.2z"/></svg></span>
+            <svg class="medalha" viewBox="0 0 512 512" aria-hidden="true"><path d="M4.1 38.2C1.4 34.2 0 29.4 0 24.6C0 11 11 0 24.6 0L133.9 0c11.2 0 21.7 5.9 27.4 15.5l68.5 114.1c-48.2 6.1-91.3 28.6-123.4 61.9L4.1 38.2zm503.7 0L405.6 191.5c-32.1-33.3-75.2-55.8-123.4-61.9L350.7 15.5C356.5 5.9 366.9 0 378.1 0L487.4 0C501 0 512 11 512 24.6c0 4.8-1.4 9.6-4.1 13.6zM80 336a176 176 0 1 1 352 0A176 176 0 1 1 80 336zm184.4-94.9c-3.4-7-13.3-7-16.8 0l-22.4 45.4c-1.4 2.8-4 4.7-7 5.1L168 298.9c-7.7 1.1-10.7 10.5-5.2 16l36.3 35.4c2.2 2.2 3.2 5.2 2.7 8.3l-8.6 49.9c-1.3 7.6 6.7 13.5 13.6 9.9l44.8-23.6c2.7-1.4 6-1.4 8.7 0l44.8 23.6c6.9 3.6 14.9-2.2 13.6-9.9l-8.6-49.9c-.5-3 .5-6.1 2.7-8.3l36.3-35.4c5.6-5.4 2.5-14.8-5.2-16l-50.1-7.3c-3-.4-5.7-2.4-7-5.1l-22.4-45.4z"/></svg>
+          </div>
           <h4>Gestor da Prefeitura</h4>
           <p>Consegue assumir a gestão e evolução dos fluxos.</p>
         </div>
         <div class="card">
+          <div class="icos">
+            <span class="ico-persona"><svg viewBox="0 0 320 512" aria-hidden="true"><path d="M160 0a48 48 0 1 1 0 96 48 48 0 1 1 0-96zM88 384l-17.8 0c-10.9 0-18.6-10.7-15.2-21.1L93.3 248.1 59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l53.6-89.2c20.3-33.7 56.7-54.3 96-54.3l11.6 0c39.3 0 75.7 20.6 96 54.3l53.6 89.2c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9l-33.9-56.3L265 362.9c3.5 10.4-4.3 21.1-15.2 21.1L232 384l0 96c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-96-16 0 0 96c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-96z"/></svg></span>
+            <svg class="medalha" viewBox="0 0 512 512" aria-hidden="true"><path d="M4.1 38.2C1.4 34.2 0 29.4 0 24.6C0 11 11 0 24.6 0L133.9 0c11.2 0 21.7 5.9 27.4 15.5l68.5 114.1c-48.2 6.1-91.3 28.6-123.4 61.9L4.1 38.2zm503.7 0L405.6 191.5c-32.1-33.3-75.2-55.8-123.4-61.9L350.7 15.5C356.5 5.9 366.9 0 378.1 0L487.4 0C501 0 512 11 512 24.6c0 4.8-1.4 9.6-4.1 13.6zM80 336a176 176 0 1 1 352 0A176 176 0 1 1 80 336zm184.4-94.9c-3.4-7-13.3-7-16.8 0l-22.4 45.4c-1.4 2.8-4 4.7-7 5.1L168 298.9c-7.7 1.1-10.7 10.5-5.2 16l36.3 35.4c2.2 2.2 3.2 5.2 2.7 8.3l-8.6 49.9c-1.3 7.6 6.7 13.5 13.6 9.9l44.8-23.6c2.7-1.4 6-1.4 8.7 0l44.8 23.6c6.9 3.6 14.9-2.2 13.6-9.9l-8.6-49.9c-.5-3 .5-6.1 2.7-8.3l36.3-35.4c5.6-5.4 2.5-14.8-5.2-16l-50.1-7.3c-3-.4-5.7-2.4-7-5.1l-22.4-45.4z"/></svg>
+          </div>
           <h4>Servidor Público</h4>
           <p>Consegue criar, executar e tramitar protocolos sem depender de conhecimento técnico sobre a configuração do sistema.</p>
         </div>
@@ -2717,10 +2776,246 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </div>
     </section>
 
+    <div class="ilustracao">
+      <svg viewBox="0 0 720 90" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+
+        <!-- shapes: a tela do usuário, as camadas do serviço, o ORM, o banco
+             do tenant, o banco de analytics e o armazenamento dos documentos -->
+        <g fill="none" stroke="#F3FFC3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="16" y="18" width="96" height="56" rx="9" fill="#DFF08F" fill-opacity=".18"/>
+          <line x1="16" y1="35" x2="112" y2="35"/>
+          <circle cx="27" cy="26" r="2.5" fill="#DFF08F" stroke="none"/>
+          <circle cx="37" cy="26" r="2.5" fill="#DFF08F" stroke="none"/>
+
+          <rect x="158" y="12" width="104" height="18" rx="6" fill="#E8EF9E" fill-opacity=".2"/>
+          <rect x="158" y="36" width="104" height="18" rx="6" fill="#DFF08F" fill-opacity=".26"/>
+          <rect x="158" y="60" width="104" height="18" rx="6" fill="#C6E628" fill-opacity=".32"/>
+
+          <rect x="308" y="30" width="76" height="30" rx="8" fill="#C6E628" fill-opacity=".26"/>
+          <line x1="346" y1="33" x2="346" y2="57" stroke-dasharray="1 5"/>
+
+          <ellipse cx="470" cy="24" rx="30" ry="8" fill="#C6E628" fill-opacity=".3"/>
+          <line x1="440" y1="24" x2="440" y2="62"/>
+          <line x1="500" y1="24" x2="500" y2="62"/>
+          <path d="M440 43 a30 8 0 0 0 60 0"/>
+          <path d="M440 62 a30 8 0 0 0 60 0"/>
+
+          <ellipse cx="586" cy="34" rx="20" ry="6" fill="#DFF08F" fill-opacity=".22"/>
+          <line x1="566" y1="34" x2="566" y2="56"/>
+          <line x1="606" y1="34" x2="606" y2="56"/>
+          <path d="M566 56 a20 6 0 0 0 40 0"/>
+
+          <path d="M652 62 a11 11 0 0 1 2 -22 a14 14 0 0 1 27 3 a9 9 0 0 1 -2 19 z" fill="#DFF08F" fill-opacity=".2"/>
+        </g>
+
+        <!-- linhas e setas: a requisição desce as camadas até o banco, e dele
+             saem os dados de analytics e os documentos -->
+        <g fill="none" stroke="#F3FFC3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="120" y1="45" x2="150" y2="45"/>
+          <path d="M143 40 l7 5 -7 5"/>
+
+          <line x1="270" y1="45" x2="300" y2="45"/>
+          <path d="M293 40 l7 5 -7 5"/>
+
+          <line x1="392" y1="45" x2="430" y2="45"/>
+          <path d="M423 40 l7 5 -7 5"/>
+
+          <line x1="508" y1="45" x2="558" y2="45" stroke-dasharray="1 8"/>
+          <line x1="614" y1="45" x2="644" y2="45" stroke-dasharray="1 8"/>
+        </g>
+      </svg>
+    </div>
+
     <section id="etapa5">
       <h2>#5 Arquitetura Tecnológica</h2>
       <p class="lead">Decisões de arquitetura, integrações e infraestrutura que sustentam o produto.</p>
-      <p>Conteúdo a preencher com as definições desta etapa.</p>
+    </section>
+
+    <section id="etapa5-objetivo" class="sub">
+      <h3>Objetivo da etapa</h3>
+      <p><b>Descrever a plataforma sobre a qual o Protocolo 3.0 será construído</b>, deixando claro em que capacidades já existentes o MVP se apoia e quais precisam ser criadas ou decididas.</p>
+      <div class="nota">
+        <p>Esta etapa conecta a modelagem funcional à construção efetiva: cada capacidade prevista no MVP — configurar fluxos, criar protocolos, tramitar etapas, guardar documentos, notificar e acompanhar — precisa ter <b>um lugar definido dentro da arquitetura da Centi</b>.</p>
+      </div>
+    </section>
+
+    <section id="etapa5-visao" class="sub">
+      <h3>Visão geral da solução</h3>
+      <p>O Protocolo 3.0 nasce em uma plataforma já existente. Ele é um módulo do <b>ERP municipal da Centi</b>, e herda dele o banco, a camada de serviço, a geração de telas, os relatórios e o modelo de operação por município.</p>
+
+      <div class="definicao">
+        <p>O CENTI é um ERP municipal multi-tenant, com ORM próprio baseado em anotações que dirigem banco, back-end e front-end, geração automática de DDL e de interface, e SQL Server como banco principal.</p>
+      </div>
+
+      <p>As características que sustentam o produto:</p>
+      <ul class="lista">
+        <li><b>ORM próprio</b>, baseado em anotações (<i>attributes</i>) que dirigem banco, back-end e front-end;</li>
+        <li><b>geração automática de DDL</b>, a partir das mesmas anotações;</li>
+        <li><b>geração automática de UI</b>, com o front-end montado dinamicamente;</li>
+        <li><b>FastReport</b> para relatórios em PDF, XLSX e DOCX;</li>
+        <li><b>SQL Server</b> como banco principal, com <b>ClickHouse</b> para analytics;</li>
+        <li><b>multi-tenant</b>: cada tenant é um banco de dados separado.</li>
+      </ul>
+
+      <p>Para o Protocolo 3.0, isso significa que o esforço da construção está menos na infraestrutura e mais em <b>modelar corretamente o fluxo, as etapas e as regras</b> — o resto da cadeia já existe e é compartilhado com os demais módulos do ERP.</p>
+    </section>
+
+    <section id="etapa5-stack" class="sub">
+      <h3>Stack tecnológico</h3>
+      <p>A base tecnológica atual da plataforma:</p>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr>
+              <th>Camada</th>
+              <th>Tecnologia</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Back-end</td><td><code>.NET 8</code>, <code>ASP.NET Core</code>, <code>WCF (CoreWCF)</code></td></tr>
+            <tr><td>ORM</td><td>Próprio, dirigido por anotações</td></tr>
+            <tr><td>Banco</td><td><code>SQL Server</code> (principal), <code>ClickHouse</code> (analytics)</td></tr>
+            <tr><td>Front-end</td><td><code>React 19</code></td></tr>
+            <tr><td>Relatórios</td><td><code>FastReport .NET</code></td></tr>
+            <tr><td>Serialização</td><td><code>Newtonsoft.Json</code> (TypeNameHandling.Objects)</td></tr>
+            <tr><td>Cache</td><td>Em memória (ConcurrentDictionary por tenant)</td></tr>
+            <tr><td>E-mail</td><td>SMTP assíncrono com fila</td></tr>
+            <tr><td>Armazenamento</td><td>Azure Blob Storage + binário local</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="nota-tab">Fonte: documento <i>Arquitetura Completa do ERP CENTI</i>, na versão disponível nesta data.</p>
+    </section>
+
+    <section id="etapa5-anotacoes" class="sub">
+      <h3>Anotações e geração automática</h3>
+      <p>O ponto central da arquitetura é que <b>uma única definição alimenta três camadas</b>. A entidade anotada gera a estrutura no banco, é servida pela API e chega ao front-end sem precisar ser redesenhada em cada ponta.</p>
+
+      <div class="fluxo-palavras">
+        <span class="palavra">ANOTAÇÃO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">DDL</span><span class="seta-fluxo">→</span>
+        <span class="palavra">API</span><span class="seta-fluxo">→</span>
+        <span class="palavra">UI</span>
+      </div>
+
+      <p>É por isso que as entidades do Protocolo 3.0 — a <b>versão do fluxo</b>, as <b>etapas</b>, as <b>variáveis</b>, os <b>paralelismos</b>, os <b>remapeamentos</b>, e no protocolo os <b>andamentos</b>, <b>documentos</b>, <b>checklists</b> e <b>regras de saída</b> — devem ser tratadas como parte do mesmo modelo, e não como estruturas paralelas mantidas à mão.</p>
+
+      <div class="nota">
+        <p>A geração automática de interface resolve bem o <b>formulário de cadastro</b>, como se vê na <code>PO051</code>. Já as telas que são a proposta de valor do produto — o fluxograma da <code>PO050</code> e a tramitação visual da <code>PO051</code> — <b>não são formulários</b>, e deverão ser construídas como telas próprias sobre a mesma API.</p>
+      </div>
+    </section>
+
+    <section id="etapa5-servico" class="sub">
+      <h3>Camada de serviço</h3>
+      <p>Toda requisição percorre o mesmo caminho, do navegador até o banco:</p>
+
+      <div class="cadeia">
+        <div class="no">HTTP REQUEST</div>
+        <div class="liga"><span class="seta">↓</span><span class="rot">CORS e tratamento de exceções</span></div>
+        <div class="no">MIDDLEWARE ASP.NET CORE</div>
+        <div class="liga"><span class="seta">↓</span><span class="rot">recebe a chamada da tela</span></div>
+        <div class="no">CONTROLLER</div>
+        <div class="liga"><span class="seta">↓</span><span class="rot">regra de negócio</span></div>
+        <div class="no">PROVIDER</div>
+        <div class="liga"><span class="seta">↓</span><span class="rot">persistência</span></div>
+        <div class="no">ORM</div>
+        <div class="liga"><span class="seta">↓</span><span class="rot">banco do município</span></div>
+        <div class="no fim">SQL SERVER</div>
+      </div>
+
+      <p>O <b>Provider</b> é a camada de regra de negócio, e portanto o lugar natural do motor do Protocolo 3.0: é onde deverão viver a avaliação das <b>regras de saída</b>, a leitura das <b>variáveis</b>, a abertura dos <b>caminhos paralelos</b> e a decisão de qual é a <b>próxima etapa</b> de um protocolo.</p>
+    </section>
+
+    <section id="etapa5-dados" class="sub">
+      <h3>Multi-tenant e dados</h3>
+      <p>Cada prefeitura opera em um <b>banco de dados separado</b>. Essa decisão já tomada tem três consequências diretas para o produto:</p>
+      <ul class="lista">
+        <li>os fluxos configurados são <b>de cada município</b>, e não de uma base compartilhada;</li>
+        <li>o cache vive em memória <b>por tenant</b>, o que exige atenção ao publicar uma nova versão de fluxo;</li>
+        <li>indicadores comparativos entre municípios precisam de uma consolidação à parte, e é aí que entra o <b>ClickHouse</b>.</li>
+      </ul>
+
+      <div class="colunas-2">
+        <fieldset class="riscos">
+          <legend>SQL Server · operação</legend>
+          <ul>
+            <li>configuração dos fluxos e suas versões;</li>
+            <li>protocolos, andamentos e documentos;</li>
+            <li>checklists, regras e variáveis;</li>
+            <li>tudo o que a tramitação lê e grava no dia a dia.</li>
+          </ul>
+        </fieldset>
+
+        <fieldset class="riscos fora">
+          <legend>ClickHouse · analytics</legend>
+          <ul>
+            <li>tempo médio por etapa e por departamento;</li>
+            <li>gargalos e processos parados;</li>
+            <li>volume de protocolos por natureza;</li>
+            <li>histórico para os painéis de gestão.</li>
+          </ul>
+        </fieldset>
+      </div>
+    </section>
+
+    <section id="etapa5-protocolo" class="sub">
+      <h3>O Protocolo 3.0 na plataforma</h3>
+      <p>O quadro abaixo liga cada capacidade prevista no MVP à parte da arquitetura que a sustenta:</p>
+
+      <div class="quadro">
+        <h4>Capacidades do MVP e sua base na plataforma</h4>
+        <div class="corpo">
+          <div class="tabela-rolagem">
+            <table>
+              <thead>
+                <tr>
+                  <th>Capacidade do MVP</th>
+                  <th>Base na plataforma</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Configurar o fluxo e suas versões (<code>PO050</code>)</td><td>Entidades anotadas, ORM e DDL automático</td></tr>
+                <tr><td>Criar e tramitar protocolos (<code>PO051</code>)</td><td>Controller → Provider → ORM</td></tr>
+                <tr><td>Avaliar regras, variáveis e caminhos</td><td>Provider, na camada de regra de negócio</td></tr>
+                <tr><td>Guardar os documentos do processo</td><td>Azure Blob Storage e binário local</td></tr>
+                <tr><td>Emitir comprovantes e relatórios</td><td>FastReport, em PDF, XLSX e DOCX</td></tr>
+                <tr><td>Notificar o interessado e os responsáveis</td><td>SMTP assíncrono com fila</td></tr>
+                <tr><td>Acompanhar tempo por etapa e gargalos</td><td>ClickHouse</td></tr>
+                <tr><td>Telas do fluxograma e da tramitação</td><td>React 19, sobre a API da plataforma</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p>Nenhuma dessas capacidades exige uma tecnologia nova: o MVP é viável dentro da arquitetura atual, e o que muda é <b>como o processo é modelado e apresentado</b>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="etapa5-entregaveis" class="sub">
+      <h3>Entregáveis da etapa</h3>
+      <p>Ao final desta etapa, deverão estar disponíveis:</p>
+      <ul class="lista">
+        <li>modelo de dados do fluxo, das etapas e do protocolo;</li>
+        <li>definição do que é gerado automaticamente e do que é tela própria;</li>
+        <li>desenho do motor de regras e do seu lugar na camada de serviço;</li>
+        <li>estratégia de versionamento do fluxo no banco;</li>
+        <li>definição do armazenamento e da retenção dos documentos;</li>
+        <li>plano de indicadores e da carga para analytics;</li>
+        <li>pontos de integração com os demais módulos do ERP.</li>
+      </ul>
+
+      <div class="objetivo">
+        <svg class="setas" viewBox="0 0 100 64" aria-hidden="true">
+          <path d="M8 12 L30 32 L8 52"/>
+          <path d="M36 12 L58 32 L36 52"/>
+          <path d="M64 12 L86 32 L64 52"/>
+        </svg>
+        <div>
+          <h4>Resultado esperado</h4>
+          <p>Ter clareza de que o MVP do Protocolo 3.0 cabe na arquitetura atual da Centi, e de quais decisões técnicas precisam ser tomadas antes de começar a construção.</p>
+        </div>
+      </div>
     </section>
 
     <section id="etapa6">
@@ -2826,7 +3121,16 @@ const MENU = [
     { id: 'etapa4-criterio',    txt: 'Critério de sucesso do MVP' },
     { id: 'etapa4-entregaveis', txt: 'Entregáveis da etapa' },
   ] },
-  { titulo: '#5 Arquitetura Tecnológica',   itens: [{ id: 'etapa5',  txt: 'Visão geral' }] },
+  { titulo: '#5 Arquitetura Tecnológica',   itens: [
+    { id: 'etapa5-objetivo',    txt: 'Objetivo da etapa' },
+    { id: 'etapa5-visao',       txt: 'Visão geral da solução' },
+    { id: 'etapa5-stack',       txt: 'Stack tecnológico' },
+    { id: 'etapa5-anotacoes',   txt: 'Anotações e geração automática' },
+    { id: 'etapa5-servico',     txt: 'Camada de serviço' },
+    { id: 'etapa5-dados',       txt: 'Multi-tenant e dados' },
+    { id: 'etapa5-protocolo',   txt: 'O Protocolo 3.0 na plataforma' },
+    { id: 'etapa5-entregaveis', txt: 'Entregáveis da etapa' },
+  ] },
   { titulo: '#6 Design System e UX/UI',     itens: [{ id: 'etapa6',  txt: 'Visão geral' }] },
   { titulo: '#7 Skill Inovação (IA/ViCenti)', itens: [{ id: 'etapa7', txt: 'Visão geral' }] },
   { titulo: '#8 Legal & Compliance',        itens: [{ id: 'etapa8',  txt: 'Visão geral' }] },
