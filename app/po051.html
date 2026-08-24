@@ -6,7 +6,7 @@
 <title>Centi · PO051 - Tramitação de Protocolo</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
 <link rel="stylesheet" href="assets/centi.css?v=8">
-<link rel="stylesheet" href="assets/fluxo.css?v=16">
+<link rel="stylesheet" href="assets/fluxo.css?v=18">
 <style>
   /* o fluxo é o conteúdo da aba Cadastro, e o drawer ocupa 2/3 da área */
   .cad .fluxo { --drawer-w: 66.667%; }
@@ -47,8 +47,9 @@
      na etapa da vez e branco nas que ainda não começaram. Basta trocar a
      paleta que o fluxo.css lê nas variáveis do tipo; as regras de lá seguem
      valendo, e as outras telas continuam com as quatro cores. */
-  /* grafite das linhas fora do caminho percorrido (pulado ou ainda por vir) */
-  .cad .fluxo { --linha-fora: #4F4F4F; }
+  /* cinza claro de tudo que está fora do caminho percorrido: as linhas do que o
+     processo pulou e do que ele ainda não percorreu, e o card da etapa pulada */
+  .cad .fluxo { --linha-fora: #BDBFB5; }
 
   .cad .etapa {
     --tipo: var(--g); --tipo-nome: var(--g-mid);

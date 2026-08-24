@@ -220,11 +220,12 @@
 .etapa.finalizada .dias { color: #919191; }
 
 /* etapa que o fluxo não executou — pulada ou não aplicável: card branco, com o
-   contorno, a bolinha e o título em grafite. A que ainda vai ser executada, por
-   contraste, fica branca mas toda na cor da etapa. */
-.etapa.dispensada { border-color: #4F4F4F; }
-.etapa.dispensada .nome { color: #4F4F4F; }
-.etapa.dispensada .num { background: #4F4F4F; }
+   contorno, a bolinha e o título no cinza claro do caminho não percorrido. A
+   que ainda vai ser executada, por contraste, fica branca mas toda na cor da
+   etapa. O número segue branco, como nas demais bolinhas. */
+.etapa.dispensada { border-color: var(--linha-fora, #BDBFB5); }
+.etapa.dispensada .nome { color: var(--linha-fora, #BDBFB5); }
+.etapa.dispensada .num { background: var(--linha-fora, #BDBFB5); }
 
 /* card selecionado com o drawer aberto: fundo na cor do próprio tipo — verde só
    na Tarefa, que é a verde. Sem tipo (fluxo por estado do PO011) cai no verde */
