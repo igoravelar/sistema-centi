@@ -219,11 +219,12 @@
 .etapa.finalizada .depto-lbl,
 .etapa.finalizada .dias { color: #919191; }
 
-/* apagada — etapa não iniciada: continua clicável, e volta ao cheio no hover e
-   com o drawer aberto, para não se confundir com um card desabilitado */
-.etapa.naoiniciada { opacity: .45; }
-.etapa.naoiniciada:hover,
-.etapa.naoiniciada.aberta { opacity: 1; }
+/* etapa que o fluxo não executou — pulada ou não aplicável: card branco, com o
+   contorno, a bolinha e o título em grafite. A que ainda vai ser executada, por
+   contraste, fica branca mas toda na cor da etapa. */
+.etapa.dispensada { border-color: #4F4F4F; }
+.etapa.dispensada .nome { color: #4F4F4F; }
+.etapa.dispensada .num { background: #4F4F4F; }
 
 /* card selecionado com o drawer aberto: fundo na cor do próprio tipo — verde só
    na Tarefa, que é a verde. Sem tipo (fluxo por estado do PO011) cai no verde */
@@ -234,12 +235,6 @@
 .etapa.aberta .nome, .etapa.aberta .depto { color: #FFFFFF; }
 .etapa.aberta .depto-lbl, .etapa.aberta .dias { color: var(--tipo-claro, #DFF19C); }
 .etapa.aberta .num { background: var(--tipo-forte, var(--g-stroke)); color: #FFFFFF; }
-
-/* atraso na previsão: o protocolo passou do prazo da etapa. Só o contorno vai a
-   vermelho — a bolinha continua na cor da etapa, para não perder de vista qual
-   é. Concluída em atraso segue vermelha. Vem depois de .aberta para valer
-   também no card selecionado. */
-.etapa.atrasada { border-color: #E53935; }
 
 /* farol da situação da etapa: mesma leitura de cor no card e no drawer */
 .farol {

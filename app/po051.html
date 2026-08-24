@@ -6,7 +6,7 @@
 <title>Centi · PO051 - Tramitação de Protocolo</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
 <link rel="stylesheet" href="assets/centi.css?v=8">
-<link rel="stylesheet" href="assets/fluxo.css?v=14">
+<link rel="stylesheet" href="assets/fluxo.css?v=16">
 <style>
   /* o fluxo é o conteúdo da aba Cadastro, e o drawer ocupa 2/3 da área */
   .cad .fluxo { --drawer-w: 66.667%; }
@@ -30,12 +30,15 @@
     cursor: default;
   }
 
-  /* linha que liga os cards do fluxo do protocolo: 2px verdes no trecho já
-     percorrido e, do card em andamento para baixo, o mesmo verde em tracejado
-     — dali para frente o caminho é previsto, e não percorrido */
-  .liga-prot { width: 2px; height: 56px; background: #BCC8A0; flex: 0 0 auto; }
+  /* linha que liga os cards do fluxo do protocolo: o mesmo verde do contorno do
+     card e a mesma leitura de espessura — 3px, porque o zoom do desenho suaviza
+     a borda do card e uma linha de 2px acaba parecendo mais fina que ela.
+     O verde é o caminho que o processo percorreu; o que ele pulou vem em
+     grafite, e o que ainda não percorreu, em grafite tracejado. */
+  .liga-prot { width: 3px; height: 56px; background: var(--g); flex: 0 0 auto; }
+  .liga-prot.grafite { background: var(--linha-fora); }
   .liga-prot.tracejada {
-    background: repeating-linear-gradient(180deg, #BCC8A0 0 6px, transparent 6px 12px);
+    background: repeating-linear-gradient(180deg, var(--linha-fora) 0 7px, transparent 7px 14px);
   }
 
   /* ------------- sinalização das etapas (regra própria do PO051) -------------
@@ -44,13 +47,48 @@
      na etapa da vez e branco nas que ainda não começaram. Basta trocar a
      paleta que o fluxo.css lê nas variáveis do tipo; as regras de lá seguem
      valendo, e as outras telas continuam com as quatro cores. */
+  /* grafite das linhas fora do caminho percorrido (pulado ou ainda por vir) */
+  .cad .fluxo { --linha-fora: #4F4F4F; }
+
   .cad .etapa {
     --tipo: var(--g); --tipo-nome: var(--g-mid);
     --tipo-topo: #ADC84A; --tipo-fundo: #8FAA31;
     --tipo-forte: var(--g-stroke); --tipo-claro: #DFF19C;
   }
 
-  /* etapa da vez: o card inteiro verde, o mesmo desenho do card selecionado */
+  /* no drawer da etapa a bolinha e o título seguem a mesma cor do card */
+  .cad .drawer-titulo { --tipo: var(--g); --tipo-nome: var(--g-mid); }
+
+  /* paralelismo: os dois cards lado a lado e as bifurcações que abrem e fecham
+     o desvio. Cada ramo é metade da bifurcação — meia barra, do meio até o
+     centro do seu card, mais a perna que desce (ou sobe) até ele —, e assim
+     cada lado leva a cor do seu próprio caminho: verde no ramo que o processo
+     percorreu, grafite no que ele pulou. */
+  .cad .par { display: flex; flex: 0 0 auto; }
+  .cad .bifurca { position: relative; flex: 0 0 auto; height: 28px; }
+  .cad .bifurca .ramo { position: absolute; top: 0; bottom: 0; width: 50%; --linha: var(--g); }
+  .cad .bifurca .ramo.grafite { --linha: var(--linha-fora); }
+  .cad .bifurca .ramo.esq { left: 0; }
+  .cad .bifurca .ramo.dir { right: 0; }
+  .cad .bifurca .ramo::before { content: ''; position: absolute; left: 0; right: 0; height: 3px; background: var(--linha); }
+  .cad .bifurca.abre .ramo::before  { top: 0; }
+  .cad .bifurca.fecha .ramo::before { bottom: 0; }
+  .cad .bifurca .ramo i { position: absolute; top: 0; bottom: 0; width: 3px; background: var(--linha); }
+  .cad .bifurca .ramo.esq i { left: 0; }
+  .cad .bifurca .ramo.dir i { right: 0; }
+  .cad .bifurca.tracejada .ramo { --linha: var(--linha-fora); }
+  .cad .bifurca.tracejada .ramo::before {
+    background: repeating-linear-gradient(90deg, var(--linha) 0 7px, transparent 7px 14px);
+  }
+  .cad .bifurca.tracejada .ramo i {
+    background: repeating-linear-gradient(180deg, var(--linha) 0 7px, transparent 7px 14px);
+  }
+
+  /* etapa clicada: nada muda no card além de um contorno extra, na cor e na
+     espessura do contorno dele, a 5px de distância */
+  .cad .etapa.selecionada { outline: 2px solid var(--tipo); outline-offset: 5px; }
+
+  /* etapa da vez: o card inteiro verde */
   .cad .etapa.executar {
     background: linear-gradient(180deg, var(--tipo-topo) 0%, var(--tipo-fundo) 100%);
     border-color: var(--tipo-forte);
@@ -59,8 +97,6 @@
   .cad .etapa.executar .depto { color: #FFFFFF; }
   .cad .etapa.executar .depto-lbl { color: var(--tipo-claro); }
   .cad .etapa.executar .num { background: var(--tipo-forte); color: #FFFFFF; }
-  /* o atraso da previsão continua marcando o contorno, mesmo na etapa da vez */
-  .cad .etapa.executar.atrasada { border-color: #E53935; }
 
   /* o reenquadre ao abrir/fechar o drawer desliza o fluxo suavemente */
   .cad .bpmn-espaco.anim { transition: transform .28s ease; }
@@ -401,22 +437,23 @@ let protAberto = null;   /* índice da linha aberta; null = instrução */
 let etapaSelP = null;
 
 /* Fluxos de exemplo do protocolo. `prazo` é o tempo previsto da etapa em dias e
-   `corridos` é quanto o protocolo já ficou na repartição; passando do prazo, o
-   card marca atraso.
+   `corridos` é quanto o protocolo já ficou na repartição — o atraso passou a ser
+   comunicado de outra forma, e os dois campos ficam aqui como dado da etapa.
+   `par` marca as etapas paralelas: as que têm o mesmo valor correm lado a lado.
 
-   O FLUXO_VALIDACAO é o cenário de conferência das cores — os quatro tipos de
-   etapa, os seis estados do farol e os dois casos de atraso — e abre no
-   protocolo 2292436. Os demais protocolos abrem o FLUXO_SIMPLES, a tramitação
-   de AQUISIÇÃO - PD. */
-const FLUXO_VALIDACAO = [
-  { n: 1, titulo: 'Início',                        tipo: 'Início',  depto: 'QUALQUER UM',                                   prazo: 1, corridos: 1, situacao: 'Concluída' },
-  { n: 2, titulo: 'Pedido',                        tipo: 'Tarefa',  depto: 'DEPARTAMENTO DE COMPRAS - SEC. ADMINISTRAÇÃO',  prazo: 2, corridos: 2, situacao: 'Concluída Retroativa' },
-  { n: 3, titulo: 'Gerar Dispensa',                tipo: 'Tarefa',  depto: 'DEPARTAMENTO DE LICITAÇÃO - SEC ADMINISTRAÇÃO', prazo: 2, corridos: 5, situacao: 'Concluída' },
-  { n: 4, titulo: 'Valor exige análise ampliada?', tipo: 'Decisão', depto: 'TRIBUTAÇÃO',                                    prazo: 1, corridos: 1, situacao: 'Pulada' },
-  { n: 5, titulo: 'Parecer do Controle Interno',   tipo: 'Tarefa',  depto: 'CONTROLE INTERNO',                              prazo: 1, corridos: 0, situacao: 'Não Aplicável' },
-  { n: 6, titulo: 'Gerar Autorização Empenho',     tipo: 'Tarefa',  depto: 'DEPARTAMENTO DE COMPRAS - SEC. ADMINISTRAÇÃO',  prazo: 2, corridos: 4, situacao: 'Em Andamento' },
-  { n: 7, titulo: 'Decisão do Pedido',             tipo: 'Decisão', depto: 'TRIBUTAÇÃO',                                    prazo: 1, corridos: 0, situacao: 'Não Iniciada' },
-  { n: 8, titulo: 'Fim',                           tipo: 'Fim',     depto: 'PREFEITURA MUNICIPAL DE RIO VERDE',             prazo: 1, corridos: 0, situacao: 'Não Iniciada' },
+   O FLUXO_PARALELO abre no protocolo 2292436, o primeiro da grid, e é o que
+   mostra o paralelismo — a etapa 3 bifurca nas etapas 4 e 5, que se juntam de
+   novo na etapa 6. Os demais protocolos abrem o FLUXO_SIMPLES, a tramitação de
+   AQUISIÇÃO - PD. */
+const FLUXO_PARALELO = [
+  { n: 1, titulo: 'Início',                      tipo: 'Início',  depto: 'QUALQUER UM',                                   prazo: 1, corridos: 1, situacao: 'Concluída' },
+  { n: 2, titulo: 'Pedido',                      tipo: 'Tarefa',  depto: 'DEPARTAMENTO DE COMPRAS - SEC. ADMINISTRAÇÃO',  prazo: 2, corridos: 2, situacao: 'Concluída' },
+  { n: 3, titulo: 'Conferência da Solicitação',  tipo: 'Tarefa',  depto: 'DEPARTAMENTO DE LICITAÇÃO - SEC ADMINISTRAÇÃO', prazo: 2, corridos: 2, situacao: 'Concluída' },
+  { n: 4, titulo: 'Análise Tributária',          tipo: 'Tarefa',  depto: 'TRIBUTAÇÃO',            par: 'a',               prazo: 1, corridos: 0, situacao: 'Pulada' },
+  { n: 5, titulo: 'Parecer do Controle Interno', tipo: 'Tarefa',  depto: 'CONTROLE INTERNO',      par: 'a',               prazo: 1, corridos: 1, situacao: 'Concluída' },
+  { n: 6, titulo: 'Gerar Autorização Empenho',   tipo: 'Tarefa',  depto: 'DEPARTAMENTO DE COMPRAS - SEC. ADMINISTRAÇÃO',  prazo: 2, corridos: 1, situacao: 'Em Andamento' },
+  { n: 7, titulo: 'Decisão do Pedido',           tipo: 'Decisão', depto: 'TRIBUTAÇÃO',                                    prazo: 1, corridos: 0, situacao: 'Não Iniciada' },
+  { n: 8, titulo: 'Fim',                         tipo: 'Fim',     depto: 'PREFEITURA MUNICIPAL DE RIO VERDE',             prazo: 1, corridos: 0, situacao: 'Não Iniciada' },
 ];
 
 const FLUXO_SIMPLES = [
@@ -443,14 +480,19 @@ const FLUXO_LICITACAO = [
 ];
 
 /* qual fluxo cada protocolo abre; sem entrada aqui, abre o simples */
-const FLUXOS_PROT = { '2292436': FLUXO_VALIDACAO, '2292410': FLUXO_LICITACAO };
+const FLUXOS_PROT = { '2292436': FLUXO_PARALELO, '2292410': FLUXO_LICITACAO };
 
 /* etapas do protocolo aberto: definido em abrirFluxoProt, pelo id da linha */
 let ETAPAS_PROT = FLUXO_SIMPLES;
 
 const PROT_L = 594;
-/* a altura do desenho acompanha a quantidade de etapas do fluxo aberto */
-function alturaProtP() { return 40 + ETAPAS_PROT.length * 112 + (ETAPAS_PROT.length - 1) * 56; }
+/* a altura do desenho acompanha as linhas do fluxo aberto — um paralelismo
+   ocupa uma linha só, mais as duas bifurcações que o abrem e o fecham */
+function alturaProtP() {
+  const linhas = linhasFluxoP();
+  const pares = linhas.filter(l => l.length > 1).length;
+  return 40 + linhas.length * CARD_A + (linhas.length - 1) * LIGA_A + pares * 2 * BIFURCA_A;
+}
 
 /** Classe de cor do card conforme o tipo da etapa: Início azul, Tarefa verde,
     Decisão laranja, Fim vermelho (paleta no fluxo.css). */
@@ -465,27 +507,59 @@ function classeTipoP(tipo) {
    prazo à esquerda e a situação à direita sem encostar na bolinha do meio */
 const CARD_L = 260, CARD_A = 112;
 
-/** Estado do card a partir da situação da etapa: concluída (nas duas formas)
-    fica cinza — o tipo mantém contorno e bolinha —, a que está em andamento é a
-    que precisa ser executada (fundo branco, com o anel girando em volta) e a
-    não iniciada fica apagada, ainda clicável. Pulada e Não Aplicável ficam no
-    card branco, sem apagar: quem conta a história ali é o farol. */
+/** Estado do card a partir da situação da etapa:
+      concluída (nas duas formas) — fundo cinza, contorno e bolinha da etapa e
+                                    título em cinza claro;
+      em andamento               — fundo no verde degradê;
+      pulada / não aplicável     — fundo branco, tudo em grafite;
+      não iniciada               — fundo branco, tudo na cor da etapa. */
 function classeEstadoP(n) {
   const sit = situacaoEtapaP(n);
   return sit === 'Concluída' || sit === 'Concluída Retroativa' ? 'finalizada'
        : sit === 'Em Andamento' ? 'executar'
-       : sit === 'Não Iniciada' ? 'naoiniciada'
-       : '';
+       : sit === 'Pulada' || sit === 'Não Aplicável' ? 'dispensada'
+       : 'naoiniciada';
 }
 
-/** Atraso da previsão: o protocolo ficou na repartição mais do que o prazo da
-    etapa. Vale também depois de concluída — a etapa concluída em atraso segue
-    marcada. */
-function atrasadaP(e) { return e.corridos > e.prazo; }
-
-/* situações em que o fluxo já passou pela etapa: o trecho de linha até ela é
+/* situações em que o fluxo já resolveu a etapa: o trecho de linha até ela é
    caminho percorrido, e não previsto */
 const RESOLVIDAS_P = ['Concluída', 'Concluída Retroativa', 'Pulada', 'Não Aplicável'];
+
+/* das resolvidas, as que o processo não executou: as linhas que levam a elas
+   ficam em grafite, porque o protocolo não passou por ali */
+const NAO_EXECUTADAS_P = ['Pulada', 'Não Aplicável'];
+
+/* medidas do desenho: altura do traço entre linhas, altura da bifurcação e a
+   folga entre os dois cards de um paralelismo */
+const LIGA_A = 56, BIFURCA_A = 28, PAR_GAP = 40;
+
+/** Etapas agrupadas em linhas do desenho: as que compartilham o mesmo `par`
+    são paralelas e dividem a mesma linha, uma ao lado da outra. */
+function linhasFluxoP() {
+  const linhas = [];
+  ETAPAS_PROT.forEach(e => {
+    const ultima = linhas[linhas.length - 1];
+    if (e.par && ultima && ultima[0].par === e.par) ultima.push(e);
+    else linhas.push([e]);
+  });
+  return linhas;
+}
+
+/** Card de uma etapa no desenho. */
+function cardEtapaP(e) {
+  return `
+    <div class="etapa ${classeTipoP(e.tipo)} ${classeEstadoP(e.n)}" data-n="${e.n}"
+         style="position:relative;left:0;top:0;width:${CARD_L}px;height:${CARD_A}px;flex:0 0 auto"
+         onclick="abrirEtapaProt(${e.n})">
+      <span class="num">${e.n}</span>
+      <span class="nome">${e.titulo}</span>
+      <span class="rodape">
+        <span class="depto-lbl">DEPTO</span>
+        <span class="depto">${e.depto}</span>
+      </span>
+      <span class="ponto"></span>
+    </div>`;
+}
 
 /** Título do topo do Cadastro: sem protocolo aberto, uma instrução em
     itálico (sem link); com um aberto, o link "Protocolo - X" de sempre. */
@@ -525,25 +599,33 @@ function montarFluxoProt() {
   const r = RESULTADOS_P[protAberto];
   main.querySelector('.cad-topo .esq').innerHTML = tituloCadEsqHTML();
 
-  const cards = ETAPAS_PROT.map(e => {
-    const classes = [classeTipoP(e.tipo), classeEstadoP(e.n), atrasadaP(e) ? 'atrasada' : ''];
-    /* o trecho de linha acima do card sai da etapa anterior: caminho já
-       percorrido vem cheio; daí em diante é previsto, e vem tracejado */
-    const antes = e.n > 1 ? situacaoEtapaP(e.n - 1) : '';
-    const liga = antes && !RESOLVIDAS_P.includes(antes) ? ' tracejada' : '';
-    return `
-    ${e.n > 1 ? `<div class="liga-prot${liga}"></div>` : ''}
-    <div class="etapa ${classes.filter(Boolean).join(' ')}" data-n="${e.n}"
-         style="position:relative;left:0;top:0;width:${CARD_L}px;height:${CARD_A}px;flex:0 0 auto"
-         onclick="abrirEtapaProt(${e.n})">
-      <span class="num">${e.n}</span>
-      <span class="nome">${e.titulo}</span>
-      <span class="rodape">
-        <span class="depto-lbl">DEPTO</span>
-        <span class="depto">${e.depto}</span>
-      </span>
-      <span class="ponto"></span>
+  /* o traço que chega numa linha sai da anterior. Verde é o caminho que o
+     processo percorreu; grafite tracejado, o que ele ainda não percorreu; e
+     grafite cheio, o que ele pulou — o trecho de uma etapa não executada. */
+  const previsto = linha => !linha.every(e => RESOLVIDAS_P.includes(e.situacao));
+  const puladas = linha => linha.every(e => NAO_EXECUTADAS_P.includes(e.situacao));
+  const liga = (tracejada, grafite) =>
+    `<div class="liga-prot${tracejada ? ' tracejada' : grafite ? ' grafite' : ''}"></div>`;
+  /* na bifurcação cada ramo leva a cor do seu próprio card */
+  const bifurca = (lado, tracejada, ramos) => `
+    <div class="bifurca ${lado}${tracejada ? ' tracejada' : ''}" style="width:${CARD_L + PAR_GAP}px">
+      ${['esq', 'dir'].map((l, k) => `
+      <span class="ramo ${l}${NAO_EXECUTADAS_P.includes(ramos[k].situacao) ? ' grafite' : ''}"><i></i></span>`).join('')}
     </div>`;
+
+  const linhas = linhasFluxoP();
+  const cards = linhas.map((atual, i) => {
+    const antes = i > 0 ? linhas[i - 1] : null;
+    /* o traço vertical só é grafite quando o processo não passou por nenhum dos
+       lados: num paralelismo, basta um ramo ter corrido para o tronco ser verde */
+    const chegando = antes ? liga(previsto(antes), puladas(antes) || puladas(atual)) : '';
+    if (atual.length === 1) return chegando + cardEtapaP(atual[0]);
+    /* paralelismo: a bifurcação abre para os dois cards e fecha depois deles */
+    return `
+    ${chegando}
+    ${bifurca('abre', antes ? previsto(antes) : false, atual)}
+    <div class="par" style="gap:${PAR_GAP}px">${atual.map(cardEtapaP).join('')}</div>
+    ${bifurca('fecha', previsto(atual), atual)}`;
   }).join('');
 
   main.querySelector('.cad .fluxo').innerHTML = `
@@ -757,7 +839,7 @@ function aoDrawerAssentar(d, fn) {
 
 function abrirProtocoloP() {
   etapaSelP = null;
-  main.querySelectorAll('.cad .etapa').forEach(el => el.classList.remove('aberta'));
+  main.querySelectorAll('.cad .etapa').forEach(el => el.classList.remove('selecionada'));
   mostrarDrawer(drawerProtocoloHTML(), () => montarCanvasP(true));
 }
 
@@ -766,9 +848,10 @@ function abrirProtocoloP() {
     o fluxo inteiro) que dá a sensação de destaque no card clicado. */
 function abrirEtapaProt(n) {
   etapaSelP = n; abaP = 'Dados';
-  /* o card aberto se destaca pelo fundo na cor do tipo, sem contorno extra */
+  /* o card clicado se destaca só pelo contorno extra: o fundo continua
+     contando o andamento da etapa */
   main.querySelectorAll('.cad .etapa').forEach(el => {
-    el.classList.toggle('aberta', +el.dataset.n === n);
+    el.classList.toggle('selecionada', +el.dataset.n === n);
   });
   mostrarDrawer(drawerEtapaHTML(n), () => centralizarEtapaP(n));
 }
@@ -785,7 +868,7 @@ function fecharDrawerP() {
   const d = drawerP();
   d.classList.remove('aberto');
   etapaSelP = null;
-  main.querySelectorAll('.cad .etapa').forEach(el => el.classList.remove('aberta'));
+  main.querySelectorAll('.cad .etapa').forEach(el => el.classList.remove('selecionada'));
   /* recentraliza deslizando assim que o drawer devolve a largura */
   aoDrawerAssentar(d, () => montarCanvasP(true));
 }
