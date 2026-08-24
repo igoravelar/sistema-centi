@@ -903,34 +903,6 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
 .cadeia .liga .rot { font-size: 12px; font-style: italic; color: var(--txt-mute); }
 
-/* camadas da arquitetura conceitual, empilhadas e ligadas por setas */
-.camadas { margin: 0 0 22px; }
-
-.camadas .camada {
-  background: #F5FCD9;
-  border: 1px solid #D5E690;
-  border-radius: 10px;
-  padding: 14px 18px;
-}
-
-.camadas .camada h4 {
-  margin: 0 0 6px;
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: #3F440C;
-}
-
-.camadas .camada p { margin: 0; font-size: 12.5px; }
-
-.camadas .seta-baixo {
-  padding: 4px 0;
-  text-align: center;
-  color: var(--verde);
-  font-weight: 700;
-}
-
 /* ficha de tela: miniatura do protótipo com o nome e o código da tela */
 .pagina fieldset.tela {
   margin: 0 0 22px;
@@ -2684,30 +2656,6 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <p>O objetivo é reduzir a fragmentação da experiência atual e fazer com que o sistema reflita a lógica real da tramitação administrativa.</p>
     </section>
 
-    <section id="etapa4-arquitetura" class="sub">
-      <h3>Arquitetura conceitual do MVP</h3>
-      <p>O modelo funcional pode ser resumido em três camadas:</p>
-
-      <div class="camadas">
-        <div class="camada">
-          <h4>Configuração</h4>
-          <p>Fluxos · Etapas · Regras · Checklist · Documentos · Variáveis · Condições</p>
-        </div>
-        <div class="seta-baixo">↓</div>
-        <div class="camada">
-          <h4>Protocolo</h4>
-          <p>Cadastro · Documentos · Requisitos · Identificação · Início do processo</p>
-        </div>
-        <div class="seta-baixo">↓</div>
-        <div class="camada">
-          <h4>Tramitação</h4>
-          <p>Executar · Conferir · Encaminhar · Acompanhar · Concluir · Rastrear</p>
-        </div>
-      </div>
-
-      <p>Essa arquitetura conceitual estabelece a base para a construção do MVP e para as próximas definições de arquitetura tecnológica, UX/UI e regras de negócio.</p>
-    </section>
-
     <section id="etapa4-criterio" class="sub">
       <h3>Critério de sucesso do MVP</h3>
       <p>O MVP será considerado conceitualmente validado quando demonstrar que os três principais perfis conseguem realizar suas responsabilidades com clareza:</p>
@@ -2753,13 +2701,19 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <div class="nota">
         <p>A conclusão desta etapa <b>não significa que o produto está validado em produção</b>. Ela representa a construção da primeira versão estruturada do produto, que deverá ser submetida à validação com usuários e posteriormente utilizada em um <b>projeto piloto real</b>.</p>
       </div>
-    </section>
 
-    <section id="etapa4-resultado" class="sub">
-      <h3>Resultado esperado</h3>
       <p>Ao final da Modelagem do Produto, a Centi deverá ter clareza sobre <b>como o Protocolo 3.0 funciona, quem utiliza cada parte da solução, quais responsabilidades cada perfil possui e como o processo percorre a plataforma desde sua configuração até sua conclusão</b>.</p>
-      <div class="definicao">
-        <p>A partir desse ponto, o produto deixa de ser apenas uma visão estratégica e passa a possuir estrutura funcional suficiente para ser demonstrado, testado, validado e posteriormente transformado em uma solução comercializável.</p>
+
+      <div class="objetivo">
+        <svg class="setas" viewBox="0 0 100 64" aria-hidden="true">
+          <path d="M8 12 L30 32 L8 52"/>
+          <path d="M36 12 L58 32 L36 52"/>
+          <path d="M64 12 L86 32 L64 52"/>
+        </svg>
+        <div>
+          <h4>Resultado esperado</h4>
+          <p>A partir desse ponto, o produto deixa de ser apenas uma visão estratégica e passa a possuir estrutura funcional suficiente para ser demonstrado, testado, validado e posteriormente transformado em uma solução comercializável.</p>
+        </div>
       </div>
     </section>
 
@@ -2869,10 +2823,8 @@ const MENU = [
     { id: 'etapa4-estagios',    txt: 'Estágios Operacionais' },
     { id: 'etapa4-perfis',      txt: 'Perfis de usuários' },
     { id: 'etapa4-telas',       txt: 'Evolução das telas' },
-    { id: 'etapa4-arquitetura', txt: 'Arquitetura conceitual' },
     { id: 'etapa4-criterio',    txt: 'Critério de sucesso do MVP' },
     { id: 'etapa4-entregaveis', txt: 'Entregáveis da etapa' },
-    { id: 'etapa4-resultado',   txt: 'Resultado esperado' },
   ] },
   { titulo: '#5 Arquitetura Tecnológica',   itens: [{ id: 'etapa5',  txt: 'Visão geral' }] },
   { titulo: '#6 Design System e UX/UI',     itens: [{ id: 'etapa6',  txt: 'Visão geral' }] },
