@@ -413,6 +413,12 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
   font-weight: 800;
 }
 
+.pagina .estagio-titulo .num svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
 .pagina .estagio-titulo .lbl {
   display: block;
   font-size: 11px;
@@ -423,17 +429,21 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 }
 
 .pagina .estagio-titulo h3 { margin: 0; font-size: 17px; }
-/* dentro da faixa o marcador verde do subtópico não faz sentido — precisa
-   vencer a especificidade da regra `section.sub h3::before` */
-.pagina section.sub .estagio-titulo h3::before { display: none; }
+/* dentro da faixa o sublinhado verde do subtópico não faz sentido, e o título
+   segue colado — precisa vencer a especificidade das regras `section.sub h3` */
+.pagina section.sub .estagio-titulo h3 { margin: 0; }
+.pagina section.sub .estagio-titulo h3::after { display: none; }
 
-/* marcador acima do título do subtópico */
-.pagina section.sub h3::before {
+/* sublinhado verde do título do subtópico: `display: table` encolhe o h3 até
+   o texto, e assim o traço nasce com a largura do próprio título */
+.pagina section.sub h3 { display: table; margin-bottom: 20px; }
+
+.pagina section.sub h3::after {
   content: '';
   display: block;
-  width: 10px;
+  width: 100%;
   height: 3px;
-  margin-bottom: 7px;
+  margin-top: 4px;
   background: #BFD634;
 }
 
@@ -481,6 +491,28 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 .pagina fieldset.riscos li { margin: 6px 0; }
 
 .pagina fieldset.riscos li::marker { color: var(--verde); }
+
+/* quadro de conteúdo: barra de título em cima e o conteúdo dentro da moldura */
+.pagina .quadro {
+  margin: 26px 0 22px;
+  border: 1px solid var(--verde-linha);
+  border-radius: 10px;
+  /* a barra de título acompanha o arredondado do quadro */
+  overflow: hidden;
+}
+
+.pagina .quadro > h4 {
+  margin: 0;
+  padding: 11px 20px;
+  background: #F3FFC3;
+  border-bottom: 1px solid var(--verde-linha);
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--txt-strong);
+}
+
+/* o recuo de baixo é curto porque o último parágrafo já traz a sua margem */
+.pagina .quadro .corpo { padding: 16px 20px 4px; }
 
 /* título de terceiro nível dentro de um subtópico */
 .pagina > section > h4 {
@@ -559,6 +591,56 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
 .pagina blockquote p { margin: 0; font-weight: 700; font-style: italic; }
 
+/* objetivo do estágio: três setas em degradê e o texto ao lado */
+.pagina .objetivo {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  margin: 26px 0 22px;
+}
+
+.pagina .objetivo .setas {
+  flex: 0 0 auto;
+  width: 116px;
+  height: 74px;
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* o degradê vai do verde mais claro até o verde da marca */
+.pagina .objetivo .setas path:nth-child(1) { stroke: #DEECB0; }
+.pagina .objetivo .setas path:nth-child(2) { stroke: #C4D96C; }
+.pagina .objetivo .setas path:nth-child(3) { stroke: var(--verde); }
+
+/* seta curva: o objetivo de cada persona. Vem no tamanho do desenho original,
+   e o texto anda mais para perto dela do que na versão das três setas */
+.pagina .objetivo.curva { gap: 14px; }
+
+.pagina .objetivo .seta-curva {
+  flex: 0 0 auto;
+  width: 87px;
+  height: 37px;
+  fill: none;
+  stroke: var(--verde);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pagina .objetivo h4 {
+  margin: 0 0 8px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--txt-strong);
+}
+
+.pagina .objetivo p {
+  margin: 0;
+  font-style: italic;
+}
+
 /* seta de evolução em destaque (Digitalizar → Tramitar → ...) */
 .pagina .marco {
   margin: 0 0 18px;
@@ -633,6 +715,67 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 .fluxo-palavras.vertical .palavra {
   min-width: 190px;
   text-align: center;
+}
+
+/* quadro comparativo: o caminho de antes e o de depois, um em cada coluna.
+   A coluna do antes vem em cinza, e a do depois no verde do produto. */
+.comparativo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin: 0 0 22px;
+}
+
+.comparativo .col {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--cinza-linha);
+  border-radius: 10px;
+  /* a barra de título acompanha o arredondado da coluna */
+  overflow: hidden;
+}
+
+.comparativo .col.depois { border-color: var(--verde-linha); }
+
+.comparativo .cab {
+  margin: 0;
+  padding: 10px 16px;
+  background: #F7F7F7;
+  border-bottom: 1px solid var(--cinza-linha);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--txt-mute);
+}
+
+.comparativo .col.depois .cab {
+  background: #F3FFC3;
+  border-bottom-color: var(--verde-linha);
+  color: #8BA81D;
+}
+
+/* a coluna mais curta centraliza o caminho na altura da outra */
+.comparativo .fluxo-palavras {
+  flex: 1;
+  justify-content: center;
+  margin: 0;
+  padding: 16px;
+  align-items: center;
+}
+
+/* o caminho de hoje fica sem cor: é o que está sendo substituído */
+.comparativo .col:not(.depois) .palavra {
+  background: #FAFAFA;
+  border-color: var(--cinza-linha);
+  color: var(--txt);
+}
+
+.comparativo .col:not(.depois) .seta-fluxo { color: var(--txt-mute); }
+
+/* nas telas estreitas as duas colunas passam a ficar uma sob a outra */
+@media (max-width: 720px) {
+  .comparativo { grid-template-columns: 1fr; }
 }
 
 /* estágios de evolução: pílula do estágio + descrição, encadeados por setas */
@@ -2052,17 +2195,27 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
       <h4>Conceito de versão e etapas</h4>
 
-      <div class="mini-tela" data-legenda="Fluxo de Processos PO050" onclick="ampliarTela(this)">
-        <img src="assets/img/po050-versoes-pastas.png"
-             alt="PO050 - Fluxo de Processos: a versão publicada do fluxo ISENÇÃO DE IPTU e, dentro dela, as pastas Etapas, Variáveis, Paralelismos e Remapeamentos">
-        <span class="canto"></span>
-        <button class="lupa" title="Ampliar a tela" aria-label="Ampliar a tela">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
-        </button>
-      </div>
+      <fieldset class="tela">
+        <legend>
+          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <span class="ico">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="5" rx="1"/><rect x="2" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="6" height="5" rx="1"/><path d="M12 7v3"/><path d="M5 16v-2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v2"/></svg>
+          </span>
+          Fluxo de Processos
+          <span class="cod">PO050</span>
+        </legend>
 
-      <p>A criação ou alteração de um fluxo deverá ocorrer inicialmente em uma <b>versão em rascunho</b>.</p>
-      <p>Isso permite que o usuário responsável possa estruturar, revisar e validar as alterações antes que uma nova configuração seja efetivamente disponibilizada para utilização.</p>
+        <div class="mini-tela" onclick="ampliarTela(this)">
+          <img src="assets/img/po050-versoes-pastas.png"
+               alt="PO050 - Fluxo de Processos: a versão publicada do fluxo ISENÇÃO DE IPTU e, dentro dela, as pastas Etapas, Variáveis, Paralelismos e Remapeamentos">
+          <span class="canto"></span>
+          <button class="lupa" title="Ampliar a tela" aria-label="Ampliar a tela">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
+          </button>
+        </div>
+      </fieldset>
+
+      <p>A criação ou alteração de um fluxo deverá ocorrer inicialmente em uma <b>versão em rascunho</b>. Isso permite que o usuário responsável possa estruturar, revisar e validar as alterações antes que uma nova configuração seja efetivamente disponibilizada para utilização.</p>
       <p>Cada processo é composto por etapas que representam as atividades necessárias para sua conclusão. Cada etapa poderá possuir:</p>
       <div class="fluxo-palavras">
         <span class="palavra">RESPONSÁVEL</span>
@@ -2076,13 +2229,22 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </div>
 
       <h4>Regras e variáveis</h4>
-      <p>As regras determinam o comportamento do processo diante de diferentes situações.</p>
-      <p>As variáveis permitem que o fluxo seja adaptado às informações específicas de cada protocolo, possibilitando que diferentes circunstâncias conduzam o processo por caminhos distintos.</p>
+      <ul>
+        <li><b>Regras:</b> determinam o comportamento do processo diante de diferentes situações.</li>
+        <li><b>Variáveis:</b> permitem que o fluxo seja adaptado às informações específicas de cada protocolo, possibilitando que diferentes circunstâncias conduzam o processo por caminhos distintos.</li>
+      </ul>
 
-      <h4>Objetivo deste estágio</h4>
-      <blockquote>
-        <p>Permitir que a prefeitura transforme sua regra de negócio em um fluxo administrativo estruturado, configurável e rastreável.</p>
-      </blockquote>
+      <div class="objetivo">
+        <svg class="setas" viewBox="0 0 100 64" aria-hidden="true">
+          <path d="M8 12 L30 32 L8 52"/>
+          <path d="M36 12 L58 32 L36 52"/>
+          <path d="M64 12 L86 32 L64 52"/>
+        </svg>
+        <div>
+          <h4>Objetivo do 1º estágio</h4>
+          <p>Permitir que a prefeitura transforme sua regra de negócio em um fluxo administrativo estruturado, configurável e rastreável.</p>
+        </div>
+      </div>
     </section>
 
     <section id="etapa4-estagio2" class="sub">
@@ -2093,12 +2255,11 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           <h3>Criar Protocolo</h3>
         </div>
       </div>
-      <p>O segundo estágio representa o <b>início efetivo de um processo administrativo</b>.</p>
-      <p>Após o fluxo estar configurado, um usuário poderá criar um novo protocolo utilizando uma estrutura previamente definida.</p>
+      <p>O segundo estágio representa o <b>início efetivo de um processo administrativo</b>. Após o fluxo estar configurado, um usuário poderá criar um novo protocolo utilizando uma estrutura previamente definida.</p>
 
       <p>A criação do protocolo contempla:</p>
       <ul class="lista">
-        <li>identificação do tipo de processo;</li>
+        <li>identificação do tipo de processo (natureza);</li>
         <li>cadastro das informações iniciais;</li>
         <li>inclusão dos documentos necessários;</li>
         <li>aplicação das regras definidas no fluxo;</li>
@@ -2109,16 +2270,44 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <p>O objetivo é fazer com que a criação do protocolo seja simples e orientada, reduzindo erros e garantindo que as informações necessárias estejam disponíveis desde o início.</p>
 
       <h4>Cadastro inicial</h4>
+
+      <fieldset class="tela">
+        <legend>
+          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <span class="ico">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="8.5" width="7" height="7" rx="1.5"/><line x1="9" y1="12" x2="18" y2="12"/><polyline points="15.5,9.5 18,12 15.5,14.5"/></svg>
+          </span>
+          Tramitação de Protocolo
+          <span class="cod">PO051</span>
+        </legend>
+
+        <div class="mini-tela" onclick="ampliarTela(this)">
+          <img src="assets/img/po051-novo-protocolo.png"
+               alt="PO051 - Tramitação de Protocolo: a modal de Novo Protocolo, com as pastas do protocolo à esquerda e o formulário de cadastro à direita">
+          <span class="canto"></span>
+          <button class="lupa" title="Ampliar a tela" aria-label="Ampliar a tela">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
+          </button>
+        </div>
+      </fieldset>
+
       <p>O cadastro inicial deverá reunir somente as informações necessárias para iniciar corretamente o processo, evitando sobrecarregar o usuário com campos ou decisões que pertencem a etapas posteriores.</p>
 
       <h4>Guia e orientação</h4>
       <p>O protocolo deverá apresentar ao usuário as informações necessárias para sua correta abertura, incluindo documentos, requisitos e orientações relacionadas ao processo.</p>
       <p>Essa abordagem transforma o protocolo de um simples formulário de entrada em uma <b>porta orientada para a execução do processo</b>.</p>
 
-      <h4>Objetivo deste estágio</h4>
-      <blockquote>
-        <p>Permitir que um processo seja iniciado de forma simples, completa e aderente ao fluxo previamente configurado.</p>
-      </blockquote>
+      <div class="objetivo">
+        <svg class="setas" viewBox="0 0 100 64" aria-hidden="true">
+          <path d="M8 12 L30 32 L8 52"/>
+          <path d="M36 12 L58 32 L36 52"/>
+          <path d="M64 12 L86 32 L64 52"/>
+        </svg>
+        <div>
+          <h4>Objetivo do 2º estágio</h4>
+          <p>Permitir que um processo seja iniciado de forma simples, completa e aderente ao fluxo previamente configurado.</p>
+        </div>
+      </div>
     </section>
 
     <section id="etapa4-estagio3" class="sub">
@@ -2129,8 +2318,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           <h3>Tramitar / Concluir Etapas do Protocolo</h3>
         </div>
       </div>
-      <p>O terceiro estágio representa a <b>execução operacional do processo</b>.</p>
-      <p>É nesta etapa que os servidores recebem, analisam, executam e concluem as atividades atribuídas a eles.</p>
+      <p>O terceiro estágio representa a <b>execução operacional do processo</b>. É nesta etapa que os servidores recebem, analisam, executam e concluem as atividades atribuídas a eles.</p>
 
       <p>O usuário deverá conseguir:</p>
       <ul class="lista">
@@ -2147,10 +2335,52 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </ul>
 
       <h4>Localização e filtragem</h4>
+
+      <fieldset class="tela">
+        <legend>
+          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <span class="ico">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="8.5" width="7" height="7" rx="1.5"/><line x1="9" y1="12" x2="18" y2="12"/><polyline points="15.5,9.5 18,12 15.5,14.5"/></svg>
+          </span>
+          Tramitação de Protocolo
+          <span class="cod">PO051</span>
+        </legend>
+
+        <div class="mini-tela" onclick="ampliarTela(this)">
+          <img src="assets/img/po051-pesquisa-resultados.png"
+               alt="PO051 - Tramitação de Protocolo: a aba Pesquisa com os filtros aplicados e a grid de resultados dos protocolos">
+          <span class="canto"></span>
+          <button class="lupa" title="Ampliar a tela" aria-label="Ampliar a tela">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
+          </button>
+        </div>
+      </fieldset>
+
       <p>A tela de tramitação deverá permitir que o servidor encontre rapidamente os processos sob sua responsabilidade.</p>
       <p>A filtragem por departamento e demais critérios permite organizar o trabalho e reduzir o tempo gasto na localização dos protocolos.</p>
 
       <h4>Detalhamento do processo</h4>
+
+      <fieldset class="tela">
+        <legend>
+          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <span class="ico">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="8.5" width="7" height="7" rx="1.5"/><line x1="9" y1="12" x2="18" y2="12"/><polyline points="15.5,9.5 18,12 15.5,14.5"/></svg>
+          </span>
+          Tramitação de Protocolo
+          <span class="cod">PO051</span>
+        </legend>
+
+        <div class="mini-tela" onclick="ampliarTela(this)">
+          <img src="assets/img/po051-etapa-drawer.png"
+               alt="PO051 - Tramitação de Protocolo: o fluxo do protocolo 2292436 ao lado do detalhamento da etapa 6, Gerar Autorização Empenho">
+          <span class="canto"></span>
+          <button class="lupa" title="Ampliar a tela" aria-label="Ampliar a tela">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
+          </button>
+        </div>
+      </fieldset>
+
       <p>O detalhamento deverá concentrar as informações necessárias para a tomada de decisão do servidor, permitindo consultar o contexto do processo sem precisar navegar por diversas telas. Entre as informações relevantes estão:</p>
       <ul class="lista">
         <li>dados do protocolo;</li>
@@ -2173,10 +2403,17 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </div>
       <p>Esse princípio é central para a proposta do Protocolo 3.0.</p>
 
-      <h4>Objetivo deste estágio</h4>
-      <blockquote>
-        <p>Permitir que cada servidor saiba o que precisa fazer, execute sua atividade e encaminhe o processo corretamente para a próxima etapa.</p>
-      </blockquote>
+      <div class="objetivo">
+        <svg class="setas" viewBox="0 0 100 64" aria-hidden="true">
+          <path d="M8 12 L30 32 L8 52"/>
+          <path d="M36 12 L58 32 L36 52"/>
+          <path d="M64 12 L86 32 L64 52"/>
+        </svg>
+        <div>
+          <h4>Objetivo do 3º estágio</h4>
+          <p>Permitir que cada servidor saiba o que precisa fazer, execute sua atividade e encaminhe o processo corretamente para a próxima etapa.</p>
+        </div>
+      </div>
     </section>
 
     <section id="etapa4-perfis" class="sub">
@@ -2212,11 +2449,16 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
     </section>
 
     <section id="etapa4-persona1" class="sub">
-      <h3>Persona 01 — Consultor Técnico Centi</h3>
+      <div class="estagio-titulo">
+        <span class="num"><svg viewBox="0 0 84.34 92.2" aria-hidden="true"><path d="M2.69,63.54c-5.1-8.14,3.33-9.53,12.37-6.19,6.98,2.58,6.75,7.42,14.85,8.93-7.95,6-21.09,5.15-27.22-2.74"/><path d="M41.35,92.2c-18.3,0-34.08-10.77-41.35-26.32,13.65,11.85,28.09,7.88,35.53-.44,8.04-9,17.54-18.25,29.54-19.2,28.08-2.22,21.67,22.56,4.85,36.02-8.06,6.44-18.42,9.94-28.57,9.94"/><path d="M81.66,28.66c5.1,8.14-3.33,9.53-12.37,6.19-6.98-2.58-6.75-7.42-14.85-8.93,7.95-6,21.09-5.15,27.22,2.75"/><path d="M42.99,0c18.3,0,34.08,10.77,41.35,26.32-13.65-11.85-28.09-7.88-35.53.44-8.04,9-17.54,18.25-29.54,19.2C-8.81,48.18-2.41,23.4,14.42,9.94,22.48,3.49,32.84,0,42.99,0"/></svg></span>
+        <div>
+          <span class="lbl">Persona 01</span>
+          <h3>Consultor Técnico Centi</h3>
+        </div>
+      </div>
 
       <h4>Papel</h4>
-      <p>O Consultor Técnico Centi é o <b>mentor da utilização do Protocolo 3.0 dentro da prefeitura</b>.</p>
-      <p>É o profissional responsável por apoiar a construção inicial dos fluxos, orientar a prefeitura sobre as possibilidades do produto e estimular a utilização correta e completa da ferramenta.</p>
+      <p>O Consultor Técnico Centi é o <b>mentor da utilização do Protocolo 3.0 dentro da prefeitura</b>. É o profissional responsável por apoiar a construção inicial dos fluxos, orientar a prefeitura sobre as possibilidades do produto e estimular a utilização correta e completa da ferramenta.</p>
 
       <h4>Responsabilidades</h4>
       <ul class="lista">
@@ -2231,21 +2473,32 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </ul>
 
       <h4>Característica principal</h4>
-      <p>O Consultor Técnico possui <b>alto conhecimento do produto</b> e atua como facilitador da transformação dos processos da prefeitura.</p>
-      <p>Ele não deve simplesmente configurar o sistema para o cliente, mas também <b>ensinar, orientar e provocar a evolução da operação municipal</b>.</p>
+      <p>O Consultor Técnico possui <b>alto conhecimento do produto</b> e atua como facilitador da transformação dos processos da prefeitura. Ele não deve simplesmente configurar o sistema para o cliente, mas também <b>ensinar, orientar e provocar a evolução da operação municipal</b>.</p>
 
-      <h4>Objetivo</h4>
-      <blockquote>
-        <p>Garantir que a prefeitura compreenda o potencial do Protocolo 3.0 e consiga transformar suas regras de negócio em processos digitais bem estruturados.</p>
-      </blockquote>
+      <div class="objetivo curva">
+        <svg class="seta-curva" viewBox="0 0 87 37" aria-hidden="true">
+          <path d="M2.0004 2.00049C9.60802 16.0434 24.4691 25.5682 41.5405 25.5682H85.0004"/>
+          <path d="M75.5855 16.1536L85.0004 25.5685"/>
+          <path d="M75.5855 34.9955L85.0004 25.5684"/>
+        </svg>
+        <div>
+          <h4>Objetivo</h4>
+          <p>Garantir que a prefeitura compreenda o potencial do Protocolo 3.0 e consiga transformar suas regras de negócio em processos digitais bem estruturados.</p>
+        </div>
+      </div>
     </section>
 
     <section id="etapa4-persona2" class="sub">
-      <h3>Persona 02 — Gestor / Líder Técnico da Prefeitura</h3>
+      <div class="estagio-titulo">
+        <span class="num"><svg viewBox="0 0 448 512" aria-hidden="true"><path d="M96 128a128 128 0 1 0 256 0A128 128 0 1 0 96 128zm94.5 200.2l18.6 31L175.8 483.1l-36-146.9c-2-8.1-9.8-13.4-17.9-11.3C51.9 342.4 0 405.8 0 481.3c0 17 13.8 30.7 30.7 30.7l131.7 0c0 0 0 0 .1 0l5.5 0 112 0 5.5 0c0 0 0 0 .1 0l131.7 0c17 0 30.7-13.8 30.7-30.7c0-75.5-51.9-138.9-121.9-156.4c-8.1-2-15.9 3.3-17.9 11.3l-36 146.9L238.9 359.2l18.6-31c6.4-10.7-1.3-24.2-13.7-24.2L224 304l-19.7 0c-12.4 0-20.1 13.6-13.7 24.2z"/></svg></span>
+        <div>
+          <span class="lbl">Persona 02</span>
+          <h3>Gestor / Líder Técnico da Prefeitura</h3>
+        </div>
+      </div>
 
       <h4>Papel</h4>
-      <p>O Gestor ou Líder Técnico é o <b>responsável interno pela evolução dos processos dentro da prefeitura</b>.</p>
-      <p>Após receber capacitação, ele deve possuir autonomia suficiente para criar novos fluxos, editar fluxos existentes e apoiar os demais usuários.</p>
+      <p>O Gestor ou Líder Técnico é o <b>responsável interno pela evolução dos processos dentro da prefeitura</b>. Após receber capacitação, ele deve possuir autonomia suficiente para criar novos fluxos, editar fluxos existentes e apoiar os demais usuários.</p>
       <p>Além da função de gestão dos fluxos, esse usuário também pode criar e tramitar processos relacionados ao seu departamento.</p>
 
       <h4>Responsabilidades</h4>
@@ -2262,21 +2515,32 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </ul>
 
       <h4>Característica principal</h4>
-      <p>O Gestor/Líder Técnico funciona como um <b>multiplicador de conhecimento</b>.</p>
-      <p>A estratégia é reduzir progressivamente a dependência da prefeitura em relação à equipe da Centi para alterações simples de configuração.</p>
+      <p>O Gestor/Líder Técnico funciona como um <b>multiplicador de conhecimento</b>. A estratégia é reduzir progressivamente a dependência da prefeitura em relação à equipe da Centi para alterações simples de configuração.</p>
 
-      <h4>Objetivo</h4>
-      <blockquote>
-        <p>Dar autonomia à prefeitura para evoluir seus próprios processos e manter a plataforma aderente às mudanças de suas regras de negócio.</p>
-      </blockquote>
+      <div class="objetivo curva">
+        <svg class="seta-curva" viewBox="0 0 87 37" aria-hidden="true">
+          <path d="M2.0004 2.00049C9.60802 16.0434 24.4691 25.5682 41.5405 25.5682H85.0004"/>
+          <path d="M75.5855 16.1536L85.0004 25.5685"/>
+          <path d="M75.5855 34.9955L85.0004 25.5684"/>
+        </svg>
+        <div>
+          <h4>Objetivo</h4>
+          <p>Dar autonomia à prefeitura para evoluir seus próprios processos e manter a plataforma aderente às mudanças de suas regras de negócio.</p>
+        </div>
+      </div>
     </section>
 
     <section id="etapa4-persona3" class="sub">
-      <h3>Persona 03 — Servidor Público</h3>
+      <div class="estagio-titulo">
+        <span class="num"><svg viewBox="0 0 320 512" aria-hidden="true"><path d="M160 0a48 48 0 1 1 0 96 48 48 0 1 1 0-96zM88 384l-17.8 0c-10.9 0-18.6-10.7-15.2-21.1L93.3 248.1 59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l53.6-89.2c20.3-33.7 56.7-54.3 96-54.3l11.6 0c39.3 0 75.7 20.6 96 54.3l53.6 89.2c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9l-33.9-56.3L265 362.9c3.5 10.4-4.3 21.1-15.2 21.1L232 384l0 96c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-96-16 0 0 96c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-96z"/></svg></span>
+        <div>
+          <span class="lbl">Persona 03</span>
+          <h3>Servidor Público</h3>
+        </div>
+      </div>
 
       <h4>Papel</h4>
-      <p>O Servidor Público é o <b>principal usuário operacional do Protocolo 3.0</b>.</p>
-      <p>Seu foco não está na configuração do sistema, mas na execução das atividades necessárias para que os processos avancem.</p>
+      <p>O Servidor Público é o <b>principal usuário operacional do Protocolo 3.0</b>. Seu foco não está na configuração do sistema, mas na execução das atividades necessárias para que os processos avancem.</p>
 
       <h4>Responsabilidades</h4>
       <ul class="lista">
@@ -2285,110 +2549,135 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         <li>analisar informações;</li>
         <li>consultar documentos;</li>
         <li>executar checklists;</li>
-        <li>cumprir as condições da etapa;</li>
+        <li>cumprir as regras da etapa;</li>
         <li>realizar as atividades atribuídas;</li>
         <li>encaminhar processos;</li>
         <li>concluir etapas.</li>
       </ul>
 
       <h4>Característica principal</h4>
-      <p>Esse usuário possui <b>menor necessidade de conhecimento técnico sobre a plataforma</b>.</p>
-      <p>Por isso, sua experiência deve ser altamente orientada, apresentando somente as informações e ações necessárias para executar sua atividade.</p>
+      <p>Esse usuário possui <b>menor necessidade de conhecimento técnico sobre a plataforma</b>. Por isso, sua experiência deve ser altamente orientada, apresentando somente as informações e ações necessárias para executar sua atividade.</p>
       <p>Seu principal ambiente de trabalho será a <code>PO051</code>, concebida para concentrar as tarefas operacionais de criação e tramitação dos protocolos.</p>
 
-      <h4>Objetivo</h4>
-      <blockquote>
-        <p>Permitir que o servidor execute seu trabalho corretamente sem precisar compreender a complexidade existente por trás da configuração do processo.</p>
-      </blockquote>
+      <div class="objetivo curva">
+        <svg class="seta-curva" viewBox="0 0 87 37" aria-hidden="true">
+          <path d="M2.0004 2.00049C9.60802 16.0434 24.4691 25.5682 41.5405 25.5682H85.0004"/>
+          <path d="M75.5855 16.1536L85.0004 25.5685"/>
+          <path d="M75.5855 34.9955L85.0004 25.5684"/>
+        </svg>
+        <div>
+          <h4>Objetivo</h4>
+          <p>Permitir que o servidor execute seu trabalho corretamente sem precisar compreender a complexidade existente por trás da configuração do processo.</p>
+        </div>
+      </div>
     </section>
 
     <section id="etapa4-relacao" class="sub">
-      <h3>Relação entre os usuários</h3>
-      <p>O modelo cria uma cadeia de conhecimento e operação:</p>
+      <div class="quadro">
+        <h4>Relação entre os usuários</h4>
+        <div class="corpo">
+          <p>O modelo cria uma cadeia de conhecimento e operação:</p>
 
-      <div class="cadeia">
-        <div class="no">CONSULTOR CENTI</div>
-        <div class="liga"><span class="seta">↓</span><span class="rot">capacita e orienta</span></div>
-        <div class="no">GESTOR / LÍDER TÉCNICO</div>
-        <div class="liga"><span class="seta">↓</span><span class="rot">configura e multiplica conhecimento</span></div>
-        <div class="no">SERVIDOR PÚBLICO</div>
-        <div class="liga"><span class="seta">↓</span><span class="rot">executa</span></div>
-        <div class="no fim">PROCESSO ADMINISTRATIVO</div>
+          <div class="cadeia">
+            <div class="no">CONSULTOR CENTI</div>
+            <div class="liga"><span class="seta">↓</span><span class="rot">capacita e orienta</span></div>
+            <div class="no">GESTOR / LÍDER TÉCNICO</div>
+            <div class="liga"><span class="seta">↓</span><span class="rot">configura e multiplica conhecimento</span></div>
+            <div class="no">SERVIDOR PÚBLICO</div>
+            <div class="liga"><span class="seta">↓</span><span class="rot">executa</span></div>
+            <div class="no fim">PROCESSO ADMINISTRATIVO</div>
+          </div>
+
+          <p>Essa estrutura permite que a Centi atue como <b>habilitadora da transformação</b>, e não como dependência permanente da operação.</p>
+        </div>
       </div>
-
-      <p>Essa estrutura permite que a Centi atue como <b>habilitadora da transformação</b>, e não como dependência permanente da operação.</p>
     </section>
 
     <section id="etapa4-matriz" class="sub">
-      <h3>Relação entre os estágios e personas</h3>
+      <div class="quadro">
+        <h4>Relação entre os estágios e personas</h4>
+        <div class="corpo">
+          <div class="tabela-rolagem">
+            <table>
+              <thead>
+                <tr>
+                  <th>Estágio</th>
+                  <th class="centro">Consultor Centi</th>
+                  <th class="centro">Gestor Prefeitura</th>
+                  <th class="centro">Servidor Público</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Criar / editar fluxo</td>
+                  <td class="centro"><span class="marca sim">✓</span></td>
+                  <td class="centro"><span class="marca sim">✓</span></td>
+                  <td class="centro"><span class="marca nao">—</span></td></tr>
+                <tr><td>Criar protocolo</td>
+                  <td class="centro"><span class="marca nao">—</span></td>
+                  <td class="centro"><span class="marca sim">✓</span></td>
+                  <td class="centro"><span class="marca sim">✓</span></td></tr>
+                <tr><td>Tramitar protocolo</td>
+                  <td class="centro"><span class="marca nao">—</span></td>
+                  <td class="centro"><span class="marca sim">✓</span></td>
+                  <td class="centro"><span class="marca sim">✓</span></td></tr>
+                <tr><td>Configurar regras</td>
+                  <td class="centro"><span class="marca sim">✓</span></td>
+                  <td class="centro"><span class="marca sim">✓</span></td>
+                  <td class="centro"><span class="marca nao">—</span></td></tr>
+                <tr><td>Definir checklist</td>
+                  <td class="centro"><span class="marca sim">✓</span></td>
+                  <td class="centro"><span class="marca sim">✓</span></td>
+                  <td class="centro"><span class="marca nao">—</span></td></tr>
+                <tr><td>Executar checklist</td>
+                  <td class="centro"><span class="marca nao">—</span></td>
+                  <td class="centro"><span class="marca sim">✓</span></td>
+                  <td class="centro"><span class="marca sim">✓</span></td></tr>
+                <tr><td>Criar novos fluxos</td>
+                  <td class="centro"><span class="marca sim">✓</span></td>
+                  <td class="centro"><span class="marca sim">✓</span></td>
+                  <td class="centro"><span class="marca nao">—</span></td></tr>
+              </tbody>
+            </table>
+          </div>
 
-      <div class="tabela-rolagem">
-        <table>
-          <thead>
-            <tr>
-              <th>Estágio</th>
-              <th class="centro">Consultor Centi</th>
-              <th class="centro">Gestor Prefeitura</th>
-              <th class="centro">Servidor Público</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>Criar / editar fluxo</td>
-              <td class="centro"><span class="marca sim">✓</span></td>
-              <td class="centro"><span class="marca sim">✓</span></td>
-              <td class="centro"><span class="marca nao">—</span></td></tr>
-            <tr><td>Criar protocolo</td>
-              <td class="centro"><span class="marca nao">—</span></td>
-              <td class="centro"><span class="marca sim">✓</span></td>
-              <td class="centro"><span class="marca sim">✓</span></td></tr>
-            <tr><td>Tramitar protocolo</td>
-              <td class="centro"><span class="marca nao">—</span></td>
-              <td class="centro"><span class="marca sim">✓</span></td>
-              <td class="centro"><span class="marca sim">✓</span></td></tr>
-            <tr><td>Configurar regras</td>
-              <td class="centro"><span class="marca sim">✓</span></td>
-              <td class="centro"><span class="marca sim">✓</span></td>
-              <td class="centro"><span class="marca nao">—</span></td></tr>
-            <tr><td>Definir checklist</td>
-              <td class="centro"><span class="marca sim">✓</span></td>
-              <td class="centro"><span class="marca sim">✓</span></td>
-              <td class="centro"><span class="marca nao">—</span></td></tr>
-            <tr><td>Executar checklist</td>
-              <td class="centro"><span class="marca nao">—</span></td>
-              <td class="centro"><span class="marca sim">✓</span></td>
-              <td class="centro"><span class="marca sim">✓</span></td></tr>
-            <tr><td>Criar novos fluxos</td>
-              <td class="centro"><span class="marca sim">✓</span></td>
-              <td class="centro"><span class="marca sim">✓</span></td>
-              <td class="centro"><span class="marca nao">—</span></td></tr>
-          </tbody>
-        </table>
+          <p>A matriz representa o <b>modelo de responsabilidade do MVP</b> e deverá ser refinada conforme as validações com usuários e as definições de segurança e permissões do produto.</p>
+        </div>
       </div>
-
-      <p>A matriz representa o <b>modelo de responsabilidade do MVP</b> e deverá ser refinada conforme as validações com usuários e as definições de segurança e permissões do produto.</p>
     </section>
 
     <section id="etapa4-telas" class="sub">
       <h3>Evolução das telas</h3>
       <p>O MVP do Protocolo 3.0 representa também uma evolução da experiência atual do sistema Centi.</p>
-      <p>Algumas das funcionalidades atualmente distribuídas em telas legadas — como <code>PO050</code>, <code>PO002</code> e <code>PO011</code> — estão sendo reorganizadas em uma experiência mais integrada e orientada.</p>
+      <p>Algumas das funcionalidades atualmente distribuídas em telas legadas — como <code>PO002</code> e <code>PO011</code> — estão sendo reorganizadas em uma experiência mais integrada e orientada.</p>
       <p>A estratégia não consiste apenas em reproduzir as funcionalidades existentes em novas interfaces, mas em <b>reorganizar a experiência a partir da lógica do processo</b>.</p>
 
-      <h4>De</h4>
-      <div class="fluxo-palavras">
-        <span class="palavra">TELAS</span><span class="seta-fluxo">→</span>
-        <span class="palavra">CAMPOS</span><span class="seta-fluxo">→</span>
-        <span class="palavra">AÇÕES</span><span class="seta-fluxo">→</span>
-        <span class="palavra">ENCAMINHAMENTOS</span>
-      </div>
-
-      <h4>Para</h4>
-      <div class="fluxo-palavras">
-        <span class="palavra">PROCESSO</span><span class="seta-fluxo">→</span>
-        <span class="palavra">ETAPA</span><span class="seta-fluxo">→</span>
-        <span class="palavra">CONTEXTO</span><span class="seta-fluxo">→</span>
-        <span class="palavra">AÇÃO</span><span class="seta-fluxo">→</span>
-        <span class="palavra">PRÓXIMO PASSO</span>
+      <div class="comparativo">
+        <div class="col">
+          <h5 class="cab">Antes</h5>
+          <div class="fluxo-palavras vertical">
+            <span class="palavra">TELA</span>
+            <span class="seta-fluxo">↓</span>
+            <span class="palavra">PASTAS</span>
+            <span class="seta-fluxo">↓</span>
+            <span class="palavra">FORMULÁRIOS DIVERSOS</span>
+            <span class="seta-fluxo">↓</span>
+            <span class="palavra">OPERAÇÕES</span>
+            <span class="seta-fluxo">↓</span>
+            <span class="palavra">AÇÃO</span>
+          </div>
+        </div>
+        <div class="col depois">
+          <h5 class="cab">Depois</h5>
+          <div class="fluxo-palavras vertical">
+            <span class="palavra">TELA</span>
+            <span class="seta-fluxo">↓</span>
+            <span class="palavra">FLUXO / ETAPA</span>
+            <span class="seta-fluxo">↓</span>
+            <span class="palavra">DOCS, CHECKLIST, REGRAS</span>
+            <span class="seta-fluxo">↓</span>
+            <span class="palavra">AÇÃO</span>
+          </div>
+        </div>
       </div>
 
       <p>Essa mudança representa uma evolução de UX e também de conceito de produto.</p>
@@ -2579,11 +2868,6 @@ const MENU = [
     { id: 'etapa4-estrutura',   txt: 'Estrutura funcional do MVP' },
     { id: 'etapa4-estagios',    txt: 'Estágios Operacionais' },
     { id: 'etapa4-perfis',      txt: 'Perfis de usuários' },
-    { id: 'etapa4-persona1',    txt: 'Persona 01 · Consultor Centi' },
-    { id: 'etapa4-persona2',    txt: 'Persona 02 · Gestor da Prefeitura' },
-    { id: 'etapa4-persona3',    txt: 'Persona 03 · Servidor Público' },
-    { id: 'etapa4-relacao',     txt: 'Relação entre os usuários' },
-    { id: 'etapa4-matriz',      txt: 'Estágios e personas' },
     { id: 'etapa4-telas',       txt: 'Evolução das telas' },
     { id: 'etapa4-arquitetura', txt: 'Arquitetura conceitual' },
     { id: 'etapa4-criterio',    txt: 'Critério de sucesso do MVP' },
@@ -2784,8 +3068,8 @@ const lightboxCap = lightbox.querySelector('figcaption');
 
 function ampliarTela(mini) {
   const img = mini.querySelector('img');
-  /* a legenda vem do fieldset da tela; a miniatura solta no tópico não tem
-     fieldset, e traz a sua em data-legenda (sem isso, nada abria) */
+  /* a legenda vem do fieldset da tela; uma miniatura solta fora de fieldset
+     pode trazer a sua em data-legenda (sem isso, nada abria) */
   const fs = mini.closest('fieldset');
   const legenda = mini.dataset.legenda
     || (fs ? fs.querySelector('legend').textContent : img.alt);
