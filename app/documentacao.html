@@ -649,6 +649,39 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
   color: #3F440C;
 }
 
+/* verbete de concorrente: a logo da empresa à esquerda e o texto ao lado */
+.pagina .verbete {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin: 0 0 22px;
+}
+
+.pagina .verbete .logo {
+  flex: 0 0 96px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  padding: 6px 9px;
+  background: #FFFFFF;
+  border: 1px solid var(--cinza-linha);
+  border-radius: 8px;
+}
+
+/* altura em pixel, e não em porcentagem: dentro do grid a porcentagem não
+   segurava as marcas quadradas, que vazavam da moldura */
+.pagina .verbete .logo img { display: block; width: auto; max-width: 100%; max-height: 34px; }
+
+/* a marca da Gove é branca: pede o roxo dela atrás para aparecer */
+.pagina .verbete .logo.gove { background: #430099; border-color: #430099; }
+
+.pagina .verbete p { margin: 0; }
+
+/* na tela estreita a logo sobe para cima do texto */
+@media (max-width: 620px) {
+  .pagina .verbete { flex-direction: column; gap: 10px; }
+}
+
 /* nota de rodapé de tabela */
 .pagina .nota-tab { font-size: 12px; color: var(--txt-mute); margin: -8px 0 22px; }
 
@@ -1284,7 +1317,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
     <section id="etapa1-descricao" class="sub">
       <h3>Descrição do Produto</h3>
       <div class="definicao">
-        <p>É o 3º nível da ferramenta de protocolo municipal da CENTI, que permite tramitar processos administrativos por fluxos configuráveis e visuais, orientando os servidores em cada etapa e permitindo que diferentes departamentos trabalhem de forma integrada e simultânea, com controle de prazos e documentos e menos esperas, retrabalhos e encaminhamentos desnecessários.</p>
+        <p>É o 3º nível da ferramenta de protocolo municipal da CENTI, que permite tramitar processos administrativos por fluxos configuráveis e visuais, orientando os servidores em cada etapa e permitindo que diferentes departamentos trabalhem de forma integrada e simultânea, com controle de documentos, prazos e checklist para execução da etapa.</p>
       </div>
       <p>O Protocolo 3.0 é a solução da CENTI para tornar a tramitação de processos administrativos mais simples, organizada e eficiente, eliminando esperas, retrabalhos e obstáculos que podem ser evitados no dia a dia da prefeitura.</p>
       <p>Mais do que apenas digitalizar documentos, o Protocolo 3.0 orienta cada processo pelo caminho adequado, deixando claro o que precisa ser feito, por quem, em qual etapa e dentro de qual prazo, permitindo que atividades sejam realizadas simultaneamente quando possível, que decisões sejam apoiadas por checklists, documentos e regras, e que toda a comunicação e o acompanhamento aconteçam em um único ambiente.</p>
@@ -1427,7 +1460,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa2-cenario" class="sub">
       <h3>Cenário competitivo</h3>
-      <p>O mercado possui três grupos principais de concorrentes:</p>
+      <p>O mercado possui quatro grupos principais de concorrentes:</p>
 
       <div class="tabela-rolagem">
         <table>
@@ -1446,6 +1479,11 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
               <td>Protocolo e processos integrados a um ecossistema maior de gestão municipal</td>
             </tr>
             <tr>
+              <td><b>GovTechs de relacionamento e dados</b></td>
+              <td>Gove</td>
+              <td>Atendimento digital ao cidadão, cadastro central e automação com IA</td>
+            </tr>
+            <tr>
               <td><b>Soluções institucionais</b></td>
               <td>SEI / ProPEN / Protocolo GOV.BR</td>
               <td>Alternativas públicas para digitalização e tramitação de processos</td>
@@ -1454,11 +1492,39 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         </table>
       </div>
 
-      <p>A <b>1Doc</b> é o principal benchmark direto do Protocolo 3.0, com mais de 900 organizações e entidades declaradas atualmente e presença nos 26 estados. A plataforma reúne protocolo, processo administrativo, ouvidoria, requerimentos, carta de serviços e outros canais em um único ecossistema.</p>
-      <p>A <b>Aprova</b> é outro concorrente direto relevante, com mais de 130 prefeituras atendidas e posicionamento baseado em processos configuráveis, automação e inteligência artificial.</p>
-      <p>A <b>OM30</b>, por meio do Doc+ Simples, atua principalmente em gestão documental, processos digitais, workflows e conformidade, representando uma concorrência adjacente importante.</p>
-      <p>Entre as suites de gestão pública, destacam-se a <b>Fiorilli</b>, presente em 1.344 cidades e 2.755 órgãos públicos segundo dados divulgados pela própria empresa, e a <b>IPM</b>, que declara mais de 850 órgãos públicos atendidos pelo Atende.Net.</p>
-      <p>A <b>Thema</b> também possui uma solução específica de Processos Digitais, contemplando processo eletrônico, protocolo digital, gerenciamento de documentos, assinaturas e controle de fluxos.</p>
+      <div class="verbete">
+        <span class="logo"><img src="assets/img/logos/logo-1doc.png" alt="1Doc"></span>
+        <p>A <b>1Doc</b> é o principal benchmark direto do Protocolo 3.0, com mais de 900 organizações e entidades declaradas atualmente e presença nos 26 estados. A plataforma reúne protocolo, processo administrativo, ouvidoria, requerimentos, carta de serviços e outros canais em um único ecossistema.</p>
+      </div>
+
+      <div class="verbete">
+        <span class="logo"><img src="assets/img/logos/logo-aprova.png" alt="Aprova"></span>
+        <p>A <b>Aprova</b> é outro concorrente direto relevante, com mais de 130 prefeituras atendidas e posicionamento baseado em processos configuráveis, automação e inteligência artificial.</p>
+      </div>
+
+      <div class="verbete">
+        <span class="logo gove"><img src="assets/img/logos/logo-gove.png" alt="Gove"></span>
+        <p>A <b>Gove</b> atua no relacionamento digital entre prefeitura e cidadão: atendimento e serviços por WhatsApp com chatbot, cadastro central verificado e comunicação ativa por e-mail, SMS e WhatsApp. Posiciona-se como <i>governo zero clique</i> — antecipar a demanda em vez de esperar a solicitação — e declara presença em mais de 100 cidades, cerca de 2% dos municípios, alcançando mais de 16 milhões de habitantes.</p>
+      </div>
+
+      <div class="nota">
+        <p>A sobreposição da Gove com o Protocolo 3.0 não está na tramitação interna, mas na <b>porta de entrada do processo</b>: o pedido que chega pelo WhatsApp e o protocolo de atendimento aberto ali. Hoje é concorrência adjacente, mas a empresa já divulga recursos de construtor de fluxos, formulários inteligentes, assinatura eletrônica nativa e agentes de IA que leem documentos — um vetor de aproximação a acompanhar.</p>
+      </div>
+
+      <div class="verbete">
+        <span class="logo"><img src="assets/img/logos/logo-fiorilli.png" alt="Fiorilli Software"></span>
+        <p>Entre as suites de gestão pública, destaca-se a <b>Fiorilli</b>, presente em 1.344 cidades e 2.755 órgãos públicos segundo dados divulgados pela própria empresa.</p>
+      </div>
+
+      <div class="verbete">
+        <span class="logo"><img src="assets/img/logos/logo-ipm.svg" alt="IPM Sistemas"></span>
+        <p>A <b>IPM</b> declara mais de 850 órgãos públicos atendidos pelo Atende.Net, com protocolo e processos integrados ao restante da suite de gestão municipal.</p>
+      </div>
+
+      <div class="verbete">
+        <span class="logo"><img src="assets/img/logos/logo-thema.png" alt="Thema"></span>
+        <p>A <b>Thema</b> também possui uma solução específica de Processos Digitais, contemplando processo eletrônico, protocolo digital, gerenciamento de documentos, assinaturas e controle de fluxos.</p>
+      </div>
     </section>
 
     <section id="etapa2-concorrentes" class="sub">
@@ -1489,6 +1555,11 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
               <td><b>Thema</b></td><td>Processo + protocolo + documentos</td>
               <td>Integração com gestão pública</td>
               <td><span class="nivel media-alta">Média/Alta</span></td>
+            </tr>
+            <tr>
+              <td><b>Gove</b></td><td>Relacionamento com o cidadão + dados + IA</td>
+              <td>Atendimento digital e automação sobre o cadastro central</td>
+              <td><span class="nivel media">Média</span></td>
             </tr>
             <tr>
               <td><b>IPM</b></td><td>Suite de gestão municipal</td>
@@ -1566,6 +1637,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
             <tr><td>IPM</td><td class="dir">+850 órgãos públicos</td></tr>
             <tr><td>1Doc</td><td class="dir">+900 organizações e entidades</td></tr>
             <tr><td>Aprova</td><td class="dir">+130 cidades</td></tr>
+            <tr><td>Gove</td><td class="dir">+100 cidades</td></tr>
             <tr><td>Thema</td><td class="dir">Presença em órgãos públicos nos três poderes</td></tr>
             <tr><td>OM30</td><td class="dir">Presença em soluções de gestão pública</td></tr>
           </tbody>
@@ -1796,11 +1868,11 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
             <tr><th>Público</th><th>Papel</th><th>Principal necessidade</th></tr>
           </thead>
           <tbody>
-            <tr><td><b>Prefeitura</b></td><td>Cliente</td><td>Eficiência, controle e previsibilidade</td></tr>
-            <tr><td><b>Gestor</b></td><td>Decisor</td><td>Visibilidade e indicadores</td></tr>
-            <tr><td><b>Servidor</b></td><td>Usuário principal</td><td>Saber o que fazer e quando fazer</td></tr>
-            <tr><td><b>Cidadão</b></td><td>Beneficiário</td><td>Solicitar e acompanhar sem burocracia</td></tr>
-            <tr><td><b>Administrador</b></td><td>Configurador</td><td>Criar e alterar fluxos sem depender de TI</td></tr>
+            <tr><td><b>Prefeitura</b></td><td>Cliente</td><td>Agilidade, controle e previsibilidade</td></tr>
+            <tr><td><b>Gestor</b></td><td>Decisor</td><td>Avanço tecnológico e visibilidade</td></tr>
+            <tr><td><b>Líder Técnico</b></td><td>Configurador e multiplicador</td><td>Criar e alterar fluxos</td></tr>
+            <tr><td><b>Servidor</b></td><td>Usuário principal</td><td>Saber “o que”, “como” e “quando” fazer</td></tr>
+            <tr><td><b>Cidadão</b></td><td>Beneficiário principal</td><td>Solicitar e acompanhar sem burocracia</td></tr>
           </tbody>
         </table>
       </div>
@@ -1809,11 +1881,11 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
     </section>
 
     <section id="etapa3-jtbd" class="sub">
-      <h3>Jobs-to-be-Done prioritários</h3>
+      <h3>Jobs-to-be-Done</h3>
 
-      <h4>Servidor</h4>
+      <h4>Prefeitura</h4>
       <blockquote>
-        <p>“Preciso saber exatamente o que fazer com este processo para que ele avance corretamente.”</p>
+        <p>“Preciso reduzir burocracia, retrabalho e tempo de tramitação sem aumentar a complexidade operacional.”</p>
       </blockquote>
 
       <h4>Gestor</h4>
@@ -1821,19 +1893,19 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         <p>“Preciso saber onde estão meus processos, quais estão atrasados e onde estão os gargalos.”</p>
       </blockquote>
 
-      <h4>Administrador</h4>
+      <h4>Líder Técnico</h4>
       <blockquote>
         <p>“Preciso configurar e ajustar os fluxos dos processos sem depender constantemente da equipe técnica.”</p>
+      </blockquote>
+
+      <h4>Servidor</h4>
+      <blockquote>
+        <p>“Preciso saber exatamente o que fazer com este processo para que ele avance corretamente.”</p>
       </blockquote>
 
       <h4>Cidadão</h4>
       <blockquote>
         <p>“Preciso solicitar algo à prefeitura e acompanhar o andamento sem precisar ir presencialmente ou descobrir onde meu processo está.”</p>
-      </blockquote>
-
-      <h4>Prefeitura</h4>
-      <blockquote>
-        <p>“Preciso reduzir burocracia, retrabalho e tempo de tramitação sem aumentar a complexidade operacional.”</p>
       </blockquote>
     </section>
 
@@ -1866,61 +1938,6 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           <span class="num">05</span>
           <h4>Evolução para automação e IA</h4>
           <p>A arquitetura do produto deve permitir que tarefas repetitivas sejam progressivamente automatizadas e que o ViCenti possa atuar como camada de inteligência sobre os processos.</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="etapa3-principios" class="sub">
-      <h3>Princípios do Produto</h3>
-      <p>As decisões futuras de produto deverão seguir os seguintes princípios:</p>
-
-      <div class="tabela-rolagem">
-        <table>
-          <thead>
-            <tr><th>Princípio</th><th>Diretriz</th></tr>
-          </thead>
-          <tbody>
-            <tr><td><b>Simples antes de complexo</b></td><td>A solução deve reduzir a complexidade percebida pelo usuário</td></tr>
-            <tr><td><b>Orientar antes de cobrar</b></td><td>O sistema deve explicar o próximo passo antes de exigir uma ação</td></tr>
-            <tr><td><b>Fluxo antes de tela</b></td><td>A experiência deve refletir o processo, não a estrutura interna do sistema</td></tr>
-            <tr><td><b>Automatizar antes de repetir</b></td><td>Tarefas previsíveis devem ser candidatas à automação</td></tr>
-            <tr><td><b>Configurar antes de desenvolver</b></td><td>Regras de negócio devem ser parametrizáveis sempre que possível</td></tr>
-            <tr><td><b>Integrar antes de isolar</b></td><td>O produto deve se conectar ao ecossistema Centi e aos sistemas municipais</td></tr>
-            <tr><td><b>Rastreabilidade por padrão</b></td><td>Toda movimentação relevante deve ser registrada</td></tr>
-            <tr><td><b>Mobile quando necessário</b></td><td>A experiência deve considerar servidores e cidadãos fora do desktop</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section id="etapa3-evolucao" class="sub">
-      <h3>Estratégia de evolução</h3>
-      <p>A evolução do Protocolo 3.0 será organizada em cinco estágios:</p>
-
-      <div class="escada-evolucao">
-        <div class="estagio">
-          <span class="rotulo">DIGITALIZAR</span>
-          <p>Eliminar a dependência do papel e centralizar documentos e solicitações.</p>
-        </div>
-        <div class="seta-baixo">↓</div>
-        <div class="estagio">
-          <span class="rotulo">ORGANIZAR</span>
-          <p>Estruturar processos, departamentos, responsáveis, prazos e documentos.</p>
-        </div>
-        <div class="seta-baixo">↓</div>
-        <div class="estagio">
-          <span class="rotulo">ORIENTAR</span>
-          <p>Mostrar ao servidor o próximo passo e as condições necessárias para executá-lo.</p>
-        </div>
-        <div class="seta-baixo">↓</div>
-        <div class="estagio">
-          <span class="rotulo">AUTOMATIZAR</span>
-          <p>Reduzir tarefas manuais, encaminhamentos e decisões repetitivas.</p>
-        </div>
-        <div class="seta-baixo">↓</div>
-        <div class="estagio">
-          <span class="rotulo">INTELIGÊNCIA</span>
-          <p>Utilizar dados e IA para antecipar gargalos, recomendar ações, analisar documentos e apoiar decisões.</p>
         </div>
       </div>
     </section>
@@ -1996,36 +2013,34 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
             <li>Tempo médio de tramitação;</li>
             <li>tempo médio por etapa;</li>
             <li>percentual de processos dentro do prazo;</li>
-            <li>redução de retrabalho;</li>
-            <li>redução de encaminhamentos.</li>
+            <li>redução de retrabalhos ou encaminhamentos.</li>
           </ul>
         </fieldset>
         <fieldset class="riscos">
           <legend>Adoção</legend>
           <ul>
-            <li>Processos criados;</li>
-            <li>usuários ativos;</li>
-            <li>frequência de utilização;</li>
-            <li>percentual de processos realizados integralmente no sistema.</li>
+            <li>Frequência de uso da <code>PO051</code>;</li>
+            <li>fluxos criados;</li>
+            <li>protocolos criados;</li>
+            <li>protocolos tramitados.</li>
           </ul>
         </fieldset>
         <fieldset class="riscos">
           <legend>Qualidade</legend>
           <ul>
             <li>Processos devolvidos;</li>
-            <li>etapas reabertas;</li>
             <li>erros de tramitação;</li>
-            <li>chamados de suporte relacionados ao fluxo.</li>
+            <li>etapas não concluídas;</li>
+            <li>chamados de suporte para fluxos.</li>
           </ul>
         </fieldset>
         <fieldset class="riscos">
           <legend>Resultado</legend>
           <ul>
-            <li>Redução do tempo total de processo;</li>
-            <li>satisfação dos servidores;</li>
+            <li>Satisfação dos servidores;</li>
             <li>satisfação dos cidadãos;</li>
             <li>taxa de renovação dos municípios;</li>
-            <li>expansão para novos departamentos.</li>
+            <li>expansão de novos departamentos.</li>
           </ul>
         </fieldset>
       </div>
@@ -2651,10 +2666,6 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
                   <td class="centro"><span class="marca nao">—</span></td>
                   <td class="centro"><span class="marca sim">✓</span></td>
                   <td class="centro"><span class="marca sim">✓</span></td></tr>
-                <tr><td>Criar novos fluxos</td>
-                  <td class="centro"><span class="marca sim">✓</span></td>
-                  <td class="centro"><span class="marca sim">✓</span></td>
-                  <td class="centro"><span class="marca nao">—</span></td></tr>
               </tbody>
             </table>
           </div>
@@ -2704,7 +2715,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
     </section>
 
     <section id="etapa4-criterio" class="sub">
-      <h3>Critério de sucesso do MVP</h3>
+      <h3>Validação do MVP</h3>
       <p>O MVP será considerado conceitualmente validado quando demonstrar que os três principais perfis conseguem realizar suas responsabilidades com clareza:</p>
 
       <div class="cards-persona">
@@ -2733,11 +2744,6 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           <p>Consegue criar, executar e tramitar protocolos sem depender de conhecimento técnico sobre a configuração do sistema.</p>
         </div>
       </div>
-
-      <p>A hipótese central a ser validada é:</p>
-      <blockquote>
-        <p>É possível transformar regras administrativas municipais em fluxos digitais configuráveis e permitir que diferentes perfis de usuários executem esses processos de forma simples, orientada e rastreável.</p>
-      </blockquote>
     </section>
 
     <section id="etapa4-entregaveis" class="sub">
@@ -2873,7 +2879,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
             </tr>
           </thead>
           <tbody>
-            <tr><td>Back-end</td><td><code>.NET 8</code>, <code>ASP.NET Core</code>, <code>WCF (CoreWCF)</code></td></tr>
+            <tr><td>Back-end</td><td><code>.NET 8</code>, <code>WCF (CoreWCF)</code></td></tr>
             <tr><td>ORM</td><td>Próprio, dirigido por anotações</td></tr>
             <tr><td>Banco</td><td><code>SQL Server</code> (principal), <code>ClickHouse</code> (analytics)</td></tr>
             <tr><td>Front-end</td><td><code>React 19</code></td></tr>
@@ -2885,7 +2891,6 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           </tbody>
         </table>
       </div>
-      <p class="nota-tab">Fonte: documento <i>Arquitetura Completa do ERP CENTI</i>, na versão disponível nesta data.</p>
     </section>
 
     <section id="etapa5-anotacoes" class="sub">
@@ -2913,7 +2918,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <div class="cadeia">
         <div class="no">HTTP REQUEST</div>
         <div class="liga"><span class="seta">↓</span><span class="rot">CORS e tratamento de exceções</span></div>
-        <div class="no">MIDDLEWARE ASP.NET CORE</div>
+        <div class="no">MIDDLEWARE .NET 8</div>
         <div class="liga"><span class="seta">↓</span><span class="rot">recebe a chamada da tela</span></div>
         <div class="no">CONTROLLER</div>
         <div class="liga"><span class="seta">↓</span><span class="rot">regra de negócio</span></div>
@@ -3102,10 +3107,8 @@ const MENU = [
     { id: 'etapa3-papel',         txt: 'Papel estratégico no portfólio' },
     { id: 'etapa3-posicionamento',txt: 'Posicionamento' },
     { id: 'etapa3-publicos',      txt: 'Públicos estratégicos' },
-    { id: 'etapa3-jtbd',          txt: 'Jobs-to-be-Done prioritários' },
+    { id: 'etapa3-jtbd',          txt: 'Jobs-to-be-Done' },
     { id: 'etapa3-diferenciais',  txt: 'Diferenciais competitivos' },
-    { id: 'etapa3-principios',    txt: 'Princípios do Produto' },
-    { id: 'etapa3-evolucao',      txt: 'Estratégia de evolução' },
     { id: 'etapa3-mvp',           txt: 'Estratégia de MVP' },
     { id: 'etapa3-roadmap',       txt: 'Roadmap Estratégico' },
     { id: 'etapa3-metricas',      txt: 'Métricas estratégicas' },
@@ -3118,7 +3121,7 @@ const MENU = [
     { id: 'etapa4-estagios',    txt: 'Estágios Operacionais' },
     { id: 'etapa4-perfis',      txt: 'Perfis de usuários' },
     { id: 'etapa4-telas',       txt: 'Evolução das telas' },
-    { id: 'etapa4-criterio',    txt: 'Critério de sucesso do MVP' },
+    { id: 'etapa4-criterio',    txt: 'Validação do MVP' },
     { id: 'etapa4-entregaveis', txt: 'Entregáveis da etapa' },
   ] },
   { titulo: '#5 Arquitetura Tecnológica',   itens: [
