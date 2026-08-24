@@ -98,15 +98,16 @@
 }
 .zoom-ctrl .legenda .bo { width: 11px; height: 11px; border-radius: 50%; flex: 0 0 auto; }
 
-/* as bolinhas repetem a paleta dos cards: os quatro tipos de etapa e, na
-   execução, as três marcas que o desenho usa no fundo do card */
+/* as bolinhas repetem a leitura dos cards: os quatro tipos de etapa, no
+   cadastro do fluxo, e o fundo mais o contorno de cada andamento, na tramitação */
 .zoom-ctrl .legenda .bo.inicio  { background: var(--selecao); }
 .zoom-ctrl .legenda .bo.tarefa  { background: var(--g); }
 .zoom-ctrl .legenda .bo.decisao { background: #F5A623; }
 .zoom-ctrl .legenda .bo.fim     { background: #4F4F4F; }
-.zoom-ctrl .legenda .bo.concluida   { background: #E9E9E9; box-shadow: inset 0 0 0 1px #C4C4C4; }
-.zoom-ctrl .legenda .bo.executando  { background: #FFFFFF; box-shadow: inset 0 0 0 2px #7E7F79; }
-.zoom-ctrl .legenda .bo.naoiniciada { background: #C4C4C4; }
+.zoom-ctrl .legenda .bo.concluida   { background: #E9E9E9; box-shadow: inset 0 0 0 2px var(--g); }
+.zoom-ctrl .legenda .bo.andamento   { background: var(--g); box-shadow: inset 0 0 0 2px var(--g-stroke); }
+.zoom-ctrl .legenda .bo.dispensada  { background: #FFFFFF; box-shadow: inset 0 0 0 2px #BDBFB5; }
+.zoom-ctrl .legenda .bo.naoiniciada { background: #FFFFFF; box-shadow: inset 0 0 0 2px var(--g); }
 
 /* -------------------------------- etapa -------------------------------- */
 /* o título ocupa toda a faixa entre o topo do card (onde fica a bolinha) e a

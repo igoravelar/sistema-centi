@@ -669,13 +669,14 @@ function fecharDrawer() {
  * e a largura do drawer, via --drawer-w.
  */
 /** Botão de legenda das cores dos cards, com tooltip escuro no hover. */
-/* Legenda das cores. `execucao` liga o grupo do estado de execução, que só faz
-   sentido onde há um protocolo tramitando (PO051); nas telas de cadastro do
-   fluxo a legenda fica só nos tipos de etapa. */
-const LEGENDA_EXECUCAO = [
-  ['concluida',   'Concluída'],
-  ['executando',  'Onde o processo está'],
-  ['naoiniciada', 'Não iniciada'],
+/* Legenda das cores. Onde há protocolo tramitando (PO051) o card conta o
+   andamento da etapa, e é isso que a legenda explica; nas telas de cadastro do
+   fluxo ele conta o tipo da etapa, e a legenda mostra os tipos. */
+const LEGENDA_ANDAMENTO = [
+  ['concluida',   'Etapa Concluída'],
+  ['andamento',   'Etapa Em Andamento'],
+  ['dispensada',  'Etapa Pulada ou Não Aplicável'],
+  ['naoiniciada', 'Etapa Não Iniciada'],
 ];
 const LEGENDA_TIPOS = [
   ['inicio',  'Início'],
@@ -691,16 +692,16 @@ const ICO_INFO = '<svg viewBox="0 0 512 512" fill="currentColor" stroke="none" a
   + 's10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24'
   + 's10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>';
 
-function legendaCoresHTML(execucao = false) {
-  const grupo = (titulo, itens) => `
-      <span class="gr">${titulo}</span>
-      ${itens.map(([cls, txt]) => `<span class="li"><i class="bo ${cls}"></i>${txt}</span>`).join('')}`;
+function legendaCoresHTML(andamento = false) {
+  const itens = (andamento ? LEGENDA_ANDAMENTO : LEGENDA_TIPOS)
+    .map(([cls, txt]) => `<span class="li"><i class="bo ${cls}"></i>${txt}</span>`).join('');
+  /* a lista do andamento se explica sozinha nos rótulos e dispensa o título */
   return `
   <button class="legenda" title="Legenda das cores">
     ${ICO_INFO}
     <span class="legenda-tip">
-      ${execucao ? grupo('EXECUÇÃO', LEGENDA_EXECUCAO) : ''}
-      ${grupo('TIPO DE ETAPA', LEGENDA_TIPOS)}
+      ${andamento ? '' : '<span class="gr">TIPO DE ETAPA</span>'}
+      ${itens}
     </span>
   </button>`;
 }
