@@ -759,6 +759,159 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
 .cards-persona .card p { margin: 0; font-size: 12.5px; }
 
+/* botão de acesso: o mesmo desenho dos botões da tela de início, em escala
+   de texto corrido */
+.pagina .botao {
+  display: inline-block;
+  padding: 12px 28px;
+  background: #F3FFC3;
+  border: 2px solid #9BB61A;
+  border-radius: 12px;
+  color: #6D8415;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: 0 5px 0 #9BB61A;
+  transition: transform .1s ease, box-shadow .1s ease;
+}
+
+.pagina .botao:hover {
+  background: #9BB61A;
+  border-color: #7F9612;
+  color: #FFFFFF;
+  box-shadow: 0 5px 0 #7F9612;
+}
+
+.pagina .botao:active { transform: translateY(5px); box-shadow: 0 0 0 #9BB61A; }
+
+/* a moldura do botão: centralizada e com folga para a sombra do botão */
+.pagina fieldset.riscos.acesso { text-align: center; padding: 16px 20px 24px; }
+
+/* jornadas em raias: uma coluna por perfil, os passos alinhados na mesma
+   altura entre as colunas e o objetivo fechando cada raia */
+.pagina .raias {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 0 0 24px;
+}
+
+.pagina .raias .raia {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--cinza-linha);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.pagina .raias .cab {
+  margin: 0 -14px 16px;
+  padding: 0 12px 12px;
+  border-bottom: 1px solid var(--cinza-linha);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  color: #3F440C;
+}
+
+/* o vão entre os passos é onde a seta aparece */
+.pagina .raias .passos { display: grid; gap: 20px; }
+
+.pagina .raias .passo {
+  position: relative;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 6px 8px;
+  background: #F3FFC3;
+  border: 1px solid #C9DA86;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  line-height: 1.35;
+  text-align: center;
+  color: #6D8415;
+}
+
+/* Ligação com o passo seguinte: a haste nasce colada na borda de baixo da
+   caixa e a ponta da seta para antes da caixa seguinte. A do último passo
+   aponta para o objetivo. */
+.pagina .raias .passo::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 1.5px;
+  height: 11px;
+  margin-left: -.75px;
+  background: var(--verde);
+}
+
+.pagina .raias .passo::before {
+  content: '';
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--verde);
+}
+
+.pagina .raias fieldset.riscos {
+  margin: 20px 0 0;
+  padding: 10px 16px 14px;
+}
+
+.pagina .raias fieldset.riscos p { margin: 0; font-size: 12px; }
+
+/* na tela estreita as raias viram uma embaixo da outra */
+@media (max-width: 760px) {
+  .pagina .raias { grid-template-columns: 1fr; }
+}
+
+/* infográfico radial: o usuário no centro e, em volta, o que a camada
+   apresenta a ele; cada caixa se liga ao centro por um fio */
+.pagina .radial { margin: 0 0 26px; }
+
+.pagina .radial svg { width: 100%; height: auto; display: block; }
+
+.pagina .radial .centro { fill: var(--verde); }
+.pagina .radial .ico { fill: #FFFFFF; }
+
+.pagina .radial .caixa { fill: #F3FFC3; stroke: #C9DA86; stroke-width: 1; }
+
+.pagina .radial .rot {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  fill: #6D8415;
+}
+
+.pagina .radial .ordem { fill: var(--verde); stroke: #FFFFFF; stroke-width: 1.5; }
+
+.pagina .radial .ordem-n {
+  font-size: 9.5px;
+  font-weight: 700;
+  fill: #FFFFFF;
+}
+
+.pagina .radial .nome {
+  font-size: 12.5px;
+  font-weight: 700;
+  fill: var(--txt-strong);
+  /* contorno branco para os fios passarem por trás do nome sem encostar */
+  paint-order: stroke;
+  stroke: #FFFFFF;
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
+.pagina .radial .liga { stroke: #C9DA86; stroke-width: 1.5; }
+
 /* fluxo de palavras: resumo em etapas encadeadas por setas */
 .fluxo-palavras {
   display: flex;
@@ -927,6 +1080,9 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
   font-size: 12.5px;
 }
 
+/* card numerado com mais de um parágrafo: o segundo respira do primeiro */
+.cards-num .card p + p { margin-top: 8px; }
+
 /* blocos de lista lado a lado (escopo x fora do escopo, grupos de métricas) */
 .colunas-2 {
   display: grid;
@@ -936,6 +1092,13 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 }
 
 .colunas-2 fieldset.riscos { margin: 0; }
+
+/* variante da grade: os três blocos sempre na mesma linha */
+.colunas-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+@media (max-width: 920px) {
+  .colunas-3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+}
 
 /* variante neutra da moldura: o que fica fora do escopo */
 .pagina fieldset.riscos.fora { border-color: var(--cinza-linha); }
@@ -1085,6 +1248,12 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
   stroke-linecap: round; stroke-linejoin: round;
 }
 
+/* miniatura menor, ao lado de um texto: o canto e a lupa encolhem junto */
+.mini-tela.compacta::after { width: 92px; height: 80px; }
+.mini-tela.compacta .canto { width: 76px; height: 66px; }
+.mini-tela.compacta .lupa { width: 34px; height: 34px; right: 8px; bottom: 8px; border-radius: 9px; }
+.mini-tela.compacta .lupa svg { width: 16px; height: 16px; }
+
 /* modal da imagem ampliada, escurecendo a página */
 .lightbox {
   position: fixed;
@@ -1221,7 +1390,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
     <img src="assets/img/marca-centi.png" alt="Centi">
   </a>
   <h1>Documentação Protocolo 3.0</h1>
-  <div class="atualizado">Atualizado em: <span class="badge-data">24/08/2026</span></div>
+  <div class="atualizado">Atualizado em: <span class="badge-data">25/08/2026</span></div>
   <button class="bt-menu" id="bt-menu" onclick="alternarMenu()"
           aria-label="Abrir o menu" aria-expanded="false" aria-controls="sidebar">
     <svg class="ico-abrir" viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
@@ -3023,10 +3192,449 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </div>
     </section>
 
+    <div class="ilustracao">
+      <svg viewBox="0 0 720 90" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+
+        <!-- shapes: a paleta, a escala tipográfica, os componentes, a tela
+             montada com eles e a leitura acessível no fim -->
+        <g fill="none" stroke="#F3FFC3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="34" cy="45" r="14" fill="#C6E628" fill-opacity=".38"/>
+          <circle cx="58" cy="45" r="14" fill="#DFF08F" fill-opacity=".26"/>
+          <circle cx="82" cy="45" r="14" fill="#E8EF9E" fill-opacity=".16"/>
+
+          <line x1="150" y1="24" x2="226" y2="24"/>
+          <line x1="150" y1="45" x2="204" y2="45"/>
+          <line x1="150" y1="66" x2="182" y2="66"/>
+
+          <rect x="284" y="18" width="72" height="20" rx="10" fill="#C6E628" fill-opacity=".32"/>
+          <rect x="284" y="52" width="72" height="20" rx="6" fill="#DFF08F" fill-opacity=".18"/>
+          <line x1="294" y1="62" x2="330" y2="62"/>
+
+          <rect x="416" y="12" width="150" height="66" rx="9" fill="#DFF08F" fill-opacity=".16"/>
+          <line x1="416" y1="29" x2="566" y2="29"/>
+          <line x1="452" y1="29" x2="452" y2="78"/>
+          <rect x="464" y="40" width="42" height="12" rx="4" fill="#C6E628" fill-opacity=".3"/>
+          <rect x="464" y="58" width="88" height="10" rx="4" fill="#E8EF9E" fill-opacity=".2"/>
+
+          <path d="M628 45 a34 20 0 0 1 68 0 a34 20 0 0 1 -68 0"/>
+          <circle cx="662" cy="45" r="8" fill="#C6E628" fill-opacity=".34"/>
+        </g>
+
+        <!-- linhas e setas: a fundação vira componente, o componente vira tela -->
+        <g fill="none" stroke="#F3FFC3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="104" y1="45" x2="140" y2="45"/>
+          <path d="M133 40 l7 5 -7 5"/>
+
+          <line x1="240" y1="45" x2="276" y2="45"/>
+          <path d="M269 40 l7 5 -7 5"/>
+
+          <line x1="366" y1="45" x2="408" y2="45"/>
+          <path d="M401 40 l7 5 -7 5"/>
+
+          <line x1="578" y1="45" x2="616" y2="45" stroke-dasharray="1 8"/>
+        </g>
+      </svg>
+    </div>
+
     <section id="etapa6">
       <h2>#6 Design System e UX/UI</h2>
       <p class="lead">Identidade visual, componentes e padrões de experiência aplicados às telas.</p>
-      <p>A paleta parte do verde institucional <code>#A1BB3E</code>, com tons de apoio como <code>#D5E690</code> para filetes e divisores, e a família Open Sans nas telas novas.</p>
+    </section>
+
+    <section id="etapa6-objetivo" class="sub">
+      <h3>Objetivo da etapa</h3>
+      <p>Transformar a complexidade administrativa em uma <b>experiência digital simples de entender, fácil de usar e de rápida execução</b>. Esta etapa define como o Protocolo 3.0 será percebido, compreendido e utilizado pelos diferentes perfis de usuários.</p>
+      <p>A estratégia de UX/UI não se limita à criação das interfaces do produto. Ela estabelece <b>como o sistema apresenta informações, orienta decisões, organiza tarefas e conduz o usuário ao longo da tramitação de um processo</b>.</p>
+
+      <blockquote>
+        <p>O servidor não precisa entender o sistema; precisa saber o que deve fazer.</p>
+      </blockquote>
+
+      <p>Esse princípio está norteando as decisões de arquitetura da informação, jornadas, fluxos, componentes e interfaces.</p>
+    </section>
+
+    <section id="etapa6-ux" class="sub">
+      <h3>Estratégia de UX</h3>
+      <p>A estratégia de UX do Protocolo 3.0 parte de uma mudança de paradigma:</p>
+
+      <div class="comparativo">
+        <div class="col">
+          <h5 class="cab">Orientado a funcionalidades</h5>
+          <div class="fluxo-palavras vertical">
+            <span class="palavra">ONDE ENCONTRO A FUNÇÃO?</span>
+          </div>
+        </div>
+        <div class="col depois">
+          <h5 class="cab">Orientado à tarefa</h5>
+          <div class="fluxo-palavras vertical">
+            <span class="palavra">O QUE PRECISO FAZER AGORA?</span>
+          </div>
+        </div>
+      </div>
+
+      <p>O usuário não deve precisar conhecer a estrutura interna do sistema, os códigos das funcionalidades ou a lógica técnica que sustenta o processo. A interface deve apresentar, de maneira contextual:</p>
+
+      <div class="fluxo-palavras">
+        <span class="palavra">ONDE ESTOU</span><span class="seta-fluxo">→</span>
+        <span class="palavra">O QUE ACONTECEU</span><span class="seta-fluxo">→</span>
+        <span class="palavra">O QUE PRECISO FAZER</span><span class="seta-fluxo">→</span>
+        <span class="palavra">O QUE ACONTECE DEPOIS</span>
+      </div>
+
+      <p>Essa abordagem é especialmente importante para o <b>Servidor Público</b>, que possui menor necessidade de conhecimento técnico sobre a plataforma, mas precisa executar corretamente as atividades de sua etapa.</p>
+
+      <h4>Diretrizes de UX</h4>
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Diretriz</th><th>Aplicação</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Orientação</b></td><td>Mostrar claramente o próximo passo</td></tr>
+            <tr><td><b>Contexto</b></td><td>Apresentar as informações necessárias no momento da decisão</td></tr>
+            <tr><td><b>Simplicidade</b></td><td>Reduzir campos, telas e decisões desnecessárias</td></tr>
+            <tr><td><b>Previsibilidade</b></td><td>Tornar claro o que acontecerá após cada ação</td></tr>
+            <tr><td><b>Rastreabilidade</b></td><td>Permitir compreender o histórico do processo</td></tr>
+            <tr><td><b>Consistência</b></td><td>Utilizar os mesmos padrões de interação em todo o produto</td></tr>
+            <tr><td><b>Hierarquia</b></td><td>Destacar primeiro o que é mais importante para a tarefa</td></tr>
+            <tr><td><b>Progressividade</b></td><td>Revelar informações complexas conforme a necessidade</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="etapa6-ia" class="sub">
+      <h3>Arquitetura da informação</h3>
+      <p>A arquitetura da informação deverá refletir a <b>lógica do processo administrativo</b>, e não a estrutura técnica do sistema. Ela se organiza sobre os três estágios operacionais definidos na Modelagem do Produto:</p>
+
+      <div class="fluxo-palavras">
+        <span class="palavra">CONFIGURAR O FLUXO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">INICIAR O PROTOCOLO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">EXECUTAR A TRAMITAÇÃO</span>
+      </div>
+
+      <p>Sobre esses estágios, a experiência se divide em três camadas, cada uma com o seu público e o seu vocabulário:</p>
+
+      <h4>Camada de configuração</h4>
+      <p>Destinada principalmente ao Consultor Técnico Centi e ao Gestor / Líder Técnico da Prefeitura.</p>
+      <div class="radial">
+        <svg viewBox="0 0 720 331" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Consultor e Líder Técnico: FLUXOS · ETAPAS · RESPONSÁVEIS · DOCUMENTOS · CHECKLIST · REGRAS · VARIÁVEIS">
+          <line class="liga" x1="360.0" y1="101.0" x2="360.0" y2="43.0"/>
+          <line class="liga" x1="404.3" y1="132.4" x2="535.5" y2="86.4"/>
+          <line class="liga" x1="406.8" y1="152.7" x2="566.3" y2="168.7"/>
+          <line class="liga" x1="394.7" y1="179.7" x2="462.1" y2="241.3"/>
+          <line class="liga" x1="325.3" y1="179.7" x2="257.9" y2="241.3"/>
+          <line class="liga" x1="313.2" y1="152.7" x2="132.7" y2="170.8"/>
+          <line class="liga" x1="315.7" y1="132.4" x2="187.5" y2="87.4"/>
+          <g><rect class="caixa" x="326.0" y="17.0" width="68.0" height="26.0" rx="8"/><text class="rot" x="360.0" y="30.5" text-anchor="middle" dominant-baseline="central">FLUXOS</text><circle class="ordem" cx="326.0" cy="17.0" r="8.5"/><text class="ordem-n" x="326.0" y="17.5" text-anchor="middle" dominant-baseline="central">1</text></g>
+          <g><rect class="caixa" x="535.5" y="61.4" width="68.0" height="26.0" rx="8"/><text class="rot" x="569.5" y="74.9" text-anchor="middle" dominant-baseline="central">ETAPAS</text><circle class="ordem" cx="535.5" cy="61.4" r="8.5"/><text class="ordem-n" x="535.5" y="61.9" text-anchor="middle" dominant-baseline="central">2</text></g>
+          <g><rect class="caixa" x="566.3" y="161.3" width="110.0" height="26.0" rx="8"/><text class="rot" x="621.3" y="174.8" text-anchor="middle" dominant-baseline="central">RESPONSÁVEIS</text><circle class="ordem" cx="566.3" cy="161.3" r="8.5"/><text class="ordem-n" x="566.3" y="161.8" text-anchor="middle" dominant-baseline="central">3</text></g>
+          <g><rect class="caixa" x="428.3" y="241.3" width="96.0" height="26.0" rx="8"/><text class="rot" x="476.3" y="254.8" text-anchor="middle" dominant-baseline="central">DOCUMENTOS</text><circle class="ordem" cx="428.3" cy="241.3" r="8.5"/><text class="ordem-n" x="428.3" y="241.8" text-anchor="middle" dominant-baseline="central">4</text></g>
+          <g><rect class="caixa" x="199.2" y="241.3" width="89.0" height="26.0" rx="8"/><text class="rot" x="243.7" y="254.8" text-anchor="middle" dominant-baseline="central">CHECKLIST</text><circle class="ordem" cx="199.2" cy="241.3" r="8.5"/><text class="ordem-n" x="199.2" y="241.8" text-anchor="middle" dominant-baseline="central">5</text></g>
+          <g><rect class="caixa" x="64.7" y="161.3" width="68.0" height="26.0" rx="8"/><text class="rot" x="98.7" y="174.8" text-anchor="middle" dominant-baseline="central">REGRAS</text><circle class="ordem" cx="64.7" cy="161.3" r="8.5"/><text class="ordem-n" x="64.7" y="161.8" text-anchor="middle" dominant-baseline="central">6</text></g>
+          <g><rect class="caixa" x="106.0" y="61.4" width="89.0" height="26.0" rx="8"/><text class="rot" x="150.5" y="74.9" text-anchor="middle" dominant-baseline="central">VARIÁVEIS</text><circle class="ordem" cx="106.0" cy="61.4" r="8.5"/><text class="ordem-n" x="106.0" y="61.9" text-anchor="middle" dominant-baseline="central">7</text></g>
+          <circle class="centro" cx="360.0" cy="148.0" r="44.0"/>
+          <g transform="translate(360.0 148.0)"><g transform="translate(-15.0 -12.0) scale(0.0469)"><path class="ico" d="M224 0a128 128 0 1 1 0 256A128 128 0 1 1 224 0zM178.3 304l91.4 0c11.8 0 23.4 1.2 34.5 3.3c-2.1 18.5 7.4 35.6 21.8 44.8c-16.6 10.6-26.7 31.6-20 53.3c4 12.9 9.4 25.5 16.4 37.6s15.2 23.1 24.4 33c15.7 16.9 39.6 18.4 57.2 8.7l0 .9c0 9.2 2.7 18.5 7.9 26.3L29.7 512C13.3 512 0 498.7 0 482.3C0 383.8 79.8 304 178.3 304zM436 218.2c0-7 4.5-13.3 11.3-14.8c10.5-2.4 21.5-3.7 32.7-3.7s22.2 1.3 32.7 3.7c6.8 1.5 11.3 7.8 11.3 14.8l0 30.6c7.9 3.4 15.4 7.7 22.3 12.8l24.9-14.3c6.1-3.5 13.7-2.7 18.5 2.4c7.6 8.1 14.3 17.2 20.1 27.2s10.3 20.4 13.5 31c2.1 6.7-1.1 13.7-7.2 17.2l-25 14.4c.4 4 .7 8.1 .7 12.3s-.2 8.2-.7 12.3l25 14.4c6.1 3.5 9.2 10.5 7.2 17.2c-3.3 10.6-7.8 21-13.5 31s-12.5 19.1-20.1 27.2c-4.8 5.1-12.5 5.9-18.5 2.4l-24.9-14.3c-6.9 5.1-14.3 9.4-22.3 12.8l0 30.6c0 7-4.5 13.3-11.3 14.8c-10.5 2.4-21.5 3.7-32.7 3.7s-22.2-1.3-32.7-3.7c-6.8-1.5-11.3-7.8-11.3-14.8l0-30.5c-8-3.4-15.6-7.7-22.5-12.9l-24.7 14.3c-6.1 3.5-13.7 2.7-18.5-2.4c-7.6-8.1-14.3-17.2-20.1-27.2s-10.3-20.4-13.5-31c-2.1-6.7 1.1-13.7 7.2-17.2l24.8-14.3c-.4-4.1-.7-8.2-.7-12.4s.2-8.3 .7-12.4L343.8 325c-6.1-3.5-9.2-10.5-7.2-17.2c3.3-10.6 7.7-21 13.5-31s12.5-19.1 20.1-27.2c4.8-5.1 12.4-5.9 18.5-2.4l24.8 14.3c6.9-5.1 14.5-9.4 22.5-12.9l0-30.5zm92.1 133.5a48.1 48.1 0 1 0 -96.1 0 48.1 48.1 0 1 0 96.1 0z"/></g></g>
+          <text class="nome" x="360.0" y="214.0" text-anchor="middle">
+            <tspan x="360.0" dy="0">Consultor e</tspan>
+            <tspan x="360.0" dy="15">Líder Técnico</tspan>
+          </text>
+        </svg>
+      </div>
+
+      <h4>Camada de operação</h4>
+      <p>Destinada principalmente aos servidores.</p>
+      <div class="radial">
+        <svg viewBox="0 0 720 313" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Servidor Público: PROTOCOLOS · ETAPA ATUAL · CONTEXTO · TAREFAS · DOCUMENTOS · AÇÕES · PRÓXIMA ETAPA">
+          <line class="liga" x1="360.0" y1="101.0" x2="360.0" y2="43.0"/>
+          <line class="liga" x1="404.3" y1="132.4" x2="532.5" y2="87.4"/>
+          <line class="liga" x1="406.8" y1="152.7" x2="580.3" y2="170.1"/>
+          <line class="liga" x1="394.7" y1="179.7" x2="462.1" y2="241.3"/>
+          <line class="liga" x1="325.3" y1="179.7" x2="257.9" y2="241.3"/>
+          <line class="liga" x1="313.2" y1="152.7" x2="129.2" y2="171.2"/>
+          <line class="liga" x1="315.7" y1="132.4" x2="187.5" y2="87.4"/>
+          <g><rect class="caixa" x="312.0" y="17.0" width="96.0" height="26.0" rx="8"/><text class="rot" x="360.0" y="30.5" text-anchor="middle" dominant-baseline="central">PROTOCOLOS</text><circle class="ordem" cx="312.0" cy="17.0" r="8.5"/><text class="ordem-n" x="312.0" y="17.5" text-anchor="middle" dominant-baseline="central">1</text></g>
+          <g><rect class="caixa" x="518.0" y="61.4" width="103.0" height="26.0" rx="8"/><text class="rot" x="569.5" y="74.9" text-anchor="middle" dominant-baseline="central">ETAPA ATUAL</text><circle class="ordem" cx="518.0" cy="61.4" r="8.5"/><text class="ordem-n" x="518.0" y="61.9" text-anchor="middle" dominant-baseline="central">2</text></g>
+          <g><rect class="caixa" x="580.3" y="161.3" width="82.0" height="26.0" rx="8"/><text class="rot" x="621.3" y="174.8" text-anchor="middle" dominant-baseline="central">CONTEXTO</text><circle class="ordem" cx="580.3" cy="161.3" r="8.5"/><text class="ordem-n" x="580.3" y="161.8" text-anchor="middle" dominant-baseline="central">3</text></g>
+          <g><rect class="caixa" x="438.8" y="241.3" width="75.0" height="26.0" rx="8"/><text class="rot" x="476.3" y="254.8" text-anchor="middle" dominant-baseline="central">TAREFAS</text><circle class="ordem" cx="438.8" cy="241.3" r="8.5"/><text class="ordem-n" x="438.8" y="241.8" text-anchor="middle" dominant-baseline="central">4</text></g>
+          <g><rect class="caixa" x="195.7" y="241.3" width="96.0" height="26.0" rx="8"/><text class="rot" x="243.7" y="254.8" text-anchor="middle" dominant-baseline="central">DOCUMENTOS</text><circle class="ordem" cx="195.7" cy="241.3" r="8.5"/><text class="ordem-n" x="195.7" y="241.8" text-anchor="middle" dominant-baseline="central">5</text></g>
+          <g><rect class="caixa" x="68.2" y="161.3" width="61.0" height="26.0" rx="8"/><text class="rot" x="98.7" y="174.8" text-anchor="middle" dominant-baseline="central">AÇÕES</text><circle class="ordem" cx="68.2" cy="161.3" r="8.5"/><text class="ordem-n" x="68.2" y="161.8" text-anchor="middle" dominant-baseline="central">6</text></g>
+          <g><rect class="caixa" x="92.0" y="61.4" width="117.0" height="26.0" rx="8"/><text class="rot" x="150.5" y="74.9" text-anchor="middle" dominant-baseline="central">PRÓXIMA ETAPA</text><circle class="ordem" cx="92.0" cy="61.4" r="8.5"/><text class="ordem-n" x="92.0" y="61.9" text-anchor="middle" dominant-baseline="central">7</text></g>
+          <circle class="centro" cx="360.0" cy="148.0" r="44.0"/>
+          <g transform="translate(360.0 148.0)"><g transform="translate(-9.4 -15.0) scale(0.0586)"><path class="ico" d="M160 0a48 48 0 1 1 0 96 48 48 0 1 1 0-96zM88 384l-17.8 0c-10.9 0-18.6-10.7-15.2-21.1L93.3 248.1 59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l53.6-89.2c20.3-33.7 56.7-54.3 96-54.3l11.6 0c39.3 0 75.7 20.6 96 54.3l53.6 89.2c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9l-33.9-56.3L265 362.9c3.5 10.4-4.3 21.1-15.2 21.1L232 384l0 96c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-96-16 0 0 96c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-96z"/></g></g>
+          <text class="nome" x="360.0" y="214.0" text-anchor="middle">Servidor Público</text>
+        </svg>
+      </div>
+
+      <h4>Camada de acompanhamento</h4>
+      <p>Destinada principalmente aos gestores.</p>
+      <div class="radial">
+        <svg viewBox="0 0 720 313" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Gestor: PROCESSOS · STATUS · PRAZOS · RESPONSÁVEIS · GARGALOS · HISTÓRICO · INDICADORES">
+          <line class="liga" x1="360.0" y1="101.0" x2="360.0" y2="43.0"/>
+          <line class="liga" x1="404.3" y1="132.4" x2="535.5" y2="86.4"/>
+          <line class="liga" x1="406.8" y1="152.7" x2="587.3" y2="170.8"/>
+          <line class="liga" x1="394.7" y1="179.7" x2="462.1" y2="241.3"/>
+          <line class="liga" x1="325.3" y1="179.7" x2="257.9" y2="241.3"/>
+          <line class="liga" x1="313.2" y1="152.7" x2="143.2" y2="169.8"/>
+          <line class="liga" x1="315.7" y1="132.4" x2="187.5" y2="87.4"/>
+          <g><rect class="caixa" x="315.5" y="17.0" width="89.0" height="26.0" rx="8"/><text class="rot" x="360.0" y="30.5" text-anchor="middle" dominant-baseline="central">PROCESSOS</text><circle class="ordem" cx="315.5" cy="17.0" r="8.5"/><text class="ordem-n" x="315.5" y="17.5" text-anchor="middle" dominant-baseline="central">1</text></g>
+          <g><rect class="caixa" x="535.5" y="61.4" width="68.0" height="26.0" rx="8"/><text class="rot" x="569.5" y="74.9" text-anchor="middle" dominant-baseline="central">STATUS</text><circle class="ordem" cx="535.5" cy="61.4" r="8.5"/><text class="ordem-n" x="535.5" y="61.9" text-anchor="middle" dominant-baseline="central">2</text></g>
+          <g><rect class="caixa" x="587.3" y="161.3" width="68.0" height="26.0" rx="8"/><text class="rot" x="621.3" y="174.8" text-anchor="middle" dominant-baseline="central">PRAZOS</text><circle class="ordem" cx="587.3" cy="161.3" r="8.5"/><text class="ordem-n" x="587.3" y="161.8" text-anchor="middle" dominant-baseline="central">3</text></g>
+          <g><rect class="caixa" x="421.3" y="241.3" width="110.0" height="26.0" rx="8"/><text class="rot" x="476.3" y="254.8" text-anchor="middle" dominant-baseline="central">RESPONSÁVEIS</text><circle class="ordem" cx="421.3" cy="241.3" r="8.5"/><text class="ordem-n" x="421.3" y="241.8" text-anchor="middle" dominant-baseline="central">4</text></g>
+          <g><rect class="caixa" x="202.7" y="241.3" width="82.0" height="26.0" rx="8"/><text class="rot" x="243.7" y="254.8" text-anchor="middle" dominant-baseline="central">GARGALOS</text><circle class="ordem" cx="202.7" cy="241.3" r="8.5"/><text class="ordem-n" x="202.7" y="241.8" text-anchor="middle" dominant-baseline="central">5</text></g>
+          <g><rect class="caixa" x="54.2" y="161.3" width="89.0" height="26.0" rx="8"/><text class="rot" x="98.7" y="174.8" text-anchor="middle" dominant-baseline="central">HISTÓRICO</text><circle class="ordem" cx="54.2" cy="161.3" r="8.5"/><text class="ordem-n" x="54.2" y="161.8" text-anchor="middle" dominant-baseline="central">6</text></g>
+          <g><rect class="caixa" x="99.0" y="61.4" width="103.0" height="26.0" rx="8"/><text class="rot" x="150.5" y="74.9" text-anchor="middle" dominant-baseline="central">INDICADORES</text><circle class="ordem" cx="99.0" cy="61.4" r="8.5"/><text class="ordem-n" x="99.0" y="61.9" text-anchor="middle" dominant-baseline="central">7</text></g>
+          <circle class="centro" cx="360.0" cy="148.0" r="44.0"/>
+          <g transform="translate(360.0 148.0)"><g transform="translate(-13.1 -15.0) scale(0.0586)"><path class="ico" d="M96 128a128 128 0 1 0 256 0A128 128 0 1 0 96 128zm94.5 200.2l18.6 31L175.8 483.1l-36-146.9c-2-8.1-9.8-13.4-17.9-11.3C51.9 342.4 0 405.8 0 481.3c0 17 13.8 30.7 30.7 30.7l131.7 0c0 0 0 0 .1 0l5.5 0 112 0 5.5 0c0 0 0 0 .1 0l131.7 0c17 0 30.7-13.8 30.7-30.7c0-75.5-51.9-138.9-121.9-156.4c-8.1-2-15.9 3.3-17.9 11.3l-36 146.9L238.9 359.2l18.6-31c6.4-10.7-1.3-24.2-13.7-24.2L224 304l-19.7 0c-12.4 0-20.1 13.6-13.7 24.2z"/></g></g>
+          <text class="nome" x="360.0" y="214.0" text-anchor="middle">Gestor</text>
+        </svg>
+      </div>
+
+      <p>Essa separação permite que cada perfil tenha acesso à complexidade necessária para a sua função, <b>sem expor desnecessariamente os demais usuários</b>.</p>
+    </section>
+
+    <section id="etapa6-jornadas" class="sub">
+      <h3>Jornadas dos usuários</h3>
+      <p>A experiência deverá ser desenhada a partir das jornadas dos três perfis definidos na Modelagem do Produto.</p>
+
+      <div class="raias">
+        <div class="raia">
+          <h4 class="cab">Consultor Técnico Centi</h4>
+          <div class="passos">
+            <span class="passo">COMPREENDER O PROCESSO</span>
+            <span class="passo">MODELAR O FLUXO</span>
+            <span class="passo">DEFINIR ETAPAS</span>
+            <span class="passo">CONFIGURAR REGRAS</span>
+            <span class="passo">DOCUMENTOS E CHECKLISTS</span>
+            <span class="passo">VALIDAR O FLUXO</span>
+            <span class="passo">ORIENTAR A PREFEITURA</span>
+            <span class="passo">ACOMPANHAR A EVOLUÇÃO</span>
+          </div>
+          <fieldset class="riscos">
+            <legend>Objetivo</legend>
+            <p>Transformar uma regra administrativa em um <b>fluxo digital estruturado</b>, sem precisar recorrer continuamente a desenvolvimento técnico.</p>
+          </fieldset>
+        </div>
+        <div class="raia">
+          <h4 class="cab">Gestor / Líder Técnico</h4>
+          <div class="passos">
+            <span class="passo">RECEBER CAPACITAÇÃO</span>
+            <span class="passo">COMPREENDER O FLUXO</span>
+            <span class="passo">CRIAR / EDITAR FLUXO</span>
+            <span class="passo">PUBLICAR A ALTERAÇÃO</span>
+            <span class="passo">CRIAR E ACOMPANHAR PROCESSOS</span>
+            <span class="passo">IDENTIFICAR PROBLEMAS</span>
+            <span class="passo">AJUSTAR A OPERAÇÃO</span>
+            <span class="passo">MULTIPLICAR CONHECIMENTO</span>
+          </div>
+          <fieldset class="riscos">
+            <legend>Objetivo</legend>
+            <p>Garantir <b>autonomia progressiva</b> para que a prefeitura mantenha seus processos atualizados sem depender continuamente da Centi.</p>
+          </fieldset>
+        </div>
+        <div class="raia">
+          <h4 class="cab">Servidor Público</h4>
+          <div class="passos">
+            <span class="passo">RECEBER O PROTOCOLO</span>
+            <span class="passo">ENTENDER O CONTEXTO</span>
+            <span class="passo">VERIFICAR DOCUMENTOS</span>
+            <span class="passo">CONSULTAR CHECKLIST E REGRAS</span>
+            <span class="passo">EXECUTAR A ATIVIDADE</span>
+            <span class="passo">CONCLUIR A ETAPA</span>
+            <span class="passo">ENCAMINHAR</span>
+            <span class="passo">AGUARDAR A PRÓXIMA ATIVIDADE</span>
+          </div>
+          <fieldset class="riscos">
+            <legend>Objetivo</legend>
+            <p>Executar a sua responsabilidade <b>sem precisar compreender a complexidade do fluxo completo</b>.</p>
+          </fieldset>
+        </div>
+      </div>
+    </section>
+
+    <section id="etapa6-fluxo" class="sub">
+      <h3>O fluxo visual como elemento central</h3>
+      <p>O <b>fluxo visual</b> é um dos principais elementos de diferenciação da experiência do Protocolo 3.0. Ele transforma um processo administrativo — normalmente percebido como uma sequência abstrata de documentos e encaminhamentos — em uma <b>representação visual compreensível</b>.</p>
+
+      <div class="quadro">
+        <h4>O que o fluxo visual precisa responder de imediato</h4>
+        <div class="corpo">
+          <div class="colunas-2">
+            <ul class="lista">
+              <li>Onde o processo está?</li>
+              <li>Por onde ele já passou?</li>
+              <li>Quem é responsável agora?</li>
+              <li>O que precisa ser feito?</li>
+              <li>Quais regras precisam ser atendidas?</li>
+              <li>Para onde ele irá depois?</li>
+            </ul>
+
+            <div class="mini-tela compacta" data-legenda="Tramitação de Protocolo PO051" onclick="ampliarTela(this)">
+              <img src="assets/img/po051-fluxo-completo.png"
+                   alt="PO051 - Tramitação de Protocolo: o fluxo completo do protocolo 2292436, da abertura ao fim, com a etapa 6 em andamento e o seu detalhamento ao lado">
+              <span class="canto"></span>
+              <button class="lupa" title="Ampliar a tela" aria-label="Ampliar a tela">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p>O fluxo visual, portanto, não deve ser tratado apenas como um diagrama de apoio. Ele funciona como uma <b>camada de orientação e compreensão do processo</b>.</p>
+    </section>
+
+    <section id="etapa6-ds" class="sub">
+      <h3>Design System Centi</h3>
+      <p>O <b>Design System Centi</b> é a base visual e estrutural para a construção das novas interfaces. A versão atual já estabelece padrões para cores, tipografia, botões, formulários, tabelas, abas, cards, badges, ícones, grid, navegação e componentes de interface, usando <b>Material UI</b> como base e <b>Font Awesome</b> como biblioteca de ícones.</p>
+
+      <h4>Objetivos do Design System</h4>
+      <ul class="lista">
+        <li>garantir consistência entre as telas;</li>
+        <li>acelerar o desenvolvimento;</li>
+        <li>reduzir decisões repetitivas de UI;</li>
+        <li>facilitar a manutenção;</li>
+        <li>estabelecer padrões de interação;</li>
+        <li>garantir escalabilidade para novos módulos;</li>
+        <li>aproximar Produto, UX e Desenvolvimento.</li>
+      </ul>
+
+      <h4>Componentes fundamentais</h4>
+      <div class="colunas-2 colunas-3">
+        <fieldset class="riscos">
+          <legend>Fundação</legend>
+          <ul>
+            <li>cores;</li>
+            <li>tipografia;</li>
+            <li>espaçamento;</li>
+            <li>grid;</li>
+            <li>bordas;</li>
+            <li>navegação;</li>
+            <li>ícones.</li>
+          </ul>
+        </fieldset>
+        <fieldset class="riscos">
+          <legend>Componentes</legend>
+          <ul>
+            <li>botões, inputs e selects;</li>
+            <li>tabelas;</li>
+            <li>cards e badges;</li>
+            <li>tabs e menus;</li>
+            <li>modais e drawers;</li>
+            <li>tooltips e alertas;</li>
+            <li>indicadores de status.</li>
+          </ul>
+        </fieldset>
+        <fieldset class="riscos">
+          <legend>Padrões de experiência</legend>
+          <ul>
+            <li>pesquisa, cadastro e edição;</li>
+            <li>confirmação e exclusão;</li>
+            <li>carregamento;</li>
+            <li>erro, vazio e sucesso;</li>
+            <li>estados de processo;</li>
+            <li>feedback de ações.</li>
+          </ul>
+        </fieldset>
+      </div>
+
+      <fieldset class="riscos acesso">
+        <legend>Acessar</legend>
+        <a class="botao" href="Centi%20Design%20System.dc.html" target="_blank" rel="noopener">Design System Centi</a>
+      </fieldset>
+    </section>
+
+    <section id="etapa6-prototipos" class="sub">
+      <h3>Protótipo Funcional</h3>
+      <p>O protótipo funcional transforma a arquitetura e as jornadas em <b>interfaces navegáveis antes da implementação definitiva</b>.</p>
+      <p>Seu valor está em antecipar decisões: em vez de discutir telas no papel, a equipe percorre o produto, testa os conceitos com usuários reais e descobre cedo o que não funciona — validando a lógica do fluxo, a linguagem das telas e a sequência das ações enquanto a mudança ainda é barata. Ele também dá a Produto, UX, Desenvolvimento e Comercial <b>uma mesma referência concreta</b> para discutir, e serve de material de demonstração da proposta do Protocolo 3.0 para a prefeitura.</p>
+      <p>O protótipo deverá evoluir continuamente conforme as validações de UX e os resultados dos testes com usuários.</p>
+
+      <fieldset class="riscos acesso">
+        <legend>Acessar</legend>
+        <a class="botao" href="prototipo.html" target="_blank" rel="noopener">Protótipo Protocolo 3.0</a>
+      </fieldset>
+    </section>
+
+    <section id="etapa6-testes" class="sub">
+      <h3>Testes de usabilidade</h3>
+      <p>O produto deverá ser submetido a testes de usabilidade antes da implantação do piloto. O objetivo é verificar se os usuários conseguem realizar suas tarefas <b>sem depender de explicações constantes da equipe da Centi</b>.</p>
+
+      <div class="cards-num">
+        <div class="card">
+          <span class="num">TESTE 01</span>
+          <h4>Configuração</h4>
+          <p><i>“Crie um fluxo para um determinado processo e configure suas etapas.”</i></p>
+          <p>Avalia a compreensão do construtor, a facilidade de criação, a organização das informações, o entendimento das regras e a clareza da publicação.</p>
+        </div>
+        <div class="card">
+          <span class="num">TESTE 02</span>
+          <h4>Criação</h4>
+          <p><i>“Crie um novo protocolo a partir de um fluxo existente.”</i></p>
+          <p>Avalia a compreensão do cadastro, a clareza dos requisitos, a facilidade de inclusão de documentos e o entendimento do início do processo.</p>
+        </div>
+        <div class="card">
+          <span class="num">TESTE 03</span>
+          <h4>Tramitação</h4>
+          <p><i>“Receba um protocolo, analise sua etapa e conclua a atividade.”</i></p>
+          <p>Avalia a compreensão da etapa atual, a localização das informações, o entendimento do que deve ser feito, a clareza da conclusão e a compreensão do próximo passo.</p>
+        </div>
+      </div>
+
+      <h4>Critérios de avaliação</h4>
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Indicador</th><th>Objetivo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Taxa de conclusão</b></td><td>O usuário consegue realizar a tarefa</td></tr>
+            <tr><td><b>Tempo de execução</b></td><td>A tarefa é realizada com eficiência</td></tr>
+            <tr><td><b>Erros</b></td><td>Identificar os pontos de confusão</td></tr>
+            <tr><td><b>Dúvidas</b></td><td>Medir a dependência de orientação</td></tr>
+            <tr><td><b>Satisfação</b></td><td>Percepção do usuário</td></tr>
+            <tr><td><b>Aprendizado</b></td><td>Facilidade após o primeiro contato</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>O principal indicador qualitativo será:</p>
+      <blockquote>
+        <p>O usuário conseguiu entender o que deveria fazer sem que alguém precisasse explicar?</p>
+      </blockquote>
+    </section>
+
+    <section id="etapa6-entregaveis" class="sub">
+      <h3>Entregáveis da etapa</h3>
+      <p>Ao final desta etapa, deverão estar disponíveis:</p>
+      <ul class="lista">
+        <li><b>Estratégia de UX do produto</b>;</li>
+        <li>arquitetura da informação;</li>
+        <li>jornadas dos principais usuários;</li>
+        <li>fluxos de interação;</li>
+        <li>protótipos das principais telas;</li>
+        <li>especificações de UI;</li>
+        <li>Design System atualizado e biblioteca de componentes;</li>
+        <li>padrões de estados e de feedback;</li>
+        <li>plano de testes de usabilidade;</li>
+        <li>resultados dos testes e os ajustes feitos a partir deles.</li>
+      </ul>
+
+      <div class="objetivo">
+        <svg class="setas" viewBox="0 0 100 64" aria-hidden="true">
+          <path d="M8 12 L30 32 L8 52"/>
+          <path d="M36 12 L58 32 L36 52"/>
+          <path d="M64 12 L86 32 L64 52"/>
+        </svg>
+        <div>
+          <h4>Resultado esperado</h4>
+          <p>Uma experiência coerente, testável, acessível e escalável, em que cada perfil compreenda sua responsabilidade e execute suas tarefas com o mínimo de esforço cognitivo — o resultado não é uma coleção de telas visualmente consistentes, e sim a transformação de complexidade administrativa em clareza operacional.</p>
+        </div>
+      </div>
+
+      <blockquote>
+        <p>A complexidade fica na construção do sistema. Para o usuário fica a simplicidade de uso.</p>
+      </blockquote>
     </section>
 
     <section id="etapa7">
@@ -3134,7 +3742,17 @@ const MENU = [
     { id: 'etapa5-protocolo',   txt: 'O Protocolo 3.0 na plataforma' },
     { id: 'etapa5-entregaveis', txt: 'Entregáveis da etapa' },
   ] },
-  { titulo: '#6 Design System e UX/UI',     itens: [{ id: 'etapa6',  txt: 'Visão geral' }] },
+  { titulo: '#6 Design System e UX/UI',     itens: [
+    { id: 'etapa6-objetivo',      txt: 'Objetivo da etapa' },
+    { id: 'etapa6-ux',            txt: 'Estratégia de UX' },
+    { id: 'etapa6-ia',            txt: 'Arquitetura da informação' },
+    { id: 'etapa6-jornadas',      txt: 'Jornadas dos usuários' },
+    { id: 'etapa6-fluxo',         txt: 'O fluxo visual' },
+    { id: 'etapa6-ds',            txt: 'Design System Centi' },
+    { id: 'etapa6-prototipos',    txt: 'Protótipo Funcional' },
+    { id: 'etapa6-testes',        txt: 'Testes de usabilidade' },
+    { id: 'etapa6-entregaveis',   txt: 'Entregáveis da etapa' },
+  ] },
   { titulo: '#7 Skill Inovação (IA/ViCenti)', itens: [{ id: 'etapa7', txt: 'Visão geral' }] },
   { titulo: '#8 Legal & Compliance',        itens: [{ id: 'etapa8',  txt: 'Visão geral' }] },
   { titulo: '#9 Pipeline de Vendas',        itens: [{ id: 'etapa9',  txt: 'Visão geral' }] },
