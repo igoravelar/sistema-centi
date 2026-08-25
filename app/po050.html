@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Centi · PO050 - Fluxo de Processos</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
-<link rel="stylesheet" href="assets/centi.css?v=8">
+<link rel="stylesheet" href="assets/centi.css?v=9">
 <link rel="stylesheet" href="assets/fluxo.css?v=19">
 <style>
   /* Pesquisa: filtros à esquerda, Últimas Buscas à direita, separados por
@@ -198,7 +198,8 @@
 
   .form { flex: 1; min-width: 0; max-width: 576px; display: flex; flex-direction: column; gap: 10px;
           overflow: auto; padding: 14px 16px; }
-  .form .rot .ajuda-rot { width: 13px; height: 13px; vertical-align: -2px; margin-left: 5px; color: var(--txt-mute); }
+  .form .rot .ajuda-rot,
+  .modal-form .rot .ajuda-rot { width: 13px; height: 13px; vertical-align: -2px; margin-left: 5px; color: var(--txt-mute); }
 </style>
 </head>
 <body>
@@ -308,8 +309,14 @@ function pesquisaHTML() {
 
 /* ------------------------------- Cadastro ------------------------------- */
 
+/* `id` e os ganchos de evento são opcionais: só os campos que o protótipo
+   precisa ler de volta (os da modal da etapa) os informam. */
+const atrId = id => (id ? ` id="${id}"` : '');
+const atrEv = (ev, fn) => (fn ? ` ${ev}="${fn}"` : '');
+
 /** Campo padrão: rótulo à esquerda, valor à direita (componente do centi.css). */
-function campo({ rot, val = '', ro = false, cod, acoes = [], alto = false, ph = '' }) {
+function campo({ rot, val = '', ro = false, cod, acoes = [], alto = false, ph = '',
+                 id, aoDigitar, aoFocar }) {
   const codBox = cod !== undefined
     ? `<input class="cx cod cod-l${ro ? ' ro' : ''}" value="${cod}" ${ro ? 'readonly' : ''}>` : '';
   const acts = acoes.map(a => `<button class="act" title="${a.t}">${svg(a.i)}</button>`).join('');
@@ -318,28 +325,29 @@ function campo({ rot, val = '', ro = false, cod, acoes = [], alto = false, ph = 
       <div class="rot">${rot}</div>
       <div class="val">
         ${codBox}
-        <input class="cx${ro ? ' ro' : ''}" value="${val}" placeholder="${ph}" ${ro ? 'readonly' : ''}>
+        <input${atrId(id)} class="cx${ro ? ' ro' : ''}" value="${val}" placeholder="${ph}"
+               ${ro ? 'readonly' : ''}${atrEv('oninput', aoDigitar)}${atrEv('onfocus', aoFocar)}>
         ${acts}
       </div>
     </div>`;
 }
 
 /** Variante com textarea (Descrição). */
-function campoArea({ rot, val = '', linhas = 4 }) {
+function campoArea({ rot, val = '', linhas = 4, id, aoDigitar }) {
   return `
     <div class="campo" style="min-height:${linhas * 22 + 16}px">
       <div class="rot">${rot}</div>
-      <div class="val"><textarea class="cx" rows="${linhas}">${val}</textarea></div>
+      <div class="val"><textarea${atrId(id)} class="cx" rows="${linhas}"${atrEv('oninput', aoDigitar)}>${val}</textarea></div>
     </div>`;
 }
 
 /** Variante com select; `val` marca a opção selecionada. */
-function campoSelect({ rot, opcoes, ro = false, val }) {
+function campoSelect({ rot, opcoes, ro = false, val, id, aoMudar }) {
   return `
     <div class="campo">
       <div class="rot">${rot}</div>
       <div class="val">
-        <select class="cx${ro ? ' ro' : ''}" ${ro ? 'disabled' : ''}>
+        <select${atrId(id)} class="cx${ro ? ' ro' : ''}" ${ro ? 'disabled' : ''}${atrEv('onchange', aoMudar)}>
           ${opcoes.map(o => `<option${o === val ? ' selected' : ''}>${o}</option>`).join('')}
         </select>
       </div>
@@ -596,10 +604,34 @@ let modalEditIdx = null;   /* índice do card sendo revisto; null = criando */
 let modalAlvo = 'etapa1';
 let modalCriada = false;   /* etapa já existe: título e formulário preenchidos */
 
+/* O Tipo de etapa comanda a modal: trocar a combo remonta o formulário. O
+   rascunho guarda o que já está em tela para nada se perder na remontagem. */
+let modalTipo = 'Início';
+let modalRascunho = rascunhoVazio();
+
+function rascunhoVazio() {
+  return { titulo: '', deptoCod: '', depto: '', crit: '', orient: '', alerta: '',
+           aprova: 'Não', prazo: '', tipoprazo: 'Dias corridos', tipofim: 'Deferido' };
+}
+
+/* exemplo das duas primeiras etapas da jornada guiada do protótipo */
+const EX_ETAPA1 = { titulo: 'Entrada de Protocolo', tipo: 'Início' };
+const EX_ETAPA2 = {
+  titulo: 'Recebimento do pedido', tipo: 'Tarefa',
+  deptoCod: '1960', depto: 'PROTOCOLO CENTRAL',
+  crit: 'Pedido recebido, requerimento assinado pelo requerente e documentação anexada.',
+  orient: 'Confira se o requerimento está assinado pelo próprio requerente ou por procurador com poderes. Sem a assinatura o pedido não pode ser analisado.',
+  alerta: 'O prazo deste processo corre em dias corridos, inclusive fins de semana. Não deixe parado.',
+  prazo: '2', tipoprazo: 'Dias corridos',
+};
+
 function abrirModalEtapa()  {
   modalEtapa = true; modalVista = 'form'; modalPreenchido = false; modalCriada = false;
   modalEditIdx = null;
   modalAlvo = etapasFluxo.length === 0 ? 'etapa1' : etapasFluxo.length === 1 ? 'etapa2' : 'nova';
+  /* etapa nova nasce como Início: é o tipo que abre um fluxo */
+  modalTipo = 'Início';
+  modalRascunho = rascunhoVazio();
   mExp = { docs: false, doc1: false, ass1: false, doc2: false, check: false, cond: false };
   render();
 }
@@ -609,6 +641,14 @@ function abrirCard(i) {
   modalEtapa = true; modalVista = 'form'; modalPreenchido = true; modalCriada = true;
   modalEditIdx = i;
   modalAlvo = i === 0 ? 'etapa1' : i === 1 ? 'etapa2' : 'nova';
+  const e = etapasFluxo[i] || {};
+  modalRascunho = i === 0 ? { ...rascunhoVazio(), ...EX_ETAPA1 }
+                : i === 1 ? { ...rascunhoVazio(), ...EX_ETAPA2 }
+                : { ...rascunhoVazio(), titulo: e.titulo || '',
+                    depto: e.depto && e.depto !== '—' ? e.depto : '',
+                    prazo: e.dias ? String(parseInt(e.dias, 10)) : '',
+                    tipoprazo: /úteis/.test(e.dias || '') ? 'Dias úteis' : 'Dias corridos' };
+  modalTipo = e.tipo || 'Início';
   mExp = { docs: false, doc1: false, ass1: false, doc2: false, check: false, cond: false };
   render();
 }
@@ -626,17 +666,36 @@ function habilitarSalvarEtapa() {
   }
 }
 
-/** Lê os campos do formulário livre para montar o card. */
-function lerFormNova() {
-  const v = id => (document.getElementById(id) || {}).value || '';
-  const prazo = v('ne-prazo');
-  const tipo = v('ne-tipo') || 'Tarefa';
+/** Recolhe o que está em tela para o rascunho: só os campos do tipo atual
+    existem no DOM, e os demais seguem guardados como estavam. */
+function lerRascunhoEtapa() {
+  Object.keys(modalRascunho).forEach(k => {
+    const el = document.getElementById('ne-' + k);
+    if (el) modalRascunho[k] = el.value;
+  });
+}
+
+/** Troca do Tipo de etapa: remonta o formulário com os campos do novo tipo. */
+function mudarTipoEtapa(valor) {
+  lerRascunhoEtapa();
+  modalTipo = valor;
+  modalPreenchido = true; modalCriada = true;
+  render();
+}
+
+/** Lê o formulário da etapa para montar o card do fluxograma. */
+function lerFormEtapa() {
+  lerRascunhoEtapa();
+  const d = modalRascunho;
+  const c = camposDoTipo(modalTipo);
+  const prazo = parseInt(d.prazo, 10);
   return {
-    titulo: v('ne-titulo') || 'Nova etapa',
-    tipo,
-    depto: v('ne-depto') || '—',
-    dias: prazo && tipo !== 'Início'
-      ? `${prazo} ${v('ne-tipoprazo') === 'Dias úteis' ? 'dias úteis' : 'dias'}` : null,
+    titulo: d.titulo || 'Nova etapa',
+    tipo: modalTipo,
+    /* o Início não tem repartição responsável: qualquer uma abre o processo */
+    depto: d.depto || (c.resp ? '—' : 'QUALQUER UM'),
+    dias: c.prazo && prazo
+      ? `${prazo} ${d.tipoprazo === 'Dias úteis' ? 'dias úteis' : 'dias'}` : null,
   };
 }
 function fecharModalEtapa() { modalEtapa = false; render(); }
@@ -660,8 +719,14 @@ function chevM(no) {
 /** Abre o formulário de um item já cadastrado (vem preenchido). */
 function abrirItemModal(vista) { modalVista = vista; modalPreenchido = true; render(); }
 
+/** Nas duas etapas guiadas, o primeiro toque no Título traz o exemplo — e
+    com ele o tipo da etapa, que remonta os campos. No formulário livre nada
+    é preenchido: quem digita é o usuário. */
 function preencherTituloEtapa() {
-  if (modalPreenchido) return;
+  if (modalPreenchido || modalAlvo === 'nova') return;
+  const ex = modalAlvo === 'etapa2' ? EX_ETAPA2 : EX_ETAPA1;
+  modalRascunho = { ...rascunhoVazio(), ...ex };
+  modalTipo = ex.tipo;
   modalPreenchido = true;
   modalCriada = true;
   render();
@@ -679,16 +744,9 @@ function preencherModal() {
 function salvarModal() {
   if (!modalPreenchido) return;
   if (modalVista === 'form') {
-    if (modalEditIdx === null) {
-      if (modalAlvo === 'etapa1')
-        etapasFluxo.push({ titulo: 'Entrada de Protocolo', tipo: 'Início', depto: 'QUALQUER UM', dias: null });
-      else if (modalAlvo === 'etapa2')
-        etapasFluxo.push({ titulo: 'Recebimento do pedido', tipo: 'Tarefa', depto: 'PROTOCOLO CENTRAL', dias: '2 dias' });
-      else
-        etapasFluxo.push(lerFormNova());
-    } else if (modalAlvo === 'nova') {
-      etapasFluxo[modalEditIdx] = lerFormNova();
-    }
+    const dados = lerFormEtapa();
+    if (modalEditIdx === null) etapasFluxo.push(dados);
+    else etapasFluxo[modalEditIdx] = dados;
     modalEtapa = false; render();
   }
   else if (modalVista === 'ass-form') modalIr('doc-grid');
@@ -842,7 +900,8 @@ function ativarArrastoCanvas() {
 function classeTipo(tipo) {
   return tipo === 'Início' ? 'inicio'
        : tipo === 'Tarefa' ? 'tarefa'
-       : tipo === 'Decisão' ? 'decisao'
+       /* os paralelismos desviam o caminho como a Decisão e vestem a cor dela */
+       : tipo === 'Decisão' || tipo === 'Abertura Paralelo' || tipo === 'Fechamento Paralelo' ? 'decisao'
        : 'fim';
 }
 
@@ -919,110 +978,96 @@ function gridModalHTML(colunas, linhas, comCheck, aoClicar) {
   </div>`;
 }
 
+/* ------------------- campos conforme o Tipo de etapa -------------------
+   O Tipo de etapa comanda o formulário: cada tipo mostra só o que lhe diz
+   respeito. O Início apenas abre o fluxo — não tem responsável nem prazo. A
+   Tarefa é trabalho de alguém: ganha aprovação e prazo. A Decisão e os dois
+   paralelismos desviam o caminho, então respondem por responsável, critério
+   e orientações, mas não marcam prazo. O Fim encerra e declara o desfecho no
+   Tipo de fim. */
+const TIPOS_ETAPA = ['Início', 'Tarefa', 'Decisão', 'Abertura Paralelo',
+                     'Fechamento Paralelo', 'Fim'];
+
+const TIPOS_FIM = ['Deferido', 'Indeferido', 'Arquivado', 'Cancelado'];
+
+const CAMPOS_ETAPA = {
+  'Início':              { resp: false, prazo: false, fim: false },
+  'Tarefa':              { resp: true,  prazo: true,  fim: false },
+  'Decisão':             { resp: true,  prazo: false, fim: false },
+  'Abertura Paralelo':   { resp: true,  prazo: false, fim: false },
+  'Fechamento Paralelo': { resp: true,  prazo: false, fim: false },
+  'Fim':                 { resp: true,  prazo: false, fim: true  },
+};
+
+function camposDoTipo(tipo) { return CAMPOS_ETAPA[tipo] || CAMPOS_ETAPA['Tarefa']; }
+
+/* Id e Ordem seguem a jornada: as etapas guiadas mostram os números do
+   exemplo depois de preenchidas; no formulário livre a ordem é a posição da
+   etapa no fluxo. */
+function idEtapaModal() {
+  if (modalAlvo === 'etapa1') return '0';
+  if (modalAlvo === 'etapa2') return modalPreenchido ? '37' : '0';
+  return modalEditIdx !== null ? String(37 + modalEditIdx) : '0';
+}
+
+function ordemEtapaModal() {
+  if (modalAlvo === 'etapa1') return '0';
+  if (modalAlvo === 'etapa2') return modalPreenchido ? '2' : '0';
+  return String((modalEditIdx !== null ? modalEditIdx : etapasFluxo.length) + 1);
+}
+
+/** Formulário da etapa: um só, montado a partir do tipo escolhido na combo.
+    Os valores vêm do rascunho, para sobreviverem à troca de tipo. */
 function formEtapaHTML() {
-  return modalAlvo === 'nova' ? formEtapaNovaHTML()
-       : modalAlvo === 'etapa2' ? formEtapa2HTML()
-       : formEtapa1HTML();
-}
+  const c = camposDoTipo(modalTipo);
+  const d = modalRascunho;
+  const esc = v => String(v == null ? '' : v).replace(/"/g, '&quot;');
 
-/* formulário livre (3ª etapa em diante): os campos são lidos no Salvar */
-function formEtapaNovaHTML() {
-  const e = modalEditIdx !== null ? etapasFluxo[modalEditIdx] : null;
-  const ordem = (modalEditIdx !== null ? modalEditIdx : etapasFluxo.length) + 1;
-  const prazoVal = e && e.dias ? parseInt(e.dias, 10) : '';
-  const tipoOpts = ['Início', 'Tarefa', 'Decisão', 'Fim']
-    .map(o => `<option${e && e.tipo === o ? ' selected' : ''}>${o}</option>`).join('');
-  return [
-    campo({ rot: 'Id', val: e ? String(37 + modalEditIdx) : '0', ro: true }),
-    `<div class="campo">
-       <div class="rot">Título<span class="req">*</span></div>
-       <div class="val"><input id="ne-titulo" class="cx" value="${e ? e.titulo : ''}" oninput="habilitarSalvarEtapa()"></div>
-     </div>`,
-    `<div class="campo">
-       <div class="rot">Tipo de etapa<span class="req">*</span></div>
-       <div class="val"><select id="ne-tipo" class="cx" onchange="habilitarSalvarEtapa()">${tipoOpts}</select></div>
-     </div>`,
-    campo({ rot: 'Ordem<span class="req">*</span>', val: String(ordem) }),
-    `<div class="campo">
-       <div class="rot">Repartição<br>responsável</div>
-       <div class="val">
-         <input class="cx cod cod-l" value="">
-         <input id="ne-depto" class="cx" value="${e && e.depto !== '—' ? e.depto : ''}" placeholder="Pesquisar" oninput="habilitarSalvarEtapa()">
-         <button class="act" title="Pesquisar">${svg('lupa')}</button>
-       </div>
-     </div>`,
-    campo({ rot: 'Responsável<br>específico', cod: '', val: '', ph: 'Pesquisar',
-            acoes: [{ i: 'lupa', t: 'Pesquisar' }] }),
-    campoArea({ rot: 'Critério de<br>conclusão', linhas: 3 }),
-    campoArea({ rot: 'Orientações', linhas: 3 }),
-    campoArea({ rot: 'Alertas', linhas: 3 }),
-    campoSelect({ rot: 'Exige aprovação', opcoes: ['Não', 'Sim'], val: 'Não' }),
-    campoSelect({ rot: 'Bloqueia sem<br>documentos<span class="req">*</span>', opcoes: ['Não', 'Sim'], val: 'Não' }),
-    `<div class="campo">
-       <div class="rot">Prazo<br>(quantidade)</div>
-       <div class="val"><input id="ne-prazo" class="cx" value="${prazoVal}" oninput="habilitarSalvarEtapa()"></div>
-     </div>`,
-    `<div class="campo">
-       <div class="rot">Tipo de prazo</div>
-       <div class="val"><select id="ne-tipoprazo" class="cx">
-         <option>Dias corridos</option><option>Dias úteis</option>
-       </select></div>
-     </div>`,
-  ].join('');
-}
+  /* o Título é o gatilho da jornada guiada e habilita o Salvar no livre */
+  const campos = [
+    campo({ rot: 'Id', val: idEtapaModal(), ro: true }),
+    campo({ rot: 'Título<span class="req">*</span>', id: 'ne-titulo', val: esc(d.titulo),
+            aoFocar: 'preencherTituloEtapa()', aoDigitar: 'habilitarSalvarEtapa()' }),
+    campoSelect({ rot: 'Tipo de etapa<span class="req">*</span>', id: 'ne-tipo',
+                  opcoes: TIPOS_ETAPA, val: modalTipo, aoMudar: 'mudarTipoEtapa(this.value)' }),
+  ];
 
-/* 1ª etapa: Entrada de Protocolo (Início) */
-function formEtapa1HTML() {
-  const p = modalPreenchido;
-  return [
-    campo({ rot: 'Id', val: '0', ro: true }),
-    `<div class="campo">
-       <div class="rot">Título<span class="req">*</span></div>
-       <div class="val"><input class="cx" value="${p ? 'Entrada de Protocolo' : ''}" onfocus="preencherTituloEtapa()"></div>
-     </div>`,
-    campoSelect({ rot: 'Tipo de etapa<span class="req">*</span>', opcoes: ['Início', 'Tarefa', 'Decisão', 'Fim'] }),
-    campo({ rot: 'Ordem<span class="req">*</span>', val: '0' }),
-    campo({ rot: 'Repartição<br>responsável', cod: '', val: '', ph: 'Pesquisar',
-            acoes: [{ i: 'lupa', t: 'Pesquisar' }] }),
-    campo({ rot: 'Responsável<br>específico', cod: '', val: '', ph: 'Pesquisar',
-            acoes: [{ i: 'lupa', t: 'Pesquisar' }] }),
-    campoArea({ rot: 'Critério de<br>conclusão', linhas: 3 }),
-    campoArea({ rot: 'Orientações', linhas: 3 }),
-    campoArea({ rot: 'Alertas', linhas: 3 }),
-  ].join('');
-}
+  /* o desfecho vem logo depois do tipo: é o que qualifica o Fim */
+  if (c.fim)
+    campos.push(campoSelect({ rot: 'Tipo de fim', id: 'ne-tipofim',
+                              opcoes: TIPOS_FIM, val: d.tipofim }));
 
-/* 2ª etapa: Recebimento do pedido (Tarefa), com os campos de prazo */
-function formEtapa2HTML() {
-  const p = modalPreenchido;
-  const acoesLookup = p
-    ? [{ i: 'lapis', t: 'Editar' }, { i: 'lupa', t: 'Pesquisar' }]
-    : [{ i: 'lupa', t: 'Pesquisar' }];
-  return [
-    campo({ rot: 'Id', val: p ? '37' : '0', ro: true }),
-    `<div class="campo">
-       <div class="rot">Título<span class="req">*</span></div>
-       <div class="val"><input class="cx" value="${p ? 'Recebimento do pedido' : ''}" onfocus="preencherTituloEtapa()"></div>
-     </div>`,
-    campoSelect({ rot: 'Tipo de etapa<span class="req">*</span>', opcoes: ['Início', 'Tarefa', 'Decisão', 'Fim'],
-                  val: p ? 'Tarefa' : 'Início' }),
-    campo({ rot: 'Ordem<span class="req">*</span>', val: p ? '2' : '0' }),
-    campo({ rot: 'Repartição<br>responsável', cod: p ? '1960' : '', val: p ? 'PROTOCOLO CENTRAL' : '',
-            ph: 'Pesquisar', acoes: acoesLookup }),
-    campo({ rot: 'Responsável<br>específico', cod: '', val: '', ph: 'Pesquisar',
-            acoes: [{ i: 'lupa', t: 'Pesquisar' }] }),
-    campoArea({ rot: 'Critério de<br>conclusão', linhas: 3,
-                val: p ? 'Pedido recebido, requerimento assinado pelo requerente e documentação anexada.' : '' }),
-    campoArea({ rot: 'Orientações', linhas: 3,
-                val: p ? 'Confira se o requerimento está assinado pelo próprio requerente ou por procurador com poderes. Sem a assinatura o pedido não pode ser analisado.' : '' }),
-    campoArea({ rot: 'Alertas', linhas: 3,
-                val: p ? 'O prazo deste processo corre em dias corridos, inclusive fins de semana. Não deixe parado.' : '' }),
-    campoSelect({ rot: 'Exige aprovação', opcoes: ['Não', 'Sim'], val: 'Não' }),
-    campoSelect({ rot: 'Bloqueia sem<br>documentos<span class="req">*</span>', opcoes: ['Não', 'Sim'],
-                  val: p ? 'Sim' : 'Não' }),
-    campo({ rot: 'Prazo<br>(quantidade)', val: p ? '2' : '' }),
-    campoSelect({ rot: 'Tipo de prazo', opcoes: ['Dias corridos', 'Dias úteis'], val: 'Dias corridos' }),
-  ].join('');
+  campos.push(campo({ rot: `Ordem${svg('ajuda', 'class="ajuda-rot"')}`, id: 'ne-ordem',
+                      val: ordemEtapaModal() }));
+
+  if (c.resp) {
+    const acoesDepto = d.depto
+      ? [{ i: 'lapis', t: 'Editar' }, { i: 'lupa', t: 'Pesquisar' }]
+      : [{ i: 'lupa', t: 'Pesquisar' }];
+    campos.push(
+      campo({ rot: 'Repartição<br>responsável', id: 'ne-depto', cod: esc(d.deptoCod),
+              val: esc(d.depto), ph: 'Pesquisar', acoes: acoesDepto,
+              aoDigitar: 'habilitarSalvarEtapa()' }),
+      campo({ rot: 'Responsável<br>específico', cod: '', val: '', ph: 'Pesquisar',
+              acoes: [{ i: 'lupa', t: 'Pesquisar' }] }),
+      campoArea({ rot: 'Critério de<br>conclusão', linhas: 3, id: 'ne-crit', val: d.crit,
+                  aoDigitar: 'habilitarSalvarEtapa()' }),
+      campoArea({ rot: 'Orientações', linhas: 3, id: 'ne-orient', val: d.orient,
+                  aoDigitar: 'habilitarSalvarEtapa()' }),
+      campoArea({ rot: 'Alertas', linhas: 3, id: 'ne-alerta', val: d.alerta,
+                  aoDigitar: 'habilitarSalvarEtapa()' }));
+  }
+
+  if (c.prazo)
+    campos.push(
+      campoSelect({ rot: 'Exige aprovação', id: 'ne-aprova', opcoes: ['Não', 'Sim'],
+                    val: d.aprova }),
+      campo({ rot: 'Prazo<br>(quantidade)', id: 'ne-prazo', val: esc(d.prazo),
+              aoDigitar: 'habilitarSalvarEtapa()' }),
+      campoSelect({ rot: 'Tipo de prazo', id: 'ne-tipoprazo',
+                    opcoes: ['Dias corridos', 'Dias úteis'], val: d.tipoprazo }));
+
+  return campos.join('');
 }
 
 function formDocHTML() {
@@ -1175,10 +1220,8 @@ function modalEtapaHTML() {
           <div class="cab-arv" onclick="modalIr('form')" style="cursor:pointer">
             <span class="chev-arv" style="display:flex">${fa('chevronBaixo')}</span>
             <span class="mais" style="display:flex">${svg('mais')}</span>
-            <span class="nome-link">${!modalCriada ? 'Etapa do fluxo'
-              : modalAlvo === 'etapa2' ? 'Recebimento do pedido'
-              : modalAlvo === 'etapa1' ? 'Entrada de Protocolo'
-              : modalEditIdx !== null && etapasFluxo[modalEditIdx] ? etapasFluxo[modalEditIdx].titulo : 'Etapa do fluxo'}</span>
+            <span class="nome-link">${modalCriada && modalRascunho.titulo
+              ? modalRascunho.titulo : 'Etapa do fluxo'}</span>
           </div>
           ${pastaHTML('Documentos', 'docs', 'doc-grid', 'doc-form')}
           ${docsArv}
