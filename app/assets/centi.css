@@ -313,7 +313,7 @@ a { color: inherit; text-decoration: none; }
   height: var(--tab-h);
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 6px;
   padding: 0 15px;
   background: var(--tab-off);
   border: 1px solid var(--tab-bd);
@@ -325,6 +325,15 @@ a { color: inherit; text-decoration: none; }
 }
 .doctab + .doctab { margin-left: -1px; }
 .doctab svg { width: 15px; height: 15px; flex: 0 0 auto; }
+/* o código cola no título, e o trio de ações abre uma folga antes de começar */
+.doctab .cod { font-weight: bold; }
+.doctab .acoes-aba { display: flex; align-items: center; gap: 8px; margin-left: 5px; }
+.doctab .acoes-aba button {
+  border: 0; background: none; padding: 0; line-height: 0;
+  display: grid; place-items: center; color: var(--txt-mute);
+}
+.doctab .acoes-aba button:hover { color: var(--g-dark); }
+.doctab .acoes-aba svg { width: 14px; height: 14px; }
 .doctab.ativa {
   background: #FFFFFF;
   color: var(--g-dark);
@@ -332,11 +341,8 @@ a { color: inherit; text-decoration: none; }
   position: relative;
   z-index: 2;
 }
-.doctab .fechar {
-  border: 0; background: none; padding: 0;
-  color: var(--txt-mute); font-size: 14px; line-height: 1;
-}
-.doctab .fechar:hover { color: #C62828; }
+.doctab .acoes-aba .fechar svg { width: 15px; height: 15px; }
+.doctab .acoes-aba .fechar:hover { color: #C62828; }
 
 /* controles à direita da barra de abas */
 .doctabs-controles { margin-left: auto; align-self: center; display: flex; align-items: center; gap: 8px; }

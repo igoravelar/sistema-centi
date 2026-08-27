@@ -49,6 +49,8 @@ const ICO = {
   borracha: '<path d="M4 16 12 8l6 6-5 5H7z"/><line x1="4" y1="21" x2="20" y2="21"/>',
   seta: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/>',
   voltar: '<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12,19 5,12 12,5"/>',
+  estrela: '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>',
+  pin: '<path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>',
 };
 
 /** <svg> a partir de um path do dicionário ICO */
@@ -77,14 +79,16 @@ const MODULOS = [
  * Abas de documento. `home` e `notif` são fixas; as demais só aparecem quando a
  * tela declara que estão abertas (ver montarShell).
  */
+/* Na aba, o código da tela vem em negrito e o título logo depois; o ícone fica
+   só nas duas que não são tela (Início e Notificações). */
 const ABAS = {
-  home:      { ico: 'casa',      href: 'prototipo.html' },
-  notif:     { ico: 'sino',      rotulo: 'Notificações', href: '#' },
-  protocolo: { ico: 'protocolo', rotulo: 'Protocolo', href: 'protocolo.html', fechavel: true },
-  po002:     { ico: 'arquivo',   rotulo: 'PO002 - Protocolo', href: 'po002.html', fechavel: true },
-  po011:     { ico: 'fluxo',     rotulo: 'PO011 - Central de Protocolos', href: 'po011.html', fechavel: true },
-  po050:     { ico: 'fluxo',      rotulo: 'PO050 - Fluxo de Processos', href: 'po050.html', fechavel: true },
-  po051:     { ico: 'tramitacao', rotulo: 'PO051 - Tramitação de Protocolo', href: 'po051.html', fechavel: true },
+  home:      { ico: 'casa', href: 'prototipo.html' },
+  notif:     { ico: 'sino', rotulo: 'Notificações', href: '#' },
+  protocolo: { rotulo: 'Protocolo', href: 'protocolo.html', fechavel: true },
+  po002:     { cod: 'PO002', rotulo: 'Protocolo', href: 'po002.html', fechavel: true },
+  po011:     { cod: 'PO011', rotulo: 'Central de Protocolos', href: 'po011.html', fechavel: true },
+  po050:     { cod: 'PO050', rotulo: 'Fluxo de Processos', href: 'po050.html', fechavel: true },
+  po051:     { cod: 'PO051', rotulo: 'Tramitação de Protocolo', href: 'po051.html', fechavel: true },
 };
 
 function topbarHTML() {
@@ -152,12 +156,59 @@ function guardarAbas(ids) {
   catch { /* sessão indisponível: as abas valem só nesta página */ }
 }
 
+/* O conteúdo de cada aba também vive na sessão. Trocar de aba é uma navegação
+   de verdade — a página recarrega —, então cada tela guarda aqui o ponto em que
+   estava e o retoma na volta, em vez de renascer no estado inicial. Modais
+   ficam de fora de propósito: são passageiras, e reabri-las atrapalharia. */
+const CHAVE_ESTADO = 'centi:estado:';
+
+/* Recarregar a página é um pedido de recomeço, e não de retomada: as abas
+   continuam abertas, mas o conteúdo de todas volta ao início — a Pesquisa, com
+   a grid zerada. Roda no carregamento do shell, antes de qualquer tela ler o
+   seu estado. Trocar de aba também é uma navegação, mas de tipo 'navigate', e
+   por isso segue retomando o que estava aberto. */
+(function recomecarAoRecarregar() {
+  const nav = performance.getEntriesByType('navigation')[0];
+  const recarregou = nav ? nav.type === 'reload'
+    : performance.navigation && performance.navigation.type === 1;
+  if (!recarregou) return;
+  try {
+    Object.keys(sessionStorage)
+          .filter(k => k.startsWith(CHAVE_ESTADO))
+          .forEach(k => sessionStorage.removeItem(k));
+  } catch { /* sessão indisponível: não havia estado guardado */ }
+})();
+
+/** Estado guardado da tela, ou null se ela ainda não foi visitada nesta sessão
+    (ou se a página acabou de ser recarregada). */
+function lerEstado(tela) {
+  try { return JSON.parse(sessionStorage.getItem(CHAVE_ESTADO + tela)); }
+  catch { return null; }
+}
+
+/* aba fechada pelo ×: a saída que vem logo depois não pode regravar o estado
+   que o fechamento acabou de descartar */
+let abaDescartada = null;
+
+/** Liga o salvamento: `coletar()` roda na saída da página e devolve o objeto
+    que `lerEstado` entrega na volta. */
+function guardarEstadoAoSair(tela, coletar) {
+  addEventListener('pagehide', () => {
+    if (abaDescartada === tela) return;
+    try { sessionStorage.setItem(CHAVE_ESTADO + tela, JSON.stringify(coletar())); }
+    catch { /* sessão indisponível: a tela volta ao estado inicial */ }
+  });
+}
+
 /** Fecha a aba pelo ×. Se era a aba em foco, abre a aba imediatamente à
     esquerda; quando a vizinha é Notificações (que não é uma tela), cai na
     aba de Início. */
 function fecharAba(id, botao) {
   const antes = abasAbertas();
   guardarAbas(antes.filter(x => x !== id));
+  /* fechar é descartar: reabrir a tela pela lateral tem de começar do zero */
+  abaDescartada = id;
+  try { sessionStorage.removeItem(CHAVE_ESTADO + id); } catch { /* sem sessão */ }
   const aba = botao.closest('.doctab');
   const eraAtiva = aba.classList.contains('ativa');
   aba.remove();
@@ -173,12 +224,21 @@ function doctabsHTML(atual, abertas) {
   const tabs = ids.map(id => {
     const a = ABAS[id];
     if (!a) return '';
+    /* favoritar e fixar ainda não fazem nada: entram pelo desenho da aba, e o
+       preventDefault é o que impede o clique de navegar pelo <a> em volta */
+    const acoes = !a.fechavel ? '' : `
+      <span class="acoes-aba">
+        <button title="Favoritar" onclick="event.preventDefault();event.stopPropagation()">${svg('estrela')}</button>
+        <button title="Fixar aba" onclick="event.preventDefault();event.stopPropagation()">${svg('pin')}</button>
+        <button class="fechar" title="Fechar aba"
+                onclick="event.preventDefault();event.stopPropagation();fecharAba('${id}', this)">${svg('x')}</button>
+      </span>`;
     return `
     <a class="doctab${id === atual ? ' ativa' : ''}" href="${a.href}">
-      ${svg(a.ico)}
-      ${a.rotulo ? `<span>${a.rotulo}</span>` : ''}
-      ${a.fechavel ? `<button class="fechar" title="Fechar aba"
-          onclick="event.preventDefault();event.stopPropagation();fecharAba('${id}', this)">×</button>` : ''}
+      ${a.ico ? svg(a.ico) : ''}
+      ${a.cod ? `<b class="cod">${a.cod}</b>` : ''}
+      ${a.rotulo ? `<span class="rot">${a.rotulo}</span>` : ''}
+      ${acoes}
     </a>`;
   }).join('');
 

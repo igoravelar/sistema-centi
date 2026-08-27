@@ -5,21 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Centi · PO051 - Tramitação de Protocolo</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
-<link rel="stylesheet" href="assets/centi.css?v=15">
+<link rel="stylesheet" href="assets/centi.css?v=16">
 <link rel="stylesheet" href="assets/fluxo.css?v=24">
 <style>
   /* o fluxo é o conteúdo da aba Cadastro, e o drawer ocupa 2/3 da área */
   .cad .fluxo { --drawer-w: 66.667%; }
   .vazio-vista { flex: 1; display: grid; place-items: center; color: var(--txt-mute); }
-  /* o título abre as informações do protocolo no drawer */
-  .cad-topo .esq .link { text-decoration: underline; cursor: pointer; transition: color .15s ease; }
-  .cad-topo .esq .link:hover { color: var(--g-dark); }
+  /* o título abre as informações do protocolo no drawer. É o botão de texto:
+     sem caixa, o sublinhado tracejado é o que diz que ele é clicável */
+  .cad-topo .esq .link {
+    color: #5C5B5C;
+    text-decoration: underline dashed;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    cursor: pointer; transition: color .15s ease;
+  }
+  .cad-topo .esq .link:hover { color: #A6D100; }
 
   /* aqui o topo não tem uma segunda coluna para alinhar (como a árvore do
-     PO050): o título cresce pelo conteúdo, sem o limite fixo de 240px nem
-     truncamento — nem "Protocolo - X" nem a instrução precisam disso */
-  .cad-topo .esq { flex: 0 0 auto; overflow: visible; border-right: 1px solid var(--tab-bd); }
+     PO050): o título cresce pelo conteúdo, sem o limite fixo de 240px, sem
+     truncamento e sem a divisória vertical que separava as duas colunas */
+  .cad-topo .esq { flex: 0 0 auto; overflow: visible; }
   .cad-topo .esq .nome { overflow: visible; text-overflow: clip; }
+  /* Novo e Operações andam juntos, encostados na direita */
+  .cad-topo .dir { justify-content: flex-end; }
 
   /* cadastro sem protocolo aberto: instrução em itálico, sem link */
   .cad-topo .esq .nome-vazio {
@@ -208,7 +217,9 @@
   .filtros .remover { border: 0; background: none; color: #E53935; display: grid; place-items: center; }
   .filtros .remover svg { width: 15px; height: 15px; }
   .filtros .divisor { height: 1px; background: var(--tab-bd); margin-top: 14px; }
-  .filtros .acoes { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+  /* as quatro ações dos filtros ficam juntas, encostadas na direita */
+  .filtros .acoes { display: flex; justify-content: flex-end; align-items: center;
+                    gap: 12px; margin-top: 12px; }
 
   .ultimas {
     flex: 0 0 330px;
@@ -310,6 +321,8 @@
 
   /* botão só de ícone na faixa de ações da modal */
   .modal-toolbar .btn.so-ico { padding: 0 10px; }
+  /* faixa em que as ações andam todas juntas, encostadas na direita */
+  .modal-toolbar.direita { justify-content: flex-end; }
 
   .modal-dir { flex: 1; min-width: 0; display: flex; flex-direction: column; }
   /* faixa de ações: um cinza acima do cinza do formulário */
@@ -335,7 +348,7 @@
 
 <div class="app"></div>
 
-<script src="assets/shell.js?v=9"></script>
+<script src="assets/shell.js?v=13"></script>
 <script src="assets/fluxo.js?v=10"></script>
 <script>
 /* As abas verticais são desta tela: trocam de vista aqui dentro, sem sair do
@@ -442,7 +455,6 @@ function pesquisaHTML() {
       <div class="acoes">
         <button class="btn btn-claro">${svg('mais')} Adicionar Filtro</button>
         <button class="btn btn-claro">${svg('borracha')} Limpar Filtros</button>
-        <div style="flex:1"></div>
         <button class="btn btn-primario" onclick="pesquisar()">${svg('lupa')} Pesquisar</button>
         <button class="btn btn-neutro">${svg('salvar')} Salvar Filtros</button>
       </div>
@@ -632,12 +644,15 @@ function canvasVazioHTML() {
     </div>`;
 }
 
-function abrirFluxoProt(i) {
+/** Abre o fluxo do protocolo `i`. `aoMontar` troca o que acontece depois do
+    desenho pronto — o padrão é abrir o drawer do protocolo, e a retomada de
+    estado usa isso para reabrir o drawer da etapa, ou nenhum. */
+function abrirFluxoProt(i, aoMontar) {
   protAberto = i; etapaSelP = null;
   ETAPAS_PROT = FLUXOS_PROT[RESULTADOS_P[i][0]] || FLUXO_SIMPLES;
   irPara('cadastro');      /* mostra o .cad antes de medir o canvas */
   montarFluxoProt();
-  abrirProtocoloP();
+  (aoMontar || abrirProtocoloP)();
 }
 
 function montarFluxoProt() {
@@ -1327,11 +1342,10 @@ function modalNovoProtHTML() {
           ${arvore}
         </div>
         <div class="modal-dir">
-          <div class="modal-toolbar">
+          <div class="modal-toolbar direita">
             ${novoProtCheio
               ? `<button class="btn btn-claro" onclick="salvarNovoProtP()">${svg('salvar')} Salvar</button>`
               : `<button class="btn btn-neutro" disabled>${svg('salvar')} Salvar</button>`}
-            <div style="flex:1"></div>
             <button class="btn btn-neutro so-ico" disabled title="Sigiloso">${svg('olho')}</button>
             <button class="btn btn-primario">${svg('gerais')} Operações</button>
           </div>
@@ -1654,6 +1668,13 @@ function irPara(id) {
 
 const main = montarShell('po051');
 
+/* O que a tela era quando saímos para outra aba. As duas primeiras entram
+   antes da montagem, para a grid já nascer pesquisada e com a linha marcada;
+   o resto é reaplicado depois, quando o DOM existe. */
+const ESTADO_P = lerEstado('po051') || {};
+if (ESTADO_P.pesquisou) pesquisou = true;
+if (ESTADO_P.protSel !== undefined && ESTADO_P.protSel !== null) protSel = ESTADO_P.protSel;
+
 main.insertAdjacentHTML('beforeend', `
   <div class="tela">
     <div class="vtabs">
@@ -1671,7 +1692,6 @@ main.insertAdjacentHTML('beforeend', `
           <div class="esq">${tituloCadEsqHTML()}</div>
           <div class="dir">
             <button class="btn btn-claro" onclick="abrirNovoProtP()">${svg('mais')} Novo</button>
-            <div style="flex:1"></div>
             <button class="btn btn-primario">${svg('gerais')} Operações</button>
           </div>
         </div>
@@ -1683,9 +1703,31 @@ main.insertAdjacentHTML('beforeend', `
     </div>
   </div>`);
 
+/* Retomada: reabre o fluxo e o drawer que estavam abertos. Vem antes do
+   ?view porque o parâmetro é um pedido explícito de outra tela e deve vencer. */
+if (ESTADO_P.protAberto !== undefined && ESTADO_P.protAberto !== null) {
+  const n = ESTADO_P.etapaSelP;
+  abrirFluxoProt(ESTADO_P.protAberto,
+    ESTADO_P.drawer === 'etapa' && n !== null && n !== undefined
+      ? () => { abrirEtapaProt(n); if (ESTADO_P.abaP) trocarAbaP(ESTADO_P.abaP); }
+      : ESTADO_P.drawer === 'protocolo' ? abrirProtocoloP : () => {});
+} else if (ESTADO_P.vista) {
+  irPara(ESTADO_P.vista);
+}
+
 /* estado inicial via ?view=cadastro (abre com a instrução, sem fluxo) */
 const q = new URLSearchParams(location.search);
 if (q.get('view') && VISTAS.some(v => v.id === q.get('view'))) irPara(q.get('view'));
+
+/* o que levar para a próxima visita a esta aba */
+guardarEstadoAoSair('po051', () => {
+  const d = main.querySelector('.cad .drawer');
+  const aberto = d && d.classList.contains('aberto');
+  return {
+    vista, pesquisou, protSel, protAberto, etapaSelP, abaP,
+    drawer: !aberto ? null : etapaSelP !== null ? 'etapa' : 'protocolo',
+  };
+});
 </script>
 </body>
 </html>

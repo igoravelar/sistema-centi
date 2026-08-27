@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Centi · PO002 - Protocolo</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
-<link rel="stylesheet" href="assets/centi.css?v=15">
+<link rel="stylesheet" href="assets/centi.css?v=16">
 <style>
   /* -------------------------------- Pesquisa -------------------------------- */
   .filtros { padding: 14px 16px; position: relative; }
@@ -20,7 +20,10 @@
   .filtros-grid select:focus, .filtros-grid input:focus { border-color: var(--g); }
   .filtros .remover { border: 0; background: none; color: #E53935; display: grid; place-items: center; }
   .filtros .remover svg { width: 15px; height: 15px; }
-  .filtros .acoes { display: flex; align-items: center; gap: 20px; margin-top: 14px;
+  /* as quatro ações dos filtros ficam juntas, encostadas na direita — o
+     max-width é o que impede que elas passem por baixo das Últimas Buscas */
+  .filtros .acoes { display: flex; justify-content: flex-end; align-items: center;
+                    gap: 20px; margin-top: 14px;
                     max-width: min(1010px, calc(100% - 358px)); }
   .filtros .link { border: 0; background: none; color: var(--g-dark); font-size: 13px; display: inline-flex; align-items: center; gap: 7px; }
   .filtros .link.cinza { color: var(--txt); }
@@ -71,7 +74,7 @@
 
 <div class="app"></div>
 
-<script src="assets/shell.js?v=9"></script>
+<script src="assets/shell.js?v=13"></script>
 <script>
 /**
  * Ícones do Font Awesome 5 Free (traçados oficiais, licença CC BY 4.0).
@@ -159,7 +162,6 @@ function pesquisaHTML() {
     <div class="acoes">
       <button class="link">${svg('mais')} Adicionar Filtro</button>
       <button class="link cinza">${svg('borracha')} Limpar Filtros</button>
-      <div style="flex:1"></div>
       <button class="btn btn-primario" style="height:40px;padding:0 26px">${svg('lupa')} Pesquisar</button>
       <button class="btn btn-neutro" style="height:40px;padding:0 20px">${svg('salvar')} Salvar Filtros</button>
     </div>
@@ -288,11 +290,18 @@ function irPara(id) { vista = id; render(); }
 function abrirCadastro(i) { irPara('cadastro'); }
 
 const main = montarShell('po002');
+
+/* retoma a vista em que a aba estava; o ?view, quando vem, vence depois */
+const ESTADO_B = lerEstado('po002');
+if (ESTADO_B && ESTADO_B.vista) vista = ESTADO_B.vista;
+
 render();
 
 /* estado inicial via ?view=cadastro */
 const q = new URLSearchParams(location.search).get('view');
 if (q && VTABS.some(v => v.id === q)) irPara(q);
+
+guardarEstadoAoSair('po002', () => ({ vista }));
 </script>
 </body>
 </html>

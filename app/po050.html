@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Centi · PO050 - Fluxo de Processos</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
-<link rel="stylesheet" href="assets/centi.css?v=15">
+<link rel="stylesheet" href="assets/centi.css?v=16">
 <link rel="stylesheet" href="assets/fluxo.css?v=24">
 <style>
   /* Pesquisa: filtros à esquerda, Últimas Buscas à direita, separados por
@@ -25,7 +25,9 @@
   .filtros .remover svg { width: 15px; height: 15px; }
   /* linha horizontal: do início do input Campo até a divisória vertical */
   .filtros .divisor { height: 1px; background: var(--tab-bd); margin-top: 14px; }
-  .filtros .acoes { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+  /* as quatro ações dos filtros ficam juntas, encostadas na direita */
+  .filtros .acoes { display: flex; justify-content: flex-end; align-items: center;
+                    gap: 12px; margin-top: 12px; }
 
   .ultimas {
     flex: 0 0 330px;
@@ -212,7 +214,7 @@
 
 <div class="app"></div>
 
-<script src="assets/shell.js?v=9"></script>
+<script src="assets/shell.js?v=13"></script>
 <script src="assets/fluxo.js?v=10"></script>
 <script>
 /* ícones extras desta tela */
@@ -282,7 +284,6 @@ function pesquisaHTML() {
       <div class="acoes">
         <button class="btn btn-claro">${svg('mais')} Adicionar Filtro</button>
         <button class="btn btn-claro">${svg('borracha')} Limpar Filtros</button>
-        <div style="flex:1"></div>
         <button class="btn btn-primario" onclick="pesquisar()">${svg('lupa')} Pesquisar</button>
         <button class="btn btn-neutro">${svg('salvar')} Salvar Filtros</button>
       </div>
@@ -1529,11 +1530,33 @@ function abrirCadastro(i) {
 }
 
 const main = montarShell('po050');
+
+/* Retomada do ponto em que a aba estava. Como o render() reconstrói a tela
+   inteira a partir das variáveis, basta devolvê-las antes de desenhar. O
+   estado das modais fica de fora: reabrir uma modal na volta atrapalharia. */
+const salvo = lerEstado('po050');
+if (salvo) {
+  vista = salvo.vista; pesquisou = salvo.pesquisou;
+  etapa = salvo.etapa; preenchido = salvo.preenchido; fluxoCriado = salvo.fluxoCriado;
+  fluxoSel = salvo.fluxoSel; iptuVista = salvo.iptuVista;
+  expandIptu = salvo.expandIptu; expandIptuVersao = salvo.expandIptuVersao;
+  expandIptuEtapas = salvo.expandIptuEtapas;
+  expandVersoes = salvo.expandVersoes; expandVersao = salvo.expandVersao;
+  etapasFluxo = salvo.etapasFluxo; mExp = salvo.mExp;
+}
+
 render();
 
 /* estado inicial via ?view=cadastro */
 const q = new URLSearchParams(location.search).get('view');
 if (q && VTABS.some(v => v.id === q)) irPara(q);
+
+/* o que levar para a próxima visita a esta aba */
+guardarEstadoAoSair('po050', () => ({
+  vista, pesquisou, etapa, preenchido, fluxoCriado, fluxoSel, iptuVista,
+  expandIptu, expandIptuVersao, expandIptuEtapas, expandVersoes, expandVersao,
+  etapasFluxo, mExp,
+}));
 </script>
 </body>
 </html>
