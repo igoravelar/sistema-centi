@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Centi · PO051 - Tramitação de Protocolo</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
-<link rel="stylesheet" href="assets/centi.css?v=9">
-<link rel="stylesheet" href="assets/fluxo.css?v=19">
+<link rel="stylesheet" href="assets/centi.css?v=15">
+<link rel="stylesheet" href="assets/fluxo.css?v=24">
 <style>
   /* o fluxo é o conteúdo da aba Cadastro, e o drawer ocupa 2/3 da área */
   .cad .fluxo { --drawer-w: 66.667%; }
@@ -67,16 +67,45 @@
      percorreu, grafite no que ele pulou. */
   .cad .par { display: flex; flex: 0 0 auto; }
   .cad .bifurca { position: relative; flex: 0 0 auto; height: 28px; }
-  .cad .bifurca .ramo { position: absolute; top: 0; bottom: 0; width: 50%; --linha: var(--g); }
+  /* a quina entre a barra e a perna do ramo é arredondada em 10px: a barra e a
+     perna param no raio e o ::after fecha o trecho curvo entre as duas.
+     A bifurcação é um traço mais larga que CARD_L + PAR_GAP (ver LINHA_L): a
+     perna nasce na borda do ramo, então esse traço a mais é o que faz o eixo
+     dela cair no centro da bolinha do card, e não meio traço ao lado. */
+  .cad .bifurca .ramo { position: absolute; top: 0; bottom: 0; width: 50%; --linha: var(--g); --raio: 10px; }
   .cad .bifurca .ramo.grafite { --linha: var(--linha-fora); }
   .cad .bifurca .ramo.esq { left: 0; }
   .cad .bifurca .ramo.dir { right: 0; }
-  .cad .bifurca .ramo::before { content: ''; position: absolute; left: 0; right: 0; height: 3px; background: var(--linha); }
+  .cad .bifurca .ramo::before { content: ''; position: absolute; height: 3px; background: var(--linha); }
+  .cad .bifurca .ramo.esq::before { left: var(--raio); right: 0; }
+  .cad .bifurca .ramo.dir::before { left: 0; right: var(--raio); }
   .cad .bifurca.abre .ramo::before  { top: 0; }
   .cad .bifurca.fecha .ramo::before { bottom: 0; }
-  .cad .bifurca .ramo i { position: absolute; top: 0; bottom: 0; width: 3px; background: var(--linha); }
+  .cad .bifurca .ramo i { position: absolute; width: 3px; background: var(--linha); }
+  .cad .bifurca.abre .ramo i  { top: var(--raio); bottom: 0; }
+  .cad .bifurca.fecha .ramo i { top: 0; bottom: var(--raio); }
   .cad .bifurca .ramo.esq i { left: 0; }
   .cad .bifurca .ramo.dir i { right: 0; }
+  .cad .bifurca .ramo::after {
+    content: ''; position: absolute;
+    width: var(--raio); height: var(--raio); border: 0 solid var(--linha);
+  }
+  .cad .bifurca.abre .ramo.esq::after {
+    top: 0; left: 0; border-top-width: 3px; border-left-width: 3px;
+    border-top-left-radius: var(--raio);
+  }
+  .cad .bifurca.abre .ramo.dir::after {
+    top: 0; right: 0; border-top-width: 3px; border-right-width: 3px;
+    border-top-right-radius: var(--raio);
+  }
+  .cad .bifurca.fecha .ramo.esq::after {
+    bottom: 0; left: 0; border-bottom-width: 3px; border-left-width: 3px;
+    border-bottom-left-radius: var(--raio);
+  }
+  .cad .bifurca.fecha .ramo.dir::after {
+    bottom: 0; right: 0; border-bottom-width: 3px; border-right-width: 3px;
+    border-bottom-right-radius: var(--raio);
+  }
   .cad .bifurca.tracejada .ramo { --linha: var(--linha-fora); }
   .cad .bifurca.tracejada .ramo::before {
     background: repeating-linear-gradient(90deg, var(--linha) 0 7px, transparent 7px 14px);
@@ -121,20 +150,31 @@
   }
   .cad .barra-titulo .drawer-titulo { flex: 1; min-width: 0; }
   .cad .barra-titulo .drawer-titulo h3 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  /* aqui o fechar entra na linha, no fim da barra, e não solto no canto —
-     e volta ao aspecto verde claro do botão padrão, um pouco maior */
+  /* no lugar da bolinha numerada, a etiqueta ETAPA: — uma caixa branca de
+     contorno cinza claro, que só rotula o nome que vem ao lado */
+  .cad .barra-titulo .etapa-lbl {
+    flex: 0 0 auto;
+    padding: 7px 11px;
+    background: #FFFFFF;
+    border: 1px solid #E4E4E4;
+    border-radius: 8px;
+    font-size: 10px; font-weight: bold; letter-spacing: .5px;
+    color: #BDBDBD;
+  }
+  /* aqui o fechar entra na linha, no fim da barra, e não solto no canto — e,
+     como o do drawer de protocolo, usa a paleta do botão branco, um pouco maior.
+     O :hover precisa ser declarado aqui: .bt-fechar:hover tem especificidade
+     menor que este seletor, e sozinho não vencia a troca de variável. */
   .cad .barra-titulo .bt-fechar {
     position: static; flex: 0 0 auto;
     width: 24px; height: 24px;
     border-radius: 6px;
-    background: #FFFFFF;
-    border-color: var(--g-soft-bd2);
-    color: var(--g-olive);
+    --btc-bg: var(--btb-bg);   --btc-txt: var(--btb-txt);
+    --btc-ico: var(--btb-ico);  --btc-bd: var(--btb-bd);
   }
   .cad .barra-titulo .bt-fechar:hover {
-    background: var(--g-soft-bg);
-    border-color: var(--g);
-    color: var(--g-dark);
+    --btc-bg: var(--btb-bg-h);   --btc-txt: var(--btb-txt-h);
+    --btc-ico: var(--btb-ico-h); --btc-bd: var(--btb-bd-h);
   }
   .cad .barra-titulo .bt-fechar svg { width: 12px; height: 12px; }
 
@@ -239,13 +279,16 @@
   .arvore .pasta .add {
     position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
     width: 22px; height: 22px; padding: 0;
-    border: 1px solid var(--g-soft-bd); border-radius: 50%;
-    background: var(--g-soft-bg); color: var(--g-olive);
+    border: 1px solid var(--btc-bd); border-radius: 50%;
+    background: var(--btc-bg); color: var(--btc-txt);
     display: none; place-items: center;
   }
   .arvore .pasta:hover .add { display: grid; }
-  .arvore .pasta .add:hover { background: #5D6725; color: #FFFFFF; }
-  .arvore .pasta .add svg { width: 12px; height: 12px; }
+  .arvore .pasta .add:hover {
+    --btc-bg: var(--btc-bg-h); --btc-txt: var(--btc-txt-h);
+    --btc-ico: var(--btc-ico-h); --btc-bd: var(--btc-bd-h);
+  }
+  .arvore .pasta .add svg { width: 12px; height: 12px; color: var(--btc-ico); }
 
   /* raiz da árvore: o próprio item da linha clicada */
   .modal-arvore .cab-arv { display: flex; align-items: center; gap: 7px; padding: 6px 4px 10px;
@@ -293,7 +336,7 @@
 <div class="app"></div>
 
 <script src="assets/shell.js?v=9"></script>
-<script src="assets/fluxo.js?v=9"></script>
+<script src="assets/fluxo.js?v=10"></script>
 <script>
 /* As abas verticais são desta tela: trocam de vista aqui dentro, sem sair do
    PO051. O fluxo fica montado o tempo todo, só oculto, para não perder o
@@ -530,9 +573,10 @@ const RESOLVIDAS_P = ['Concluída', 'Concluída Retroativa', 'Pulada', 'Não Apl
    ficam em grafite, porque o protocolo não passou por ali */
 const NAO_EXECUTADAS_P = ['Pulada', 'Não Aplicável'];
 
-/* medidas do desenho: altura do traço entre linhas, altura da bifurcação e a
-   folga entre os dois cards de um paralelismo */
-const LIGA_A = 56, BIFURCA_A = 28, PAR_GAP = 40;
+/* medidas do desenho: altura do traço entre linhas, altura da bifurcação, a
+   folga entre os dois cards de um paralelismo e a espessura do traço (a mesma
+   do .liga-prot e dos ramos, no CSS lá de cima) */
+const LIGA_A = 56, BIFURCA_A = 28, PAR_GAP = 40, LINHA_L = 3;
 
 /** Etapas agrupadas em linhas do desenho: as que compartilham o mesmo `par`
     são paralelas e dividem a mesma linha, uma ao lado da outra. */
@@ -552,7 +596,7 @@ function cardEtapaP(e) {
     <div class="etapa ${classeTipoP(e.tipo)} ${classeEstadoP(e.n)}" data-n="${e.n}"
          style="position:relative;left:0;top:0;width:${CARD_L}px;height:${CARD_A}px;flex:0 0 auto"
          onclick="abrirEtapaProt(${e.n})">
-      <span class="num">${e.n}</span>
+      <span class="num"></span>
       <span class="nome">${e.titulo}</span>
       <span class="rodape">
         <span class="depto-lbl">DEPTO</span>
@@ -609,7 +653,7 @@ function montarFluxoProt() {
     `<div class="liga-prot${tracejada ? ' tracejada' : grafite ? ' grafite' : ''}"></div>`;
   /* na bifurcação cada ramo leva a cor do seu próprio card */
   const bifurca = (lado, tracejada, ramos) => `
-    <div class="bifurca ${lado}${tracejada ? ' tracejada' : ''}" style="width:${CARD_L + PAR_GAP}px">
+    <div class="bifurca ${lado}${tracejada ? ' tracejada' : ''}" style="width:${CARD_L + PAR_GAP + LINHA_L}px">
       ${['esq', 'dir'].map((l, k) => `
       <span class="ramo ${l}${NAO_EXECUTADAS_P.includes(ramos[k].situacao) ? ' grafite' : ''}"><i></i></span>`).join('')}
     </div>`;
@@ -761,18 +805,18 @@ function situacaoEtapaP(n) {
 }
 
 const PREVISAO_ETAPA = '01/10/2026';
-const PREVISAO_FIM   = '30/11/2026';
 
 /** Botões de navegação do rodapé: a primeira etapa não tem anterior e a de
-    Fim não tem próxima — nesses casos o botão fica apagado, sem clique. */
+    Fim não tem próxima — nesses casos o botão fica apagado, sem clique.
+    O ícone vem sempre antes do texto, como em todos os botões do protótipo. */
 function btEtapa(lado, n) {
   const anterior = lado === 'anterior';
   const rot = anterior ? 'Etapa Anterior' : 'Próxima Etapa';
   const ico = anterior ? svg('voltar') : svg('seta');
   const ativo = anterior ? n > 1 : n < ETAPAS_PROT.length;
-  if (!ativo) return `<button class="btn btn-neutro" disabled>${anterior ? ico + ' ' + rot : rot + ' ' + ico}</button>`;
-  return `<button class="btn btn-claro" onclick="abrirEtapaProt(${anterior ? n - 1 : n + 1})">${
-    anterior ? ico + ' ' + rot : rot + ' ' + ico}</button>`;
+  if (!ativo) return `<button class="btn btn-neutro" disabled>${ico} ${rot}</button>`;
+  return `<button class="btn btn-branco" onclick="abrirEtapaProt(${
+    anterior ? n - 1 : n + 1})">${ico} ${rot}</button>`;
 }
 
 function drawerEtapaHTML(n) {
@@ -784,14 +828,14 @@ function drawerEtapaHTML(n) {
     <div class="drawer-topo">
       <div class="barra-titulo">
         <div class="drawer-titulo ${classeTipoP(e.tipo)}">
-          <span class="num">${e.n}</span>
+          <span class="etapa-lbl">ETAPA:</span>
           <h3>${e.titulo}</h3>
         </div>
         <span class="badge-etapa">
           <span class="farol ${CLASSE_SITUACAO[sit]}"></span><b>${sit}</b>
         </span>
         <span class="badge-etapa">
-          Previsão Etapa: <b>${PREVISAO_ETAPA}</b> | Fim: <b>${PREVISAO_FIM}</b>
+          Previsão Etapa: <b>${PREVISAO_ETAPA}</b>
         </span>
         <button class="bt-fechar" onclick="fecharDrawerP()" title="Fechar">${svg('x')}</button>
       </div>
@@ -801,7 +845,7 @@ function drawerEtapaHTML(n) {
     <div class="drawer-rodape">
       ${btEtapa('anterior', n)}
       <button class="btn btn-claro" onclick="abrirRemessaP('devolver')">${svg('devolver')} Devolver Protocolo</button>
-      <button class="btn btn-claro" onclick="abrirRemessaP('tramitar')">${svg('check')} Tramitar Protocolo</button>
+      <button class="btn btn-primario" onclick="abrirRemessaP('tramitar')">${svg('check')} Tramitar Protocolo</button>
       ${btEtapa('proxima', n)}
     </div>`;
 }

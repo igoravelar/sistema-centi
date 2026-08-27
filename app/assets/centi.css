@@ -16,6 +16,46 @@
   --g-stroke:   #7F981D;  /* contorno da etapa ativa */
   --selecao:    #2E6FD6;  /* azul das caixas de seleção */
 
+  /* botão verde claro — fundo claro com contorno verde: o .btn-claro, a ação do
+     campo, o fechar, o + da árvore e a pílula de nova etapa. O :hover de cada um
+     só reaponta as quatro variáveis de baixo para as de -h, e tanto a caixa
+     quanto o ícone acompanham. O ícone tem tom próprio, um pouco mais frio que
+     o texto. */
+  --btc-bg:  #F5FFD3;  /* fundo */
+  --btc-txt: #86A427;  /* texto */
+  --btc-ico: #8BA81D;  /* ícone */
+  --btc-bd:  #A1C518;  /* contorno */
+  --btc-bg-h:  #728F00;
+  --btc-txt-h: #BBEC00;
+  --btc-ico-h: #BBEC00;
+  --btc-bd-h:  #728F00;
+
+  /* botão branco — fundo branco com contorno verde: a ação do campo, o fechar
+     do drawer e o .btn-branco da barra de ações. Mesma mecânica do de cima: o
+     :hover só reaponta as quatro variáveis para as de -h, e no hover ele fica
+     igual ao verde claro — fundo escuro e texto/ícone em verde-limão. */
+  --btb-bg:  #FFFFFF;  /* fundo */
+  --btb-txt: #86A427;  /* texto */
+  --btb-ico: #A2C812;  /* ícone */
+  --btb-bd:  #B9DD31;  /* contorno */
+  --btb-bg-h:  #728F00;
+  --btb-txt-h: #BBEC00;
+  --btb-ico-h: #BBEC00;
+  --btb-bd-h:  #728F00;
+
+  /* botão preenchido — o verde cheio da ação principal: Operações, Pesquisar,
+     Salvar e o Tramitar Protocolo da barra de ações. Mesma mecânica das duas
+     paletas de cima, e o mesmo hover delas: fundo escuro e texto/ícone em
+     verde-limão. */
+  --btp-bg:  #A1C518;  /* fundo */
+  --btp-txt: #FFFFFF;  /* texto */
+  --btp-ico: #FFFFFF;  /* ícone */
+  --btp-bd:  #A1C518;  /* contorno */
+  --btp-bg-h:  #728F00;
+  --btp-txt-h: #BBEC00;
+  --btp-ico-h: #BBEC00;
+  --btp-bd-h:  #728F00;
+
   /* formulário */
   --label-bg:   #F1F4E7;  /* rótulo à esquerda */
   --ro-bg:      #F4F4F6;  /* campo bloqueado */
@@ -39,6 +79,10 @@
   --panel-1:    #F9F9F9;
   --panel-2:    #EBECEE;
   --modal-bg:   #F7FBEE;
+  --canvas-bg:    #F7FBEE;  /* fundo da área de desenho (fluxograma) */
+  --canvas-grade: #EEF0E0;  /* traço da grade quadrangular */
+  --canvas-ponto: #E2EACF;  /* ponto do fundo pontilhado */
+  --canvas-passo: 17.3px;   /* passo dos dois fundos */
 
   /* métricas */
   --topbar-h:   50px;
@@ -423,19 +467,22 @@ a { color: inherit; text-decoration: none; }
 /* combo somente-leitura: mantém a seta, mas sem a mãozinha */
 .campo select.cx.ro { background-color: var(--ro-bg); cursor: default; }
 
-/* botãozinho de ação anexo ao campo (lupa, editar, calendário) */
+/* botãozinho de ação anexo ao campo (lupa, editar, calendário): botão branco */
 .campo .act {
   flex: 0 0 32px;
-  border: 1px solid var(--g-soft-bd);
-  background: var(--g-soft-bg);
-  color: var(--g-olive);
+  border: 1px solid var(--btb-bd);
+  background: var(--btb-bg);
+  color: var(--btb-txt);
   display: grid; place-items: center;
   margin-left: -1px;
   padding: 0;
 }
 .campo .act:last-child { border-radius: 0 4px 4px 0; }
-.campo .act:hover { background: var(--g); color: #FFFFFF; border-color: var(--g); }
-.campo .act svg { width: 13px; height: 13px; }
+.campo .act:hover {
+    --btb-bg: var(--btb-bg-h); --btb-txt: var(--btb-txt-h);
+    --btb-ico: var(--btb-ico-h); --btb-bd: var(--btb-bd-h);
+}
+.campo .act svg { width: 13px; height: 13px; color: var(--btb-ico); }
 
 /* ============================== botões ============================== */
 
@@ -452,11 +499,27 @@ a { color: inherit; text-decoration: none; }
 }
 .btn svg { width: 12px; height: 12px; }
 
-.btn-primario { background: var(--g); color: #FFFFFF; }
-.btn-primario:hover { background: #5D6725; }
+.btn-primario { background: var(--btp-bg); color: var(--btp-txt); border-color: var(--btp-bd); }
+.btn-primario svg { color: var(--btp-ico); }
+.btn-primario:hover {
+    --btp-bg: var(--btp-bg-h); --btp-txt: var(--btp-txt-h);
+    --btp-ico: var(--btp-ico-h); --btp-bd: var(--btp-bd-h);
+}
 
-.btn-claro { background: var(--g-soft-bg); color: var(--g-olive); border-color: var(--g-soft-bd); }
-.btn-claro:hover { background: #5D6725; color: #FFFFFF; border-color: #5D6725; }
+.btn-claro { background: var(--btc-bg); color: var(--btc-txt); border-color: var(--btc-bd); }
+.btn-claro svg { color: var(--btc-ico); }
+.btn-claro:hover {
+    --btc-bg: var(--btc-bg-h); --btc-txt: var(--btc-txt-h);
+    --btc-ico: var(--btc-ico-h); --btc-bd: var(--btc-bd-h);
+}
+
+/* mesma caixa do .btn-claro, na paleta branca — a navegação da barra de ações */
+.btn-branco { background: var(--btb-bg); color: var(--btb-txt); border-color: var(--btb-bd); }
+.btn-branco svg { color: var(--btb-ico); }
+.btn-branco:hover {
+    --btb-bg: var(--btb-bg-h); --btb-txt: var(--btb-txt-h);
+    --btb-ico: var(--btb-ico-h); --btb-bd: var(--btb-bd-h);
+}
 
 .btn-neutro { background: #EAEAEA; color: #A0A0A0; border-color: #CFCFCD; }
 .btn-neutro:disabled { cursor: default; }
@@ -528,3 +591,27 @@ a { color: inherit; text-decoration: none; }
 .scroll::-webkit-scrollbar-thumb { background: #D5D5D5; border-radius: 10px; }
 
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* ========================= fundos de área de desenho =========================
+   Dois acabamentos para o mesmo fundo, no mesmo passo — a grade num tom mais
+   claro que o ponto, porque a linha é contínua e pesa mais que ele:
+
+   .fundo-grade   grade quadrangular de linhas — é o fundo do fluxograma
+   .fundo-pontos  a malha de pontos que o fluxograma usava antes; guardada aqui
+                  para outra tela, ainda a definir
+
+   O .bpmn-wrap (fluxo.css) monta a grade direto, sem a classe, porque o fundo é
+   parte do próprio container do fluxo. Quem for usar o pontilhado é só aplicar
+   a classe no elemento que faz as vezes de canvas. */
+.fundo-grade, .fundo-pontos { background-color: var(--canvas-bg); }
+.fundo-grade {
+  background-image:
+    linear-gradient(to right,  var(--canvas-grade) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--canvas-grade) 1px, transparent 1px);
+  background-size: var(--canvas-passo) var(--canvas-passo);
+}
+/* o passo vertical do pontilhado é menor que o horizontal — é assim no protótipo */
+.fundo-pontos {
+  background-image: radial-gradient(var(--canvas-ponto) 1.45px, transparent 1.45px);
+  background-size: var(--canvas-passo) 15.9px;
+}

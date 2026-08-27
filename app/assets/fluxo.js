@@ -120,7 +120,7 @@ function etapaHTML(e) {
   return `
   <div class="etapa ${e.estado}" data-n="${e.n}"
        style="left:${e.x}px; top:${e.y}px; width:${e.w}px; height:${e.h}px">
-    <span class="num">${e.n}</span>
+    <span class="num"></span>
     <span class="dias">${svg('cronometro')}${e.dias}</span>
     <span class="nome">${e.nome}</span>
     <span class="rodape">

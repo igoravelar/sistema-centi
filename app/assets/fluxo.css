@@ -11,24 +11,31 @@
 
 .bt-fechar {
   width: 20px; height: 20px;
-  border: 1px solid var(--g-soft-bd2); border-radius: 4px;
-  background: var(--g-soft-bg); color: var(--g-olive);
+  border: 1px solid var(--btc-bd); border-radius: 4px;
+  background: var(--btc-bg); color: var(--btc-txt);
   display: grid; place-items: center; padding: 0;
 }
-.bt-fechar:hover { background: #5D6725; color: #FFFFFF; border-color: #5D6725; }
-.bt-fechar svg { width: 11px; height: 11px; }
+.bt-fechar:hover {
+    --btc-bg: var(--btc-bg-h); --btc-txt: var(--btc-txt-h);
+    --btc-ico: var(--btc-ico-h); --btc-bd: var(--btc-bd-h);
+}
+.bt-fechar svg { width: 11px; height: 11px; color: var(--btc-ico); }
 
 
-/* grade de pontos do protótipo: passo 17,3 x 15,9 px em #E2EACF.
+/* grade quadrangular do protótipo: linhas de 1px a cada 17,3 px, em #EEF0E0
+   (é a .fundo-grade do centi.css, montada aqui porque o fundo pertence ao
+   container do fluxo). A malha de pontos que ficava aqui virou .fundo-pontos.
    Sem barras de rolagem: a navegação é por clique e arraste (ver ativarArrasto). */
 .bpmn-wrap {
   position: relative;
   flex: 1; min-width: 0;
   overflow: hidden;
   /* o fundo é do próprio container do fluxo, para valer em qualquer tela */
-  background-color: #F7FBEE;
-  background-image: radial-gradient(#E2EACF 1.45px, transparent 1.45px);
-  background-size: 17.3px 15.9px;
+  background-color: var(--canvas-bg);
+  background-image:
+    linear-gradient(to right,  var(--canvas-grade) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--canvas-grade) 1px, transparent 1px);
+  background-size: var(--canvas-passo) var(--canvas-passo);
   cursor: grab;
   user-select: none;
   touch-action: none;
@@ -129,12 +136,12 @@
 .etapa .dias svg { width: 11px; height: 11px; }
 
 
-/* o padding-top desconta os 14px em que a bolinha invade o card, para que a
+/* o padding-top desconta os 6px em que a bolinha invade o card, para que a
    faixa de centralização comece na base dela e não na borda */
 .etapa .nome {
   flex: 1;
   display: grid; place-items: center;
-  padding: 14px 12px 0;
+  padding: 6px 12px 0;
   font-size: 14px; font-weight: bold; text-align: center; line-height: 16px;
 }
 
@@ -147,11 +154,11 @@
 }
 .etapa .depto-lbl::before, .etapa .depto-lbl::after { content: ""; flex: 1; height: 1px; background: currentColor; opacity: .45; }
 .etapa .depto { font-size: 11px; padding: 0 8px; }
+/* bolinha de entrada da etapa: um ponto, sem número — a mesma leitura da
+   bolinha de saída (.ponto), só um pouco maior */
 .etapa .num {
-  position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
-  width: 29px; height: 29px; border-radius: 50%;
-  display: grid; place-items: center;
-  font-size: 13px; font-weight: bold;
+  position: absolute; top: -5.5px; left: 50%; transform: translateX(-50%);
+  width: 11px; height: 11px; border-radius: 50%;
 }
 .etapa .ponto {
   position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
@@ -223,7 +230,7 @@
 /* etapa que o fluxo não executou — pulada ou não aplicável: card branco, com o
    contorno, a bolinha e o título no cinza claro do caminho não percorrido. A
    que ainda vai ser executada, por contraste, fica branca mas toda na cor da
-   etapa. O número segue branco, como nas demais bolinhas. */
+   etapa. */
 .etapa.dispensada { border-color: var(--linha-fora, #BDBFB5); }
 .etapa.dispensada .nome { color: var(--linha-fora, #BDBFB5); }
 .etapa.dispensada .num { background: var(--linha-fora, #BDBFB5); }
@@ -306,7 +313,18 @@
 }
 
 .drawer-topo { flex: 0 0 auto; padding: 20px 20px 0; position: relative; }
-.drawer-topo .bt-fechar { position: absolute; top: 11px; right: 11px; background: #FFFFFF; border-color: var(--fld-bd); color: var(--txt); }
+/* o fechar do drawer usa a caixa do .bt-fechar na paleta branca. O :hover
+   precisa vir aqui: a regra base é .bt-fechar:hover, de especificidade menor
+   que este seletor, e por isso perdia a troca de variável para ele. */
+.drawer-topo .bt-fechar {
+  position: absolute; top: 11px; right: 11px;
+  --btc-bg: var(--btb-bg);   --btc-txt: var(--btb-txt);
+  --btc-ico: var(--btb-ico);  --btc-bd: var(--btb-bd);
+}
+.drawer-topo .bt-fechar:hover {
+  --btc-bg: var(--btb-bg-h);   --btc-txt: var(--btb-txt-h);
+  --btc-ico: var(--btb-ico-h); --btc-bd: var(--btb-bd-h);
+}
 .drawer-titulo { display: flex; align-items: center; gap: 10px; }
 /* a bolinha e o título seguem a cor do tipo da etapa (a classe do tipo vem no
    .drawer-titulo); sem tipo, ficam no verde padrão */

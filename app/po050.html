@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Centi · PO050 - Fluxo de Processos</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
-<link rel="stylesheet" href="assets/centi.css?v=9">
-<link rel="stylesheet" href="assets/fluxo.css?v=19">
+<link rel="stylesheet" href="assets/centi.css?v=15">
+<link rel="stylesheet" href="assets/fluxo.css?v=24">
 <style>
   /* Pesquisa: filtros à esquerda, Últimas Buscas à direita, separados por
      uma linha vertical cinza */
@@ -71,14 +71,17 @@
     position: absolute; top: 10px; right: 10px; z-index: 5;
     display: inline-flex; align-items: center; gap: 6px;
     padding: 6px 14px;
-    background: var(--g-soft-bg);
-    border: 1px solid var(--g);
+    background: var(--btc-bg);
+    border: 1px solid var(--btc-bd);
     border-radius: 999px;
-    color: var(--g-dark);
+    color: var(--btc-txt);
     font-size: 11px; font-weight: bold; text-transform: uppercase;
   }
-  .nova-etapa:hover { background: #5D6725; color: #FFFFFF; border-color: #5D6725; }
-  .nova-etapa svg { width: 12px; height: 12px; }
+  .nova-etapa:hover {
+    --btc-bg: var(--btc-bg-h); --btc-txt: var(--btc-txt-h);
+    --btc-ico: var(--btc-ico-h); --btc-bd: var(--btc-bd-h);
+  }
+  .nova-etapa svg { width: 12px; height: 12px; color: var(--btc-ico); }
 
   /* ------------------------- modal Etapa do fluxo -------------------------
      Cobre a área da aba PO050 inteira (pastas + fluxograma), como no PO011. */
@@ -127,13 +130,16 @@
   .arvore .pasta .add {
     position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
     width: 22px; height: 22px; padding: 0;
-    border: 1px solid var(--g-soft-bd); border-radius: 50%;
-    background: var(--g-soft-bg); color: var(--g-olive);
+    border: 1px solid var(--btc-bd); border-radius: 50%;
+    background: var(--btc-bg); color: var(--btc-txt);
     display: none; place-items: center;
   }
   .arvore .pasta:hover .add { display: grid; }
-  .arvore .pasta .add:hover { background: #5D6725; color: #FFFFFF; }
-  .arvore .pasta .add svg { width: 12px; height: 12px; }
+  .arvore .pasta .add:hover {
+    --btc-bg: var(--btc-bg-h); --btc-txt: var(--btc-txt-h);
+    --btc-ico: var(--btc-ico-h); --btc-bd: var(--btc-bd-h);
+  }
+  .arvore .pasta .add svg { width: 12px; height: 12px; color: var(--btc-ico); }
 
   /* grid de itens da pasta (Documentos / Checklist / Condições) */
   .modal-grid { flex: 1; min-height: 0; overflow: auto; padding: 14px 16px; background: var(--panel-1); }
@@ -207,7 +213,7 @@
 <div class="app"></div>
 
 <script src="assets/shell.js?v=9"></script>
-<script src="assets/fluxo.js?v=9"></script>
+<script src="assets/fluxo.js?v=10"></script>
 <script>
 /* ícones extras desta tela */
 Object.assign(ICO, {
@@ -504,7 +510,7 @@ function arvoreIptuHTML() {
 function canvasIptuHTML() {
   const cards = ETAPAS_IPTU.map(e => `
     <div class="etapa ${classeTipo(e.tipo)}" style="left:${e.x}px;top:${e.y}px;width:190px;height:112px">
-      <span class="num">${e.n}</span>
+      <span class="num"></span>
       ${e.dias ? `<span class="dias">${svg('cronometro')}${e.dias}</span>` : ''}
       <span class="nome">${e.titulo}</span>
       <span class="rodape">
@@ -1411,7 +1417,7 @@ function cadastroHTML() {
       ${i > 0 ? '<div class="liga-cards"></div>' : ''}
       <div class="etapa ${classeTipo(e.tipo)}" style="position:relative;left:0;top:0;width:190px;height:112px;flex:0 0 auto"
            onclick="abrirCard(${i})">
-        <span class="num">${i + 1}</span>
+        <span class="num"></span>
         ${e.dias ? `<span class="dias">${svg('cronometro')}${e.dias}</span>` : ''}
         <span class="nome">${e.titulo}</span>
         <span class="rodape">
