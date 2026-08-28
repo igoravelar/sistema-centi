@@ -1083,6 +1083,40 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 /* card numerado com mais de um parágrafo: o segundo respira do primeiro */
 .cards-num .card p + p { margin-top: 8px; }
 
+/* princípios de um acrônimo: a inicial em destaque à esquerda e o princípio
+   ao lado, uma linha por letra (LIMPE) */
+.acronimo {
+  margin: 0 0 22px;
+  border: 1px solid var(--verde-linha);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.acronimo .linha {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  border-top: 1px solid var(--verde-linha);
+}
+
+.acronimo .linha:first-child { border-top: 0; }
+
+.acronimo .inicial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F3FFC3;
+  border-right: 1px solid var(--verde-linha);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--verde);
+}
+
+.acronimo .texto { padding: 12px 18px; }
+
+.acronimo .texto p { margin: 0; font-size: 13px; }
+
+.acronimo .texto b { color: var(--txt-strong); }
+
 /* blocos de lista lado a lado (escopo x fora do escopo, grupos de métricas) */
 .colunas-2 {
   display: grid;
@@ -3918,10 +3952,241 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </div>
     </section>
 
+    <div class="ilustracao">
+      <svg viewBox="0 0 720 90" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+
+        <!-- shapes: a lei vira regra escrita, a regra desenha o processo,
+             o processo ganha controle, o controle vira sistema e o sistema produz evidência -->
+        <g fill="none" stroke="#F3FFC3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="60" cy="26" r="3.5" fill="#C6E628" fill-opacity=".34"/>
+          <line x1="60" y1="29" x2="60" y2="64"/>
+          <line x1="48" y1="64" x2="72" y2="64"/>
+          <line x1="36" y1="32" x2="84" y2="32"/>
+          <path d="M29 34 L36 46 L43 34" fill="#C6E628" fill-opacity=".30"/>
+          <path d="M77 34 L84 46 L91 34" fill="#DFF08F" fill-opacity=".26"/>
+
+          <rect x="156" y="16" width="48" height="58" rx="5" fill="#DFF08F" fill-opacity=".18"/>
+          <line x1="166" y1="32" x2="194" y2="32"/>
+          <line x1="166" y1="42" x2="194" y2="42"/>
+          <line x1="166" y1="52" x2="182" y2="52"/>
+          <circle cx="192" cy="60" r="6" fill="#C6E628" fill-opacity=".34"/>
+
+          <rect x="267" y="37" width="18" height="16" rx="3" fill="#E8EF9E" fill-opacity=".20"/>
+          <rect x="291" y="37" width="18" height="16" rx="3" fill="#DFF08F" fill-opacity=".26"/>
+          <rect x="315" y="37" width="18" height="16" rx="3" fill="#C6E628" fill-opacity=".32"/>
+          <line x1="285" y1="45" x2="291" y2="45"/>
+          <line x1="309" y1="45" x2="315" y2="45"/>
+
+          <path d="M420 16 L444 26 V46 C444 60 433 68 420 74 C407 68 396 60 396 46 V26 Z" fill="#C6E628" fill-opacity=".30"/>
+          <path d="M410 44 l7 8 l14 -16"/>
+
+          <rect x="516" y="20" width="48" height="15" rx="4" fill="#C6E628" fill-opacity=".32"/>
+          <rect x="516" y="38" width="48" height="15" rx="4" fill="#DFF08F" fill-opacity=".26"/>
+          <rect x="516" y="56" width="48" height="15" rx="4" fill="#E8EF9E" fill-opacity=".16"/>
+          <line x1="526" y1="27" x2="529" y2="27"/>
+          <line x1="526" y1="45" x2="529" y2="45"/>
+          <line x1="526" y1="63" x2="529" y2="63"/>
+
+          <circle cx="660" cy="45" r="19" fill="#C6E628" fill-opacity=".34"/>
+          <circle cx="660" cy="45" r="11"/>
+        </g>
+
+        <!-- linhas e setas: cada elo do encadeamento sustenta o seguinte -->
+        <g fill="none" stroke="#F3FFC3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="100" y1="45" x2="140" y2="45"/>
+          <path d="M133 40 l7 5 -7 5"/>
+
+          <line x1="214" y1="45" x2="254" y2="45"/>
+          <path d="M247 40 l7 5 -7 5"/>
+
+          <line x1="344" y1="45" x2="384" y2="45"/>
+          <path d="M377 40 l7 5 -7 5"/>
+
+          <line x1="456" y1="45" x2="500" y2="45"/>
+          <path d="M493 40 l7 5 -7 5"/>
+
+          <line x1="576" y1="45" x2="628" y2="45"/>
+          <path d="M621 40 l7 5 -7 5"/>
+        </g>
+      </svg>
+    </div>
+
     <section id="etapa8">
-      <h2>#8 Legal &amp; Compliance</h2>
-      <p class="lead">Requisitos legais, normativos e de conformidade que o produto deve atender.</p>
-      <p>Conteúdo a preencher com as definições desta etapa.</p>
+      <h2>#8 Legalidade &amp; Compliance</h2>
+      <p class="lead">A legalidade tratada como requisito de produto: da lei à regra, da regra ao controle, do controle ao sistema e do sistema à evidência.</p>
+    </section>
+
+    <section id="etapa8-objetivo" class="sub">
+      <h3>Objetivo da etapa</h3>
+      <p>Garantir que o Protocolo 3.0 seja concebido e desenvolvido em conformidade com a legislação aplicável à <b>Administração Pública Municipal</b>, incorporando requisitos jurídicos, controles, segurança, transparência e rastreabilidade à própria arquitetura do produto.</p>
+      <p>A legalidade deve ser tratada como <b>requisito de produto</b>, transformando:</p>
+
+      <div class="fluxo-palavras">
+        <span class="palavra">LEI</span><span class="seta-fluxo">&#8594;</span>
+        <span class="palavra">REGRA</span><span class="seta-fluxo">&#8594;</span>
+        <span class="palavra">PROCESSO</span><span class="seta-fluxo">&#8594;</span>
+        <span class="palavra">CONTROLE</span><span class="seta-fluxo">&#8594;</span>
+        <span class="palavra">SISTEMA</span><span class="seta-fluxo">&#8594;</span>
+        <span class="palavra">EVIDÊNCIA</span>
+      </div>
+    </section>
+
+    <section id="etapa8-principios" class="sub">
+      <h3>Princípios Jurídicos</h3>
+      <p>Decorrem, em sua maioria, do <b>art. 37 da Constituição Federal</b> (LIMPE) e dos princípios gerais de Direito Administrativo:</p>
+
+      <div class="acronimo">
+        <div class="linha">
+          <div class="inicial">L</div>
+          <div class="texto"><p><b>Legalidade:</b> os processos devem respeitar o ordenamento jurídico aplicável.</p></div>
+        </div>
+        <div class="linha">
+          <div class="inicial">I</div>
+          <div class="texto"><p><b>Impessoalidade:</b> as decisões e procedimentos devem evitar favorecimentos ou tratamentos arbitrários.</p></div>
+        </div>
+        <div class="linha">
+          <div class="inicial">M</div>
+          <div class="texto"><p><b>Moralidade:</b> os processos devem observar padrões de integridade e probidade administrativa.</p></div>
+        </div>
+        <div class="linha">
+          <div class="inicial">P</div>
+          <div class="texto"><p><b>Publicidade:</b> os atos devem observar a transparência exigida pela legislação, respeitando as hipóteses legais de restrição.</p></div>
+        </div>
+        <div class="linha">
+          <div class="inicial">E</div>
+          <div class="texto"><p><b>Eficiência:</b> os processos devem buscar resultados adequados com racionalidade e qualidade operacional.</p></div>
+        </div>
+      </div>
+
+      <fieldset class="riscos">
+        <legend>E, ainda</legend>
+        <ul>
+          <li><b>Motivação:</b> decisões que exijam fundamentação devem registrar seus fundamentos de fato e de direito.</li>
+          <li><b>Segurança jurídica:</b> as regras e procedimentos devem proporcionar previsibilidade aos agentes públicos e cidadãos.</li>
+          <li><b>Rastreabilidade:</b> as operações relevantes devem poder ser reconstruídas posteriormente.</li>
+          <li><b>Prestação de Contas:</b> a Administração deve ser capaz de demonstrar como, quando, por quem e com qual fundamento determinado ato foi realizado.</li>
+        </ul>
+      </fieldset>
+
+      <div class="definicao">
+        <p>O sistema deve buscar não apenas registrar o cumprimento das regras, mas, quando possível, <b>orientar, controlar e impedir</b> operações incompatíveis com as regras configuradas.</p>
+      </div>
+    </section>
+
+    <section id="etapa8-marco" class="sub">
+      <h3>Marco Legal Aplicável</h3>
+      <p>A operação do Protocolo 3.0 deve considerar diferentes níveis normativos. A legislação federal estabelece parâmetros gerais, enquanto Estados e Municípios podem possuir normas complementares específicas.</p>
+      <p>Entre os principais referenciais estão:</p>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Norma</th><th>Abrangência para o produto</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Constituição Federal, art. 37 e seguintes</b></td>
+              <td>Organização dos municípios, competências, princípios da Administração Pública, direitos dos cidadãos, controle e fiscalização.</td>
+            </tr>
+            <tr>
+              <td><b>Lei nº 14.133/2021</b></td>
+              <td>Regula toda contratação pública — inclusive a própria contratação do Protocolo 3.0 pelo município — e deve orientar qualquer fluxo de compras/licitação eventualmente tramitado dentro da plataforma.</td>
+            </tr>
+            <tr>
+              <td><b>Lei nº 13.709/2018 (LGPD)</b></td>
+              <td>Aplicável a todo dado pessoal tratado pelo sistema, tanto o dado do cidadão quanto o do próprio servidor.</td>
+            </tr>
+            <tr>
+              <td><b>Lei Complementar nº 101/2000 (LRF), art. 48</b></td>
+              <td>Exige ampla divulgação, inclusive em meios eletrônicos de acesso público, da execução orçamentária e financeira — relevante sempre que um fluxo do Protocolo 3.0 tocar em despesa pública (ex.: etapa de autorização de empenho identificada na Modelagem do Produto).</td>
+            </tr>
+            <tr>
+              <td><b>Lei nº 4.320/1964</b></td>
+              <td>Normas gerais de Direito Financeiro para elaboração e controle de orçamentos e balanços — base de qualquer etapa que gere efeito orçamentário.</td>
+            </tr>
+            <tr>
+              <td><b>Lei nº 12.527/2011 (LAI)</b></td>
+              <td>Regras de transparência ativa e passiva, e as hipóteses excepcionais de sigilo (arts. 23 e 24) e de restrição de dado pessoal (art. 31).</td>
+            </tr>
+            <tr>
+              <td><b>Decreto Federal nº 10.540/2020</b></td>
+              <td>Regulamenta o SIAFIC, com o qual o sistema financeiro do município (e por extensão qualquer módulo que gere despesa) deve manter integração.</td>
+            </tr>
+            <tr>
+              <td><b>Legislação estadual, Lei Orgânica Municipal, leis e decretos municipais, normas de Tribunais de Contas</b></td>
+              <td>Variam por município. Definem, por exemplo, prazos específicos de resposta, exigências documentais próprias, ritos de processo administrativo disciplinar, regras de arquivo público.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Regra de parametrização</h4>
+      <p>O sistema não deve presumir que todos os Municípios possuem os mesmos procedimentos. A solução deve permitir a <b>parametrização das regras municipais</b> para definir processos, regras, documentos, prazos e responsáveis, considerando a legislação vigente e os procedimentos definidos por cada Administração.</p>
+    </section>
+
+    <section id="etapa8-aplicada" class="sub">
+      <h3>Legalidade Aplicada</h3>
+      <p>A principal diretriz desta etapa é transformar <b>requisitos jurídicos em regras operacionais e sistêmicas</b>.</p>
+      <p>A legislação deve ser interpretada e traduzida para dentro do processo:</p>
+
+      <div class="fluxo-palavras">
+        <span class="palavra">LEI</span><span class="seta-fluxo">→</span>
+        <span class="palavra">OBRIGAÇÃO / PERMISSÃO / RESTRIÇÃO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">REGRA DE PROCESSO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">RESPONSÁVEL</span><span class="seta-fluxo">→</span>
+        <span class="palavra">CONTROLE</span><span class="seta-fluxo">→</span>
+        <span class="palavra">REGISTRO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">EVIDÊNCIA</span>
+      </div>
+
+      <h4>Requisitos jurídicos</h4>
+      <p>Cada processo (cada fluxo configurado na <code>PO050</code>) deve permitir identificar, quando aplicável:</p>
+
+      <ul class="lista">
+        <li>fundamento legal da existência daquele tipo de processo;</li>
+        <li>requisitos para sua abertura;</li>
+        <li>documentos obrigatórios;</li>
+        <li>responsável e competência para cada etapa;</li>
+        <li>prazo;</li>
+        <li>decisão e aprovação necessárias;</li>
+        <li>impedimentos;</li>
+        <li>possibilidade de recurso;</li>
+        <li>condições de encerramento e arquivamento.</li>
+      </ul>
+
+      <h4>Exemplo</h4>
+      <p>Se determinada legislação exige um documento para conclusão de uma etapa:</p>
+
+      <div class="escada-evolucao larga">
+        <div class="estagio">
+          <span class="rotulo">REGRA JURÍDICA</span>
+          <p>Documento obrigatório.</p>
+        </div>
+        <div class="seta-baixo">↓</div>
+        <div class="estagio">
+          <span class="rotulo">REGRA OPERACIONAL</span>
+          <p>O documento deve ser apresentado antes da conclusão.</p>
+        </div>
+        <div class="seta-baixo">↓</div>
+        <div class="estagio">
+          <span class="rotulo">REGRA SISTÊMICA</span>
+          <p>O sistema solicita o documento e impede o avanço quando a ausência inviabilizar legalmente a etapa.</p>
+        </div>
+        <div class="seta-baixo">↓</div>
+        <div class="estagio">
+          <span class="rotulo">EXCEÇÃO</span>
+          <p>Caso exista hipótese legal para dispensa, o sistema deve permitir o tratamento da exceção conforme as regras configuradas.</p>
+        </div>
+        <div class="seta-baixo">↓</div>
+        <div class="estagio">
+          <span class="rotulo">EVIDÊNCIA</span>
+          <p>O sistema registra o documento apresentado ou a justificativa e decisão referente à exceção.</p>
+        </div>
+      </div>
+
+      <div class="definicao">
+        <p>Essa abordagem transforma o sistema em uma <b>camada de conformidade operacional</b>, reduzindo a dependência de controles exclusivamente manuais.</p>
+      </div>
     </section>
 
     <section id="etapa9">
@@ -4035,7 +4300,12 @@ const MENU = [
     { id: 'etapa7-indicadores', txt: 'Indicadores e resumo inteligente' },
     { id: 'etapa7-roadmap',     txt: 'Roadmap de evolução' },
   ] },
-  { titulo: '#8 Legal & Compliance',        itens: [{ id: 'etapa8',  txt: 'Visão geral' }] },
+  { titulo: '#8 Legalidade & Compliance',   itens: [
+    { id: 'etapa8-objetivo',    txt: 'Objetivo da etapa' },
+    { id: 'etapa8-principios',  txt: 'Princípios Jurídicos' },
+    { id: 'etapa8-marco',       txt: 'Marco Legal Aplicável' },
+    { id: 'etapa8-aplicada',    txt: 'Legalidade Aplicada' },
+  ] },
   { titulo: '#9 Pipeline de Vendas',        itens: [{ id: 'etapa9',  txt: 'Visão geral' }] },
   { titulo: '#10 Validação (piloto)',       itens: [{ id: 'etapa10', txt: 'Visão geral' }] },
   { titulo: '#11 CSI & CSM',                itens: [{ id: 'etapa11', txt: 'Visão geral' }] },
