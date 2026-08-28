@@ -4126,8 +4126,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa8-aplicada" class="sub">
       <h3>Legalidade Aplicada</h3>
-      <p>A principal diretriz desta etapa é transformar <b>requisitos jurídicos em regras operacionais e sistêmicas</b>.</p>
-      <p>A legislação deve ser interpretada e traduzida para dentro do processo:</p>
+      <p>A principal diretriz desta etapa é transformar <b>requisitos jurídicos em regras operacionais e sistêmicas</b>. A legislação deve ser interpretada e traduzida para dentro do processo:</p>
 
       <div class="fluxo-palavras">
         <span class="palavra">LEI</span><span class="seta-fluxo">→</span>
@@ -4153,6 +4152,40 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         <li>possibilidade de recurso;</li>
         <li>condições de encerramento e arquivamento.</li>
       </ul>
+
+      <h4>Matriz Jurídica para cada etapa</h4>
+      <p>Ao configurar uma etapa na <code>PO050</code>, o Consultor Técnico ou o Gestor/Líder Técnico deve conseguir responder:</p>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Elemento</th><th>Pergunta</th><th>Onde fica no produto</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Competência</b></td><td>Quem pode decidir?</td><td>Responsável + Departamento da etapa</td></tr>
+            <tr><td><b>Base legal</b></td><td>Qual norma autoriza ou determina?</td><td>Campo de fundamentação (a criar)</td></tr>
+            <tr><td><b>Requisitos</b></td><td>O que precisa ser apresentado?</td><td>Checklist</td></tr>
+            <tr><td><b>Documentos</b></td><td>Quais documentos são necessários?</td><td>Documentos da etapa</td></tr>
+            <tr><td><b>Prazo</b></td><td>Existe prazo legal ou regulamentar?</td><td>Prazos + alertas</td></tr>
+            <tr><td><b>Decisão</b></td><td>Quem decide?</td><td>Responsável + Regras de saída</td></tr>
+            <tr><td><b>Motivação</b></td><td>A decisão precisa ser fundamentada?</td><td>Campo de justificativa obrigatório</td></tr>
+            <tr><td><b>Recurso</b></td><td>Existe possibilidade de recurso?</td><td>Caminho de retorno configurável</td></tr>
+            <tr><td><b>Evidência</b></td><td>O que precisa ficar registrado?</td><td>Andamento + histórico</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <fieldset class="riscos">
+        <legend>Tratamento de exceções</legend>
+        <p>Exceções ao fluxo padrão devem ser controladas. Quando uma etapa puder ser excepcionalmente ignorada, alterada ou devolvida, o sistema deve permitir, conforme a regra aplicável:</p>
+        <ul>
+          <li>identificar a exceção;</li>
+          <li>restringir sua execução a usuários autorizados;</li>
+          <li>exigir justificativa;</li>
+          <li>registrar a decisão;</li>
+          <li>preservar o histórico.</li>
+        </ul>
+      </fieldset>
 
       <h4>Exemplo</h4>
       <p>Se determinada legislação exige um documento para conclusão de uma etapa:</p>
@@ -4184,8 +4217,60 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         </div>
       </div>
 
-      <div class="definicao">
-        <p>Essa abordagem transforma o sistema em uma <b>camada de conformidade operacional</b>, reduzindo a dependência de controles exclusivamente manuais.</p>
+      <div class="objetivo curva">
+        <svg class="seta-curva" viewBox="0 0 87 37" aria-hidden="true">
+          <path d="M2.0004 2.00049C9.60802 16.0434 24.4691 25.5682 41.5405 25.5682H85.0004"/>
+          <path d="M75.5855 16.1536L85.0004 25.5685"/>
+          <path d="M75.5855 34.9955L85.0004 25.5684"/>
+        </svg>
+        <div>
+          <h4>Em síntese:</h4>
+          <p>Essa abordagem transforma o sistema em uma <b>camada de conformidade operacional</b>, reduzindo a dependência de controles exclusivamente manuais.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="etapa8-licitacoes" class="sub">
+      <h3>Licitações e Contratações Públicas</h3>
+      <p>O Protocolo 3.0 deve considerar o ciclo completo das contratações públicas sob a <b>Lei nº 14.133/2021</b> em duas frentes: (a) como fluxo que pode ser tramitado dentro da plataforma por qualquer município-cliente, e (b) como processo pelo qual a própria Centi é contratada (tratado com mais profundidade em <b>08.6</b> e <b>08.7</b>, a partir do TR de referência já em uso).</p>
+
+      <div class="colunas-2">
+        <fieldset class="riscos">
+          <legend>Planejamento</legend>
+          <ul>
+            <li>Documento de Formalização da Demanda (DFD);</li>
+            <li>Plano de Contratações Anual (PCA);</li>
+            <li>Estudo Técnico Preliminar (ETP);</li>
+            <li>Termo de Referência (TR).</li>
+          </ul>
+        </fieldset>
+        <fieldset class="riscos">
+          <legend>Procedimento de contratação</legend>
+          <p>Definição da modalidade (pregão, concorrência, diálogo competitivo), contratação direta (dispensa ou inexigibilidade, quando cabível e devidamente motivada), habilitação, julgamento, recursos, adjudicação e homologação.</p>
+        </fieldset>
+      </div>
+
+      <h4>Diretriz de produto</h4>
+      <p>O sistema deve permitir que um fluxo de contratação pública seja modelado como qualquer outro fluxo do Protocolo 3.0:</p>
+
+      <div class="fluxo-palavras">
+        <span class="palavra">DFD</span><span class="seta-fluxo">→</span>
+        <span class="palavra">ETP</span><span class="seta-fluxo">→</span>
+        <span class="palavra">TR</span><span class="seta-fluxo">→</span>
+        <span class="palavra">EDITAL</span><span class="seta-fluxo">→</span>
+        <span class="palavra">HABILITAÇÃO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">JULGAMENTO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">CONTRATO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">EXECUÇÃO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">ENCERRAMENTO</span>
+      </div>
+
+      <p>A etapa de compras pode, inclusive, alimentar diretamente o <b>módulo financeiro do ERP Centi</b> para fins de dotação orçamentária e empenho — mantendo a rastreabilidade de ponta a ponta que é a proposta de valor central do produto.</p>
+
+      <h4>Ponto de atenção — competitividade</h4>
+
+      <div class="nota">
+        <p>A especificação de qualquer objeto tramitado (inclusive a do próprio Protocolo 3.0, como já ocorre no TR de referência) deve evitar requisitos desnecessários que possam <b>restringir indevidamente a competição</b>, direcionar a contratação ou favorecer fornecedor específico. Requisitos técnicos só se sustentam quando amparados em necessidade objetiva registrada no ETP — não em preferência de mercado.</p>
       </div>
     </section>
 
@@ -4305,6 +4390,7 @@ const MENU = [
     { id: 'etapa8-principios',  txt: 'Princípios Jurídicos' },
     { id: 'etapa8-marco',       txt: 'Marco Legal Aplicável' },
     { id: 'etapa8-aplicada',    txt: 'Legalidade Aplicada' },
+    { id: 'etapa8-licitacoes',  txt: 'Licitações e Contratações Públicas' },
   ] },
   { titulo: '#9 Pipeline de Vendas',        itens: [{ id: 'etapa9',  txt: 'Visão geral' }] },
   { titulo: '#10 Validação (piloto)',       itens: [{ id: 'etapa10', txt: 'Visão geral' }] },
