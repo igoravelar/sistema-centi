@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Centi · Módulo Protocolo</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
-<link rel="stylesheet" href="assets/centi.css?v=16">
+<link rel="stylesheet" href="assets/centi.css?v=19">
 <link rel="stylesheet" href="assets/menu.css?v=3">
 </head>
 <body>
 
 <div class="app"></div>
 
-<script src="assets/shell.js?v=13"></script>
+<script src="assets/shell.js?v=16"></script>
 <script>
 /* ícones extras usados só nesta tela */
 Object.assign(ICO, {
@@ -175,7 +175,7 @@ function filtrar(termo) {
 }
 
 const main = montarShell('protocolo');
-main.insertAdjacentHTML('beforeend', `<div class="tela" style="padding-left:32px">${menuHTML()}</div>`);
+main.insertAdjacentHTML('beforeend', `<div class="tela">${menuHTML()}</div>`);
 </script>
 </body>
 </html>

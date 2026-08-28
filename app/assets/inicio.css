@@ -8,7 +8,7 @@
   min-height: 0;
   background: #EDEDED;
   border: 1px solid var(--tab-bd);
-  border-radius: 0 5px 5px 5px;
+  border-radius: 5px;
   overflow: auto;
   padding: 24px 28px;
 }

@@ -27,7 +27,6 @@ const ICO = {
   lapis: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/>',
   notas: '<line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/>',
   robo: '<rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 4v4"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/>',
-  chevron: '<polyline points="9,18 15,12 9,6"/>',
   chevronBaixo: '<polyline points="6,9 12,15 18,9"/>',
   alternar: '<rect x="2" y="7" width="20" height="10" rx="5"/><circle cx="8" cy="12" r="3" fill="currentColor"/>',
   painel: '<rect x="3" y="4" width="18" height="16" rx="2"/><line x1="10" y1="4" x2="10" y2="20"/>',
@@ -50,8 +49,19 @@ const ICO = {
   seta: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/>',
   voltar: '<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12,19 5,12 12,5"/>',
   estrela: '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>',
+  prancheta: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="13" y2="14"/>',
+  executar: '<polygon points="6,4 20,12 6,20"/>',
+  martelo: '<g transform="rotate(45 12 12)"><rect x="9" y="2.5" width="6" height="5" rx="1"/><line x1="12" y1="7.5" x2="12" y2="19"/></g>',
+  contrato: '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14,2 14,8 20,8"/><path d="M8 17c1.5-3 3-3 4 0s2.5 3 4 0"/>',
+  publicar: '<path d="M4 21h16"/><path d="M4 21v-8l8-5 8 5v8"/><polyline points="9,14.5 12,11.5 15,14.5"/><line x1="12" y1="11.5" x2="12" y2="18"/>',
+  bussola: '<circle cx="12" cy="12" r="9"/><polygon points="15.5,8.5 10.5,10.5 8.5,15.5 13.5,13.5"/>',
   pin: '<path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>',
 };
+
+/* O chevron do menu lateral vem do Figma com desenho próprio: 10 × 6 e
+   preenchido, fora do padrão 24 × 24 de contorno do ICO — por isso não entra no
+   dicionário. Aponta para baixo; o CSS gira meia volta no módulo aberto. */
+const CHEVRON_MENU = `<svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.69297 0.305085C9.28877 -0.101695 8.63065 -0.101695 8.22645 0.305085L4.99806 3.51298L1.76966 0.305085C1.36546 -0.0965458 0.707345 -0.0965458 0.303147 0.305085C-0.10105 0.706715 -0.10105 1.36065 0.303147 1.76228L4.26739 5.6962C4.46949 5.89702 4.73377 6 5.00324 6C5.2727 6 5.53699 5.89702 5.73909 5.6962L9.69297 1.76228C10.1023 1.36065 10.1023 0.706715 9.69297 0.305085Z" fill="currentColor"/></svg>`;
 
 /** <svg> a partir de um path do dicionário ICO */
 function svg(nome, extra = '') {
@@ -64,8 +74,16 @@ const MODULOS = [
   { nome: 'Gerais',              ico: 'gerais' },
   { nome: 'Protocolo',           ico: 'protocolo', href: 'protocolo.html',
     paginas: ['protocolo.html', 'po002.html', 'po011.html', 'po050.html', 'po051.html'] },
-  { nome: 'Planejamento',        ico: 'planejamento',  chev: true },
-  { nome: 'Compras/Licitação',   ico: 'compras',       chev: true },
+  { nome: 'Planejamento',        ico: 'planejamento',
+    subs: [{ nome: 'PPA', ico: 'calendario' }, { nome: 'LDO', ico: 'bussola' }] },
+  { nome: 'Compras/Licitação',   ico: 'compras', subs: [
+      { nome: 'Configurações e Dados Mestres',     ico: 'gerais' },
+      { nome: 'Planejamento',                      ico: 'prancheta' },
+      { nome: 'Execução de Compras',               ico: 'executar' },
+      { nome: 'Controle Licitações',               ico: 'martelo' },
+      { nome: 'Contratos',                         ico: 'contrato' },
+      { nome: 'Prestação de Contas e Publicações', ico: 'publicar' },
+    ] },
   { nome: 'Folha de Pagamento',  ico: 'folha',         chev: true },
   { nome: 'Arrecadação',         ico: 'arrecadacao',   chev: true },
   { nome: 'Contabilidade',       ico: 'contabilidade', chev: true },
@@ -84,7 +102,7 @@ const MODULOS = [
 const ABAS = {
   home:      { ico: 'casa', href: 'prototipo.html' },
   notif:     { ico: 'sino', rotulo: 'Notificações', href: '#' },
-  protocolo: { rotulo: 'Protocolo', href: 'protocolo.html', fechavel: true },
+  protocolo: { menu: true, rotulo: 'Protocolo', href: 'protocolo.html', fechavel: true },
   po002:     { cod: 'PO002', rotulo: 'Protocolo', href: 'po002.html', fechavel: true },
   po011:     { cod: 'PO011', rotulo: 'Central de Protocolos', href: 'po011.html', fechavel: true },
   po050:     { cod: 'PO050', rotulo: 'Fluxo de Processos', href: 'po050.html', fechavel: true },
@@ -121,15 +139,52 @@ function topbarHTML() {
   </header>`;
 }
 
+/* Qual submenu está aberto. Fica na sessão porque cada clique no menu é uma
+   navegação de verdade: sem isso, o submenu se fecharia ao abrir a tela que
+   acabou de ser escolhida dentro dele. */
+const CHAVE_MENU = 'centi:menu-aberto';
+
+function moduloAberto() {
+  try { return sessionStorage.getItem(CHAVE_MENU) || ''; }
+  catch { return ''; }
+}
+
+/** Abre o submenu do módulo, fechando o que estiver aberto: só um por vez. */
+function alternarModulo(nome, elo) {
+  const grupo = elo.closest('.mod-grupo');
+  const abrir = !grupo.classList.contains('aberto');
+  grupo.parentNode.querySelectorAll('.mod-grupo.aberto')
+       .forEach(g => g.classList.remove('aberto'));
+  grupo.classList.toggle('aberto', abrir);
+  try { sessionStorage.setItem(CHAVE_MENU, abrir ? nome : ''); }
+  catch { /* sessão indisponível: o submenu vale só nesta página */ }
+}
+
 function sidebarHTML() {
   // o módulo só fica marcado quando a tela aberta pertence a ele (o Início não marca nenhum)
   const pagina = location.pathname.split('/').pop() || 'index.html';
-  const itens = MODULOS.map(m => `
-    <a class="mod${(m.paginas || []).includes(pagina) ? ' ativo' : ''}" href="${m.href || '#'}">
+  const aberto = moduloAberto();
+  const itens = MODULOS.map(m => {
+    const linha = `
+    <a class="mod${(m.paginas || []).includes(pagina) ? ' ativo' : ''}" href="${m.href || '#'}"
+       ${m.subs ? `onclick="event.preventDefault();alternarModulo('${m.nome}', this)"` : ''}>
       <span class="tile">${svg(m.ico)}</span>
       <span class="nome">${m.nome}</span>
-      ${m.chev ? `<span class="chev">${svg('chevron')}</span>` : ''}
-    </a>`).join('');
+      ${m.subs || m.chev ? `<span class="chev">${CHEVRON_MENU}</span>` : ''}
+    </a>`;
+    if (!m.subs) return linha;
+    /* o módulo com submenu vira um grupo: a classe 'aberto' fica no grupo, e é
+       ela que mostra o segundo nível e vira o chevron */
+    const filhos = m.subs.map(sub => `
+      <a class="sub" href="${sub.href || '#'}">
+        <span class="ico">${svg(sub.ico)}</span>
+        <span class="nome">${sub.nome}</span>
+      </a>`).join('');
+    return `
+    <div class="mod-grupo${m.nome === aberto ? ' aberto' : ''}">${linha}
+      <div class="submenu"><div class="lista">${filhos}</div></div>
+    </div>`;
+  }).join('');
 
   return `
   <aside class="sidebar">
@@ -225,17 +280,21 @@ function doctabsHTML(atual, abertas) {
     const a = ABAS[id];
     if (!a) return '';
     /* favoritar e fixar ainda não fazem nada: entram pelo desenho da aba, e o
-       preventDefault é o que impede o clique de navegar pelo <a> em volta */
+       preventDefault é o que impede o clique de navegar pelo <a> em volta.
+       A aba de menu do módulo não é uma tela: não se favorita nem se fixa,
+       só se fecha. */
     const acoes = !a.fechavel ? '' : `
       <span class="acoes-aba">
+        ${a.menu ? '' : `
         <button title="Favoritar" onclick="event.preventDefault();event.stopPropagation()">${svg('estrela')}</button>
-        <button title="Fixar aba" onclick="event.preventDefault();event.stopPropagation()">${svg('pin')}</button>
+        <button title="Fixar aba" onclick="event.preventDefault();event.stopPropagation()">${svg('pin')}</button>`}
         <button class="fechar" title="Fechar aba"
                 onclick="event.preventDefault();event.stopPropagation();fecharAba('${id}', this)">${svg('x')}</button>
       </span>`;
     return `
     <a class="doctab${id === atual ? ' ativa' : ''}" href="${a.href}">
       ${a.ico ? svg(a.ico) : ''}
+      ${a.menu ? '<b class="cod">MENU</b>' : ''}
       ${a.cod ? `<b class="cod">${a.cod}</b>` : ''}
       ${a.rotulo ? `<span class="rot">${a.rotulo}</span>` : ''}
       ${acoes}

@@ -73,9 +73,11 @@
   --app-bg:     #E8EDF1;
   --tab-off:    #E5E5E5;
   --tab-bd:     #D4D4D4;
-  --side-item:  #F9FAFC;
+  --side-item:  #F9FAFC;  /* fundo do módulo (nível de cima) */
   --side-train: #F1F3FA;
-  --side-line:  #F3F5F5;
+  --side-line:  #E7EBEB;  /* divisória entre os módulos */
+  --side-sub:   #FFFFFF;  /* fundo do submenu aberto */
+  --side-sub-l: #F3F5F5;  /* divisória dentro do submenu, sobre o branco */
   --panel-1:    #F9F9F9;
   --panel-2:    #EBECEE;
   --modal-bg:   #F7FBEE;
@@ -86,7 +88,7 @@
 
   /* métricas */
   --topbar-h:   50px;
-  --sidebar-w:  250px;
+  --sidebar-w:  230px;
   --tab-h:      33px;
   --moldura:    15px;  /* recuo da área de trabalho nos quatro lados */
 }
@@ -261,8 +263,12 @@ a { color: inherit; text-decoration: none; }
   color: var(--side-txt);
 }
 
+/* O chevron só aparece no módulo que tem submenu, e é ele que diz o estado:
+   aponta para baixo fechado e gira meia volta quando o submenu abre. */
 .mod .chev { margin-left: auto; color: #6C717F; display: flex; }
-.mod .chev svg { width: 7px; height: 12px; }
+.mod .chev svg { width: 10px; height: 6px; display: block;
+  transition: transform .28s cubic-bezier(.25, .8, .3, 1); }
+.mod-grupo.aberto > .mod .chev svg { transform: rotate(180deg); }
 
 .mod.ativo::after {
   content: "";
@@ -272,14 +278,63 @@ a { color: inherit; text-decoration: none; }
   background: var(--g);
 }
 
+/* Submenu: aberto, troca o fundo do módulo pelo branco — é o que separa o
+   segundo nível do primeiro. A divisória entre os itens é mais clara que a dos
+   módulos, para não competir com ela.
+
+   Abre e fecha animado. Não dá para animar 'height: auto', e fixar uma altura
+   exigiria saber quantos itens o módulo tem; por isso o submenu é uma grade de
+   uma linha, e o que anima é a fração dessa linha — de 0fr a 1fr. A lista por
+   dentro guarda a altura real, e o overflow a recorta enquanto cresce.
+   A curva desacelera no fim, para a abertura chegar macia em vez de estancar. */
+.submenu {
+  display: grid;
+  grid-template-rows: 0fr;
+  background: var(--side-sub);
+  transition: grid-template-rows .28s cubic-bezier(.25, .8, .3, 1);
+}
+.mod-grupo.aberto .submenu { grid-template-rows: 1fr; }
+
+/* recortar o excedente é o que dá o efeito de cortina; o visibility tira os
+   itens do caminho do teclado enquanto o submenu está fechado, e só depois que
+   a animação termina */
+.submenu > .lista {
+  overflow: hidden;
+  visibility: hidden;
+  transition: visibility 0s .28s;
+}
+.mod-grupo.aberto .submenu > .lista { visibility: visible; transition: visibility 0s; }
+
+.sub {
+  display: flex;
+  align-items: center;
+  min-height: 47px;
+  padding: 11px 10px;
+  background: var(--side-sub);
+  border-bottom: 1px solid var(--side-sub-l);
+  cursor: pointer;
+}
+.sub:hover { background: #F5F9E9; }
+/* o ícone do submenu ocupa a mesma coluna do tile do módulo, mas sem a caixa:
+   só o traço verde, para o segundo nível pesar menos que o primeiro */
+.sub .ico {
+  width: 31px; flex: 0 0 31px;
+  display: grid; place-items: center;
+  color: var(--g);
+}
+.sub .ico svg { width: 17px; height: 17px; }
+.sub .nome { margin-left: 9px; font-size: 12px; line-height: 1.35; color: var(--side-txt); }
+
 .mod.treinamentos {
   height: 57px;
   background: var(--side-train);
   border-bottom: 0;
 }
-.mod.treinamentos .nome { font-size: 13px; }
 .mod.treinamentos .tile { background: none; color: var(--g); }
 .mod.treinamentos .tile svg { width: 26px; height: 18px; }
+/* sem a caixa verde em volta, o ícone deixa uma folga que os outros módulos não
+   têm: o texto avança para encostar nele como nos demais */
+.mod.treinamentos .nome { margin-left: 3px; }
 
 /* ================================ main ================================ */
 
