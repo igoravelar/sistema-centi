@@ -579,6 +579,14 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 .pagina ul.lista li { margin: 6px 0; }
 .pagina ul.lista li::marker { color: var(--verde); }
 
+/* lista longa quebrada em colunas: itens curtos, para o rol não descer demais */
+.pagina ul.lista.multi { columns: 3; column-gap: 30px; }
+
+.pagina ul.lista.multi li { break-inside: avoid; }
+
+@media (max-width: 920px) { .pagina ul.lista.multi { columns: 2; } }
+@media (max-width: 620px) { .pagina ul.lista.multi { columns: 1; } }
+
 /* citação de posicionamento/diretriz */
 .pagina blockquote {
   margin: 0 0 22px;
@@ -640,6 +648,10 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
   margin: 0;
   font-style: italic;
 }
+
+/* depois do bloco da seta o próximo título respira mais: o desenho da seta
+   já ocupa a margem e os 26px do h4 encostavam no título */
+.pagina .objetivo + h4 { margin-top: 42px; }
 
 /* seta de evolução em destaque (Digitalizar → Tramitar → ...) */
 .pagina .marco {
@@ -948,6 +960,103 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 .fluxo-palavras.vertical .palavra {
   min-width: 190px;
   text-align: center;
+}
+
+/* checklist de verificação: grupos de perguntas com a caixinha vazia à frente.
+   Os grupos são distribuídos à mão em três colunas, equilibrando a altura —
+   deixar o navegador quebrar sozinho jogava três grupos na última coluna. */
+.checklist {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 30px;
+  margin: 0 0 22px;
+}
+
+.checklist .grupo { margin: 0 0 18px; }
+
+/* o último grupo de cada coluna não precisa da folga de baixo */
+.checklist .coluna .grupo:last-child { margin-bottom: 0; }
+
+.checklist .grupo h5 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--txt-strong);
+}
+
+.checklist ul { margin: 0; padding: 0; list-style: none; }
+
+.checklist li {
+  position: relative;
+  margin: 7px 0;
+  padding-left: 23px;
+  font-size: 12.5px;
+}
+
+/* a caixinha por marcar */
+.checklist li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 13px;
+  height: 13px;
+  border: 1.5px solid #C9DA86;
+  border-radius: 3px;
+  background: #FDFFF2;
+}
+
+@media (max-width: 920px) { .checklist { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) { .checklist { grid-template-columns: 1fr; } }
+
+/* trecho do fluxo abraçado por uma chave, com o nome do conjunto embaixo.
+   A chave e o rótulo saem por fora da caixa (posição absoluta), para o trecho
+   não ficar mais alto que o resto da linha e desalinhar as pílulas. */
+.fluxo-palavras.com-chave { margin-bottom: 58px; }
+
+.fluxo-palavras .chave {
+  position: relative;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* a chave: só as bordas de baixo e das laterais, com as pontas voltadas
+   para as pílulas */
+.fluxo-palavras .chave::before {
+  content: "";
+  position: absolute;
+  top: calc(100% + 9px);
+  left: 0;
+  right: 0;
+  height: 7px;
+  border: 1.5px solid #C9DA86;
+  border-top: 0;
+  border-radius: 0 0 4px 4px;
+}
+
+/* o traço curto que desce da chave até o rótulo */
+.fluxo-palavras .chave::after {
+  content: "";
+  position: absolute;
+  top: calc(100% + 16px);
+  left: 50%;
+  width: 1.5px;
+  height: 7px;
+  background: #C9DA86;
+}
+
+.fluxo-palavras .chave .rotulo {
+  position: absolute;
+  top: calc(100% + 27px);
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: #6D8415;
 }
 
 /* quadro comparativo: o caminho de antes e o de depois, um em cada coluna.
@@ -4021,13 +4130,15 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <p>Garantir que o Protocolo 3.0 seja concebido e desenvolvido em conformidade com a legislação aplicável à <b>Administração Pública Municipal</b>, incorporando requisitos jurídicos, controles, segurança, transparência e rastreabilidade à própria arquitetura do produto.</p>
       <p>A legalidade deve ser tratada como <b>requisito de produto</b>, transformando:</p>
 
-      <div class="fluxo-palavras">
-        <span class="palavra">LEI</span><span class="seta-fluxo">&#8594;</span>
-        <span class="palavra">REGRA</span><span class="seta-fluxo">&#8594;</span>
-        <span class="palavra">PROCESSO</span><span class="seta-fluxo">&#8594;</span>
-        <span class="palavra">CONTROLE</span><span class="seta-fluxo">&#8594;</span>
-        <span class="palavra">SISTEMA</span><span class="seta-fluxo">&#8594;</span>
-        <span class="palavra">EVIDÊNCIA</span>
+      <div class="fluxo-palavras com-chave">
+        <span class="palavra">LEI</span><span class="seta-fluxo">→</span>
+        <span class="palavra">REGRA</span><span class="seta-fluxo">→</span>
+        <span class="chave">
+          <span class="palavra">PROCESSO</span><span class="seta-fluxo">→</span>
+          <span class="palavra">TRAMITAÇÃO</span><span class="seta-fluxo">→</span>
+          <span class="palavra">EVIDÊNCIA</span>
+          <span class="rotulo">Sistema</span>
+        </span>
       </div>
     </section>
 
@@ -4232,7 +4343,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa8-licitacoes" class="sub">
       <h3>Licitações e Contratações Públicas</h3>
-      <p>O Protocolo 3.0 deve considerar o ciclo completo das contratações públicas sob a <b>Lei nº 14.133/2021</b> em duas frentes: (a) como fluxo que pode ser tramitado dentro da plataforma por qualquer município-cliente, e (b) como processo pelo qual a própria Centi é contratada (tratado com mais profundidade em <b>08.6</b> e <b>08.7</b>, a partir do TR de referência já em uso).</p>
+      <p>O Protocolo 3.0 deve considerar o ciclo completo das contratações públicas sob a <b>Lei nº 14.133/2021</b> em duas frentes: (a) como fluxo que pode ser tramitado dentro da plataforma por qualquer município-cliente, e (b) como processo pelo qual a própria Centi é contratada, a partir do TR de referência já em uso.</p>
 
       <div class="colunas-2">
         <fieldset class="riscos">
@@ -4271,6 +4382,272 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
       <div class="nota">
         <p>A especificação de qualquer objeto tramitado (inclusive a do próprio Protocolo 3.0, como já ocorre no TR de referência) deve evitar requisitos desnecessários que possam <b>restringir indevidamente a competição</b>, direcionar a contratação ou favorecer fornecedor específico. Requisitos técnicos só se sustentam quando amparados em necessidade objetiva registrada no ETP — não em preferência de mercado.</p>
+      </div>
+    </section>
+
+    <section id="etapa8-tr" class="sub">
+      <h3>Termo de Referência (TR)</h3>
+      <p>O Termo de Referência é um dos principais instrumentos para definir a contratação de uma solução tecnológica pela Administração Pública.</p>
+      <p>Sua elaboração deve traduzir a necessidade pública em <b>requisitos objetivos, verificáveis e compatíveis com o objeto da contratação</b>.</p>
+
+      <h4>Estrutura</h4>
+      <p>Conforme a natureza da contratação, devem ser considerados:</p>
+
+      <ul class="lista multi">
+        <li>definição do objeto;</li>
+        <li>fundamentação da contratação;</li>
+        <li>descrição da solução;</li>
+        <li>requisitos funcionais;</li>
+        <li>requisitos não funcionais;</li>
+        <li>requisitos técnicos;</li>
+        <li>quantitativos;</li>
+        <li>condições de execução;</li>
+        <li>critérios de aceitação;</li>
+        <li>níveis de serviço;</li>
+        <li>obrigações da contratante;</li>
+        <li>obrigações da contratada;</li>
+        <li>fiscalização;</li>
+        <li>gestão contratual;</li>
+        <li>condições de pagamento;</li>
+        <li>sanções;</li>
+        <li>segurança da informação;</li>
+        <li>proteção de dados;</li>
+        <li>propriedade intelectual;</li>
+        <li>implantação;</li>
+        <li>migração de dados;</li>
+        <li>suporte;</li>
+        <li>manutenção;</li>
+        <li>treinamento;</li>
+        <li>encerramento e transição.</li>
+      </ul>
+
+      <p>A <b>Lei nº 14.133/2021</b> estabelece o Termo de Referência como um dos instrumentos utilizados para definir o objeto da contratação e disciplinar aspectos como execução, pagamento, recebimento e demais condições necessárias à contratação.</p>
+    </section>
+
+    <section id="etapa8-lgpd" class="sub">
+      <h3>LGPD e Transparência</h3>
+
+      <h4>LGPD</h4>
+      <p>O ponto de partida de qualquer análise de LGPD para o Protocolo 3.0 é a <b>definição correta dos papéis</b>, e ela é sempre a mesma nesse modelo de negócio SaaS/B2G:</p>
+
+      <div class="colunas-2 colunas-3">
+        <fieldset class="riscos">
+          <legend>Controlador</legend>
+          <p>O <b>Município</b>, que decide a finalidade e os meios do tratamento dos dados de cidadãos e servidores.</p>
+        </fieldset>
+        <fieldset class="riscos">
+          <legend>Operador</legend>
+          <p>A <b>Centi</b>, que trata os dados exclusivamente conforme as instruções do Município e para as finalidades por ele definidas.</p>
+        </fieldset>
+        <fieldset class="riscos">
+          <legend>Encarregado (DPO)</legend>
+          <p>Normalmente indicado pelo <b>Município</b>, com quem a Centi deve ter canal de comunicação formal.</p>
+        </fieldset>
+      </div>
+
+      <blockquote>
+        <p>Esse ponto deve constar de cláusula específica no contrato entre Centi e Município.</p>
+      </blockquote>
+
+      <h5>Base legal</h5>
+      <p>Para dados tratados pela Administração Pública, a base legal normalmente <b>não é o consentimento</b> — é o cumprimento de obrigação legal pelo controlador ou a execução de políticas públicas, previstas em lei ou regulamento (art. 7º e art. 23 da LGPD). O Protocolo 3.0 deve permitir, por tipo de fluxo, identificar qual é essa base.</p>
+
+      <h5>Governança de dados no produto</h5>
+      <ul class="lista">
+        <li>mapear, por fluxo, quais dados pessoais (e eventuais dados sensíveis) são coletados;</li>
+        <li>limitar o acesso por perfil e por departamento, conforme já previsto na matriz de responsabilidade;</li>
+        <li>prever retenção e eliminação — inclusive ao término do contrato entre Centi e Município;</li>
+        <li>tratar incidente de segurança com procedimento de comunicação ao encarregado, à ANPD e, quando cabível, aos titulares afetados (art. 48 da LGPD).</li>
+      </ul>
+
+      <h4>Transparência e sigilo</h4>
+      <p>A <b>LAI</b> estabelece que a publicidade é a regra; o sigilo é a exceção, e que a exceção precisa de fundamento (arts. 23 e 24 — graus de sigilo reservado, secreto e ultrassecreto, com prazos definidos; art. 31 — tratamento diferenciado para informação pessoal).</p>
+      <p>O Protocolo 3.0 deve permitir, em cada fluxo e em cada protocolo individual, distinguir:</p>
+
+      <ul class="lista">
+        <li><b>informação pública</b> (pode ir a portal de transparência);</li>
+        <li><b>informação restrita</b> (acesso apenas a interessado e responsáveis);</li>
+        <li><b>dado pessoal</b> e <b>dado pessoal sensível</b>;</li>
+        <li><b>informação sob sigilo legal</b> (com fundamento e prazo específicos).</li>
+      </ul>
+
+      <p>Essa classificação é o que permite que <b>o mesmo motor de fluxos</b> sirva tanto a processos plenamente públicos (ex.: licitação) quanto a processos que exigem sigilo (ex.: processo disciplinar, denúncia de ouvidoria).</p>
+    </section>
+
+    <section id="etapa8-rastreabilidade" class="sub">
+      <h3>Rastreabilidade, Auditoria e Assinatura Digital</h3>
+
+      <h4>Rastreabilidade</h4>
+      <p>O sistema deve ser capaz de responder, a qualquer momento e para qualquer protocolo: <b>quem fez, o que fez, quando fez, em qual processo</b>, qual informação foi alterada, qual era o estado anterior, qual foi o novo estado, qual decisão foi tomada e com base em qual documento.</p>
+
+      <h5>Princípio de não sobrescrita</h5>
+      <p>O histórico não deve ser apagado pela simples alteração do estado atual. A regra é sempre:</p>
+
+      <div class="comparativo">
+        <div class="col depois">
+          <h5 class="cab">Sempre</h5>
+          <div class="fluxo-palavras">
+            <span class="palavra">NOVO REGISTRO</span><span class="seta-fluxo">+</span>
+            <span class="palavra">HISTÓRICO</span><span class="seta-fluxo">+</span>
+            <span class="palavra">RESPONSÁVEL</span><span class="seta-fluxo">+</span>
+            <span class="palavra">DATA/HORA</span><span class="seta-fluxo">+</span>
+            <span class="palavra">JUSTIFICATIVA</span>
+          </div>
+        </div>
+        <div class="col">
+          <h5 class="cab">Nunca</h5>
+          <div class="fluxo-palavras">
+            <span class="palavra">SOBRESCREVER</span><span class="seta-fluxo">+</span>
+            <span class="palavra">APAGAR HISTÓRICO</span>
+          </div>
+        </div>
+      </div>
+
+      <p>Esse princípio já é compatível com o modelo de <b>versão de fluxo</b> descrito na <b>Etapa #4</b> (rascunho → publicação) e deve se estender ao andamento de cada protocolo individual.</p>
+
+      <h4>Auditoria</h4>
+      <p>A solução deve possibilitar auditoria das operações relevantes: alterações cadastrais, tramitações, aprovações, decisões, assinaturas, alterações de documentos, mudanças de permissões e alterações de regras — todas persistidas de forma que <b>um terceiro (Controladoria, Tribunal de Contas) consiga reconstruir a operação</b> sem depender de explicação verbal do servidor responsável.</p>
+
+      <h4>Assinatura eletrônica</h4>
+      <p>Nem todo ato praticado no Protocolo 3.0 exige o mesmo nível de assinatura. A <b>Lei nº 14.063/2020</b>, que trata do uso de assinaturas eletrônicas em interações com entes públicos, classifica as assinaturas por nível de risco (simples, avançada e qualificada), associando o nível exigido à natureza do ato. Recomenda-se que o produto trate isso como <b>parâmetro por tipo de decisão</b> — por exemplo, uma conclusão de etapa de baixo impacto pode aceitar autenticação simples do sistema, enquanto um ato que gere efeito financeiro ou afete direito de terceiro deve exigir assinatura de nível mais robusto.</p>
+
+      <blockquote>
+        <p>Este ponto depende de regulamentação e prática já adotadas por cada município (nem todos padronizaram o mesmo nível de assinatura eletrônica) — recomenda-se validação pela Procuradoria de cada cliente antes de definir a exigência como regra fixa do produto.</p>
+      </blockquote>
+    </section>
+
+    <section id="etapa8-parametrizacao" class="sub">
+      <h3>Compliance por Parametrização</h3>
+      <p>O Protocolo 3.0 deve permitir que regras jurídicas sejam transformadas em configurações do sistema — e que essas configurações acompanhem a mudança da legislação <b>sem apagar o que já foi decidido no passado</b>.</p>
+
+      <h4>Elementos parametrizáveis</h4>
+      <p>Documentos obrigatórios, campos, etapas, responsáveis, permissões, prazos, condições, aprovações, bloqueios, alertas, checklists e regras de encaminhamento.</p>
+
+      <h4>Atualização legislativa</h4>
+      <p>Quando a legislação muda, o fluxo correspondente deve ser <b>versionado</b>, não editado silenciosamente — o mesmo modelo de versão de fluxo (rascunho → publicação) já previsto na <b>Etapa #4</b> é a peça de arquitetura que resolve este ponto: uma nova versão publicada da lei de isenção de IPTU gera uma <b>nova versão do fluxo</b>, aplicável aos protocolos abertos a partir daquele momento, preservando integralmente o histórico dos protocolos que tramitaram sob a regra anterior.</p>
+      <p>Deve ser possível registrar, por versão: norma, artigo, vigência, alteração, revogação e o município a que se aplica — já que a mesma alteração legislativa estadual ou federal pode impactar municípios de forma diferente, a depender da regulamentação local.</p>
+
+      <div class="objetivo curva">
+        <svg class="seta-curva" viewBox="0 0 87 37" aria-hidden="true">
+          <path d="M2.0004 2.00049C9.60802 16.0434 24.4691 25.5682 41.5405 25.5682H85.0004"/>
+          <path d="M75.5855 16.1536L85.0004 25.5685"/>
+          <path d="M75.5855 34.9955L85.0004 25.5684"/>
+        </svg>
+        <div>
+          <h4>Princípio</h4>
+          <p>Uma alteração legislativa não deve apagar o histórico do processo. O sistema deve preservar <b>qual regra estava vigente e configurada no momento da execução</b> de cada etapa.</p>
+        </div>
+      </div>
+
+      <h4>Compliance por nível do ViCenti</h4>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Nível</th><th>O que muda</th><th>Exigência de compliance</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>1–2 · Consulta / Contexto</b></td>
+              <td>Responde dúvidas com base no protocolo real</td>
+              <td>Registrar a interação (pergunta, contexto usado, resposta)</td>
+            </tr>
+            <tr>
+              <td><b>3–4 · Análise / Recomendação</b></td>
+              <td>Aponta pendências e sugere encaminhamento</td>
+              <td>Deixar explícito que é <b>recomendação</b>, não decisão; servidor permanece responsável pelo ato</td>
+            </tr>
+            <tr>
+              <td><b>5 · Predição</b></td>
+              <td>Usa dados históricos para prever gargalos e atrasos</td>
+              <td>Base legal para uso analítico de dados históricos (finalidade de eficiência administrativa); não pode gerar decisão individual automática sobre uma pessoa específica sem revisão humana</td>
+            </tr>
+            <tr>
+              <td><b>6 · Ação (via MCP)</b></td>
+              <td>Executa operação dentro do protocolo</td>
+              <td>Exige: permissão explícita do perfil que autoriza, aprovação humana registrada para operações críticas, e log completo da ação executada — sem isso, o nível 6 não deve ser liberado em produção</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="etapa8-checklist" class="sub">
+      <h3>Checklist de Compliance</h3>
+      <p>Antes de considerar uma funcionalidade ou fluxo juridicamente adequado, verificar:</p>
+
+      <div class="checklist">
+        <div class="coluna">
+          <div class="grupo">
+            <h5>Legalidade</h5>
+            <ul>
+              <li>Existe fundamento legal?</li>
+              <li>A regra está vigente?</li>
+              <li>A legislação municipal foi considerada?</li>
+            </ul>
+          </div>
+          <div class="grupo">
+            <h5>Processo</h5>
+            <ul>
+              <li>A competência está definida?</li>
+              <li>O responsável está definido?</li>
+              <li>Os documentos necessários estão definidos?</li>
+              <li>Os prazos estão definidos?</li>
+              <li>As regras de aprovação estão definidas?</li>
+            </ul>
+          </div>
+          <div class="grupo">
+            <h5>Transparência</h5>
+            <ul>
+              <li>A informação deve ser pública?</li>
+              <li>Existe hipótese legal de restrição?</li>
+              <li>O nível de acesso está definido?</li>
+            </ul>
+          </div>
+        </div>
+        <div class="coluna">
+          <div class="grupo">
+            <h5>Controle</h5>
+            <ul>
+              <li>Existem permissões adequadas?</li>
+              <li>Há segregação de funções quando necessária?</li>
+              <li>Existem bloqueios para situações incompatíveis?</li>
+              <li>Existem mecanismos de auditoria?</li>
+            </ul>
+          </div>
+          <div class="grupo">
+            <h5>LGPD</h5>
+            <ul>
+              <li>Há tratamento de dados pessoais?</li>
+              <li>A finalidade está definida?</li>
+              <li>Existe base legal?</li>
+              <li>O acesso está controlado?</li>
+              <li>O armazenamento é adequado?</li>
+              <li>O compartilhamento foi analisado?</li>
+            </ul>
+          </div>
+        </div>
+        <div class="coluna">
+          <div class="grupo">
+            <h5>Rastreabilidade</h5>
+            <ul>
+              <li>O sistema registra quem realizou a ação?</li>
+              <li>Registra data e hora?</li>
+              <li>Mantém histórico?</li>
+              <li>Preserva evidências?</li>
+              <li>Permite auditoria posterior?</li>
+            </ul>
+          </div>
+          <div class="grupo">
+            <h5>Governança</h5>
+            <ul>
+              <li>O risco jurídico foi avaliado?</li>
+              <li>A regra está documentada?</li>
+              <li>A necessidade de análise jurídica foi avaliada?</li>
+              <li>O processo pode ser atualizado caso a legislação seja alterada?</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -4391,6 +4768,11 @@ const MENU = [
     { id: 'etapa8-marco',       txt: 'Marco Legal Aplicável' },
     { id: 'etapa8-aplicada',    txt: 'Legalidade Aplicada' },
     { id: 'etapa8-licitacoes',  txt: 'Licitações e Contratações Públicas' },
+    { id: 'etapa8-tr',          txt: 'Termo de Referência' },
+    { id: 'etapa8-lgpd',        txt: 'LGPD e Transparência' },
+    { id: 'etapa8-rastreabilidade', txt: 'Rastreabilidade, Auditoria e Assinatura Digital' },
+    { id: 'etapa8-parametrizacao',  txt: 'Compliance por Parametrização' },
+    { id: 'etapa8-checklist',       txt: 'Checklist de Compliance' },
   ] },
   { titulo: '#9 Pipeline de Vendas',        itens: [{ id: 'etapa9',  txt: 'Visão geral' }] },
   { titulo: '#10 Validação (piloto)',       itens: [{ id: 'etapa10', txt: 'Visão geral' }] },
