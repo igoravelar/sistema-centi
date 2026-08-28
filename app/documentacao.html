@@ -994,7 +994,8 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 }
 
 /* a caixinha por marcar */
-.checklist li::before {
+.checklist li::before,
+.legenda-checklist span::before {
   content: "";
   position: absolute;
   left: 0;
@@ -1004,6 +1005,42 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
   border: 1.5px solid #C9DA86;
   border-radius: 3px;
   background: #FDFFF2;
+}
+
+/* item já atendido: a caixinha vem preenchida com o visto */
+.checklist li.feito::before,
+.legenda-checklist span.feito::before {
+  background: var(--verde);
+  border-color: var(--verde);
+}
+
+.checklist li.feito::after,
+.legenda-checklist span.feito::after {
+  content: "";
+  position: absolute;
+  left: 4.5px;
+  top: 4.5px;
+  width: 4px;
+  height: 7px;
+  border: solid #FFFFFF;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* legenda do checklist: o que a caixinha vazia e a marcada querem dizer */
+.legenda-checklist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 30px;
+  margin: 0 0 22px;
+  padding-top: 14px;
+  border-top: 1px solid var(--cinza-linha);
+  font-size: 12.5px;
+}
+
+.legenda-checklist span {
+  position: relative;
+  padding-left: 23px;
 }
 
 @media (max-width: 920px) { .checklist { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -4589,19 +4626,19 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           <div class="grupo">
             <h5>Processo</h5>
             <ul>
-              <li>A competência está definida?</li>
-              <li>O responsável está definido?</li>
-              <li>Os documentos necessários estão definidos?</li>
-              <li>Os prazos estão definidos?</li>
-              <li>As regras de aprovação estão definidas?</li>
+              <li class="feito">A competência está definida?</li>
+              <li class="feito">O responsável está definido?</li>
+              <li class="feito">Os documentos necessários estão definidos?</li>
+              <li class="feito">Os prazos estão definidos?</li>
+              <li class="feito">As regras de aprovação estão definidas?</li>
             </ul>
           </div>
           <div class="grupo">
             <h5>Transparência</h5>
             <ul>
-              <li>A informação deve ser pública?</li>
-              <li>Existe hipótese legal de restrição?</li>
-              <li>O nível de acesso está definido?</li>
+              <li class="feito">A informação deve ser pública?</li>
+              <li class="feito">Existe hipótese legal de restrição?</li>
+              <li class="feito">O nível de acesso está definido?</li>
             </ul>
           </div>
         </div>
@@ -4609,21 +4646,21 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           <div class="grupo">
             <h5>Controle</h5>
             <ul>
-              <li>Existem permissões adequadas?</li>
-              <li>Há segregação de funções quando necessária?</li>
-              <li>Existem bloqueios para situações incompatíveis?</li>
-              <li>Existem mecanismos de auditoria?</li>
+              <li class="feito">Existem permissões adequadas?</li>
+              <li class="feito">Há segregação de funções quando necessária?</li>
+              <li class="feito">Existem bloqueios para situações incompatíveis?</li>
+              <li class="feito">Existem mecanismos de auditoria?</li>
             </ul>
           </div>
           <div class="grupo">
             <h5>LGPD</h5>
             <ul>
-              <li>Há tratamento de dados pessoais?</li>
-              <li>A finalidade está definida?</li>
-              <li>Existe base legal?</li>
-              <li>O acesso está controlado?</li>
-              <li>O armazenamento é adequado?</li>
-              <li>O compartilhamento foi analisado?</li>
+              <li class="feito">Há tratamento de dados pessoais?</li>
+              <li class="feito">A finalidade está definida?</li>
+              <li class="feito">Existe base legal?</li>
+              <li class="feito">O acesso está controlado?</li>
+              <li class="feito">O armazenamento é adequado?</li>
+              <li class="feito">O compartilhamento foi analisado?</li>
             </ul>
           </div>
         </div>
@@ -4631,11 +4668,11 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           <div class="grupo">
             <h5>Rastreabilidade</h5>
             <ul>
-              <li>O sistema registra quem realizou a ação?</li>
-              <li>Registra data e hora?</li>
-              <li>Mantém histórico?</li>
-              <li>Preserva evidências?</li>
-              <li>Permite auditoria posterior?</li>
+              <li class="feito">O sistema registra quem realizou a ação?</li>
+              <li class="feito">Registra data e hora?</li>
+              <li class="feito">Mantém histórico?</li>
+              <li class="feito">Preserva evidências?</li>
+              <li class="feito">Permite auditoria posterior?</li>
             </ul>
           </div>
           <div class="grupo">
@@ -4648,6 +4685,11 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
             </ul>
           </div>
         </div>
+      </div>
+
+      <div class="legenda-checklist">
+        <span>Validação no Cliente</span>
+        <span class="feito">Validação no Sistema</span>
       </div>
     </section>
 
