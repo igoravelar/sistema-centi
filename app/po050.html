@@ -121,7 +121,10 @@
 
   .modal-dir { flex: 1; min-width: 0; display: flex; flex-direction: column; }
   /* faixa de ações: um cinza acima do cinza do formulário */
-  .modal-toolbar { flex: 0 0 49px; display: flex; align-items: center; gap: 10px; padding: 0 14px;
+  /* as ações andam todas juntas, encostadas na direita: é para lá que se olha
+     depois de preencher o formulário */
+  .modal-toolbar { flex: 0 0 49px; display: flex; align-items: center;
+                   justify-content: flex-end; gap: 10px; padding: 0 14px;
                    background: var(--panel-2); }
   .modal-form { flex: 1; min-height: 0; overflow: auto; padding: 14px 16px;
                 background: var(--panel-1); display: flex; flex-direction: column; gap: 10px; }
@@ -1242,7 +1245,6 @@ function modalEtapaHTML() {
             ${btnNovo}
             <button class="btn btn-neutro" disabled>${svg('lixeira')} Excluir</button>
             ${btnSalvar}
-            <div style="flex:1"></div>
             <button class="btn btn-primario">${svg('gerais')} Operações</button>
           </div>
           ${corpo}
