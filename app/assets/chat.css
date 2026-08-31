@@ -9,6 +9,15 @@
    painel entre as informações da etapa, o ViCenti e o chat interno.
    ========================================================================== */
 
+/* --------------------- recuos do painel do drawer da etapa ----------------
+   O painel da etapa respira 15px, e não os 20 do drawer do protocolo: são
+   quatro lados iguais na barra de título (o de baixo vem da .cad .barra-titulo,
+   no po051.html) e o mesmo 15 na régua de abas Dados/Documentos e nos campos
+   embaixo dela, para a coluna do painel não escalonar. Escopado no .com-rail
+   justamente para não mexer no drawer do protocolo, que segue nos 20. */
+.drawer.com-rail .drawer-topo  { padding: 15px 15px 0; }
+.drawer.com-rail .drawer-corpo { padding: 14px 15px; }
+
 /* ------------------------- régua de abas do drawer ------------------------ */
 /* A régua flutua sobre o canvas, encostada na borda do painel: fica fora do
    fluxo do drawer para não roubar largura dele nem cortar o fluxograma antes
@@ -33,12 +42,12 @@
 /* O recuo de cima assenta a borda de topo da primeira aba EM CIMA do filete
    que fecha a barra de título, e não um pixel abaixo dele: é essa linha única,
    que curva na quina da aba e segue reta para dentro do painel, que dá a
-   sensação de continuidade. Daí o 62, e não 63 — 20 do recuo do .drawer-topo
-   + 28 da etiqueta ETAPA + 14 do rodapé da barra param no começo do filete,
-   e é ali que a borda da aba tem de cair. */
+   sensação de continuidade. O 58 é a soma do que vem antes do filete — 15 do
+   recuo do .drawer-topo + 28 da etiqueta ETAPA + 15 do rodapé da barra — e é
+   ali que a borda da aba tem de cair. Mexer num desses recuos pede mexer aqui. */
 .drawer-rail {
   position: absolute;
-  top: 62px;
+  top: 58px;
   right: 100%;
   margin-right: -1px;   /* a aba aberta encosta no painel e come a borda dele */
   z-index: 1;

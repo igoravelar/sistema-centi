@@ -7,7 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
 <link rel="stylesheet" href="assets/centi.css?v=19">
 <link rel="stylesheet" href="assets/fluxo.css?v=24">
-<link rel="stylesheet" href="assets/chat.css?v=21">
+<link rel="stylesheet" href="assets/chat.css?v=22">
 <style>
   /* o fluxo é o conteúdo da aba Cadastro, e o drawer ocupa 2/3 da área.
      O overflow apara o drawer quando ele desliza para fora: a régua de abas
@@ -157,11 +157,12 @@
      situação e de previsão à direita, e o fechar na ponta. O filete cinza
      separa a barra da régua de abas, como no drawer do protocolo — e vai de
      ponta a ponta: as margens negativas anulam o recuo lateral do .drawer-topo,
-     e o recuo volta por dentro para o conteúdo não andar. */
+     e o recuo volta por dentro para o conteúdo não andar. Os 15 casam com os
+     15 do recuo do painel (ver .drawer.com-rail .drawer-topo, no chat.css). */
   .cad .barra-titulo {
     display: flex; align-items: center; gap: 10px;
-    margin: 0 -20px;
-    padding: 0 20px 14px;
+    margin: 0 -15px;
+    padding: 0 15px 15px;
     border-bottom: 1px solid var(--tab-bd);
   }
   .cad .barra-titulo .drawer-titulo { flex: 1; min-width: 0; }
