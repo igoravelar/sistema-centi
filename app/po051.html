@@ -636,7 +636,7 @@ function tituloCadEsqHTML() {
   const r = RESULTADOS_P[protAberto];
   return `
     ${svg('fluxograma')}
-    <a class="nome link" onclick="abrirProtocoloP()">Protocolo - ${r[0]}</a>`;
+    <a class="nome link" onclick="abrirProtocoloModalP()">Protocolo - ${r[0]}</a>`;
 }
 
 /** Canvas vazio (sem protocolo aberto): só o fundo pontilhado do fluxo e os
@@ -731,10 +731,12 @@ function montarFluxoProt() {
 const ABAS_P = ['Dados', 'Documentos', 'Checklist', 'Regras de Saída'];
 let abaP = 'Dados';
 
-function drawerProtocoloHTML() {
+/** Campos do cadastro do protocolo. Ficam à parte porque são os mesmos no
+    drawer e na modal — o formulário é um só, muda a moldura. */
+function camposProtocoloHTML() {
   const r = RESULTADOS_P[protAberto];
   const ano = (r[5].split('/')[1] || '2026');
-  const campos = [
+  return [
     campoHTML({ rot: 'Id', val: r[0], ro: true }),
     campoHTML({ rot: 'Protocolo<span class="req">*</span>', val: r[1] }),
     campoHTML({ rot: 'Ano<br>protocolo<span class="req">*</span>', val: ano }),
@@ -753,15 +755,19 @@ function drawerProtocoloHTML() {
     campoHTML({ rot: 'Apensar<br>automático?<span class="req">*</span>', val: 'Não', opcoes: ['Não', 'Sim'] }),
     campoHTML({ rot: 'Sigiloso<span class="req">*</span>', val: 'Não', opcoes: ['Não', 'Sim'] }),
   ].join('');
+}
 
+/* O drawer do protocolo não tem mais porta de entrada — o título abre a modal.
+   Fica só para a retomada de estado de quem saiu da aba com ele aberto. */
+function drawerProtocoloHTML() {
   return `
     <div class="drawer-topo topo-linha">
       <button class="bt-fechar" onclick="fecharDrawerP()" title="Fechar">${svg('x')}</button>
       <div class="drawer-titulo">
-        <h3>Protocolo - ${r[0]}</h3>
+        <h3>Protocolo - ${RESULTADOS_P[protAberto][0]}</h3>
       </div>
     </div>
-    <div class="drawer-corpo scroll">${campos}</div>`;
+    <div class="drawer-corpo scroll">${camposProtocoloHTML()}</div>`;
 }
 
 /* itens de exemplo das grids do drawer (mesmo componente gridHTML do fluxo.js) */
@@ -1298,7 +1304,47 @@ const PASTAS_ITEM = {
   cond:  [{ id: 'var',  rot: 'Variáveis avaliadas', vista: 'var' }],
 };
 
-const TITULO_ITEM = { doc: 'Documento do processo', check: 'Item do checklist', cond: 'Condição de saída' };
+const TITULO_ITEM = { doc: 'Documento do processo', check: 'Item do checklist', cond: 'Condição de saída',
+                     prot: 'Tramitação de protocolo' };
+
+/* ------------------ pastas do cadastro do protocolo ------------------
+   A árvore da modal do protocolo, na ordem do sistema. As quatro primeiras
+   pastas o protótipo já povoa com os dados que ele tem; as quatro últimas
+   abrem vazias, porque as listas delas ainda não foram desenhadas — e é isso
+   que deixa a pastinha delas cinza, pela mesma regra `.vazia` da árvore do
+   Novo Protocolo. (O nome não é PASTAS_PROT: esse já é das pastas daquela
+   outra modal.) */
+const PASTAS_CAD_PROT = [
+  { id: 'etfluxo', rot: 'Etapas do fluxo',    vista: 'etfluxo' },
+  { id: 'etapas',  rot: 'Etapas',             vista: 'etapas'  },
+  { id: 'docsp',   rot: 'Documentos',         vista: 'docsp'   },
+  { id: 'checkp',  rot: 'Checklist da etapa', vista: 'checkp'  },
+  { id: 'andam',   rot: 'Andamentos',         vista: 'andam'   },
+  { id: 'assext',  rot: 'Assinatura externa', vista: 'assext'  },
+  { id: 'audit',   rot: 'Auditoria',          vista: 'audit'   },
+  { id: 'observ',  rot: 'Observador',         vista: 'observ'  },
+];
+
+/* Conteúdo de cada pasta. Vem por função, e não por referência: ETAPAS_PROT é
+   reatribuído a cada protocolo aberto, e guardar a lista aqui congelaria o
+   fluxo do primeiro protocolo que fosse aberto na sessão. */
+const ITENS_PASTA_PROT = {
+  etfluxo: () => ETAPAS_PROT,
+  etapas:  () => ETAPAS_PROT,
+  docsp:   () => DOCS_PROT,
+  checkp:  () => CHECK_PROT,
+  andam:   () => [],
+  assext:  () => [],
+  audit:   () => [],
+  observ:  () => [],
+};
+
+const ROTULO_PASTA_PROT = {
+  etfluxo: e => `${e.n} - ${e.titulo}`,
+  etapas:  e => `${e.n} - ${e.titulo}`,
+  docsp:   d => `${d.id} - ${d.descricao}`,
+  checkp:  c => `${c.id} - ${c.descricao}`,
+};
 
 /* conteúdo das pastas: cada item vira uma linha na grid e um nó na árvore */
 const ASSINATURAS_DOC = [{ id: '1', tipo: 'Responsável da etapa', situacao: 'Pendente' }];
@@ -1327,6 +1373,14 @@ function itemDaLinhaP() {
   return col.find(i => String(i.id) === String(id));
 }
 
+/** O título do protocolo abre o cadastro dele na mesma modal dos itens: a
+    árvore de pastas à esquerda e os campos do protocolo à direita. */
+function abrirProtocoloModalP() {
+  itemAbertoP = { tipo: 'prot' };
+  mVistaP = 'form'; mNovoP = false; mExpP = {};
+  renderModalP();
+}
+
 /** Abre a modal da linha clicada numa das grids do drawer. */
 function abrirItemProt(tipo, id) {
   itemAbertoP = { tipo, id };
@@ -1350,6 +1404,8 @@ function mToggleP(no) { mExpP[no] = !mExpP[no]; renderModalP(); }
     modal; nos formulários das pastas, volta para a grid da pasta. */
 function salvarModalP() {
   if (mVistaP === 'form') {
+    /* o protocolo não tem linha numa grid para marcar como resolvida */
+    if (itemAbertoP.tipo === 'prot') { fecharModalP(); return; }
     const it = itemDaLinhaP();
     if (itemAbertoP.tipo === 'doc') it.situacao = 'Anexado';
     if (itemAbertoP.tipo === 'check') it.situacao = 'Concluído';
@@ -1482,43 +1538,116 @@ function gridPastaHTML(pasta) {
   });
 }
 
+/* grids das pastas do protocolo. Só listam: as linhas não abrem formulário,
+   porque os cadastros de dentro dessas pastas ainda não foram desenhados. */
+function gridPastaProtHTML(pasta) {
+  const itens = ITENS_PASTA_PROT[pasta] ? ITENS_PASTA_PROT[pasta]() : [];
+
+  if (pasta === 'etfluxo') return gridHTML({
+    col: 'etapas-fluxo', itens,
+    colunas: [{ rot: 'ID', w: '72px', num: true }, { rot: 'ETAPA', w: '1fr' },
+              { rot: 'TIPO', w: '110px' }, { rot: 'DEPARTAMENTO', w: '2fr' },
+              { rot: 'PRAZO', w: '80px', num: true }],
+    celulas: e => [e.n, e.titulo, e.tipo, e.depto, e.prazo],
+  });
+  if (pasta === 'etapas') return gridHTML({
+    col: 'etapas-prot', itens,
+    colunas: [{ rot: 'ID', w: '72px', num: true }, { rot: 'ETAPA', w: '1fr' },
+              { rot: 'SITUAÇÃO', w: '160px' }, { rot: 'PRAZO', w: '80px', num: true },
+              { rot: 'CORRIDOS', w: '90px', num: true }],
+    celulas: e => [e.n, e.titulo, e.situacao, e.prazo, e.corridos],
+  });
+  if (pasta === 'docsp') return gridHTML({
+    col: 'docs-prot', itens,
+    colunas: [{ rot: 'ID', w: '80px', num: true }, { rot: 'DESCRIÇÃO DOCUMENTO', w: '1fr' },
+              { rot: 'OBRIGATÓRIO', w: '110px' }, { rot: 'SITUAÇÃO', w: '130px' }],
+    celulas: d => [d.id, d.descricao, d.obrigatorio, d.situacao],
+  });
+  if (pasta === 'checkp') return gridHTML({
+    col: 'checks-prot', itens,
+    colunas: [{ rot: 'ID', w: '72px', num: true }, { rot: 'DESCRIÇÃO', w: '1fr' },
+              { rot: 'OBRIGATÓRIO', w: '110px' }, { rot: 'SITUAÇÃO', w: '130px' }],
+    celulas: c => [c.id, c.descricao, c.obrigatorio, c.situacao],
+  });
+  if (pasta === 'andam') return gridHTML({
+    col: 'andamentos', itens,
+    colunas: [{ rot: 'ID', w: '72px', num: true }, { rot: 'DATA', w: '170px' },
+              { rot: 'ETAPA', w: '1fr' }, { rot: 'USUÁRIO', w: '220px' }],
+    celulas: a => [a.id, a.data, a.etapa, a.usuario],
+  });
+  if (pasta === 'assext') return gridHTML({
+    col: 'ass-externa', itens,
+    colunas: [{ rot: 'ID', w: '72px', num: true }, { rot: 'SIGNATÁRIO', w: '1fr' },
+              { rot: 'SITUAÇÃO', w: '130px' }],
+    celulas: a => [a.id, a.signatario, a.situacao],
+  });
+  if (pasta === 'audit') return gridHTML({
+    col: 'auditoria', itens,
+    colunas: [{ rot: 'ID', w: '72px', num: true }, { rot: 'DATA', w: '170px' },
+              { rot: 'AÇÃO', w: '1fr' }, { rot: 'USUÁRIO', w: '220px' }],
+    celulas: a => [a.id, a.data, a.acao, a.usuario],
+  });
+  return gridHTML({
+    col: 'observadores', itens,
+    colunas: [{ rot: 'ID', w: '72px', num: true }, { rot: 'USUÁRIO', w: '1fr' }],
+    celulas: o => [o.id, o.usuario],
+  });
+}
+
 /* ---------------------------- modal completa ---------------------------- */
 
 function modalItemHTML() {
   const { tipo } = itemAbertoP;
-  const it = itemDaLinhaP();
-  const pastas = PASTAS_ITEM[tipo];
+  /* o protocolo entra pela mesma moldura dos itens: muda a árvore, o
+     formulário e o que as pastas listam — não o desenho da modal */
+  const ehProt = tipo === 'prot';
+  const it = ehProt ? null : itemDaLinhaP();
+  const pastas = ehProt ? PASTAS_CAD_PROT : PASTAS_ITEM[tipo];
   const emGrid = mVistaP.endsWith('-grid');
   const pastaAtual = mVistaP === 'form' ? null : mVistaP.split('-')[0];
 
-  const rotRaiz = tipo === 'doc' ? `${DATA_DOC} -` : `${it.id} - ${it.descricao}`;
+  const itensDa  = v => ehProt ? ITENS_PASTA_PROT[v]() : ITENS_PASTA[v];
+  const rotuloDe = (v, i) => (ehProt ? ROTULO_PASTA_PROT[v] : ROTULO_PASTA[v])(i);
+  /* nas pastas do protocolo o filho leva à lista, e não a um formulário */
+  const vistaFilho = v => ehProt ? `${v}-grid` : `${v}-form`;
+
+  const rotRaiz = ehProt ? TITULO_ITEM.prot
+                : tipo === 'doc' ? `${DATA_DOC} -` : `${it.id} - ${it.descricao}`;
 
   const arvore = pastas.map(p => {
-    const filhos = !mExpP[p.id] ? '' : ITENS_PASTA[p.vista].map(i => `
+    const filhos = !mExpP[p.id] ? '' : itensDa(p.vista).map(i => `
       <div class="pasta n2${mVistaP === `${p.vista}-form` && !mNovoP ? ' sel' : ''}"
-           onclick="modalIrP('${p.vista}-form')">
+           onclick="modalIrP('${vistaFilho(p.vista)}')">
         <span style="font-weight:bold">+</span>
-        <span class="rot-no">${ROTULO_PASTA[p.vista](i)}</span>
+        <span class="rot-no">${rotuloDe(p.vista, i)}</span>
       </div>`).join('');
 
+    /* pasta sem nada para listar: pastinha cinza e sem seta, como na árvore do
+       Novo Protocolo — não há o que abrir dentro dela. Só vale no protocolo;
+       nas pastas do item a seta é sempre visível, como já era. */
+    const vazia = ehProt && itensDa(p.vista).length === 0;
     return `
-      <div class="pasta n1${pastaAtual === p.vista ? ' sel' : ''}" onclick="modalIrP('${p.vista}-grid')">
-        <span class="chev" onclick="event.stopPropagation();mToggleP('${p.id}')">${fa(mExpP[p.id] ? 'chevronBaixo' : 'chevronDireita')}</span>
-        <span class="ico">${fa(mExpP[p.id] ? 'pastaAberta' : 'pasta')}</span>
-        <span class="rot-no">${p.rot}</span>
+      <div class="pasta n1${pastaAtual === p.vista ? ' sel' : ''}${vazia ? ' vazia' : ''}" onclick="modalIrP('${p.vista}-grid')">
+        <span class="chev"${vazia ? '' : ` onclick="event.stopPropagation();mToggleP('${p.id}')"`}>${vazia ? '' : fa(mExpP[p.id] ? 'chevronBaixo' : 'chevronDireita')}</span>
+        <span class="ico">${fa(mExpP[p.id] && !vazia ? 'pastaAberta' : 'pasta')}</span>
+        <span class="rot-no">${p.rot}</span>${ehProt ? '' : `
         <button class="add" title="Novo item"
-                onclick="event.stopPropagation();modalIrP('${p.vista}-form', true)">${svg('mais')}</button>
+                onclick="event.stopPropagation();modalIrP('${p.vista}-form', true)">${svg('mais')}</button>`}
       </div>${filhos}`;
   }).join('');
 
-  const corpo = emGrid
-    ? `<div class="modal-grid scroll">${gridPastaHTML(pastaAtual)}</div>`
-    : `<div class="modal-form scroll">${
-        mVistaP === 'form'
-          ? (tipo === 'doc' ? formDocProtHTML() : tipo === 'check' ? formCheckProtHTML() : formCondProtHTML())
-          : formPastaHTML(pastaAtual)}</div>`;
+  const formulario = ehProt ? camposProtocoloHTML()
+    : tipo === 'doc' ? formDocProtHTML()
+    : tipo === 'check' ? formCheckProtHTML() : formCondProtHTML();
 
-  const btnNovo = emGrid
+  const corpo = emGrid
+    ? `<div class="modal-grid scroll">${
+        ehProt ? gridPastaProtHTML(pastaAtual) : gridPastaHTML(pastaAtual)}</div>`
+    : `<div class="modal-form scroll">${
+        mVistaP === 'form' ? formulario : formPastaHTML(pastaAtual)}</div>`;
+
+  /* nas pastas do protocolo não há formulário de item para o Novo abrir */
+  const btnNovo = emGrid && !ehProt
     ? `<button class="btn btn-claro" onclick="modalIrP('${pastaAtual}-form', true)">${svg('mais')} Novo</button>`
     : `<button class="btn btn-neutro" disabled>${svg('mais')} Novo</button>`;
 
@@ -1537,7 +1666,7 @@ function modalItemHTML() {
         <div class="arvore modal-arvore scroll">
           <div class="cab-arv" onclick="modalIrP('form')">
             <span>${fa('chevronBaixo')}</span>
-            <span style="font-weight:bold">+</span>
+            <span${ehProt ? ' class="marca"' : ' style="font-weight:bold"'}>${ehProt ? fa('check') : '+'}</span>
             <span class="nome-item" title="${rotRaiz}">${rotRaiz}</span>
           </div>
           ${arvore}
