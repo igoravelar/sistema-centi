@@ -1884,7 +1884,11 @@ function centralizarEtapaP(n) {
   const x     = (bpmn.offsetLeft + xColuna + card.offsetLeft + card.offsetWidth / 2) * pZoom + pDesvioX;
   const yTopo = (bpmn.offsetTop  + coluna.offsetTop  + card.offsetTop) * pZoom + pDesvioY;
 
-  const alvoSL = x - larguraCanvasP() / 2;
+  /* A régua de abas flutua sobre a borda direita do canvas: aqueles 40px não
+     são área livre para o desenho. Descontá-los é o que centraliza o card no
+     que de fato se vê — meia régua mais à esquerda do que o meio geométrico da
+     faixa, e o card deixa de nascer encostado nas abas. */
+  const alvoSL = x - (larguraCanvasP() - (rail ? rail.offsetWidth : 0)) / 2;
   const alvoST = yTopo - recuoTopo;
 
   /* aplicarZoomP já reposicionou o scroll (para ancorar o zoom no centro);
