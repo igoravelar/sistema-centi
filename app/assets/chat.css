@@ -30,11 +30,15 @@
   overflow: hidden;
 }
 
-/* o recuo de cima alinha a primeira aba com o filete que fecha a barra de
-   título do painel (20 de padding + 28 da etiqueta ETAPA + 15 do rodapé) */
+/* O recuo de cima assenta a borda de topo da primeira aba EM CIMA do filete
+   que fecha a barra de título, e não um pixel abaixo dele: é essa linha única,
+   que curva na quina da aba e segue reta para dentro do painel, que dá a
+   sensação de continuidade. Daí o 62, e não 63 — 20 do recuo do .drawer-topo
+   + 28 da etiqueta ETAPA + 14 do rodapé da barra param no começo do filete,
+   e é ali que a borda da aba tem de cair. */
 .drawer-rail {
   position: absolute;
-  top: 63px;
+  top: 62px;
   right: 100%;
   margin-right: -1px;   /* a aba aberta encosta no painel e come a borda dele */
   z-index: 1;
