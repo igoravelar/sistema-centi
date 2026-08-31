@@ -652,14 +652,19 @@ function canvasVazioHTML() {
 }
 
 /** Abre o fluxo do protocolo `i`. `aoMontar` troca o que acontece depois do
-    desenho pronto — o padrão é abrir o drawer do protocolo, e a retomada de
-    estado usa isso para reabrir o drawer da etapa, ou nenhum. */
+    desenho pronto — a retomada de estado usa isso para reabrir o drawer do
+    protocolo, ou nenhum.
+
+    Sem `aoMontar`, o padrão é o caminho de quem chega da Pesquisa: o fluxo abre
+    já na etapa vigente, com a régua nas informações, porque o que se vai fazer
+    ali é tramitar o protocolo na etapa em que ele está — e não reler os dados
+    do protocolo, que continuam a um clique no título. */
 function abrirFluxoProt(i, aoMontar) {
   protAberto = i; etapaSelP = null;
   ETAPAS_PROT = FLUXOS_PROT[RESULTADOS_P[i][0]] || FLUXO_SIMPLES;
   irPara('cadastro');      /* mostra o .cad antes de medir o canvas */
   montarFluxoProt();
-  (aoMontar || abrirProtocoloP)();
+  (aoMontar || (() => { abaLatP = 'info'; abrirEtapaProt(etapaVigenteP()); }))();
 }
 
 function montarFluxoProt() {
@@ -824,6 +829,17 @@ const CLASSE_SITUACAO = { 'Não Iniciada': 'naoiniciada', 'Em Andamento': 'andam
 function situacaoEtapaP(n) {
   const e = ETAPAS_PROT[n - 1];
   return (e && e.situacao) || 'Não Iniciada';
+}
+
+/** A etapa em que o protocolo está agora — a que o usuário precisa tramitar.
+    É a primeira Em Andamento; num paralelismo com duas correndo juntas, a de
+    cima. Se nenhuma está em andamento, cai na primeira que o fluxo ainda não
+    resolveu (a próxima da fila) e, com tudo resolvido, no Fim. */
+function etapaVigenteP() {
+  const emAndamento = ETAPAS_PROT.findIndex(e => e.situacao === 'Em Andamento');
+  if (emAndamento !== -1) return emAndamento + 1;
+  const pendente = ETAPAS_PROT.findIndex(e => !RESOLVIDAS_P.includes(e.situacao));
+  return (pendente !== -1 ? pendente : ETAPAS_PROT.length - 1) + 1;
 }
 
 const PREVISAO_ETAPA = '01/10/2026';
@@ -1674,8 +1690,7 @@ function salvarNovoProtP() {
   if (!novoProtCheio) return;
   fecharNovoProtP();
   const linha = RESULTADOS_P.findIndex(r => r[0] === PROT_NOVO.id);
-  abrirFluxoProt(linha);
-  abrirEtapaProt(2);
+  abrirFluxoProt(linha, () => { abaLatP = 'info'; abrirEtapaProt(2); });
 }
 
 function renderNovoProtP() {
