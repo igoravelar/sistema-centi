@@ -1840,8 +1840,9 @@ function deslizarScroll(wrap, sl, st) {
 }
 
 /* etapa selecionada: sempre no mesmo tamanho (zoom fixo, 1:1) e sempre na
-   mesma posição — centralizado na horizontal, com o topo do card alinhado
-   logo abaixo da régua de abas do drawer (Dados/Documentos/...) */
+   mesma posição — centralizado na horizontal, com o topo do card na altura da
+   régua de abas laterais do drawer, para o card e a primeira aba nascerem na
+   mesma linha. O GAP só serve ao fallback, se um dia o drawer vier sem régua. */
 const ZOOM_ETAPA = 1;
 const GAP_ETAPA_TOPO = 26;
 
@@ -1865,7 +1866,16 @@ function centralizarEtapaP(n) {
 
   aplicarZoomP(ZOOM_ETAPA);   /* recalcula pDesvioX/Y para o zoom fixo */
 
-  const alturaTopo = topoDrawer ? topoDrawer.getBoundingClientRect().height : 0;
+  /* O card estaciona na altura da régua de abas laterais: o topo dele e o topo
+     da primeira aba na mesma linha. Medido do próprio elemento, e não por uma
+     constante, para acompanhar o `top` da régua no CSS — e medir a vertical é
+     seguro aqui, porque o drawer desliza na horizontal e o zoom do canvas não
+     mexe nem no drawer nem na régua. Sem régua (o drawer do protocolo não tem)
+     vale o recuo antigo, logo abaixo da barra de título. */
+  const rail = drawerP().querySelector('.drawer-rail');
+  const recuoTopo = rail
+    ? rail.getBoundingClientRect().top - wrap.getBoundingClientRect().top
+    : (topoDrawer ? topoDrawer.getBoundingClientRect().height : 0) + GAP_ETAPA_TOPO;
   /* a coluna de cards fica em left:50% com translateX(-50%): offsetLeft ignora
      o transform, então metade da largura dela entra na conta à mão — sem isso
      o card estaciona meia coluna à esquerda e encosta na borda do canvas */
@@ -1874,7 +1884,7 @@ function centralizarEtapaP(n) {
   const yTopo = (bpmn.offsetTop  + coluna.offsetTop  + card.offsetTop) * pZoom + pDesvioY;
 
   const alvoSL = x - larguraCanvasP() / 2;
-  const alvoST = yTopo - alturaTopo - GAP_ETAPA_TOPO;
+  const alvoST = yTopo - recuoTopo;
 
   /* aplicarZoomP já reposicionou o scroll (para ancorar o zoom no centro);
      desfaz esse salto e anima do ponto onde o usuário estava até o alvo */
