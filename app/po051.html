@@ -141,6 +141,31 @@
   .cad .etapa.executar .depto-lbl { color: var(--tipo-claro); }
   .cad .etapa.executar .num { background: var(--tipo-forte); color: #FFFFFF; }
 
+  /* ------------------- etiqueta de prazo do card -------------------
+     Encaixa no canto de cima do card: `top/left: 0` caem dentro da borda dele,
+     o raio de cima repete o raio interno do canto e a curva grande abre para
+     dentro — o mesmo desenho da régua de abas do drawer. O fundo claro lê tanto
+     no card verde da etapa da vez quanto no cinza da concluída e no branco das
+     que faltam. Não recebe clique: o card inteiro continua clicável. */
+  .cad .etapa .prazo {
+    position: absolute; top: 0; left: 0;
+    display: flex; align-items: center; gap: 6px;
+    height: 28px; padding: 0 13px 0 9px;
+    background: var(--g-soft-bg);
+    border-radius: 8px 0 18px 0;
+    font-size: 11px; color: #6F833E;
+    pointer-events: none;
+  }
+  .cad .etapa .prazo svg { width: 12px; height: 12px; }
+  /* farol do prazo — e não o da situação: este fala do tempo, não do andamento */
+  .cad .etapa .prazo i {
+    width: 11px; height: 11px; flex: 0 0 11px; border-radius: 50%;
+    background: #C4C4C4;
+  }
+  .cad .etapa .prazo.folga  i { background: var(--g); }
+  .cad .etapa .prazo.limite i { background: #F5A623; }
+  .cad .etapa .prazo.atraso i { background: #E53935; }
+
   /* o reenquadre ao abrir/fechar o drawer desliza o fluxo suavemente */
   .cad .bpmn-espaco.anim { transition: transform .28s ease; }
 
@@ -611,13 +636,28 @@ function linhasFluxoP() {
   return linhas;
 }
 
+/** Prazo da etapa: quantos dias faltam para a previsão de entrega, e o farol
+    disso — verde com folga, âmbar no dia em que vence e vermelho depois dele.
+    `prazo` é o prazo da etapa em dias e `corridos`, os que já se passaram. */
+function prazoEtapaP(e) {
+  const dias = (e.prazo || 0) - (e.corridos || 0);
+  const n = Math.abs(dias);
+  return {
+    /* plural só a partir de dois: "0 dia", "1 dia", "2 dias" */
+    rot: `${n} ${n > 1 ? 'dias' : 'dia'}`,
+    classe: dias > 0 ? 'folga' : dias === 0 ? 'limite' : 'atraso',
+  };
+}
+
 /** Card de uma etapa no desenho. */
 function cardEtapaP(e) {
+  const p = prazoEtapaP(e);
   return `
     <div class="etapa ${classeTipoP(e.tipo)} ${classeEstadoP(e.n)}" data-n="${e.n}"
          style="position:relative;left:0;top:0;width:${CARD_L}px;height:${CARD_A}px;flex:0 0 auto"
          onclick="abrirEtapaProt(${e.n})">
       <span class="num"></span>
+      <span class="prazo ${p.classe}"><i></i>${svg('cronometro')}<span>${p.rot}</span></span>
       <span class="nome">${e.titulo}</span>
       <span class="rodape">
         <span class="depto-lbl">DEPTO</span>
