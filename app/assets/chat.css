@@ -1,0 +1,467 @@
+/* ==========================================================================
+   Centi — abas laterais do drawer, chat do ViCenti e chat interno
+   Medidas conforme "Protocolo Digital.fig", frames PO051 - Drawer Aba Info >
+   Dados, PO051 - Drawer Aba Vicenti > Nova Conversa e PO051 - Drawer Aba
+   Chat Interno > Conversa Grupo.
+
+   O drawer da etapa deixa de ser só o painel branco: ganha uma régua de abas
+   na borda esquerda, sobre o fundo do canvas, e cada aba troca o miolo do
+   painel entre as informações da etapa, o ViCenti e o chat interno.
+   ========================================================================== */
+
+/* ------------------------- régua de abas do drawer ------------------------ */
+/* A régua flutua sobre o canvas, encostada na borda do painel: fica fora do
+   fluxo do drawer para não roubar largura dele nem cortar o fluxograma antes
+   da hora — o desenho passa por baixo das abas e só termina no painel. Com
+   isso o branco e a borda saem do .drawer e vão para o painel. */
+.drawer.com-rail {
+  position: relative;
+  background: transparent;
+  border-left: 0;
+  box-shadow: none;
+  overflow: visible;   /* deixa a régua sair para cima do canvas */
+}
+
+.drawer.com-rail .drawer-painel {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column;
+  background: #FFFFFF;
+  border-left: 1px solid var(--fld-bd);
+  overflow: hidden;
+}
+
+/* o recuo de cima alinha a primeira aba com o filete que fecha a barra de
+   título do painel (20 de padding + 28 da etiqueta ETAPA + 15 do rodapé) */
+.drawer-rail {
+  position: absolute;
+  top: 63px;
+  right: 100%;
+  margin-right: -1px;   /* a aba aberta encosta no painel e come a borda dele */
+  z-index: 1;
+  display: flex; flex-direction: column;
+}
+
+.drawer-rail button {
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  padding: 0;
+  border: 1px solid var(--btc-bd);
+  border-radius: 0;
+  background: var(--btc-bg);
+  color: var(--btc-ico);
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+
+.drawer-rail button + button { margin-top: -1px; }
+
+/* os cantos vêm do Figma: só a quina de fora de cada ponta é arredondada, e a
+   de baixo abre num quarto de círculo bem maior, que fecha a pilha */
+.drawer-rail button:first-child { border-radius: 10px 0 0 0; }
+/* a de baixo é mais alta por causa da curva; o recuo sobe o ícone 3px, para
+   ele ficar no meio da parte reta e não da caixa inteira */
+.drawer-rail button:last-child {
+  height: 50px;
+  padding-bottom: 6px;
+  border-radius: 0 0 0 30px;
+}
+
+.drawer-rail button svg { width: 14px; height: 14px; }
+
+/* ícones cheios do Figma: a altura sai da proporção do próprio desenho, e não
+   de uma caixa quadrada */
+.drawer-rail button svg.cheio { width: 18px; height: auto; }
+.drawer-rail button svg.cheio.ico-chatInterno { width: 14px; }
+
+.drawer-rail button:not(.ativa):hover {
+  background: var(--btc-bg-h);
+  border-color: var(--btc-bd-h);
+  color: var(--btc-ico-h);
+}
+
+/* a aba aberta é a continuação do painel: mesmo branco, contorno cinza e sem
+   filete do lado que encosta nele */
+.drawer-rail button.ativa {
+  position: relative;
+  z-index: 1;
+  background: #FFFFFF;
+  border-color: var(--fld-bd);
+  border-right-color: #FFFFFF;
+  color: var(--side-txt);
+}
+
+/* ------------------------------- o chat ---------------------------------- */
+/* Área de conversa: um cartão pontilhado dentro do painel, com o cabeçalho
+   branco em cima, a coluna de conversas à esquerda e a barra de escrita
+   encaixada no canto de baixo. */
+.chat {
+  position: relative;   /* ancora a modal de novo grupo */
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column;
+  margin: 10px;
+  border: 1px solid #E4E4E4;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* cabeçalho: quem responde, o identificador da conversa e a ação de abrir
+   uma nova */
+.chat-topo {
+  flex: 0 0 50px;
+  display: flex; align-items: center; gap: 14px;
+  padding: 0 12px 0 10px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #E4E4E4;
+}
+
+.chat-topo .quem { flex: 1; min-width: 0; }
+.chat-topo .quem b { display: block; font-size: 12px; color: var(--side-txt); }
+.chat-topo .quem span {
+  display: block;
+  font-size: 10px; color: var(--side-txt);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.chat-topo .btn { height: 26px; padding: 0 11px; gap: 6px; }
+
+/* marca do interlocutor: o círculo verde-claro com o sinal de disponível */
+.chat-marca {
+  position: relative;
+  flex: 0 0 30px;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: #E7F9DD; color: #6DB33F;
+  display: grid; place-items: center;
+}
+.chat-marca svg { width: 17px; height: 17px; }
+.chat-marca svg.cheio { height: auto; }
+.chat-marca .online {
+  position: absolute; right: -1px; bottom: -1px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #25C35F; border: 2px solid #FFFFFF;
+}
+
+.chat-miolo { flex: 1; min-height: 0; display: flex; }
+
+/* ---------------------- coluna das conversas ---------------------- */
+.chat-lista {
+  flex: 0 0 160px;
+  overflow: auto;
+  background: #F4F4F4;
+  border-right: 1px solid #E4E4E4;
+}
+
+/* cada conversa: o identificador em cima e a última fala embaixo */
+.chat-lista .conversa {
+  position: relative;
+  width: 100%; height: 52px;
+  display: block;
+  padding: 10px 11px;
+  background: #F4F4F4;
+  border: 0; border-bottom: 1px solid #E4E4E4;
+  text-align: left;
+}
+.chat-lista .conversa:hover { background: #EDEDED; }
+.chat-lista .conversa b {
+  display: block;
+  font-size: 10px; color: var(--side-txt);
+}
+.chat-lista .conversa span {
+  display: block;
+  margin-top: 5px;
+  font-size: 10px; color: var(--side-txt);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* a conversa aberta sai do cinza e ganha o filete verde na borda */
+.chat-lista .conversa.ativa { background: #FFFFFF; }
+.chat-lista .conversa.ativa::after {
+  content: '';
+  position: absolute; top: 1px; right: 0; bottom: 1px;
+  width: 4px;
+  background: var(--g);
+}
+/* na conversa nova a segunda linha não é uma fala, e sim o aviso de que falta
+   escolher o tipo de ajuda: por isso vem apagada, como um placeholder */
+.chat-lista .conversa.nova span { color: #ADADAD; }
+
+/* ------------------------- coluna da conversa ------------------------- */
+.chat-col { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.chat-msgs { flex: 1; min-height: 0; overflow: auto; padding: 12px 15px 15px; }
+
+/* etiqueta de data no alto da conversa */
+.chat-data { display: flex; justify-content: center; margin-bottom: 20px; }
+.chat-data span {
+  padding: 5px 13px;
+  background: var(--canvas-bg);
+  border: 1px solid #D1D5DC;
+  border-radius: 12px;
+  font-size: 9px; color: #6F833E;
+}
+
+/* --------------------------------- falas --------------------------------- */
+/* Cada fala é um bloco: quem falou em cima, o balão no meio e a hora embaixo.
+   A minha fala espelha o bloco para a direita e troca o balão para o verde. */
+/* o bloco encolhe até o texto: sem isso o balão esticava até os 80% e sobrava
+   um vão do lado de dentro, longe da última palavra */
+.fala { width: fit-content; max-width: 80%; margin-bottom: 18px; }
+.fala:last-child { margin-bottom: 0; }
+
+.fala .cab { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.fala .cab b { font-size: 12px; color: var(--side-txt); }
+
+.fala .avatar {
+  flex: 0 0 30px;
+  width: 30px; height: 30px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: #E7F9DD; color: #FFFFFF;
+  font-size: 12px; font-weight: bold;
+}
+/* o ViCenti responde com a marca, e não com iniciais */
+.fala .avatar.marca { color: #6DB33F; }
+.fala .avatar.marca svg { width: 17px; height: 17px; }
+.fala .avatar.marca svg.cheio { height: auto; }
+
+/* O balão fica mais folgado embaixo do que em cima: o texto encosta a 10px do
+   topo e a 15px dos outros três lados. O canto de cima do lado de quem falou
+   fica reto, para o balão nascer colado no avatar e no nome. */
+.fala .bolha {
+  padding: 10px 15px 15px;
+  background: #FFFFFF;
+  border: 1px solid #E4E6E9;
+  border-radius: 0 8px 8px 8px;
+  font-size: 11px; line-height: 1.5; color: var(--txt);
+  white-space: pre-line;
+}
+
+.fala .hora {
+  display: flex; align-items: center; gap: 5px;
+  margin-top: 7px; padding: 0 16px;
+  font-size: 10px; color: var(--txt);
+}
+.fala .hora svg { width: 11px; height: 11px; }
+
+.fala.eu { margin-left: auto; }
+.fala.eu .cab { flex-direction: row-reverse; }
+.fala.eu .bolha {
+  background: #25C35F;
+  border-color: #25C35F;
+  border-radius: 8px 0 8px 8px;   /* o canto reto acompanha o avatar, à direita */
+  color: #FFFFFF;
+  text-align: right;
+}
+.fala.eu .hora { flex-direction: row-reverse; }
+
+/* ---------------------------- barra de escrita ---------------------------- */
+/* Ocupa toda a base da coluna da conversa: só o filete de cima a separa das
+   falas. Os cantos são os do próprio .chat — arredondar a barra deixaria
+   sobras do fundo pontilhado nas quinas, junto da coluna e da borda. */
+.chat-input {
+  flex: 0 0 auto;
+  padding: 10px 11px;
+  background: #FFFFFF;
+  border: 0;
+  border-top: 1px solid #E4E4E4;
+}
+
+/* O campo ocupa a linha inteira; o clipe e o enviar ficam por cima da ponta
+   direita dele, como no Figma — o botão verde cobre o canto do campo. */
+.chat-input .linha { position: relative; }
+
+.chat-input input {
+  width: 100%; height: 40px;
+  /* o recuo de baixo sobe o texto ~1,5px: centralizado na caixa cheia ele
+     parecia assentado embaixo */
+  padding: 0 70px 3px 15px;
+  border: 1px solid #E4E4E4;
+  border-radius: 6px;
+  font-size: 12px; color: var(--txt-strong);
+}
+.chat-input input::placeholder { color: #9FA09A; }
+/* Campo em uso: contorno de 1px em #A1C518 e, por fora dele, um anel de 3px
+   em #94B610 a 15%. */
+.chat-input input:focus {
+  outline: 0;
+  background: #FBFFEB;
+  border-color: var(--btc-bd);
+  box-shadow: 0 0 0 3px rgba(148,182,16,.15);
+}
+
+.chat-input .clipe {
+  position: absolute; top: 0; right: 50px;
+  height: 40px; width: 20px;
+  padding: 0; border: 0; background: none;
+  color: var(--btc-ico);
+  display: grid; place-items: center;
+}
+.chat-input .clipe svg { width: 17px; height: 17px; }
+.chat-input .clipe:hover { color: var(--g-stroke); }
+
+/* o botão fecha a ponta do campo: reto do lado que encosta nele, arredondado
+   só do lado de fora */
+.chat-input .enviar {
+  position: absolute; top: 0; right: 0;
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  padding: 0;
+  background: var(--btp-bg); border: 1px solid var(--btp-bd);
+  border-radius: 0 6px 6px 0;
+  color: #FFFFFF;
+}
+.chat-input .enviar svg { width: 15px; height: 15px; }
+.chat-input .enviar:hover { background: var(--btp-bg-h); border-color: var(--btp-bd-h); color: var(--btp-ico-h); }
+
+/* recado de rodapé da barra (privacidade, aviso da IA) */
+.chat-input .recado {
+  margin: 7px 0 0;
+  font-size: 9px; font-style: italic; color: #B7B8B3;
+  text-align: center;
+}
+/* na conversa nova do ViCenti a barra é só o recado: sem campo, porque a
+   escolha do tipo de ajuda vem antes de escrever */
+.chat-input.so-recado { padding: 6px 11px; }
+.chat-input.so-recado .recado { margin: 0; }
+
+/* -------------------------- boas-vindas do ViCenti ------------------------ */
+.vic-boas {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 20px 0 0;
+  text-align: center;
+}
+
+.vic-boas .marca {
+  width: 70px; height: 70px; border-radius: 50%;
+  background: #E7F9DD; color: #6DB33F;
+  display: grid; place-items: center;
+}
+.vic-boas .marca svg { width: 38px; height: 38px; }
+.vic-boas .marca svg.cheio { height: auto; }
+
+.vic-boas h4 { margin: 14px 0 0; font-size: 12px; color: var(--side-txt); }
+.vic-boas p {
+  max-width: 330px;
+  margin: 8px 0 0;
+  font-size: 10px; line-height: 1.6; color: var(--side-txt);
+}
+
+/* cartão das quatro portas de entrada da conversa */
+.vic-opcoes {
+  width: 100%;
+  margin-top: 24px;
+  padding: 13px 10px 10px;
+  background: #FFFFFF;
+  border: 1px solid #E4E6E9;
+  border-radius: 10px;
+}
+.vic-opcoes > p {
+  max-width: none;
+  margin: 0 0 10px;
+  font-size: 10px; color: var(--txt);
+}
+
+.vic-opcoes .grade {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.vic-opcoes button {
+  display: flex; align-items: center; gap: 10px;
+  padding: 5px;
+  background: #FFFFFF;
+  border: 1px solid #E4E6E9;
+  border-radius: 6px;
+  text-align: left;
+}
+.vic-opcoes button:hover { border-color: var(--btc-bd); background: var(--g-soft-bg); }
+
+.vic-opcoes .ico {
+  flex: 0 0 37px;
+  width: 37px; height: 37px; border-radius: 4px;
+  display: grid; place-items: center;
+}
+.vic-opcoes .ico svg { width: 17px; height: 17px; }
+
+.vic-opcoes .txt { flex: 1; min-width: 0; }
+.vic-opcoes .txt b { display: block; font-size: 11px; color: var(--txt); }
+.vic-opcoes .txt span { display: block; margin-top: 2px; font-size: 9px; color: var(--txt); }
+
+.vic-opcoes .seta { flex: 0 0 auto; color: #6C717F; display: grid; place-items: center; }
+.vic-opcoes .seta svg { width: 12px; height: 12px; }
+
+/* --------------------- modal de novo grupo de conversa --------------------- */
+/* Escurece só a área de conversa, como no Figma: a barra de título da etapa e
+   a régua de abas continuam à vista. */
+.grupo-modal {
+  position: absolute; inset: 0;
+  z-index: 2;
+  display: grid; place-items: center;
+  background: rgba(0,0,0,.5);
+}
+
+.grupo-modal .cartao {
+  width: 448px; max-width: calc(100% - 30px);
+  background: #FFFFFF;
+  border: 1px solid #E4E6E9;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.grupo-modal h4 {
+  margin: 0;
+  height: 40px;
+  display: grid; place-items: center;
+  border-bottom: 1px solid #E4E6E9;
+  font-size: 13px; font-weight: bold; color: var(--txt);
+}
+
+.grupo-modal .corpo { padding: 20px; }
+
+.grupo-modal .rot {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 12px; font-weight: bold; color: var(--txt);
+}
+/* o asterisco de obrigatório segue o vermelho dos campos do resto da tela */
+.grupo-modal .rot .req { color: #E53935; }
+
+/* o campo cresce conforme os participantes entram; vazio, tem a altura de um
+   campo comum */
+.grupo-modal .caixa {
+  min-height: 32px;
+  padding: 8px 13px;
+  border: 1px solid var(--fld-bd);
+  border-radius: 4px;
+  cursor: text;
+}
+/* com gente dentro o campo está em uso: acende com o contorno verde e o halo
+   de 3px do foco dos campos do protótipo */
+.grupo-modal .caixa.cheia {
+  padding: 10px;
+  border-color: var(--btc-bd);
+  box-shadow: 0 0 0 3px rgba(148,182,16,.15);
+}
+.grupo-modal .caixa .ph { font-size: 11px; color: #9FA09A; }
+
+.grupo-modal .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+
+.grupo-modal .chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 24px; padding: 0 8px 0 15px;
+  background: #EEFFB7;
+  border: 1px solid #E4E4E4;
+  border-radius: 50px;
+  font-size: 10px; color: var(--g-dark);
+  white-space: nowrap;
+}
+.grupo-modal .chip button {
+  padding: 0; border: 0; background: none;
+  display: grid; place-items: center;
+  color: var(--btc-ico);
+}
+.grupo-modal .chip button:hover { color: var(--g-stroke); }
+.grupo-modal .chip svg { width: 12px; height: 12px; }
+
+.grupo-modal .rodape {
+  display: flex; justify-content: flex-end; gap: 10px;
+  padding: 11px;
+  border-top: 1px solid #E4E6E9;
+}
+.grupo-modal .rodape .btn { height: 26px; padding: 0 11px; gap: 6px; }

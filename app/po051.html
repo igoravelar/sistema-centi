@@ -7,9 +7,13 @@
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
 <link rel="stylesheet" href="assets/centi.css?v=19">
 <link rel="stylesheet" href="assets/fluxo.css?v=24">
+<link rel="stylesheet" href="assets/chat.css?v=19">
 <style>
-  /* o fluxo é o conteúdo da aba Cadastro, e o drawer ocupa 2/3 da área */
-  .cad .fluxo { --drawer-w: 66.667%; }
+  /* o fluxo é o conteúdo da aba Cadastro, e o drawer ocupa 2/3 da área.
+     O overflow apara o drawer quando ele desliza para fora: a régua de abas
+     fica por fora da caixa dele, e sem isso apareceria à direita da tela
+     durante a animação de fechar. */
+  .cad .fluxo { --drawer-w: 66.667%; overflow: hidden; }
   .vazio-vista { flex: 1; display: grid; place-items: center; color: var(--txt-mute); }
   /* o título abre as informações do protocolo no drawer. É o botão de texto:
      sem caixa, o sublinhado tracejado é o que diz que ele é clicável */
@@ -834,34 +838,307 @@ function btEtapa(lado, n) {
     anterior ? n - 1 : n + 1})">${ico} ${rot}</button>`;
 }
 
+/* ------------------- régua de abas na borda do drawer -------------------
+   O drawer da etapa abre em três modos: as informações da etapa (o que já
+   existia), a conversa com o ViCenti e o chat interno da equipe. A régua fica
+   na borda esquerda, apoiada no fundo do canvas; a aba aberta fica branca e
+   encosta no painel. */
+const ABAS_LAT_P = [
+  { id: 'info',    ico: 'notas',       tit: 'Informações da etapa' },
+  { id: 'vicenti', ico: 'vicenti',     tit: 'ViCenti',      cheio: true },
+  { id: 'chat',    ico: 'chatInterno', tit: 'Chat interno', cheio: true },
+];
+let abaLatP = 'info';
+
+function railHTML() {
+  return `<nav class="drawer-rail">${ABAS_LAT_P.map(a => `
+      <button class="${a.id === abaLatP ? 'ativa' : ''}" title="${a.tit}"
+              onclick="trocarAbaLatP('${a.id}')">${a.cheio ? svgCheio(a.ico) : svg(a.ico)}</button>`).join('')}
+    </nav>`;
+}
+
+/** Troca o modo do drawer sem reanimar a entrada: só o miolo do painel muda. */
+function trocarAbaLatP(id) {
+  if (id === abaLatP) return;
+  abaLatP = id;
+  novoGrupoP = false;
+  repintarDrawerP();
+}
+
+/** Redesenha o painel da etapa no lugar, mantendo o drawer aberto. */
+function repintarDrawerP() {
+  if (etapaSelP === null) return;
+  drawerP().innerHTML = drawerEtapaHTML(etapaSelP);
+  rolarChatP();
+}
+
+/** O chat abre na última fala, como qualquer conversa. */
+function rolarChatP() {
+  const m = drawerP().querySelector('.chat-msgs');
+  if (m) m.scrollTop = m.scrollHeight;
+}
+
 function drawerEtapaHTML(n) {
   const e = ETAPAS_PROT[n - 1];
-  const abas = ABAS_P.map(a => `
-    <button class="${a === abaP ? 'ativa' : ''}" onclick="trocarAbaP('${a}')">${a}</button>`).join('');
   const sit = situacaoEtapaP(n);
+
+  /* a régua de abas Dados/Documentos/... pertence só ao modo de informações */
+  const abas = abaLatP !== 'info' ? '' : `
+      <div class="drawer-abas">${ABAS_P.map(a => `
+        <button class="${a === abaP ? 'ativa' : ''}" onclick="trocarAbaP('${a}')">${a}</button>`).join('')}
+      </div>`;
+
+  const miolo = abaLatP === 'vicenti' ? chatVicentiHTML()
+              : abaLatP === 'chat'    ? chatInternoHTML()
+              : `
+      <div class="drawer-corpo scroll">${corpoEtapaP(n)}</div>
+      <div class="drawer-rodape">
+        ${btEtapa('anterior', n)}
+        <button class="btn btn-claro" onclick="abrirRemessaP('devolver')">${svg('devolver')} Devolver Protocolo</button>
+        <button class="btn btn-primario" onclick="abrirRemessaP('tramitar')">${svg('check')} Tramitar Protocolo</button>
+        ${btEtapa('proxima', n)}
+      </div>`;
+
   return `
-    <div class="drawer-topo">
-      <div class="barra-titulo">
-        <div class="drawer-titulo ${classeTipoP(e.tipo)}">
-          <span class="etapa-lbl">ETAPA:</span>
-          <h3>${e.titulo}</h3>
-        </div>
-        <span class="badge-etapa">
-          <span class="farol ${CLASSE_SITUACAO[sit]}"></span><b>${sit}</b>
-        </span>
-        <span class="badge-etapa">
-          Previsão Etapa: <b>${PREVISAO_ETAPA}</b>
-        </span>
-        <button class="bt-fechar" onclick="fecharDrawerP()" title="Fechar">${svg('x')}</button>
+    ${railHTML()}
+    <div class="drawer-painel">
+      <div class="drawer-topo">
+        <div class="barra-titulo">
+          <div class="drawer-titulo ${classeTipoP(e.tipo)}">
+            <span class="etapa-lbl">ETAPA:</span>
+            <h3>${e.titulo}</h3>
+          </div>
+          <span class="badge-etapa">
+            <span class="farol ${CLASSE_SITUACAO[sit]}"></span><b>${sit}</b>
+          </span>
+          <span class="badge-etapa">
+            Previsão Etapa: <b>${PREVISAO_ETAPA}</b>
+          </span>
+          <button class="bt-fechar" onclick="fecharDrawerP()" title="Fechar">${svg('x')}</button>
+        </div>${abas}
+      </div>${miolo}
+    </div>`;
+}
+
+/* ----------------------- ViCenti e chat interno -----------------------
+   As duas conversas usam o mesmo desenho: cabeçalho branco, coluna de
+   conversas à esquerda, falas no meio sobre o fundo pontilhado e a barra de
+   escrita encaixada embaixo. Muda quem responde e o que a coluna lista. */
+
+const EU_P = { quem: 'Igor Avelar', ini: 'IA', cor: '#25C35F' };
+const DATA_CHAT_P = '26/08/2026, 12:59';
+
+/* --- ViCenti --- */
+const CONVERSAS_VIC = [
+  { id: 'nova',    rot: 'Nova Conversa', ultima: 'Escolhendo opção...' },
+  { id: '2292451', rot: 'Id: 2292451',   ultima: 'O que vcs me dizem?' },
+  { id: '2292338', rot: 'Id: 2292338',   ultima: 'Como faço para saber ...' },
+  { id: '2184553', rot: 'Id: 2184553',   ultima: 'Ok, obrigado.' },
+];
+let convVic = 'nova';
+
+/* as quatro portas de entrada de uma conversa nova */
+const OPCOES_VIC = [
+  { rot: 'Conhecimento',      sub: 'Entender como algo funciona.',  ico: 'livro',   bg: '#ECF2FF', cor: '#5147EE' },
+  { rot: 'Orientação',        sub: 'Saber como fazer algo.',        ico: 'bussola', bg: '#EEFDF3', cor: '#00A53C' },
+  { rot: 'Investigação',      sub: 'Algo está errado ou estranho.', ico: 'alerta',  bg: '#FFF7EB', cor: '#FD4800' },
+  { rot: 'Produção de texto', sub: 'Preciso de um texto pronto.',   ico: 'lapis',   bg: '#FBF5FF', cor: '#9F2BF2' },
+];
+
+const FALAS_VIC = [
+  { eu: true, ...EU_P, hora: '14:35', txt: 'Saber como fazer algo.' },
+  { marca: true, quem: 'ViCenti', hora: '14:35',
+    txt: 'Oi! Sou o ViCenti, agente de IA da Centi. Faço umas perguntas rápidas pra entender seu caso e já te ajudo direto.\n\nPra isso, me diz o que você quer entender: pode ser o funcionamento geral da tela, uma regra específica ou um campo.' },
+  { eu: true, ...EU_P, hora: '14:35', txt: 'Como faço para saber que documentos devo incluir?' },
+];
+
+/* --- chat interno --- */
+const CONVERSAS_CHAT = [
+  { id: '2292451', rot: 'Id: 2292451', ultima: 'Sim, já estou fazendo...' },
+  { id: '2292338', rot: 'Id: 2292338', ultima: 'Amanhã quem vai fazer...' },
+  { id: '2184553', rot: 'Id: 2184553', ultima: 'Ok, obrigado.' },
+];
+let convChat = '2292451';
+
+const FALAS_CHAT = [
+  { eu: true, ...EU_P, hora: '14:35', txt: 'Quem vai fazer essa análise?' },
+  { quem: 'Frederico Cardoso', ini: 'FC', cor: '#FFA323', hora: '14:42',
+    txt: 'A Camila que entende dessa parte. Imagino que ela que fará. O valor é alto.' },
+  { quem: 'Camila de Oliveira', ini: 'CO', cor: '#DF6AFF', hora: '14:51',
+    txt: 'Sim, já estou fazendo a análise da documentação e vou entregar na quinta.' },
+];
+
+/** Uma fala: quem falou em cima, o balão no meio e a hora embaixo. A minha
+    fala espelha o bloco para a direita e troca o balão para o verde. */
+function falaHTML(f) {
+  const avatar = f.marca
+    ? `<span class="avatar marca">${svgCheio('vicenti')}</span>`
+    : `<span class="avatar" style="background:${f.cor}">${f.ini}</span>`;
+  return `
+    <div class="fala${f.eu ? ' eu' : ''}">
+      <div class="cab">${avatar}<b>${f.quem}</b></div>
+      <div class="bolha">${f.txt}</div>
+      <div class="hora">${svg('relogio')}<span>${f.hora}</span></div>
+    </div>`;
+}
+
+function chatTopoHTML(titulo, sub, rotBt, acao) {
+  return `
+    <div class="chat-topo">
+      <span class="chat-marca">${svgCheio('vicenti')}<i class="online"></i></span>
+      <span class="quem"><b>${titulo}</b><span>${sub}</span></span>
+      <button class="btn btn-claro"${acao ? ` onclick="${acao}"` : ''}>${svg('mais')} ${rotBt}</button>
+    </div>`;
+}
+
+/** Barra de escrita. Na conversa nova do ViCenti ela é só o recado: a escolha
+    do tipo de ajuda vem antes de poder escrever. */
+function chatInputHTML(recado, ph) {
+  if (!ph) return `<div class="chat-input so-recado"><p class="recado">${recado}</p></div>`;
+  return `
+    <div class="chat-input">
+      <div class="linha">
+        <input type="text" placeholder="${ph}">
+        <button class="clipe" title="Anexar arquivo">${svg('clipe')}</button>
+        <button class="enviar" title="Enviar">${svgCheio('enviar')}</button>
       </div>
-      <div class="drawer-abas">${abas}</div>
-    </div>
-    <div class="drawer-corpo scroll">${corpoEtapaP(n)}</div>
-    <div class="drawer-rodape">
-      ${btEtapa('anterior', n)}
-      <button class="btn btn-claro" onclick="abrirRemessaP('devolver')">${svg('devolver')} Devolver Protocolo</button>
-      <button class="btn btn-primario" onclick="abrirRemessaP('tramitar')">${svg('check')} Tramitar Protocolo</button>
-      ${btEtapa('proxima', n)}
+      <p class="recado">${recado}</p>
+    </div>`;
+}
+
+function boasVindasVicHTML() {
+  const opcoes = OPCOES_VIC.map(o => `
+        <button onclick="abrirConversaVicP('2292451')">
+          <span class="ico" style="background:${o.bg};color:${o.cor}">${svg(o.ico)}</span>
+          <span class="txt"><b>${o.rot}</b><span>${o.sub}</span></span>
+          <span class="seta">${svg('chevronDireita')}</span>
+        </button>`).join('');
+  return `
+    <div class="vic-boas">
+      <span class="marca">${svgCheio('vicenti')}</span>
+      <h4>Olá, ${EU_P.quem}! 👋</h4>
+      <p>Sou o ViCenti, seu assistente inteligente do Sistema Centi.</p>
+      <p>Posso ajudar você a encontrar informações, resolver problemas técnicos e fornecer suporte instantâneo.</p>
+      <div class="vic-opcoes">
+        <p>Para te ajudar da melhor forma, me diz o que você precisa nesta conversa:</p>
+        <div class="grade">${opcoes}</div>
+      </div>
+    </div>`;
+}
+
+function chatVicentiHTML() {
+  const nova = convVic === 'nova';
+  const lista = CONVERSAS_VIC.map(c => `
+        <button class="conversa${c.id === 'nova' ? ' nova' : ''}${c.id === convVic ? ' ativa' : ''}" onclick="abrirConversaVicP('${c.id}')">
+          <b>${c.rot}</b><span>${c.ultima}</span>
+        </button>`).join('');
+  const sub = nova
+    ? 'Online e pronto para ajudar - IdConversa: 1787766749245 - Id do Registro: 2'
+    : `IdConversa: ${convVic} - Id do Registro: 2`;
+  const miolo = nova
+    ? boasVindasVicHTML()
+    : `<div class="chat-data"><span>${DATA_CHAT_P}</span></div>${FALAS_VIC.map(falaHTML).join('')}`;
+
+  return `
+    <div class="chat fundo-pontos">
+      ${chatTopoHTML('Assistente Virtual ViCenti', sub, 'Nova conversa', "abrirConversaVicP('nova')")}
+      <div class="chat-miolo">
+        <aside class="chat-lista">${lista}</aside>
+        <div class="chat-col">
+          <div class="chat-msgs">${miolo}</div>
+          ${nova
+            ? chatInputHTML('Suas conversas são privadas e seguras.')
+            : chatInputHTML('A IA pode cometer equívocos. Considere verificar informações importantes.', 'Escreva aqui...')}
+        </div>
+      </div>
+    </div>`;
+}
+
+function abrirConversaVicP(id) { convVic = id; repintarDrawerP(); }
+
+function chatInternoHTML() {
+  const lista = CONVERSAS_CHAT.map(c => `
+        <button class="conversa${c.id === convChat ? ' ativa' : ''}" onclick="abrirConversaChatP('${c.id}')">
+          <b>${c.rot}</b><span>${c.ultima}</span>
+        </button>`).join('');
+
+  return `
+    <div class="chat fundo-pontos">
+      ${chatTopoHTML('Chat Interno', `IdConversa: ${convChat} - Id do Registro: 2`, 'Novo Grupo',
+                     'abrirNovoGrupoP()')}
+      <div class="chat-miolo">
+        <aside class="chat-lista">${lista}</aside>
+        <div class="chat-col">
+          <div class="chat-msgs">
+            <div class="chat-data"><span>${DATA_CHAT_P}</span></div>
+            ${FALAS_CHAT.map(falaHTML).join('')}
+          </div>
+          ${chatInputHTML('A IA pode cometer equívocos. Considere verificar informações importantes.', 'Escreva aqui...')}
+        </div>
+      </div>
+      ${novoGrupoHTML()}
+    </div>`;
+}
+
+function abrirConversaChatP(id) { convChat = id; repintarDrawerP(); }
+
+/* --------------------- novo grupo de conversa ---------------------
+   Modal sobre a área de conversa do chat interno: um campo de participantes e
+   os dois botões. Enquanto não houver ninguém escolhido, Abrir conversa fica
+   apagado. Clicar no campo traz a lista de participantes. */
+const PARTICIPANTES_GRUPO = [
+  'ABEL HENRIQUE BARBOSA',
+  'ADRIANA DE OLIVEIRA',
+  'BRUNO CARLOS CHAGAS',
+  'SÉRGIO DE PÁDUA SILVA',
+  'MARIA APARECIDA DO SOCORRO ALVARENGA DA SILVA',
+  'VICTOR CARLOS MACEDO ALBUQUERQUE',
+];
+
+let novoGrupoP = false;   /* modal aberta? */
+let grupoSelP = [];       /* participantes já incluídos no campo */
+
+function abrirNovoGrupoP() { novoGrupoP = true; grupoSelP = []; repintarDrawerP(); }
+function fecharNovoGrupoP() { novoGrupoP = false; repintarDrawerP(); }
+
+/** O campo vazio se preenche no primeiro clique: é o atalho do protótipo para
+    a busca de pessoas que a tela real terá. */
+function preencherGrupoP() {
+  if (grupoSelP.length) return;
+  grupoSelP = PARTICIPANTES_GRUPO.slice();
+  repintarDrawerP();
+}
+
+function tirarDoGrupoP(i, ev) {
+  ev.stopPropagation();   /* senão o clique cai no campo e reenche a lista */
+  grupoSelP.splice(i, 1);
+  repintarDrawerP();
+}
+
+function novoGrupoHTML() {
+  if (!novoGrupoP) return '';
+  const cheio = grupoSelP.length > 0;
+  const campo = !cheio
+    ? '<span class="ph">Incluir aqui...</span>'
+    : `<div class="chips">${grupoSelP.map((n, i) => `
+              <span class="chip">${n}
+                <button onclick="tirarDoGrupoP(${i}, event)" title="Remover">${svg('x')}</button>
+              </span>`).join('')}</div>`;
+
+  return `
+    <div class="grupo-modal">
+      <div class="cartao">
+        <h4>Novo Grupo de Conversa</h4>
+        <div class="corpo">
+          <span class="rot">Participantes<span class="req">*</span></span>
+          <div class="caixa${cheio ? ' cheia' : ''}" onclick="preencherGrupoP()">${campo}</div>
+        </div>
+        <div class="rodape">
+          <button class="btn btn-branco" onclick="fecharNovoGrupoP()">${svg('x')} Cancelar</button>
+          <button class="btn ${cheio ? 'btn-primario' : 'btn-neutro'}"
+                  ${cheio ? 'onclick="fecharNovoGrupoP()"' : 'disabled'}>${svg('chat')} Abrir conversa</button>
+        </div>
+      </div>
     </div>`;
 }
 
@@ -873,8 +1150,11 @@ function drawerP() { return main.querySelector('.cad .drawer'); }
  * é aí que decidimos se o canvas reenquadra o fluxo inteiro ou só centraliza
  * o card clicado, mantendo o zoom atual.
  */
-function mostrarDrawer(html, aoAnimar) {
+function mostrarDrawer(html, aoAnimar, comRail = false) {
   const d = drawerP();
+  /* só o drawer da etapa tem a régua de abas: nela o branco sai do .drawer e
+     passa para o painel de dentro */
+  d.classList.toggle('com-rail', comRail);
   if (d.classList.contains('aberto')) {
     d.classList.add('trocando');
     setTimeout(() => { d.innerHTML = html; d.classList.remove('trocando'); aoAnimar(); }, 150);
@@ -913,7 +1193,7 @@ function abrirEtapaProt(n) {
   main.querySelectorAll('.cad .etapa').forEach(el => {
     el.classList.toggle('selecionada', +el.dataset.n === n);
   });
-  mostrarDrawer(drawerEtapaHTML(n), () => centralizarEtapaP(n));
+  mostrarDrawer(drawerEtapaHTML(n), () => { centralizarEtapaP(n); rolarChatP(); }, true);
 }
 
 function trocarAbaP(a) {
@@ -954,11 +1234,37 @@ function fa(nome) {
 }
 
 /* ícones extras do Lucide: "file-up" no campo Arquivo e "undo-2" (seta com a
-   curva de ir e voltar) no botão de devolver o protocolo */
+   curva de ir e voltar) no botão de devolver o protocolo. Da régua de abas do
+   drawer para baixo são os do chat: o balão da aba, o clipe e o avião da barra
+   de escrita, e os quatro tipos de ajuda do ViCenti. */
 Object.assign(ICO, {
   upload: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><polyline points="14,2 14,8 20,8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9,15 12,12 15,15"/>',
   devolver: '<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5 5.5 5.5 0 0 1-5.5 5.5H11"/>',
+  chat: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  clipe: '<path d="M21.4 11.05 12.25 20.2a6 6 0 0 1-8.49-8.49l9.2-9.19a4 4 0 0 1 5.65 5.66l-9.19 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
+  livro: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+  alerta: '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12" y2="17"/>',
+  chevronDireita: '<polyline points="9,6 15,12 9,18"/>',
 });
+
+/* Ícones cheios, exportados do Figma: são desenho fechado (fill), e não traço
+   como os do Lucide, e cada um tem a sua proporção. Por isso não passam pelo
+   svg() — o svgCheio() abaixo devolve o viewBox do próprio ícone e pinta com
+   a cor de quem o contém. */
+const ICO_CHEIO = {
+  vicenti: { vb: '0 0 18 14', fr: 'nonzero',
+    d: 'M0 7V10.5C0 10.984 0.402187 11.375 0.9 11.375H1.8V6.125H0.9C0.402187 6.125 0 6.51602 0 7ZM13.05 2.625H9.9V0.875C9.9 0.391016 9.49781 0 9 0C8.50219 0 8.1 0.391016 8.1 0.875V2.625H4.95C3.70687 2.625 2.7 3.60391 2.7 4.8125V12.25C2.7 13.2152 3.50719 14 4.5 14H13.5C14.4928 14 15.3 13.2152 15.3 12.25V4.8125C15.3 3.60391 14.2931 2.625 13.05 2.625ZM7.2 11.375H5.4V10.5H7.2V11.375ZM6.3 8.09375C5.67844 8.09375 5.175 7.6043 5.175 7C5.175 6.3957 5.67844 5.90625 6.3 5.90625C6.92156 5.90625 7.425 6.3957 7.425 7C7.425 7.6043 6.92156 8.09375 6.3 8.09375ZM9.9 11.375H8.1V10.5H9.9V11.375ZM12.6 11.375H10.8V10.5H12.6V11.375ZM11.7 8.09375C11.0784 8.09375 10.575 7.6043 10.575 7C10.575 6.3957 11.0784 5.90625 11.7 5.90625C12.3216 5.90625 12.825 6.3957 12.825 7C12.825 7.6043 12.3216 8.09375 11.7 8.09375ZM17.1 6.125H16.2V11.375H17.1C17.5978 11.375 18 10.984 18 10.5V7C18 6.51602 17.5978 6.125 17.1 6.125Z' },
+  enviar: { vb: '0 0 12 12', fr: 'nonzero',
+    d: 'M11.3186 4.90008L1.77651 0.133111C0.7689 -0.370273 -0.324647 0.642234 0.0902771 1.69434L1.19657 4.49945C1.36264 4.92055 1.74458 5.21629 2.19162 5.27001L5.1157 5.62131C5.59286 5.67863 5.59794 6.37346 5.12166 6.43784L2.17374 6.83626C1.73631 6.89538 1.36415 7.18635 1.19907 7.59819L0.116616 10.2993C-0.305331 11.3522 0.789751 12.3717 1.80033 11.8668L11.3186 7.11176C12.2271 6.65791 12.2271 5.35393 11.3186 4.90008Z' },
+  chatInterno: { vb: '0 0 14 14', fr: 'evenodd',
+    d: 'M0.409915 0.409915C0.13664 0.683191 0 1.01306 0 1.39953V10.7333C0 10.8622 0.0455606 10.9722 0.136682 11.0633C0.227808 11.1545 0.337801 11.2 0.466667 11.2C0.522368 11.2 0.576333 11.1903 0.628577 11.171C0.680815 11.1517 0.728079 11.1239 0.770369 11.0877L3.07503 9.11223C3.16232 9.03742 3.26345 8.99999 3.37842 8.99999H9.80047C10.1869 8.99999 10.5168 8.86335 10.7901 8.59007C11.0634 8.31679 11.2 7.98695 11.2 7.60046V1.39953C11.2 1.01306 11.0634 0.683191 10.7901 0.409915C10.5168 0.13664 10.187 0 9.80047 0H1.39953C1.01306 0 0.683191 0.13664 0.409915 0.409915ZM2.88581 11.0077C3.05963 11.5359 3.49754 11.8 4.19953 11.8H10.6216C10.7366 11.8 10.8377 11.8374 10.925 11.9122L13.2296 13.8877C13.2719 13.9239 13.3192 13.9517 13.3714 13.971C13.4237 13.9903 13.4776 14 13.5333 14C13.6622 14 13.7722 13.9545 13.8633 13.8633C13.9545 13.7722 14 13.6622 14 13.5333V4.19953C14 3.26651 13.5335 2.8 12.6005 2.8H12.1333V8.53379C12.1333 8.92029 11.9967 9.25013 11.7234 9.52341C11.4501 9.79669 11.1202 9.93333 10.7338 9.93333H4.31177C4.19678 9.93333 4.09565 9.97075 4.00836 10.0456L2.88581 11.0077ZM2.8 3.73333C2.17778 3.73333 1.86667 4.04445 1.86667 4.66667C1.86667 5.28887 2.17778 5.6 2.8 5.6C3.42222 5.6 3.73333 5.28887 3.73333 4.66667C3.73333 4.04445 3.42222 3.73333 2.8 3.73333ZM4.66667 4.66667C4.66667 4.04445 4.97779 3.73333 5.6 3.73333C6.22221 3.73333 6.53333 4.04445 6.53333 4.66667C6.53333 5.28887 6.22221 5.6 5.6 5.6C4.97779 5.6 4.66667 5.28887 4.66667 4.66667ZM8.4 3.73333C7.77779 3.73333 7.46667 4.04445 7.46667 4.66667C7.46667 4.97779 7.54446 5.21113 7.7 5.36667C7.85554 5.52221 8.08887 5.6 8.4 5.6C9.02221 5.6 9.33333 5.28887 9.33333 4.66667C9.33333 4.04445 9.02221 3.73333 8.4 3.73333Z' },
+};
+
+function svgCheio(nome) {
+  const i = ICO_CHEIO[nome];
+  return `<svg class="cheio ico-${nome}" viewBox="${i.vb}" fill="currentColor" aria-hidden="true"
+    ><path fill-rule="${i.fr}" clip-rule="${i.fr}" d="${i.d}"/></svg>`;
+}
 TITULO_ACAO.upload = 'Anexar arquivo';
 
 const DATA_DOC = '20/08/2026 12:40:34';
@@ -1709,7 +2015,11 @@ if (ESTADO_P.protAberto !== undefined && ESTADO_P.protAberto !== null) {
   const n = ESTADO_P.etapaSelP;
   abrirFluxoProt(ESTADO_P.protAberto,
     ESTADO_P.drawer === 'etapa' && n !== null && n !== undefined
-      ? () => { abrirEtapaProt(n); if (ESTADO_P.abaP) trocarAbaP(ESTADO_P.abaP); }
+      ? () => {
+          if (ESTADO_P.abaLatP) abaLatP = ESTADO_P.abaLatP;
+          abrirEtapaProt(n);
+          if (abaLatP === 'info' && ESTADO_P.abaP) trocarAbaP(ESTADO_P.abaP);
+        }
       : ESTADO_P.drawer === 'protocolo' ? abrirProtocoloP : () => {});
 } else if (ESTADO_P.vista) {
   irPara(ESTADO_P.vista);
@@ -1724,7 +2034,7 @@ guardarEstadoAoSair('po051', () => {
   const d = main.querySelector('.cad .drawer');
   const aberto = d && d.classList.contains('aberto');
   return {
-    vista, pesquisou, protSel, protAberto, etapaSelP, abaP,
+    vista, pesquisou, protSel, protAberto, etapaSelP, abaP, abaLatP,
     drawer: !aberto ? null : etapaSelP !== null ? 'etapa' : 'protocolo',
   };
 });
