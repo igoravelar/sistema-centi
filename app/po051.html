@@ -1611,7 +1611,9 @@ function modalItemHTML() {
   /* nas pastas do protocolo o filho leva à lista, e não a um formulário */
   const vistaFilho = v => ehProt ? `${v}-grid` : `${v}-form`;
 
-  const rotRaiz = ehProt ? TITULO_ITEM.prot
+  /* a raiz identifica o registro aberto: no protocolo, o número dele — o nome
+     da tela já está no cabeçalho da modal, repeti-lo aqui não diria nada */
+  const rotRaiz = ehProt ? `Protocolo - ${RESULTADOS_P[protAberto][0]}`
                 : tipo === 'doc' ? `${DATA_DOC} -` : `${it.id} - ${it.descricao}`;
 
   const arvore = pastas.map(p => {
@@ -1646,10 +1648,15 @@ function modalItemHTML() {
     : `<div class="modal-form scroll">${
         mVistaP === 'form' ? formulario : formPastaHTML(pastaAtual)}</div>`;
 
-  /* nas pastas do protocolo não há formulário de item para o Novo abrir */
-  const btnNovo = emGrid && !ehProt
+  /* O protocolo não inclui nem exclui pela sua própria modal: as pastas dele
+     são listas de leitura, e o registro já existe. Por isso Novo e Excluir
+     saem da faixa — o que sobra é Salvar e Operações. */
+  const btnNovo = ehProt ? '' : emGrid
     ? `<button class="btn btn-claro" onclick="modalIrP('${pastaAtual}-form', true)">${svg('mais')} Novo</button>`
     : `<button class="btn btn-neutro" disabled>${svg('mais')} Novo</button>`;
+
+  const btnExcluir = ehProt ? ''
+    : `<button class="btn btn-neutro" disabled>${svg('lixeira')} Excluir</button>`;
 
   const btnSalvar = emGrid
     ? `<button class="btn btn-neutro" disabled>${svg('salvar')} Salvar</button>`
@@ -1674,7 +1681,7 @@ function modalItemHTML() {
         <div class="modal-dir">
           <div class="modal-toolbar">
             ${btnNovo}
-            <button class="btn btn-neutro" disabled>${svg('lixeira')} Excluir</button>
+            ${btnExcluir}
             ${btnSalvar}
             <button class="btn btn-primario">${svg('gerais')} Operações</button>
           </div>
