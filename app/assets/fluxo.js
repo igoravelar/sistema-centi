@@ -287,7 +287,7 @@ function tooltipTabelasHTML(tipo, docs, checks, conds) {
    Um nó só, no body, reaproveitado por todos os cards das duas telas. A
    delegação é no document, então funciona para canvas que são redesenhados
    inteiros a cada render, sem ninguém precisar religar nada. */
-const TIP_ESPERA = 2000;   /* espera antes de abrir */
+const TIP_ESPERA = 1000;   /* espera antes de abrir */
 const TIP_FOLGA  = 15;     /* distância do card até o tooltip */
 const TIP_MARGEM = 10;     /* folga mínima até a borda da janela */
 
