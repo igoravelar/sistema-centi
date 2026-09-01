@@ -264,7 +264,9 @@ function fraseTooltip(s) {
     .replace(/\biptu\b/gi, 'IPTU');
 }
 
-/** Monta o shape escuro com as tabelas Tipo/Documentos/Checklist/Condição. */
+/** As tabelas Tipo/Documentos/Checklist/Condição, guardadas dentro do card.
+    Ficam escondidas (`.tip-dados`): são a fonte que o nó do tooltip copia no
+    hover. Guardá-las no card mantém o conteúdo junto de quem o define. */
 function tooltipTabelasHTML(tipo, docs, checks, conds) {
   const tabela = (titulo, valor, linhas) => `
     <div class="tb">
@@ -273,13 +275,89 @@ function tooltipTabelasHTML(tipo, docs, checks, conds) {
     </div>`;
 
   return `
-  <div class="tooltip-etapa">
+  <div class="tip-dados">
     ${tabela('Tipo', tipo)}
     ${tabela('Documentos', docs.length, docs)}
     ${tabela('Checklist', checks.length, checks)}
     ${tabela('Condição de Saída', conds.length, conds)}
   </div>`;
 }
+
+/* ---------------- abertura e posição do tooltip do card ----------------
+   Um nó só, no body, reaproveitado por todos os cards das duas telas. A
+   delegação é no document, então funciona para canvas que são redesenhados
+   inteiros a cada render, sem ninguém precisar religar nada. */
+const TIP_ESPERA = 2000;   /* espera antes de abrir */
+const TIP_FOLGA  = 15;     /* distância do card até o tooltip */
+const TIP_MARGEM = 10;     /* folga mínima até a borda da janela */
+
+let tipNo = null, tipAlvo = null, tipTimer = null;
+
+function tipNode() {
+  if (!tipNo) {
+    tipNo = document.createElement('div');
+    tipNo.className = 'tooltip-etapa';
+    document.body.appendChild(tipNo);
+  }
+  return tipNo;
+}
+
+function fecharTipCard() {
+  clearTimeout(tipTimer);
+  tipAlvo = null;
+  if (tipNo) tipNo.classList.remove('aberto');
+}
+
+/** Coloca o tooltip à direita do card. Se ele não couber até o rodapé da
+    janela, sobe o quanto precisar para aparecer inteiro; se não couber à
+    direita, vai para o outro lado do card. Medido depois de o conteúdo entrar,
+    porque a altura depende de quantas linhas cada tabela tem. */
+function posicionarTipCard(card) {
+  const no = tipNode(), r = card.getBoundingClientRect();
+  const larg = no.offsetWidth, alt = no.offsetHeight;
+
+  let x = r.right + TIP_FOLGA;
+  if (x + larg > innerWidth - TIP_MARGEM) x = Math.max(TIP_MARGEM, r.left - TIP_FOLGA - larg);
+
+  let y = r.top;
+  if (y + alt > innerHeight - TIP_MARGEM) y = innerHeight - TIP_MARGEM - alt;
+  if (y < TIP_MARGEM) y = TIP_MARGEM;
+
+  no.style.left = Math.round(x) + 'px';
+  no.style.top  = Math.round(y) + 'px';
+}
+
+document.addEventListener('mouseover', e => {
+  const card = e.target instanceof Element ? e.target.closest('.etapa') : null;
+  const dados = card && card.querySelector('.tip-dados');
+  if (!dados) { if (tipAlvo) fecharTipCard(); return; }
+  if (card === tipAlvo) return;
+
+  fecharTipCard();
+  tipAlvo = card;
+  tipTimer = setTimeout(() => {
+    /* o card pode ter sido redesenhado, ou o canvas entrado em arrasto, no
+       meio da espera */
+    if (tipAlvo !== card || !card.isConnected) return;
+    const wrap = card.closest('.bpmn-wrap');
+    if (wrap && wrap.classList.contains('arrastando')) return;
+    const no = tipNode();
+    no.innerHTML = dados.innerHTML;
+    posicionarTipCard(card);
+    no.classList.add('aberto');
+  }, TIP_ESPERA);
+});
+
+document.addEventListener('mouseout', e => {
+  if (!tipAlvo) return;
+  const para = e.relatedTarget;
+  if (para instanceof Element && tipAlvo.contains(para)) return;   /* só andou por dentro do card */
+  fecharTipCard();
+});
+
+/* rolar ou começar a arrastar move o card: a posição calculada não vale mais */
+document.addEventListener('scroll', () => { if (tipAlvo) fecharTipCard(); }, true);
+document.addEventListener('mousedown', () => { if (tipAlvo) fecharTipCard(); }, true);
 
 /**
  * Monta uma grid com coluna de seleção. `colunas` traz rótulo, largura e se a
