@@ -132,11 +132,15 @@
   .cad .etapa.selecionada { outline: 2px solid var(--tipo); outline-offset: 5px; }
 
   /* O título nasce abaixo da etiqueta de prazo, e não centralizado na altura
-     inteira do card: a faixa da etiqueta é reservada aqui (24px de etiqueta +
-     2px da borda do card + 12px de folga), e o título se centraliza no que
-     sobra. Sem isso o título sobe conforme o DEPTO cresce para duas linhas e
-     acaba entrando por baixo da etiqueta. */
-  .cad .etapa .nome { padding-top: 36px; }
+     inteira do card: a faixa da etiqueta é reservada aqui (2px da borda do card
+     + 24px de etiqueta + 8px de folga). Sem isso o título subia conforme o
+     DEPTO crescia para duas linhas e acabava entrando por baixo da etiqueta.
+
+     E encosta no topo dessa faixa (`start`), em vez de se centralizar no que
+     sobra: centralizado, um título de uma linha numa caixa dimensionada para
+     duas ganhava metade da diferença acima e a folga chegava a 20px. Assim a
+     folga é sempre a mesma, e a sobra fica toda entre o título e a régua DEPTO. */
+  .cad .etapa .nome { padding-top: 32px; place-items: start center; }
 
   /* etapa da vez: o card inteiro verde */
   .cad .etapa.executar {
@@ -610,10 +614,10 @@ function classeTipoP(tipo) {
 }
 
 /* Todos os cards do fluxo do protocolo têm a mesma medida. A altura sai do pior
-   caso, para a folga de 12px sob a etiqueta de prazo valer sempre: 4 das bordas
-   + 36 da faixa reservada ao título (ver `.cad .etapa .nome`) + 32 de um título
-   de duas linhas + 51 de um DEPTO de duas linhas = 123, e 126 deixa 3 de sobra. */
-const CARD_L = 260, CARD_A = 126;
+   caso, para o título caber sem apertar a régua DEPTO: 4 das bordas + 32 da
+   faixa reservada à etiqueta (ver `.cad .etapa .nome`) + 32 de um título de duas
+   linhas + 51 de um DEPTO de duas linhas = 119, e 120 deixa 1 de sobra. */
+const CARD_L = 260, CARD_A = 120;
 
 /** Estado do card a partir da situação da etapa:
       concluída (nas duas formas) — fundo cinza, contorno e bolinha da etapa e
