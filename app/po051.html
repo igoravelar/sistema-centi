@@ -142,17 +142,18 @@
   .cad .etapa.executar .num { background: var(--tipo-forte); color: #FFFFFF; }
 
   /* ------------------- etiqueta de prazo do card -------------------
-     Encaixa no canto de cima do card: `top/left: 0` caem dentro da borda dele,
-     o raio de cima repete o raio interno do canto e a curva grande abre para
-     dentro — o mesmo desenho da régua de abas do drawer. O fundo claro lê tanto
-     no card verde da etapa da vez quanto no cinza da concluída e no branco das
-     que faltam. Não recebe clique: o card inteiro continua clicável. */
+     Encaixa no canto de cima do card, à direita: `top/right: 0` caem dentro da
+     borda dele, o raio de cima repete o raio interno do canto e a curva grande
+     abre para dentro, agora no canto de baixo à esquerda. O recuo acompanha:
+     folgado do lado da curva, curto do lado que encosta na borda. O fundo claro
+     lê tanto no card verde da etapa da vez quanto no cinza da concluída e no
+     branco das que faltam. Não recebe clique: o card segue clicável inteiro. */
   .cad .etapa .prazo {
-    position: absolute; top: 0; left: 0;
+    position: absolute; top: 0; right: 0;
     display: flex; align-items: center; gap: 6px;
-    height: 28px; padding: 0 13px 0 9px;
+    height: 28px; padding: 0 9px 0 13px;
     background: var(--g-soft-bg);
-    border-radius: 8px 0 18px 0;
+    border-radius: 0 8px 0 18px;
     font-size: 11px; color: #6F833E;
     pointer-events: none;
   }
@@ -540,7 +541,9 @@ const FLUXO_PARALELO = [
   { n: 2, titulo: 'Pedido',                      tipo: 'Tarefa',  depto: 'DEPARTAMENTO DE COMPRAS - SEC. ADMINISTRAÇÃO',  prazo: 2, corridos: 2, situacao: 'Concluída' },
   { n: 3, titulo: 'Conferência da Solicitação',  tipo: 'Tarefa',  depto: 'DEPARTAMENTO DE LICITAÇÃO - SEC ADMINISTRAÇÃO', prazo: 2, corridos: 2, situacao: 'Concluída' },
   { n: 4, titulo: 'Análise Tributária',          tipo: 'Tarefa',  depto: 'TRIBUTAÇÃO',            par: 'a',               prazo: 1, corridos: 0, situacao: 'Pulada' },
-  { n: 5, titulo: 'Parecer do Controle Interno', tipo: 'Tarefa',  depto: 'CONTROLE INTERNO',      par: 'a',               prazo: 1, corridos: 1, situacao: 'Concluída' },
+  /* o exemplo de atraso do protótipo: 3 dias corridos para um prazo de 1 —
+     a etiqueta do card fica vermelha, com 2 dias de atraso */
+  { n: 5, titulo: 'Parecer do Controle Interno', tipo: 'Tarefa',  depto: 'CONTROLE INTERNO',      par: 'a',               prazo: 1, corridos: 3, situacao: 'Concluída' },
   { n: 6, titulo: 'Gerar Autorização Empenho',   tipo: 'Tarefa',  depto: 'DEPARTAMENTO DE COMPRAS - SEC. ADMINISTRAÇÃO',  prazo: 2, corridos: 1, situacao: 'Em Andamento' },
   { n: 7, titulo: 'Decisão do Pedido',           tipo: 'Decisão', depto: 'TRIBUTAÇÃO',                                    prazo: 1, corridos: 0, situacao: 'Não Iniciada' },
   { n: 8, titulo: 'Fim',                         tipo: 'Fim',     depto: 'PREFEITURA MUNICIPAL DE RIO VERDE',             prazo: 1, corridos: 0, situacao: 'Não Iniciada' },
