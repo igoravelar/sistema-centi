@@ -150,14 +150,17 @@
      branco das que faltam. Não recebe clique: o card segue clicável inteiro. */
   .cad .etapa .prazo {
     position: absolute; top: 0; right: 0;
-    display: flex; align-items: center; gap: 6px;
-    height: 28px; padding: 0 9px 0 13px;
+    display: flex; align-items: center; gap: 4px;
+    height: 24px; padding: 0 9px 0 13px;
     background: #F1FFBC;
-    border-radius: 0 8px 0 18px;
-    font-size: 11px; color: #6F833E;
+    border-radius: 0 8px 0 10px;
+    font-size: 10px; color: #6F833E;
     pointer-events: none;
   }
   .cad .etapa .prazo svg { width: 12px; height: 12px; }
+  /* o dia encosta no cronômetro: os 4px do gap valem para a bolinha, e o texto
+     vem 2px mais perto, para os dois lerem como uma coisa só */
+  .cad .etapa .prazo > span { margin-left: -2px; }
   /* farol do prazo — e não o da situação: este fala do tempo, não do andamento */
   .cad .etapa .prazo i {
     width: 11px; height: 11px; flex: 0 0 11px; border-radius: 50%;
@@ -165,7 +168,10 @@
   }
   .cad .etapa .prazo.folga  i { background: var(--g); }
   .cad .etapa .prazo.limite i { background: #F5A623; }
-  .cad .etapa .prazo.atraso i { background: #E53935; }
+  /* atraso: a etiqueta inteira vira vermelha, não só o farol — o fundo, o texto
+     e o cronômetro (que herda a cor pelo currentColor) */
+  .cad .etapa .prazo.atraso { background: #FFD0D1; color: #FF1852; }
+  .cad .etapa .prazo.atraso i { background: #FF1852; }
 
   /* o reenquadre ao abrir/fechar o drawer desliza o fluxo suavemente */
   .cad .bpmn-espaco.anim { transition: transform .28s ease; }
@@ -646,8 +652,9 @@ function prazoEtapaP(e) {
   const dias = (e.prazo || 0) - (e.corridos || 0);
   const n = Math.abs(dias);
   return {
-    /* plural só a partir de dois: "0 dia", "1 dia", "2 dias" */
-    rot: `${n} ${n > 1 ? 'dias' : 'dia'}`,
+    /* plural só a partir de dois: "0 dia", "1 dia", "2 dias". Em atraso o
+       número vem com o sinal, que é o que diz que o prazo já passou. */
+    rot: `${dias < 0 ? '-' : ''}${n} ${n > 1 ? 'dias' : 'dia'}`,
     classe: dias > 0 ? 'folga' : dias === 0 ? 'limite' : 'atraso',
   };
 }
