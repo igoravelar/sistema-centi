@@ -410,7 +410,6 @@ const VISTAS = [
   { id: 'pesquisa', rot: 'Pesquisa', ico: 'lupa' },
   { id: 'cadastro', rot: 'Cadastro', ico: 'lapis' },
   { id: 'notas',    rot: 'Notas',    ico: 'notas' },
-  { id: 'vicenti',  rot: 'ViCenti',  ico: 'robo' },
 ];
 
 let vista = 'pesquisa';
@@ -2212,6 +2211,10 @@ function ativarArrastoProt() {
 /* --------------------------------- vistas --------------------------------- */
 
 function irPara(id) {
+  /* a aba do ViCenti saiu da régua lateral desta tela, mas pode estar guardada
+     no estado de quem deixou a aba aberta antes: id que não existe mais cai na
+     primeira vista, em vez de pintar "undefined — em construção" */
+  if (!VISTAS.some(v => v.id === id)) id = VISTAS[0].id;
   vista = id;
   main.querySelectorAll('.vtab').forEach((b, i) => b.classList.toggle('ativa', VISTAS[i].id === id));
   main.querySelector('.cad').hidden = id !== 'cadastro';
