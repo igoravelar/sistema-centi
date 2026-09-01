@@ -6,7 +6,7 @@
 <title>Centi · PO051 - Tramitação de Protocolo</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
 <link rel="stylesheet" href="assets/centi.css?v=19">
-<link rel="stylesheet" href="assets/fluxo.css?v=24">
+<link rel="stylesheet" href="assets/fluxo.css?v=25">
 <link rel="stylesheet" href="assets/chat.css?v=22">
 <style>
   /* o fluxo é o conteúdo da aba Cadastro, e o drawer ocupa 2/3 da área.
@@ -397,7 +397,7 @@
 <div class="app"></div>
 
 <script src="assets/shell.js?v=16"></script>
-<script src="assets/fluxo.js?v=10"></script>
+<script src="assets/fluxo.js?v=11"></script>
 <script>
 /* As abas verticais são desta tela: trocam de vista aqui dentro, sem sair do
    PO051. O fluxo fica montado o tempo todo, só oculto, para não perder o
@@ -668,6 +668,25 @@ function prazoEtapaP(e) {
   };
 }
 
+/** Tooltip do card, no mesmo desenho do PO050 (tooltipTabelasHTML, no
+    fluxo.js). O que entra em cada tabela vem dos dados desta tela — os mesmos
+    que as abas Documentos, Checklist e Regras de Saída do drawer mostram, para
+    o card e o drawer não contarem histórias diferentes. Início, Decisão e Fim
+    não têm documentos nem checklist: só o que decidem na saída. */
+function tooltipEtapaProtHTML(e) {
+  if (e.tipo === 'Início')
+    return tooltipTabelasHTML('Início', [], [], ['Segue para a primeira etapa do fluxo.']);
+  if (e.tipo === 'Fim')
+    return tooltipTabelasHTML('Fim', [], [], []);
+  if (e.tipo === 'Decisão')
+    return tooltipTabelasHTML('Decisão', [], [],
+      ['Sim: avança para a próxima etapa', 'Não: encaminha para o indeferimento']);
+  return tooltipTabelasHTML('Tarefa',
+    DOCS_PROT.map(d => fraseTooltip(d.descricao)),
+    CHECK_PROT.map(c => c.descricao),
+    COND_PROT.map(c => c.descricao));
+}
+
 /** Card de uma etapa no desenho. */
 function cardEtapaP(e) {
   const p = prazoEtapaP(e);
@@ -683,6 +702,7 @@ function cardEtapaP(e) {
         <span class="depto">${e.depto}</span>
       </span>
       <span class="ponto"></span>
+      ${tooltipEtapaProtHTML(e)}
     </div>`;
 }
 

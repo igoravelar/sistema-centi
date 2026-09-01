@@ -6,7 +6,7 @@
 <title>Centi · PO050 - Fluxo de Processos</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
 <link rel="stylesheet" href="assets/centi.css?v=19">
-<link rel="stylesheet" href="assets/fluxo.css?v=24">
+<link rel="stylesheet" href="assets/fluxo.css?v=25">
 <style>
   /* Pesquisa: filtros à esquerda, Últimas Buscas à direita, separados por
      uma linha vertical cinza */
@@ -172,40 +172,7 @@
   .etapa.decisao:hover   { background: #FEF3DF; }
   .etapa.fim:hover       { background: #FDE9E9; }
 
-  /* tooltip do card: shape escuro à direita, com tabelas internas */
-  .tooltip-etapa {
-    position: absolute;
-    left: calc(100% + 15px);
-    top: 0;
-    width: 210px;
-    padding: 8px;
-    background: #3F440C;
-    border-radius: 10px;
-    display: none;
-    flex-direction: column;
-    gap: 6px;
-    z-index: 20;
-    pointer-events: none;
-    text-align: left;
-    cursor: default;
-  }
-  .etapa:hover .tooltip-etapa { display: flex; }
-  .bpmn-wrap.arrastando .etapa:hover .tooltip-etapa { display: none; }
-
-  .tooltip-etapa .tb { border: 1px solid #626A10; border-radius: 7px; overflow: hidden; }
-  .tooltip-etapa .tb .cab {
-    display: flex; align-items: center; justify-content: space-between; gap: 8px;
-    padding: 5px 9px;
-    background: #2A2D06;
-    color: #FFFFFF; font-size: 10px; font-weight: bold;
-  }
-  .tooltip-etapa .tb .cab .val { font-weight: normal; }
-  .tooltip-etapa .tb .lin {
-    padding: 5px 9px;
-    background: transparent;
-    border-top: 1px solid #626A10;
-    color: #EDEEE2; font-size: 10px; font-weight: normal; line-height: 1.4;
-  }
+  /* o tooltip do card (.tooltip-etapa) mora no fluxo.css: o PO051 usa o mesmo */
 
   .form { flex: 1; min-width: 0; max-width: 576px; display: flex; flex-direction: column; gap: 10px;
           overflow: auto; padding: 14px 16px; }
@@ -218,7 +185,7 @@
 <div class="app"></div>
 
 <script src="assets/shell.js?v=16"></script>
-<script src="assets/fluxo.js?v=10"></script>
+<script src="assets/fluxo.js?v=11"></script>
 <script>
 /* ícones extras desta tela */
 Object.assign(ICO, {
@@ -917,27 +884,7 @@ function classeTipo(tipo) {
 
 /* -------------------------- tooltips dos cards -------------------------- */
 
-function fraseTooltip(s) {
-  return (s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
-    .replace(/\biptu\b/gi, 'IPTU');
-}
-
-/** Monta o shape escuro com as tabelas Tipo/Documentos/Checklist/Condição. */
-function tooltipTabelasHTML(tipo, docs, checks, conds) {
-  const tabela = (titulo, valor, linhas) => `
-    <div class="tb">
-      <div class="cab"><span>${titulo}</span><span class="val">${valor}</span></div>
-      ${(linhas || []).map(l => `<div class="lin">${l}</div>`).join('')}
-    </div>`;
-
-  return `
-  <div class="tooltip-etapa">
-    ${tabela('Tipo', tipo)}
-    ${tabela('Documentos', docs.length, docs)}
-    ${tabela('Checklist', checks.length, checks)}
-    ${tabela('Condição de Saída', conds.length, conds)}
-  </div>`;
-}
+/* fraseTooltip e tooltipTabelasHTML vivem no fluxo.js: o PO051 usa os mesmos */
 
 /** Tooltip da jornada de criação: a etapa de entrada (1ª) abre zerada; as
     demais trazem os itens do exemplo. */

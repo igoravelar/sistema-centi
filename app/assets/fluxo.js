@@ -252,6 +252,35 @@ function sincronizarCabecalho() {
   });
 }
 
+/* --------------------------- tooltip do card ---------------------------
+   O shape escuro que abre à direita do card no hover. Fica aqui porque o PO050
+   e o PO051 montam o mesmo desenho; cada tela só decide o que entra em cada
+   tabela, a partir dos seus próprios dados. */
+
+/** Nome de documento em caixa alta virando frase: "REQUERIMENTO DE ISENÇÃO"
+    fica "Requerimento de isenção", com IPTU preservado. */
+function fraseTooltip(s) {
+  return (s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
+    .replace(/\biptu\b/gi, 'IPTU');
+}
+
+/** Monta o shape escuro com as tabelas Tipo/Documentos/Checklist/Condição. */
+function tooltipTabelasHTML(tipo, docs, checks, conds) {
+  const tabela = (titulo, valor, linhas) => `
+    <div class="tb">
+      <div class="cab"><span>${titulo}</span><span class="val">${valor}</span></div>
+      ${(linhas || []).map(l => `<div class="lin">${l}</div>`).join('')}
+    </div>`;
+
+  return `
+  <div class="tooltip-etapa">
+    ${tabela('Tipo', tipo)}
+    ${tabela('Documentos', docs.length, docs)}
+    ${tabela('Checklist', checks.length, checks)}
+    ${tabela('Condição de Saída', conds.length, conds)}
+  </div>`;
+}
+
 /**
  * Monta uma grid com coluna de seleção. `colunas` traz rótulo, largura e se a
  * célula é numérica; `celulas` devolve o conteúdo de cada linha, na ordem.

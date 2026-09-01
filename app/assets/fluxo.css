@@ -245,6 +245,53 @@
 .etapa.aberta .depto-lbl, .etapa.aberta .dias { color: var(--tipo-claro, #DFF19C); }
 .etapa.aberta .num { background: var(--tipo-forte, var(--g-stroke)); color: #FFFFFF; }
 
+/* --------------------------- tooltip do card ---------------------------
+   Shape escuro à direita do card, com as tabelas Tipo / Documentos / Checklist
+   / Condição de Saída. Mora aqui, e não na tela, porque o PO050 e o PO051 usam
+   o mesmo — uma definição só garante que os dois abram igual.
+
+   Abre 2s depois de o mouse entrar no card e fecha na hora que ele sai: o
+   atraso vive no `transition-delay` da regra de :hover, então só vale na
+   entrada — na saída manda a transição da regra base, que não tem atraso.
+   Fica sempre no layout (opacidade 0, e não display:none) porque é assim que a
+   espera de 2s pode ser feita em CSS; `pointer-events: none` garante que o box
+   invisível não roube o clique do card. */
+.tooltip-etapa {
+  position: absolute;
+  left: calc(100% + 15px);
+  top: 0;
+  width: 210px;
+  padding: 8px;
+  background: #3F440C;
+  border-radius: 10px;
+  display: flex; flex-direction: column;
+  gap: 6px;
+  z-index: 20;
+  pointer-events: none;
+  text-align: left;
+  cursor: default;
+  opacity: 0;
+  transition: opacity .12s ease;
+}
+.etapa:hover .tooltip-etapa { opacity: 1; transition-delay: 2s; }
+/* arrastando o canvas ninguém está lendo tooltip: some, e sem esperar 2s */
+.bpmn-wrap.arrastando .etapa:hover .tooltip-etapa { opacity: 0; transition-delay: 0s; }
+
+.tooltip-etapa .tb { border: 1px solid #626A10; border-radius: 7px; overflow: hidden; }
+.tooltip-etapa .tb .cab {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 5px 9px;
+  background: #2A2D06;
+  color: #FFFFFF; font-size: 10px; font-weight: bold;
+}
+.tooltip-etapa .tb .cab .val { font-weight: normal; }
+.tooltip-etapa .tb .lin {
+  padding: 5px 9px;
+  background: transparent;
+  border-top: 1px solid #626A10;
+  color: #EDEEE2; font-size: 10px; font-weight: normal; line-height: 1.4;
+}
+
 /* farol da situação da etapa: mesma leitura de cor no card e no drawer */
 .farol {
   width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%;
