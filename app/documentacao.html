@@ -366,6 +366,10 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
 .pagina p { margin: 0 0 14px; }
 
+/* subtítulo que abre um assunto novo logo depois de uma caixa de destaque:
+   precisa de mais ar para não parecer continuação dela */
+.pagina h4.afastado { margin-top: 46px; }
+
 .pagina .lead {
   font-size: 14.5px;
   font-style: italic;
@@ -554,6 +558,29 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
   line-height: 1.5;
 }
 
+/* tabela de SLA: a passagem entre as áreas é um par ligado por seta e não
+   pode quebrar no meio — a coluna se abre até caber a linha inteira */
+.pagina table.sla td:first-child,
+.pagina table.sla th:first-child { white-space: nowrap; }
+
+/* número do bloco do roteiro: repete, ao lado do nome, a pastilha que abre a
+   sequência, para ligar o quadro ao roteiro logo acima */
+.pagina table .num-bloco {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 21px;
+  margin-right: 9px;
+  border-radius: 6px;
+  background: #F3FFC3;
+  border: 1px solid #C9DA86;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6D8415;
+  vertical-align: -4px;
+}
+
 .pagina table tr:last-child td { border-bottom: none; }
 .pagina table th:last-child, .pagina table td:last-child { padding-right: 0; }
 /* coluna de números alinhada à direita (indicadores divulgados) */
@@ -722,6 +749,270 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 .cards-modelo .card p {
   margin: 0;
   font-size: 12.5px;
+}
+
+/* dores do cliente: faixa de abertura e cards com ícone. Duas leituras do
+   mesmo sinal — o que qualifica o município e o que manda esperar */
+.pagina .faixa-dor {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 52px 0 16px;
+  padding: 16px 22px;
+  background: linear-gradient(90deg, #F3FFC3, #FFFFFF);
+  border-left: 5px solid var(--verde);
+  border-radius: 0 12px 12px 0;
+}
+
+.pagina .faixa-dor .selo {
+  flex: 0 0 46px;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--verde);
+  color: #FFFFFF;
+}
+
+.pagina .faixa-dor .selo svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pagina .faixa-dor .lbl {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #8BA81D;
+}
+
+.pagina .faixa-dor h4 {
+  margin: 2px 0 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #3F440C;
+}
+
+/* variante de adiamento: mesma estrutura, sem o peso do verde */
+.pagina .faixa-dor.adiar {
+  background: linear-gradient(90deg, #F4F4F4, #FFFFFF);
+  border-left-color: #C8C8C8;
+}
+
+.pagina .faixa-dor.adiar .selo { background: #B4B4B4; }
+.pagina .faixa-dor.adiar .lbl  { color: #8A8A8A; }
+.pagina .faixa-dor.adiar h4    { color: #4A4A4A; }
+
+.pagina .cards-dor {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 12px;
+  margin: 0 0 24px;
+}
+
+.pagina .cards-dor .card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #F5FCD9;
+  border: 1px solid #E2EFB4;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.pagina .cards-dor .card .ico {
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #FFFFFF;
+  border: 1px solid #D5E690;
+  color: #8BA81D;
+}
+
+.pagina .cards-dor .card .ico svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pagina .cards-dor .card p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.pagina .cards-dor.adiar .card { background: #FAFAFA; border-color: #E6E6E6; }
+
+.pagina .cards-dor.adiar .card .ico { border-color: #DCDCDC; color: #A8A8A8; }
+
+/* funis lado a lado: as camadas estreitam linha a linha e escurecem conforme
+   a oportunidade desce, para comparar os dois caminhos no mesmo eixo */
+.pagina .funis {
+  display: grid;
+  grid-template-columns: 130px 1fr 1fr;
+  gap: 6px 18px;
+  align-items: stretch;
+  min-width: 700px;
+  margin: 0 0 24px;
+}
+
+.pagina .funis .cab {
+  padding: 0 0 8px;
+  border-bottom: 1px solid var(--cinza-linha);
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--txt-strong);
+}
+
+.pagina .funis .rot {
+  display: flex;
+  align-items: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--txt-strong);
+}
+
+.pagina .camada {
+  margin: 0 auto;
+  padding: 11px 16px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--txt-strong);
+}
+
+/* cada camada é um pouco mais estreita e um pouco mais verde que a anterior */
+.pagina .camada.n1 { width: 100%; background: #F7FCE7; }
+.pagina .camada.n2 { width: 95.5%; background: #F2FADB; }
+.pagina .camada.n3 { width: 91%; background: #ECF7CD; }
+.pagina .camada.n4 { width: 86.5%; background: #E5F4BE; }
+.pagina .camada.n5 { width: 82%; background: #DDF0AD; }
+.pagina .camada.n6 { width: 77.5%; background: #D4EB9A; }
+.pagina .camada.n7 { width: 73%; background: #CBE687; }
+.pagina .camada.n8 { width: 68.5%; background: #C1E072; }
+
+@media (max-width: 620px) { .pagina .funis { min-width: 560px; } }
+
+/* funil único: a mesma escala de camadas, centralizada, para uma sequência
+   que afunila sozinha — do monitoramento do edital até a contratação */
+.pagina .funil-solo {
+  display: grid;
+  gap: 6px;
+  max-width: 620px;
+  margin: 0 0 24px;
+}
+
+/* o texto que apresenta a sequência fica numa coluna estreita à esquerda e o
+   funil ao lado, os dois começando na mesma linha do topo */
+.pagina .bloco-funil {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  align-items: start;
+  gap: 30px;
+  margin: 0 0 24px;
+}
+
+.pagina .bloco-funil > p { margin: 0; }
+
+.pagina .bloco-funil .funil-solo { max-width: none; margin: 0; }
+
+@media (max-width: 760px) {
+  .pagina .bloco-funil { grid-template-columns: 1fr; gap: 14px; }
+}
+
+.pagina .funil-solo .camada {
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #3F440C;
+}
+
+/* informação obrigatória: a etapa vira um card, a seta liga ao que precisa
+   estar preenchido e o visto marca o campo cumprido */
+.pagina .obrigatorios {
+  display: grid;
+  grid-template-columns: max-content auto 1fr;
+  align-items: center;
+  gap: 10px 14px;
+  min-width: 640px;
+  margin: 0 0 24px;
+}
+
+.pagina .obrigatorios .cab {
+  align-self: end;
+  padding: 0 0 8px;
+  border-bottom: 1px solid var(--cinza-linha);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--txt-strong);
+}
+
+.pagina .obrigatorios .etapa {
+  padding: 10px 16px;
+  background: #F5FCD9;
+  border: 1px solid #D5E690;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #3F440C;
+}
+
+.pagina .obrigatorios .seta {
+  color: var(--verde);
+  font-weight: 700;
+}
+
+.pagina .obrigatorios .info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pagina .obrigatorios .info .ck {
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--verde);
+  color: #FFFFFF;
+}
+
+.pagina .obrigatorios .info .ck svg {
+  width: 11px;
+  height: 11px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pagina .obrigatorios .info p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
 }
 
 /* cards do critério de sucesso: a persona e a medalha em cima, o título no
@@ -1492,6 +1783,13 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
   margin: 20px 0;
 }
 
+/* variante de atenção: mesma caixa, em vermelho claro, para o ponto que
+   ainda não está resolvido e precisa de decisão */
+.pagina .nota.alerta {
+  background: #FDF1EF;
+  border-color: #EFC4BD;
+}
+
 @media (max-width: 920px) {
   /* topo em duas linhas: marca e sanduíche em cima, título e data embaixo.
      Como as faixas fixas e o recuo do conteúdo saem de --topbar-h, basta
@@ -1574,7 +1872,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
     <img src="assets/img/marca-centi.png" alt="Centi">
   </a>
   <h1>Documentação Protocolo 3.0</h1>
-  <div class="atualizado">Atualizado em: <span class="badge-data">01/09/2026</span></div>
+  <div class="atualizado">Atualizado em: <span class="badge-data">02/09/2026</span></div>
   <button class="bt-menu" id="bt-menu" onclick="alternarMenu()"
           aria-label="Abrir o menu" aria-expanded="false" aria-controls="sidebar">
     <svg class="ico-abrir" viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
@@ -4696,7 +4994,629 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
     <section id="etapa9">
       <h2>#9 Pipeline de Vendas</h2>
       <p class="lead">Estruturação do funil comercial e da abordagem de vendas do produto.</p>
-      <p>Conteúdo a preencher com as definições desta etapa.</p>
+    </section>
+
+    <section id="etapa9-objetivo" class="sub">
+      <h3>Objetivo da etapa</h3>
+      <p>Transformar o posicionamento, o produto e a inteligência de mercado já definidos em <b>um pipeline comercial operacional</b>: quem prospectar, como qualificar, como conduzir a venda, como precificar e por qual caminho contratar.</p>
+      <p>Esta etapa cobre o percurso comercial <b>do primeiro contato até a assinatura do contrato</b>.</p>
+
+      <blockquote>
+        <p>O pipeline de vendas não existe para gerar o maior número de leads. Existe para transformar oportunidades de mercado em novos contratos em potencial.</p>
+      </blockquote>
+    </section>
+
+    <section id="etapa9-icp" class="sub">
+      <h3>ICP e critérios de qualificação</h3>
+      <p>A <b>Estratégia do Produto (#3)</b> definiu dois públicos com papéis distintos. O pipeline precisa tratá-los como <b>dois ICPs diferentes</b>, com jornadas, ciclos e esforços comerciais também diferentes.</p>
+
+      <h4>Os dois ICPs</h4>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr>
+              <th>Critério</th>
+              <th>ICP A · Grandes prefeituras</th>
+              <th>ICP B · Pequenas e médias prefeituras</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Papel estratégico</b></td>
+              <td>Posicionamento, transformação e referência</td>
+              <td>Entrada, escala e volume</td>
+            </tr>
+            <tr>
+              <td><b>Maturidade administrativa</b></td>
+              <td>Média a alta</td>
+              <td>Baixa a média</td>
+            </tr>
+            <tr>
+              <td><b>Estrutura de TI</b></td>
+              <td>Equipe própria, com influência técnica na decisão</td>
+              <td>Equipe reduzida ou terceirizada</td>
+            </tr>
+            <tr>
+              <td><b>Volume de processos</b></td>
+              <td>Alto, com múltiplos departamentos envolvidos</td>
+              <td>Menor, concentrado em poucos setores</td>
+            </tr>
+            <tr>
+              <td><b>Complexidade de implantação</b></td>
+              <td>Alta — exige projeto</td>
+              <td>Baixa — exige padronização</td>
+            </tr>
+            <tr>
+              <td><b>Caminho de contratação predominante</b></td>
+              <td>Licitação</td>
+              <td>Venda direta quando o enquadramento permitir</td>
+            </tr>
+            <tr>
+              <td><b>Ciclo de venda esperado</b></td>
+              <td>Longo</td>
+              <td>Curto</td>
+            </tr>
+            <tr>
+              <td><b>Esforço comercial</b></td>
+              <td>Conta a conta (ABM)</td>
+              <td>Escala e repetição</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="nota alerta">
+        <p><b>Hipótese a validar:</b> a faixa de corte entre os segmentos (por população, por número de servidores ou por volume de protocolos) deve ser definida a partir da base atual de clientes Centi e do custo real de implantação, e não por convenção de mercado.</p>
+      </div>
+
+      <div class="faixa-dor">
+        <span class="selo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10a4.4 4.4 0 0 1 7.5-3.1 4.4 4.4 0 0 1 7.5 3.1c0 5.4-7.5 10-7.5 10Z"/></svg></span>
+        <div>
+          <span class="lbl">Sinais de aderência</span>
+          <h4>As dores que o Protocolo 3.0 resolve</h4>
+        </div>
+      </div>
+
+      <p>Quando o município apresenta os sinais abaixo, ele tem o problema que o produto resolve — e a conversa comercial deixa de ser sobre software e passa a ser sobre a dor:</p>
+
+      <div class="cards-dor">
+        <div class="card">
+          <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg></span>
+          <p>Processos administrativos <b>parados ou sem visibilidade</b> de onde estão.</p>
+        </div>
+        <div class="card">
+          <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><line x1="8.5" y1="13" x2="14" y2="13"/><line x1="8.5" y1="17" x2="12" y2="17"/></svg></span>
+          <p>Tramitação dependente de <b>papel, e-mail, planilha ou conhecimento individual</b>.</p>
+        </div>
+        <div class="card">
+          <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"/><polyline points="3 3 3 8 8 8"/></svg></span>
+          <p><b>Retrabalho e devolução frequente</b> entre departamentos.</p>
+        </div>
+        <div class="card">
+          <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.3 4 2.7 17.5A1.9 1.9 0 0 0 4.4 20.4h15.2a1.9 1.9 0 0 0 1.7-2.9L13.7 4a1.9 1.9 0 0 0-3.4 0Z"/><line x1="12" y1="9.5" x2="12" y2="13.5"/><line x1="12" y1="16.8" x2="12" y2="16.9"/></svg></span>
+          <p>Pressão por <b>prazos, transparência ou apontamentos de controle</b>.</p>
+        </div>
+        <div class="card">
+          <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="21 7 13.5 14.5 9.5 10.5 3 17"/><polyline points="15.5 7 21 7 21 12.5"/></svg></span>
+          <p>Projeto de <b>modernização, governo digital ou desburocratização</b> em curso.</p>
+        </div>
+        <div class="card">
+          <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 20v-1.8a3.5 3.5 0 0 0-3.5-3.5H6.5A3.5 3.5 0 0 0 3 18.2V20"/><circle cx="9" cy="7.5" r="3.5"/><polyline points="15.5 11 17.5 13 21.5 9"/></svg></span>
+          <p>Existência de alguém interno capaz de assumir o papel de <b>Líder Técnico</b> (persona 02).</p>
+        </div>
+      </div>
+
+      <div class="faixa-dor adiar">
+        <span class="selo"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg></span>
+        <div>
+          <span class="lbl">Sinais de desqualificação ou de adiamento</span>
+          <h4>Quando o pipeline deve esperar</h4>
+        </div>
+      </div>
+
+      <div class="cards-dor adiar">
+        <div class="card">
+          <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/><polyline points="8.5 14.5 10.5 16.5 14.5 12.5"/></svg></span>
+          <p>Solução equivalente contratada e com <b>contrato recente em vigência</b>.</p>
+        </div>
+        <div class="card">
+          <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4"/></svg></span>
+          <p>Ausência de qualquer <b>previsão orçamentária</b> ou de caminho de contratação viável no exercício.</p>
+        </div>
+        <div class="card">
+          <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 20v-1.8a3.5 3.5 0 0 0-3.5-3.5H6.5A3.5 3.5 0 0 0 3 18.2V20"/><circle cx="8.75" cy="7.5" r="3.5"/><line x1="16.5" y1="8.5" x2="21.5" y2="13.5"/><line x1="21.5" y1="8.5" x2="16.5" y2="13.5"/></svg></span>
+          <p><b>Nenhum interlocutor</b> disposto a assumir a condução interna do projeto.</p>
+        </div>
+        <div class="card">
+          <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.8 2.7a1.9 1.9 0 0 0-1.6 0L2.6 6.6a1 1 0 0 0 0 1.8l8.6 3.9a1.9 1.9 0 0 0 1.6 0l8.6-3.9a1 1 0 0 0 0-1.8Z"/><path d="M6 12 2.6 13.6a1 1 0 0 0 0 1.8l8.6 3.9a1.9 1.9 0 0 0 1.6 0l8.6-3.9a1 1 0 0 0 0-1.8L18 12"/></svg></span>
+          <p>Expectativa <b>incompatível com o escopo do produto</b> — o município busca uma suite completa de gestão, não uma plataforma de tramitação.</p>
+        </div>
+      </div>
+
+      <div class="definicao">
+        <p>Desqualificar não significa descartar. Significa retirar do pipeline ativo e devolver para relacionamento, com data de retomada definida.</p>
+      </div>
+
+      <h4 class="afastado">Definição de MQL e SQL</h4>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Estágio</th><th>Definição</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Lead</b></td>
+              <td>Contato identificado de um município do ICP, com origem registrada.</td>
+            </tr>
+            <tr>
+              <td><b>MQL</b></td>
+              <td>Lead com interesse demonstrado (solicitação de contato, demonstração, material ou resposta a abordagem) e com identificação mínima do município e do papel do contato.</td>
+            </tr>
+            <tr>
+              <td><b>SQL</b></td>
+              <td>MQL em que foram confirmados: existência do problema, interlocutor com influência ou autoridade sobre a decisão, e caminho plausível de contratação.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="etapa9-funil" class="sub">
+      <h3>Arquitetura de funil por segmento</h3>
+      <p>Não existe um funil único para prefeituras. O Protocolo 3.0 opera com <b>dois funis de aquisição</b> e <b>um caminho de contratação</b> que pode atravessar ambos.</p>
+
+      <div class="tabela-rolagem">
+        <div class="funis">
+          <div class="cab"></div>
+          <div class="cab">Funil ABM · ICP A</div>
+          <div class="cab">Funil de Escala · ICP B</div>
+
+          <div class="rot">Objetivo</div>
+          <div class="camada n1">Conquistar contas estratégicas e gerar referência</div>
+          <div class="camada n1">Conquistar volume com ciclo curto</div>
+
+          <div class="rot">Seleção</div>
+          <div class="camada n2">Lista fechada de municípios prioritários</div>
+          <div class="camada n2">Cobertura ampla por região ou perfil</div>
+
+          <div class="rot">Origem</div>
+          <div class="camada n3">Outbound dirigido, relacionamento institucional, eventos</div>
+          <div class="camada n3">Inbound, outbound de volume, indicação, base Centi</div>
+
+          <div class="rot">Abordagem</div>
+          <div class="camada n4">Multi-stakeholder: gestor, TI, jurídico e servidor</div>
+          <div class="camada n4">Contato direto com o decisor administrativo</div>
+
+          <div class="rot">Diagnóstico</div>
+          <div class="camada n5">Aprofundado, sobre processos reais do município</div>
+          <div class="camada n5">Padronizado, por roteiro</div>
+
+          <div class="rot">Demonstração</div>
+          <div class="camada n6">Personalizada, sobre um processo do próprio município</div>
+          <div class="camada n6">Padronizada, com fluxo modelo</div>
+
+          <div class="rot">Proposta</div>
+          <div class="camada n7">Business case e projeto</div>
+          <div class="camada n7">Proposta padrão por faixa</div>
+
+          <div class="rot">Contratação</div>
+          <div class="camada n8">Predominantemente licitação</div>
+          <div class="camada n8">Venda direta quando aplicável</div>
+        </div>
+      </div>
+
+      <h4 class="afastado">Caminho transversal · Funil de Licitação</h4>
+      <div class="bloco-funil">
+        <p>Aplica-se aos dois ICPs sempre que a contratação exigir procedimento licitatório, e roda <b>em paralelo</b> ao funil comercial:</p>
+
+        <div class="funil-solo">
+          <div class="camada n1">Monitoramento</div>
+          <div class="camada n2">Identificação da oportunidade</div>
+          <div class="camada n3">Análise de aderência</div>
+          <div class="camada n4">Decisão de participar</div>
+          <div class="camada n5">Documentação</div>
+          <div class="camada n6">Proposta</div>
+          <div class="camada n7">Disputa</div>
+          <div class="camada n8">Contratação</div>
+        </div>
+      </div>
+
+      <div class="objetivo curva">
+        <svg class="seta-curva" viewBox="0 0 87 37" aria-hidden="true">
+          <path d="M2.0004 2.00049C9.60802 16.0434 24.4691 25.5682 41.5405 25.5682H85.0004"/>
+          <path d="M75.5855 16.1536L85.0004 25.5685"/>
+          <path d="M75.5855 34.9955L85.0004 25.5684"/>
+        </svg>
+        <div>
+          <h4>Vale a reflexão!</h4>
+          <p>Um edital publicado sem trabalho comercial anterior é uma disputa de preço. Um edital publicado depois de diagnóstico e demonstração é uma disputa de aderência.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="etapa9-etapas" class="sub">
+      <h3>Etapas do pipeline</h3>
+      <p>Estrutura única de CRM para os dois funis. O que muda entre ICP A e ICP B é a <b>profundidade</b> de cada etapa, não a sua existência.</p>
+
+      <div class="fluxo-palavras">
+        <span class="palavra">MARKETING</span><span class="seta-fluxo">→</span>
+        <span class="palavra">PRÉ-VENDAS</span><span class="seta-fluxo">→</span>
+        <span class="palavra">VENDAS</span><span class="seta-fluxo">→</span>
+        <span class="palavra">CONTRATAÇÃO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">IMPLANTAÇÃO</span>
+      </div>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Etapa</th>
+              <th>Objetivo</th>
+              <th>Critério de entrada</th>
+              <th>Critério de saída</th>
+              <th>Responsável</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td><b>Lead</b></td>
+              <td>Registrar e organizar o contato</td>
+              <td>Contato identificado com origem registrada</td>
+              <td>Município e papel do contato identificados</td>
+              <td>Marketing</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><b>Qualificação</b></td>
+              <td>Confirmar aderência ao ICP</td>
+              <td>Lead com origem e identificação</td>
+              <td>Problema, interlocutor e viabilidade de contratação confirmados</td>
+              <td>Pré-vendas (SDR)</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td><b>Diagnóstico</b></td>
+              <td>Entender como o município tramita hoje</td>
+              <td>SQL aceito por Vendas</td>
+              <td>Processos críticos, gargalos e impacto mapeados</td>
+              <td>Vendas</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td><b>Demonstração</b></td>
+              <td>Mostrar o produto resolvendo o problema levantado</td>
+              <td>Diagnóstico registrado</td>
+              <td>Demonstração realizada para os stakeholders relevantes e próximo passo acordado</td>
+              <td>Vendas + Consultor Técnico</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td><b>Proposta</b></td>
+              <td>Formalizar escopo, valor e condições</td>
+              <td>Aderência confirmada pelo município</td>
+              <td>Proposta entregue e recebida formalmente</td>
+              <td>Vendas</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td><b>Avaliação e enquadramento</b></td>
+              <td>Definir com o município o caminho jurídico da contratação</td>
+              <td>Proposta em análise</td>
+              <td>Caminho de contratação definido (direta, licitação ou adesão)</td>
+              <td>Vendas + Jurídico</td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td><b>Contratação</b></td>
+              <td>Concluir o procedimento e assinar</td>
+              <td>Caminho definido e em curso</td>
+              <td>Contrato assinado</td>
+              <td>Vendas + Jurídico</td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td><b>Ganho / Perdido</b></td>
+              <td>Encerrar com aprendizado registrado</td>
+              <td>Decisão do município</td>
+              <td>Motivo registrado e conta destinada a implantação ou a relacionamento</td>
+              <td>Vendas</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4 class="afastado">Informação obrigatória para avançar</h4>
+      <p>Nenhuma oportunidade avança de etapa sem que os campos abaixo estejam preenchidos no CRM.</p>
+
+      <div class="tabela-rolagem">
+        <div class="obrigatorios">
+          <div class="cab">Etapa</div>
+          <div class="cab"></div>
+          <div class="cab">Informação obrigatória</div>
+
+          <div class="etapa">Qualificação</div>
+          <div class="seta">→</div>
+          <div class="info">
+            <span class="ck"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="5 12.5 10 17.5 19 6.5"/></svg></span>
+            <p>Município, porte, contato, cargo, origem, problema declarado</p>
+          </div>
+
+          <div class="etapa">Diagnóstico</div>
+          <div class="seta">→</div>
+          <div class="info">
+            <span class="ck"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="5 12.5 10 17.5 19 6.5"/></svg></span>
+            <p>Processos prioritários, volume estimado, sistema atual, gargalos, impacto percebido</p>
+          </div>
+
+          <div class="etapa">Demonstração</div>
+          <div class="seta">→</div>
+          <div class="info">
+            <span class="ck"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="5 12.5 10 17.5 19 6.5"/></svg></span>
+            <p>Stakeholders presentes, objeções levantadas, requisitos citados, próximo passo com data</p>
+          </div>
+
+          <div class="etapa">Proposta</div>
+          <div class="seta">→</div>
+          <div class="info">
+            <span class="ck"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="5 12.5 10 17.5 19 6.5"/></svg></span>
+            <p>Escopo, faixa de preço, prazo de implantação, condições comerciais</p>
+          </div>
+
+          <div class="etapa">Avaliação e enquadramento</div>
+          <div class="seta">→</div>
+          <div class="info">
+            <span class="ck"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="5 12.5 10 17.5 19 6.5"/></svg></span>
+            <p>Caminho de contratação, área responsável no município, previsão orçamentária, prazo estimado</p>
+          </div>
+
+          <div class="etapa">Contratação</div>
+          <div class="seta">→</div>
+          <div class="info">
+            <span class="ck"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="5 12.5 10 17.5 19 6.5"/></svg></span>
+            <p>Número/identificação do procedimento, vigência, data de início da implantação</p>
+          </div>
+
+          <div class="etapa">Perdido</div>
+          <div class="seta">→</div>
+          <div class="info">
+            <span class="ck"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="5 12.5 10 17.5 19 6.5"/></svg></span>
+            <p>Motivo da perda, concorrente vencedor quando conhecido, data de retomada</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="etapa9-sla" class="sub">
+      <h3>SLA entre Marketing, Pré-vendas e Vendas</h3>
+      <p>O pipeline só funciona se a passagem entre as áreas tiver regra, prazo e critério de aceite. Os prazos abaixo são <b>proposta inicial</b>, a ser calibrada pela operação real.</p>
+
+      <div class="tabela-rolagem">
+        <table class="sla">
+          <thead>
+            <tr>
+              <th>Passagem</th>
+              <th>Prazo</th>
+              <th>Critério de aceite</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Marketing → Pré-vendas</b></td>
+              <td>Primeira tentativa de contato em até 1 dia útil</td>
+              <td>Lead classificado como MQL, com origem e identificação registradas</td>
+            </tr>
+            <tr>
+              <td><b>Pré-vendas → Vendas</b></td>
+              <td>Aceite ou recusa em até 1 dia útil</td>
+              <td>SQL com problema, interlocutor e viabilidade de contratação confirmados</td>
+            </tr>
+            <tr>
+              <td><b>Vendas → Implantação</b></td>
+              <td>Reunião de passagem em até 5 dias úteis após a assinatura</td>
+              <td>Checklist de handoff completo</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Regras de cadência</h4>
+
+      <ul class="lista">
+        <li><b>Tentativas:</b> até 5 tentativas em canais diferentes ao longo de 10 dias úteis antes de encerrar a cadência.</li>
+        <li><b>Canais:</b> e-mail institucional, telefone do órgão, WhatsApp quando o contato for público ou tiver sido fornecido, e canais oficiais da prefeitura.</li>
+        <li><b>Encerramento:</b> sem resposta após a cadência, a conta sai do pipeline ativo e volta para nutrição, com data de retomada.</li>
+        <li><b>Registro:</b> toda tentativa é registrada no CRM. Contato não registrado não conta como tentativa.</li>
+      </ul>
+    </section>
+
+    <section id="etapa9-preco" class="sub">
+      <h3>Modelo de precificação</h3>
+      <p>A diretriz de monetização foi definida no <b>Modelo de Negócios (#1)</b>: <b>assinatura recorrente por município, em faixas por porte</b>. Esta etapa transforma essa diretriz em regra comercial operacional.</p>
+
+      <h4>Composição do preço</h4>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr>
+              <th>Componente</th>
+              <th>Natureza</th>
+              <th>Função</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Assinatura</b></td>
+              <td>Recorrente, mensal</td>
+              <td>Uso da plataforma, atualizações e suporte</td>
+            </tr>
+            <tr>
+              <td><b>Implantação</b></td>
+              <td>Único, no início do contrato</td>
+              <td>Parametrização inicial, modelagem dos primeiros fluxos e treinamento</td>
+            </tr>
+            <tr>
+              <td><b>Serviços adicionais</b></td>
+              <td>Sob demanda</td>
+              <td>Modelagem de fluxos além do escopo, integrações, migração, treinamentos extras</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Estrutura de faixas</h4>
+      <p>A assinatura é organizada em faixas por porte do município. Cada faixa precisa ter definido:</p>
+
+      <ul class="lista">
+        <li>o critério objetivo de enquadramento (população, número de usuários ou volume de protocolos);</li>
+        <li>o que está incluído — número de fluxos modelados na implantação, usuários, armazenamento, suporte;</li>
+        <li>o que é cobrado à parte;</li>
+        <li>o valor de implantação correspondente.</li>
+      </ul>
+    </section>
+
+    <section id="etapa9-contratacao" class="sub">
+      <h3>Contratação pública aplicada ao pipeline</h3>
+      <p>A contratação não é o fim do funil: é uma variável que muda a condução comercial desde o diagnóstico. O time precisa identificar <b>cedo</b> por qual caminho aquele município consegue contratar.</p>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr>
+              <th>Caminho</th>
+              <th>Quando tende a ocorrer</th>
+              <th>O que muda no pipeline</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Contratação direta</b></td>
+              <td>Quando o valor e as condições permitem o enquadramento previsto na legislação</td>
+              <td>Ciclo mais curto; a Centi apoia com documentação, proposta e informações técnicas</td>
+            </tr>
+            <tr>
+              <td><b>Licitação</b></td>
+              <td>Valores maiores, exigência interna ou política de contratação do município</td>
+              <td>Ciclo mais longo; exige acompanhamento do planejamento, do edital e da disputa</td>
+            </tr>
+            <tr>
+              <td><b>Adesão a ata de registro de preços</b></td>
+              <td>Quando existe ata vigente compatível</td>
+              <td>Pode encurtar significativamente o ciclo; exige monitoramento de atas</td>
+            </tr>
+            <tr>
+              <td><b>Contrato vigente com terceiro</b></td>
+              <td>Município já contratado</td>
+              <td>Oportunidade de médio prazo; trabalhar relacionamento até a janela de renovação</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="etapa9-demo" class="sub">
+      <h3>Demonstração comercial</h3>
+      <p>A demonstração é a etapa em que a promessa do produto é testada. Ela não é um passeio por funcionalidades: é a <b>encenação de um processo real do município</b> dentro do Protocolo 3.0.</p>
+
+      <h4>Roteiro base</h4>
+
+      <div class="fluxo-palavras">
+        <span class="palavra">01 · CONTEXTO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">02 · O PROBLEMA HOJE</span><span class="seta-fluxo">→</span>
+        <span class="palavra">03 · O FLUXO VISUAL</span><span class="seta-fluxo">→</span>
+        <span class="palavra">04 · ABRIR O PROTOCOLO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">05 · TRAMITAR A ETAPA</span><span class="seta-fluxo">→</span>
+        <span class="palavra">06 · ACOMPANHAR E ENCONTRAR O GARGALO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">07 · PRÓXIMO PASSO</span>
+      </div>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Bloco</th><th>O que precisa ficar demonstrado</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="num-bloco">01</span><b>Contexto</b></td>
+              <td>Retomada do diagnóstico: os processos e gargalos que o próprio município relatou</td>
+            </tr>
+            <tr>
+              <td><span class="num-bloco">02</span><b>O problema hoje</b></td>
+              <td>Onde o processo para, volta ou se perde na operação atual</td>
+            </tr>
+            <tr>
+              <td><span class="num-bloco">03</span><b>O fluxo visual</b></td>
+              <td>Que o processo pode ser desenhado, versionado e alterado pela prefeitura</td>
+            </tr>
+            <tr>
+              <td><span class="num-bloco">04</span><b>Abrir o protocolo</b></td>
+              <td>Que iniciar um processo é simples e orientado, com documentos e requisitos claros</td>
+            </tr>
+            <tr>
+              <td><span class="num-bloco">05</span><b>Tramitar a etapa</b></td>
+              <td>O ponto central: o servidor vê onde está, o que fazer, com o que e o que vem depois</td>
+            </tr>
+            <tr>
+              <td><span class="num-bloco">06</span><b>Acompanhar</b></td>
+              <td>Que o gestor enxerga status, prazos, responsáveis e gargalos</td>
+            </tr>
+            <tr>
+              <td><span class="num-bloco">07</span><b>Próximo passo</b></td>
+              <td>Compromisso com data — nova reunião, prova de conceito, proposta ou piloto</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Adaptação por interlocutor</h4>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr>
+              <th>Interlocutor</th>
+              <th>Foco da demonstração</th>
+              <th>O que evitar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Prefeito</b></td>
+              <td>Modernização, desburocratização e efeito percebido pelo cidadão</td>
+              <td>Detalhe operacional e tela de configuração</td>
+            </tr>
+            <tr>
+              <td><b>Secretário / Gestor</b></td>
+              <td>Visibilidade, prazos, gargalos e produtividade da equipe</td>
+              <td>Discussão técnica de infraestrutura</td>
+            </tr>
+            <tr>
+              <td><b>Servidor</b></td>
+              <td>Clareza do que fazer na etapa e redução de retrabalho</td>
+              <td>Complexidade da configuração do fluxo</td>
+            </tr>
+            <tr>
+              <td><b>Líder Técnico</b></td>
+              <td>Autonomia para criar e alterar fluxos sem depender da Centi</td>
+              <td>Excesso de foco na operação do dia a dia</td>
+            </tr>
+            <tr>
+              <td><b>TI</b></td>
+              <td>Arquitetura, segurança, dados, integração e disponibilidade</td>
+              <td>Argumento comercial</td>
+            </tr>
+            <tr>
+              <td><b>Compras / Jurídico</b></td>
+              <td>Conformidade, documentação e caminho de contratação</td>
+              <td>Promessa de escopo não contratada</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <section id="etapa10">
@@ -4816,7 +5736,16 @@ const MENU = [
     { id: 'etapa8-parametrizacao',  txt: 'Compliance por Parametrização' },
     { id: 'etapa8-checklist',       txt: 'Checklist de Compliance' },
   ] },
-  { titulo: '#9 Pipeline de Vendas',        itens: [{ id: 'etapa9',  txt: 'Visão geral' }] },
+  { titulo: '#9 Pipeline de Vendas',        itens: [
+    { id: 'etapa9-objetivo', txt: 'Objetivo da etapa' },
+    { id: 'etapa9-icp',      txt: 'ICP e critérios de qualificação' },
+    { id: 'etapa9-funil',    txt: 'Arquitetura de funil por segmento' },
+    { id: 'etapa9-etapas',   txt: 'Etapas do pipeline' },
+    { id: 'etapa9-sla',      txt: 'SLA entre Marketing, Pré-vendas e Vendas' },
+    { id: 'etapa9-preco',    txt: 'Modelo de precificação' },
+    { id: 'etapa9-contratacao', txt: 'Contratação pública aplicada ao pipeline' },
+    { id: 'etapa9-demo',     txt: 'Demonstração comercial' },
+  ] },
   { titulo: '#10 Validação (piloto)',       itens: [{ id: 'etapa10', txt: 'Visão geral' }] },
   { titulo: '#11 CSI & CSM',                itens: [{ id: 'etapa11', txt: 'Visão geral' }] },
   { titulo: '#12 Marketing & Design',       itens: [{ id: 'etapa12', txt: 'Visão geral' }] },
