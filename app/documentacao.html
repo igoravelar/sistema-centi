@@ -370,6 +370,10 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
    precisa de mais ar para não parecer continuação dela */
 .pagina h4.afastado { margin-top: 46px; }
 
+/* subtítulo colado: a tabela acima já deixa espaço suficiente por conta
+   da margem que fica presa dentro do contêiner com rolagem horizontal */
+.pagina h4.colado { margin-top: 0; }
+
 .pagina .lead {
   font-size: 14.5px;
   font-style: italic;
@@ -458,6 +462,25 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
   padding: 1px 7px;
   font-size: 12px;
   color: #6D8415;
+}
+
+/* estrutura de conta no CRM: árvore em monoespaçado, como um bloco de código */
+.pagina .estrutura-crm {
+  overflow-x: auto;
+  margin: 0 0 22px;
+  padding: 16px 20px;
+  background: #FAFBF6;
+  border: 1px solid var(--verde-linha);
+  border-radius: 10px;
+}
+
+.pagina .estrutura-crm pre {
+  margin: 0;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 12.5px;
+  line-height: 1.85;
+  color: var(--txt-strong);
+  white-space: pre;
 }
 
 /* box de definição: resumo objetivo destacado em verde */
@@ -723,6 +746,35 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
 /* nota de rodapé de tabela */
 .pagina .nota-tab { font-size: 12px; color: var(--txt-mute); margin: -8px 0 22px; }
+
+/* crédito de fonte da tabela: em itálico, para separar do conteúdo do quadro */
+.pagina .nota-tab.fonte { font-style: italic; }
+
+/* quadro das faixas de porte: cada faixa é uma banda verde, mais forte
+   conforme o porte cresce; o recorte estratégico vem em cinza, porque é uma
+   exceção dentro da faixa Grande e não uma quarta faixa */
+.pagina table.faixas { border-collapse: separate; border-spacing: 0 6px; }
+
+.pagina table.faixas th { padding-left: 16px; }
+
+.pagina table.faixas td {
+  padding: 12px 16px;
+  border-bottom: none;
+  vertical-align: middle;
+}
+
+.pagina table.faixas td:first-child { border-radius: 8px 0 0 8px; }
+.pagina table.faixas td:last-child  { border-radius: 0 8px 8px 0; }
+
+.pagina table.faixas tr.f1 td { background: #F5FCD9; }
+.pagina table.faixas tr.f2 td { background: #E7F4BC; }
+.pagina table.faixas tr.f3 td { background: #D6EC9C; }
+
+.pagina table.faixas tr.recorte td {
+  background: #F1F1F1;
+  font-style: italic;
+  color: #5F5F5F;
+}
 
 /* cards do modelo de comercialização */
 .cards-modelo {
@@ -1872,7 +1924,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
     <img src="assets/img/marca-centi.png" alt="Centi">
   </a>
   <h1>Documentação Protocolo 3.0</h1>
-  <div class="atualizado">Atualizado em: <span class="badge-data">02/09/2026</span></div>
+  <div class="atualizado">Atualizado em: <span class="badge-data">03/09/2026</span></div>
   <button class="bt-menu" id="bt-menu" onclick="alternarMenu()"
           aria-label="Abrir o menu" aria-expanded="false" aria-controls="sidebar">
     <svg class="ico-abrir" viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
@@ -5006,11 +5058,309 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </blockquote>
     </section>
 
+    <section id="etapa9-porte" class="sub">
+      <h3>Segmentação por porte</h3>
+      <p>A <b>Estratégia do Produto (#3)</b> definiu dois públicos com papéis distintos. Para operacionalizar a prospecção, esses públicos são traduzidos em <b>três faixas de porte</b>, com base na classificação populacional utilizada pela estatística oficial brasileira.</p>
+
+      <h4>Critério de classificação</h4>
+      <p>A “população” é um parâmetro estatístico, não a causa real e definitiva. O que determina o esforço de implantação e o valor entregue é o número de secretarias envolvidas, o volume de processos e a existência de alguém capaz de gerir os fluxos. Esses dados, porém, não são públicos para os 5.570 municípios brasileiros. A população é.</p>
+
+      <blockquote>
+        <p>População como filtro de prospecção. Estrutura administrativa como critério de enquadramento comercial.</p>
+      </blockquote>
+
+      <h4>As três faixas</h4>
+
+      <div class="tabela-rolagem">
+        <table class="faixas">
+          <thead>
+            <tr>
+              <th>Perfil</th>
+              <th>Faixa populacional</th>
+              <th>Volume aproximado no país</th>
+              <th>Papel no pipeline</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="f1">
+              <td><b>Pequena</b></td>
+              <td>Até 20 mil habitantes</td>
+              <td>Cerca de 3.935 municípios (70,6% do total)</td>
+              <td>Escala e volume</td>
+            </tr>
+            <tr class="f2">
+              <td><b>Média</b></td>
+              <td>20 mil a 100 mil habitantes</td>
+              <td>Cerca de 1.250 municípios (aprox. 22%)</td>
+              <td>Encaixe principal</td>
+            </tr>
+            <tr class="f3">
+              <td><b>Grande</b></td>
+              <td>Acima de 100 mil habitantes</td>
+              <td>Cerca de 387 municípios (aprox. 7%)</td>
+              <td>Posicionamento e referência</td>
+            </tr>
+            <tr class="recorte">
+              <td><b>Grande estratégica</b></td>
+              <td>Acima de 500 mil habitantes</td>
+              <td>48 municípios (0,9% do total)</td>
+              <td>Contas nomeadas, decisão caso a caso</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="nota-tab fonte">Fonte: Censo Demográfico 2022 e Estimativas da População 2024 (IBGE). A faixa intermediária é obtida por diferença entre as demais.</p>
+
+      <h4>Características de cada perfil</h4>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr>
+              <th>Característica</th>
+              <th>Pequena (até 20k)</th>
+              <th>Média (20k–100k)</th>
+              <th>Grande (100k+)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Secretarias</b></td>
+              <td>Poucas, com acúmulo de funções</td>
+              <td>Estrutura definida, com sobreposição</td>
+              <td>Estrutura ampla, com autarquias e fundações</td>
+            </tr>
+            <tr>
+              <td><b>Volume de processos</b></td>
+              <td>Baixo, concentrado em 2 ou 3 setores</td>
+              <td>Moderado, distribuído</td>
+              <td>Alto, atravessando várias secretarias</td>
+            </tr>
+            <tr>
+              <td><b>TI</b></td>
+              <td>Inexistente ou terceirizada</td>
+              <td>1 a 3 pessoas, sem especialização</td>
+              <td>Departamento próprio, com influência na decisão</td>
+            </tr>
+            <tr>
+              <td><b>Sistema atual</b></td>
+              <td>Papel, planilha ou módulo de protocolo em suite</td>
+              <td>Suite de gestão com protocolo físico e, talvez, digital.</td>
+              <td>Suite consolidada, às vezes com solução especializada</td>
+            </tr>
+            <tr>
+              <td><b>Quem decide</b></td>
+              <td>Prefeito ou Secretário de Administração</td>
+              <td>Secretário, com validação do prefeito</td>
+              <td>Comitê informal: secretário, TI, jurídico e compras</td>
+            </tr>
+            <tr>
+              <td><b>Ciclo de decisão</b></td>
+              <td>Curto</td>
+              <td>Médio</td>
+              <td>Longo, com múltiplas reuniões</td>
+            </tr>
+            <tr>
+              <td><b>Contratação</b></td>
+              <td>Direta, quando o valor permite</td>
+              <td>Direta ou pregão</td>
+              <td>Predominantemente licitação, com ETP formal</td>
+            </tr>
+            <tr>
+              <td><b>Orçamento para TI</b></td>
+              <td>Restrito, dependente do FPM</td>
+              <td>Existente, mas disputado</td>
+              <td>Dotação específica, às vezes plurianual</td>
+            </tr>
+            <tr>
+              <td><b>Implantação</b></td>
+              <td>Rápida, poucos fluxos, padronizável</td>
+              <td>Média, exige modelagem real</td>
+              <td>Projeto, com fases e piloto</td>
+            </tr>
+            <tr>
+              <td><b>O que compra</b></td>
+              <td>Sair do papel e do improviso</td>
+              <td>Organizar e padronizar o que já é digital</td>
+              <td>Integrar, controlar e prestar contas</td>
+            </tr>
+            <tr>
+              <td><b>Principal risco comercial</b></td>
+              <td>Não ter ninguém para tocar o projeto</td>
+              <td>Prometer padronização e cair em customização</td>
+              <td>Ciclo longo consumir custo de venda sem fechar</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Critérios de refinamento no diagnóstico</h4>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Critério</th><th>Por que importa</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Número de secretarias e órgãos</b></td>
+              <td>Define quantos fluxos e quantas fronteiras de tramitação</td>
+            </tr>
+            <tr>
+              <td><b>Número de servidores administrativos</b></td>
+              <td>Define usuários e esforço de treinamento</td>
+            </tr>
+            <tr>
+              <td><b>Volume anual de protocolos</b></td>
+              <td>Melhor indicador de valor entregue</td>
+            </tr>
+            <tr>
+              <td><b>Processos que atravessam mais de 3 setores</b></td>
+              <td>É onde o produto se diferencia</td>
+            </tr>
+            <tr>
+              <td><b>Existência de setor de TI próprio</b></td>
+              <td>Define se a TI é influenciadora ou ausente na decisão</td>
+            </tr>
+            <tr>
+              <td><b>Sistema contratado e data de vencimento</b></td>
+              <td>Define concorrência e janela de oportunidade</td>
+            </tr>
+            <tr>
+              <td><b>Existência de candidato a Líder Técnico</b></td>
+              <td>Determina a viabilidade real do projeto</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="etapa9-entidades" class="sub">
+      <h3>Entidades vinculadas</h3>
+      <p>Câmaras Municipais, institutos de previdência, autarquias, fundações e consórcios também tramitam processos administrativos e representam demanda real. Eles <b>não</b> entram no pipeline pela faixa de porte do município.</p>
+
+      <h4>Estrutura de conta no CRM</h4>
+
+      <div class="estrutura-crm">
+        <pre>CONTA-MÃE · Município de X
+    ├── Prefeitura de X ............... oportunidade
+    ├── Câmara Municipal de X ......... oportunidade
+    ├── Instituto de Previdência ...... oportunidade
+    ├── Autarquia (SAAE) .............. oportunidade
+    └── Fundação municipal ............ oportunidade</pre>
+      </div>
+
+      <h4 class="colado">Mapa de aderência por tipo de entidade</h4>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr>
+              <th>Entidade</th>
+              <th>Volume de processos</th>
+              <th>Aderência</th>
+              <th>Observação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>RPPS / Instituto de Previdência</b></td>
+              <td>Médio, altamente regrado</td>
+              <td><b>Alta</b></td>
+              <td>Aposentadoria, pensão e benefícios têm múltiplas etapas, documentação obrigatória, prazo legal e registro no TCE</td>
+            </tr>
+            <tr>
+              <td><b>Autarquia de água e saneamento</b></td>
+              <td>Alto</td>
+              <td><b>Alta</b></td>
+              <td>Grande volume de solicitações de cidadão: ligação, religação, revisão de conta, vazamento</td>
+            </tr>
+            <tr>
+              <td><b>Câmara Municipal</b></td>
+              <td>Baixo a médio</td>
+              <td><b>Parcial</b></td>
+              <td>Ver ressalva abaixo</td>
+            </tr>
+            <tr>
+              <td><b>Fundação municipal</b></td>
+              <td>Variável</td>
+              <td>Média</td>
+              <td>Depende do porte e da área de atuação</td>
+            </tr>
+            <tr>
+              <td><b>Agência reguladora municipal</b></td>
+              <td>Baixo</td>
+              <td>Média</td>
+              <td>Presente em poucos municípios</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4 class="colado">Rotas comerciais</h4>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr>
+              <th>Rota</th>
+              <th>Como funciona</th>
+              <th>Quando usar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Prefeitura → entidades</b></td>
+              <td>Entra pela prefeitura e expande para as vinculadas</td>
+              <td>Padrão. A prefeitura valida o produto e vira referência interna</td>
+            </tr>
+            <tr>
+              <td><b>Entidade → prefeitura</b></td>
+              <td>Entra por uma entidade menor e usa o resultado como prova</td>
+              <td>Quando a prefeitura tem contrato vigente, ciclo longo ou porta fechada. Ticket baixo, risco baixo, implantação rápida</td>
+            </tr>
+            <tr>
+              <td><b>Município completo</b></td>
+              <td>Aborda prefeitura e entidades em paralelo, com proposta coordenada</td>
+              <td>Municípios médios e grandes com relacionamento já estabelecido</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
     <section id="etapa9-icp" class="sub">
       <h3>ICP e critérios de qualificação</h3>
       <p>A <b>Estratégia do Produto (#3)</b> definiu dois públicos com papéis distintos. O pipeline precisa tratá-los como <b>dois ICPs diferentes</b>, com jornadas, ciclos e esforços comerciais também diferentes.</p>
 
-      <h4>Os dois ICPs</h4>
+      <h4>Definição dos ICPs (Ideal Customer Profile)</h4>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr>
+              <th>ICP</th>
+              <th>Faixas</th>
+              <th>Abordagem</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>ICP A</b></td>
+              <td>Grande e Grande estratégica</td>
+              <td>Conta a conta, por ABM</td>
+            </tr>
+            <tr>
+              <td><b>ICP B</b></td>
+              <td>Pequena e Média</td>
+              <td>Escala, repetição e padronização</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Detalhamento dos ICPs</h4>
 
       <div class="tabela-rolagem">
         <table>
@@ -5064,10 +5414,6 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
             </tr>
           </tbody>
         </table>
-      </div>
-
-      <div class="nota alerta">
-        <p><b>Hipótese a validar:</b> a faixa de corte entre os segmentos (por população, por número de servidores ou por volume de protocolos) deve ser definida a partir da base atual de clientes Centi e do custo real de implantação, e não por convenção de mercado.</p>
       </div>
 
       <div class="faixa-dor">
@@ -5423,7 +5769,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         </table>
       </div>
 
-      <h4>Regras de cadência</h4>
+      <h4 class="colado">Regras de cadência</h4>
 
       <ul class="lista">
         <li><b>Tentativas:</b> até 5 tentativas em canais diferentes ao longo de 10 dias úteis antes de encerrar a cadência.</li>
@@ -5468,7 +5814,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         </table>
       </div>
 
-      <h4>Estrutura de faixas</h4>
+      <h4 class="colado">Estrutura de faixas</h4>
       <p>A assinatura é organizada em faixas por porte do município. Cada faixa precisa ter definido:</p>
 
       <ul class="lista">
@@ -5738,6 +6084,8 @@ const MENU = [
   ] },
   { titulo: '#9 Pipeline de Vendas',        itens: [
     { id: 'etapa9-objetivo', txt: 'Objetivo da etapa' },
+    { id: 'etapa9-porte',    txt: 'Segmentação por porte' },
+    { id: 'etapa9-entidades', txt: 'Entidades vinculadas' },
     { id: 'etapa9-icp',      txt: 'ICP e critérios de qualificação' },
     { id: 'etapa9-funil',    txt: 'Arquitetura de funil por segmento' },
     { id: 'etapa9-etapas',   txt: 'Etapas do pipeline' },
