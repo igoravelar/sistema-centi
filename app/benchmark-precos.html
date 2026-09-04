@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centi · Benchmark de preços</title>
+<link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; }
+
+:root {
+  --verde:       #A1BB3E;
+  --verde-linha: #D5E690;
+  --cinza-linha: #DCDCDC;
+  --txt:         #545454;
+  --txt-strong:  #333333;
+  --txt-mute:    #8A8A8A;
+  --topbar-h:    64px;
+  --faixa-h:     36px;
+  --abas-h:      50px;
+
+  /* cor de cada série nos comparativos: os três concorrentes na escala de
+     verde da marca e a Centi no verde vivo, para o nosso preço saltar */
+  --c-1doc:   #8BA81D;
+  --c-aprova: #C3CE9A;
+  --c-gove:   #5D6725;
+  --c-centi:  #C6E628;
+}
+
+html { scroll-padding-top: calc(var(--topbar-h) + var(--faixa-h) + var(--abas-h) + 20px); }
+
+body {
+  margin: 0;
+  background: #FFFFFF;
+  color: var(--txt);
+  font-family: "Open Sans", Verdana, Geneva, sans-serif;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* ── topo ───────────────────────────────────────────────── */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 28px;
+  background: #FFFFFF;
+  z-index: 10;
+}
+
+.topbar .marca img { height: 30px; display: block; }
+
+.topbar h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--txt-strong);
+  white-space: nowrap;
+}
+
+/* o que fica à direita do topo: a data da coleta e a volta para a documentação */
+.topbar .fim {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+}
+
+.topbar .coleta { font-size: 12px; color: var(--txt-mute); white-space: nowrap; }
+
+.topbar .coleta .badge-data {
+  display: inline-block;
+  padding: 2px 9px;
+  margin-left: 4px;
+  background: #F5FCD9;
+  border-radius: 20px;
+  font-weight: 700;
+  color: #5D6725;
+}
+
+.topbar .voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border: 1px solid var(--verde-linha);
+  border-radius: 8px;
+  color: #6D8415;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.topbar .voltar:hover { background: #F5FCD9; border-color: var(--verde); }
+
+.topbar .voltar svg {
+  width: 14px; height: 14px;
+  fill: none; stroke: currentColor; stroke-width: 2.2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+.faixa {
+  position: fixed;
+  top: var(--topbar-h);
+  left: 0; right: 0;
+  height: var(--faixa-h);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 28px;
+  background: var(--verde-linha);
+  z-index: 10;
+}
+
+.faixa p {
+  margin: 0;
+  font-size: 14px;
+  font-style: italic;
+  color: #5D6725;
+}
+
+/* ── abas ───────────────────────────────────────────────── */
+.abas {
+  position: fixed;
+  top: calc(var(--topbar-h) + var(--faixa-h));
+  left: 0; right: 0;
+  height: var(--abas-h);
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  padding: 0 28px;
+  background: #FFFFFF;
+  border-bottom: 1px solid var(--cinza-linha);
+  overflow-x: auto;
+  z-index: 9;
+}
+
+.abas button {
+  flex: 0 0 auto;
+  position: relative;
+  padding: 0 18px;
+  background: none;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--txt-mute);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.abas button:hover { color: #6D8415; }
+
+.abas button[aria-selected="true"] {
+  color: #5D6725;
+  border-bottom-color: var(--verde);
+}
+
+/* ── conteúdo ───────────────────────────────────────────── */
+.conteudo {
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: calc(var(--topbar-h) + var(--faixa-h) + var(--abas-h) + 30px) 28px 90px;
+}
+
+.aba[hidden] { display: none; }
+
+.aba > h2 {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--txt-strong);
+}
+
+.aba > .lead {
+  margin: 0 0 28px;
+  max-width: 780px;
+  font-size: 14px;
+}
+
+/* ── quadro: a moldura de todo bloco do painel ──────────── */
+.quadro {
+  margin: 0 0 26px;
+  background: #FFFFFF;
+  border: 1px solid var(--cinza-linha);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.quadro > header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 20px;
+  background: #FAFCF0;
+  border-bottom: 1px solid var(--cinza-linha);
+}
+
+.quadro > header h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--txt-strong);
+}
+
+.quadro > header .sub {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--txt-mute);
+}
+
+.quadro .corpo { padding: 18px 20px; }
+.quadro .corpo > :first-child { margin-top: 0; }
+.quadro .corpo > :last-child { margin-bottom: 0; }
+
+/* o botão (i): a camada explicativa fica atrás dele, e não no meio do dado */
+.bt-info {
+  flex: 0 0 auto;
+  width: 22px; height: 22px;
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  background: #FFFFFF;
+  border: 1.5px solid var(--verde);
+  border-radius: 50%;
+  color: #6D8415;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 13px;
+  font-weight: 700;
+  font-style: italic;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.bt-info:hover { background: var(--verde); border-color: #7F9612; color: #FFFFFF; }
+
+/* ── tabelas ────────────────────────────────────────────── */
+.tabela-rolagem { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+th {
+  padding: 0 12px 9px;
+  border-bottom: 1px solid var(--cinza-linha);
+  text-align: left;
+  font-weight: 700;
+  color: var(--txt-strong);
+  white-space: nowrap;
+}
+
+td {
+  padding: 9px 12px;
+  border-bottom: 1px solid #F0F0F0;
+  vertical-align: middle;
+}
+
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: #FCFDF6; }
+
+.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rot-linha { font-weight: 700; color: var(--txt-strong); }
+
+/* linha de subtítulo dentro da tabela (PREFEITURAS, ENTIDADES VINCULADAS) */
+tr.grupo td {
+  padding: 16px 0 6px;
+  border-bottom: 1px solid var(--verde-linha);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #5D6725;
+}
+
+tr.grupo:first-child td { padding-top: 0; }
+
+/* linha de total: fecha o bloco com peso, sem virar cabeçalho */
+tr.total td {
+  background: #F5FCD9;
+  border-bottom: none;
+  font-weight: 700;
+  color: #3F440C;
+}
+
+tr.total td:first-child { border-radius: 8px 0 0 8px; padding-left: 12px; }
+tr.total td:last-child { border-radius: 0 8px 8px 0; padding-right: 12px; }
+tr.total:hover td { background: #EFF8C8; }
+
+/* célula sem amostra: o vazio precisa ser explícito */
+.vazio { color: #BEBEBE; font-style: italic; }
+
+/* ── pastilhas ──────────────────────────────────────────── */
+.pastilha {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pastilha.ok      { background: #EFF8C8; color: #4F5A14; }
+.pastilha.atencao { background: #FDF6DC; color: #8A6D0B; }
+.pastilha.fria    { background: #F1F1F1; color: #6E6E6E; }
+.pastilha.alerta  { background: #FDF1EF; color: #A33F2E; }
+
+/* ── cartões de comparabilidade ─────────────────────────── */
+.selos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin: 0 0 26px;
+}
+
+.selo {
+  padding: 16px 18px;
+  background: #FFFFFF;
+  border: 1px solid var(--cinza-linha);
+  border-left: 4px solid var(--c-1doc);
+  border-radius: 10px;
+}
+
+.selo.aprova { border-left-color: var(--c-aprova); }
+.selo.gove   { border-left-color: var(--c-gove); }
+
+.selo h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--txt-strong);
+}
+
+.selo .razao { margin: 2px 0 10px; font-size: 11.5px; color: var(--txt-mute); }
+.selo .grau { margin: 0 0 10px; }
+.selo p { margin: 0; font-size: 12.5px; line-height: 1.55; }
+
+.selo .carteira {
+  margin: 12px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid #F0F0F0;
+  font-size: 12px;
+  color: var(--txt-mute);
+}
+
+.selo .carteira b { color: var(--txt-strong); }
+
+/* ── mosaico de indicadores ─────────────────────────────── */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 0 0 26px;
+}
+
+.kpi {
+  padding: 14px 16px;
+  background: #FAFCF0;
+  border: 1px solid var(--verde-linha);
+  border-radius: 10px;
+}
+
+.kpi .lbl {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #6D8415;
+}
+
+.kpi .val {
+  display: block;
+  margin-top: 2px;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #3F440C;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi .obs { display: block; font-size: 11.5px; color: var(--txt-mute); }
+
+/* ── barras dentro da célula: a proporção junto do número ── */
+.cel-barra { display: flex; align-items: center; gap: 9px; }
+
+.cel-barra .trilho {
+  flex: 1 1 auto;
+  min-width: 46px;
+  height: 8px;
+  background: #F0F0F0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.cel-barra .preenche {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--verde);
+}
+
+.cel-barra .n {
+  flex: 0 0 auto;
+  min-width: 34px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.cel-barra .n b { color: var(--txt-strong); }
+
+/* ── gráfico de medianas: um grupo de barras por faixa ──── */
+.grafico { display: grid; gap: 22px; }
+
+.grafico .faixa-grupo { display: grid; gap: 7px; }
+
+.grafico .faixa-nome {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #5D6725;
+}
+
+.grafico .serie {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.grafico .serie .nome { font-size: 12px; font-weight: 700; color: var(--txt-strong); }
+.grafico .serie .nome i { display: block; font-weight: 400; font-style: normal; font-size: 11px; color: var(--txt-mute); }
+
+.grafico .serie .barra {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.grafico .serie .barra span.b {
+  display: block;
+  height: 22px;
+  border-radius: 0 4px 4px 0;
+  background: var(--verde);
+}
+
+.grafico .serie .barra span.v {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--txt-strong);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.grafico .serie.s-1doc   .barra span.b { background: var(--c-1doc); }
+.grafico .serie.s-aprova .barra span.b { background: var(--c-aprova); }
+.grafico .serie.s-gove   .barra span.b { background: var(--c-gove); }
+.grafico .serie.s-centi  .barra span.b { background: var(--c-centi); }
+
+.grafico .serie.s-centi .nome { color: #3F440C; }
+
+/* a proposta da Centi entra destacada, separada dos três concorrentes */
+.grafico .serie.s-centi { padding-top: 7px; border-top: 1px dashed var(--verde-linha); }
+
+.legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin: 0 0 20px;
+  font-size: 12px;
+}
+
+.legenda span { display: inline-flex; align-items: center; gap: 7px; }
+
+.legenda i {
+  width: 12px; height: 12px;
+  border-radius: 3px;
+  background: var(--verde);
+}
+
+.legenda .l-1doc i   { background: var(--c-1doc); }
+.legenda .l-aprova i { background: var(--c-aprova); }
+.legenda .l-gove i   { background: var(--c-gove); }
+.legenda .l-centi i  { background: var(--c-centi); }
+
+/* ── filtros das abas de contratos ──────────────────────── */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+.filtros label {
+  display: grid;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--txt-mute);
+}
+
+.filtros select,
+.filtros input {
+  padding: 7px 10px;
+  background: #FFFFFF;
+  border: 1px solid var(--cinza-linha);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: var(--txt);
+}
+
+.filtros select:focus,
+.filtros input:focus { outline: 2px solid var(--verde-linha); border-color: var(--verde); }
+
+.filtros input { min-width: 190px; }
+
+.filtros .limpar {
+  padding: 7px 14px;
+  background: #FFFFFF;
+  border: 1px solid var(--cinza-linha);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--txt-mute);
+  cursor: pointer;
+}
+
+.filtros .limpar:hover { border-color: var(--verde); color: #6D8415; }
+
+.contagem {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: var(--txt-mute);
+}
+
+.contagem b { color: var(--txt-strong); }
+
+/* cabeçalho ordenável */
+th.ord { cursor: pointer; user-select: none; }
+th.ord:hover { color: #6D8415; }
+
+th.ord .seta { color: var(--verde); font-size: 10px; }
+
+/* tabela de contratos: densa, com rolagem horizontal própria. Nenhuma célula
+   quebra linha — a linha do contrato tem sempre a mesma altura, e o texto que
+   não cabe é cortado com reticências e recuperado no title */
+.tab-contratos { min-width: 1240px; }
+.tab-contratos th,
+.tab-contratos td { padding: 8px 12px; white-space: nowrap; }
+
+.tab-contratos td:first-child,
+.tab-contratos th:first-child { width: 250px; max-width: 250px; }
+
+.tab-contratos .orgao,
+.tab-contratos .obj {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tab-contratos .orgao { font-weight: 700; color: var(--txt-strong); }
+.tab-contratos .obj { font-size: 11px; font-weight: 400; color: var(--txt-mute); }
+
+.tab-contratos a.pncp {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #6D8415;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.tab-contratos a.pncp:hover { text-decoration: underline; }
+
+.tab-contratos a.pncp svg {
+  width: 12px; height: 12px;
+  fill: none; stroke: currentColor; stroke-width: 2.2;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* ── caixas de recado ───────────────────────────────────── */
+.nota {
+  margin: 0 0 20px;
+  padding: 13px 18px;
+  background: #FDFBEB;
+  border: 1px solid #F0E6B2;
+  border-radius: 10px;
+  font-size: 12.5px;
+}
+
+.nota.alerta { background: #FDF1EF; border-color: #EFC4BD; }
+.nota.verde  { background: #F5FCD9; border-color: var(--verde-linha); }
+.nota p { margin: 0 0 8px; }
+.nota > :last-child { margin-bottom: 0; }
+.nota b { color: var(--txt-strong); }
+
+.nota ul { margin: 0; padding-left: 18px; }
+.nota li { margin: 4px 0; }
+
+.leitura {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px dashed var(--verde-linha);
+  font-size: 12.5px;
+}
+
+.leitura b { color: #3F440C; }
+
+/* ── modal da camada explicativa ────────────────────────── */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 30px 20px;
+  background: rgba(0,0,0,.55);
+}
+
+.modal[hidden] { display: none; }
+
+.modal .painel {
+  position: relative;
+  width: min(680px, 100%);
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+  padding: 26px 30px 28px;
+  background: #FFFFFF;
+  border-radius: 14px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.35);
+}
+
+.modal h3 {
+  margin: 0 0 4px;
+  padding-right: 40px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--txt-strong);
+}
+
+.modal .selo-modal {
+  display: inline-block;
+  margin: 0 0 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #6D8415;
+}
+
+.modal p { margin: 0 0 12px; font-size: 13px; }
+.modal ul, .modal ol { margin: 0 0 12px; padding-left: 20px; font-size: 13px; }
+.modal li { margin: 5px 0; }
+.modal h4 {
+  margin: 20px 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--txt-strong);
+}
+.modal .painel > :last-child { margin-bottom: 0; }
+.modal b { color: var(--txt-strong); }
+
+.modal .fechar {
+  position: absolute;
+  top: 16px; right: 18px;
+  width: 30px; height: 30px;
+  display: grid;
+  place-items: center;
+  background: #F5F5F5;
+  border: 0;
+  border-radius: 8px;
+  color: var(--txt);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.modal .fechar:hover { background: var(--verde); color: #FFFFFF; }
+
+/* ── rodapé ─────────────────────────────────────────────── */
+.rodape {
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 0 28px 40px;
+  font-size: 11.5px;
+  color: var(--txt-mute);
+}
+
+.rodape hr { border: 0; border-top: 1px solid var(--cinza-linha); margin: 0 0 14px; }
+
+/* ── telas estreitas ────────────────────────────────────── */
+@media (max-width: 920px) {
+  :root { --topbar-h: 104px; }
+
+  .topbar {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas: "marca fim" "titulo titulo";
+    align-items: center;
+    row-gap: 4px;
+    padding: 0 16px;
+  }
+
+  .topbar .marca { grid-area: marca; }
+  .topbar .fim { grid-area: fim; }
+  .topbar h1 { grid-area: titulo; font-size: 17px; white-space: normal; }
+  .topbar .coleta { display: none; }
+
+  .faixa { padding: 0 16px; }
+  .faixa p { font-size: 12.5px; }
+  .abas { padding: 0 16px; }
+  .conteudo { padding-left: 16px; padding-right: 16px; }
+  .rodape { padding-left: 16px; padding-right: 16px; }
+
+  .grafico .serie { grid-template-columns: 92px 1fr; gap: 8px; }
+  .quadro .corpo { padding: 16px 14px; }
+  .quadro > header { padding: 12px 14px; }
+  .modal .painel { padding: 24px 20px; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="marca" href="index.html" title="Voltar ao início">
+    <img src="assets/img/marca-centi.png" alt="Centi">
+  </a>
+  <h1>Benchmark de preços</h1>
+  <div class="fim">
+    <div class="coleta">Coleta no PNCP em <span class="badge-data">03/09/2026</span></div>
+    <a class="voltar" href="documentacao.html#etapa9-preco">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="20" y1="12" x2="5" y2="12"/><polyline points="11,6 5,12 11,18"/></svg>
+      Documentação
+    </a>
+  </div>
+</header>
+
+<div class="faixa">
+  <p>Preços praticados por concorrentes no setor público · dados do Portal Nacional de Contratações Públicas.</p>
+</div>
+
+<nav class="abas" id="abas" role="tablist" aria-label="Seções do painel"></nav>
+
+<main class="conteudo">
+  <section class="aba" id="aba-resumo" role="tabpanel" aria-labelledby="bt-resumo"></section>
+  <section class="aba" id="aba-1doc" role="tabpanel" aria-labelledby="bt-1doc" hidden></section>
+  <section class="aba" id="aba-aprova" role="tabpanel" aria-labelledby="bt-aprova" hidden></section>
+  <section class="aba" id="aba-gove" role="tabpanel" aria-labelledby="bt-gove" hidden></section>
+  <section class="aba" id="aba-centi" role="tabpanel" aria-labelledby="bt-centi" hidden></section>
+</main>
+
+<footer class="rodape">
+  <hr>
+  <p>Centi · Protocolo 3.0 · Etapa #9 Comercialização. Fonte dos contratos: Portal Nacional de Contratações Públicas (PNCP), API pública de consulta, coleta em 03/09/2026. População municipal: IBGE, Estimativas da População 2024. Valores mensais são o valor global do contrato dividido pelos meses de vigência — aproximação, não o valor de assinatura informado pelo fornecedor.</p>
+</footer>
+
+<div class="modal" id="modal" hidden onclick="if (event.target === this) fecharModal()">
+  <div class="painel" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+    <button class="fechar" type="button" onclick="fecharModal()" aria-label="Fechar">✕</button>
+    <span class="selo-modal">Como ler este quadro</span>
+    <h3 id="modal-titulo"></h3>
+    <div id="modal-corpo"></div>
+  </div>
+</div>
+
+<script src="assets/benchmark-dados.js"></script>
+<script src="assets/benchmark-painel.js"></script>
+</body>
+</html>

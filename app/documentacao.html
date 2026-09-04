@@ -464,6 +464,17 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
   color: #6D8415;
 }
 
+/* link externo dentro do conteúdo: mesma cor de destaque do code, sublinhado
+   para deixar claro que é clicável mesmo dentro de um texto em itálico */
+.pagina a {
+  color: #6D8415;
+  text-decoration: underline;
+  text-decoration-color: var(--verde-linha);
+  text-underline-offset: 2px;
+}
+
+.pagina a:hover { text-decoration-color: currentColor; }
+
 /* estrutura de conta no CRM: árvore em monoespaçado, como um bloco de código */
 .pagina .estrutura-crm {
   overflow-x: auto;
@@ -774,6 +785,103 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
   background: #F1F1F1;
   font-style: italic;
   color: #5F5F5F;
+}
+
+/* modelo de faixas: cada critério é uma barra que avança dentro do mesmo
+   range. As barras têm tamanhos diferentes porque cada critério pesa de um
+   jeito na faixa; o que a faixa cobra é a soma desse avanço, e não um corte
+   único */
+.pagina .range-faixas {
+  position: relative;
+  margin: 0 0 26px;
+}
+
+/* as guias tracejadas: onde o range começa e onde ele termina. Ficam atrás
+   das barras, que passam por cima da guia da esquerda */
+.pagina .range-faixas .guia {
+  position: absolute;
+  top: 34px;
+  bottom: 0;
+  width: 0;
+  border-left: 1px dashed #C9DA86;
+}
+
+.pagina .range-faixas .guia.ini { left: 0; }
+.pagina .range-faixas .guia.fim { right: 0; }
+
+/* a linha do range, com o rótulo no meio */
+.pagina .range-faixas .eixo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 18px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: #5D6725;
+}
+
+.pagina .range-faixas .eixo::before,
+.pagina .range-faixas .eixo::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 2px;
+  background: var(--verde-linha);
+}
+
+/* cada trilha é uma barra e o critério logo à frente dela */
+.pagina .range-faixas .trilha {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 10px;
+}
+
+.pagina .range-faixas .barra {
+  flex: 0 0 auto;
+  height: 28px;
+  border-radius: 0 6px 6px 0;
+}
+
+/* conforme o critério desce, a barra avança mais dentro do range e o verde
+   fica mais forte */
+.pagina .range-faixas .barra.b1 { width: 16%; background: #F2FADB; }
+.pagina .range-faixas .barra.b2 { width: 22%; background: #ECF7CD; }
+.pagina .range-faixas .barra.b3 { width: 27%; background: #E5F4BE; }
+.pagina .range-faixas .barra.b4 { width: 32%; background: #DDF0AD; }
+.pagina .range-faixas .barra.b5 { width: 37%; background: #D4EB9A; }
+.pagina .range-faixas .barra.b6 { width: 42%; background: #CBE687; }
+.pagina .range-faixas .barra.b7 { width: 46%; background: #C1E072; }
+
+.pagina .range-faixas .rot {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+  font-weight: 700;
+  color: var(--txt-strong);
+}
+
+/* o detalhamento entre parênteses não compete com o nome do critério */
+.pagina .range-faixas .rot .det {
+  font-weight: 400;
+  color: var(--txt-mute);
+}
+
+/* na tela estreita a barra encolhe para o critério continuar legível */
+@media (max-width: 760px) {
+  .pagina .range-faixas .trilha { gap: 10px; }
+  .pagina .range-faixas .barra { height: 24px; }
+  .pagina .range-faixas .barra.b1 { width: 12%; }
+  .pagina .range-faixas .barra.b2 { width: 17%; }
+  .pagina .range-faixas .barra.b3 { width: 22%; }
+  .pagina .range-faixas .barra.b4 { width: 26%; }
+  .pagina .range-faixas .barra.b5 { width: 30%; }
+  .pagina .range-faixas .barra.b6 { width: 34%; }
+  .pagina .range-faixas .barra.b7 { width: 38%; }
 }
 
 /* cards do modelo de comercialização */
@@ -1924,7 +2032,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
     <img src="assets/img/marca-centi.png" alt="Centi">
   </a>
   <h1>Documentação Protocolo 3.0</h1>
-  <div class="atualizado">Atualizado em: <span class="badge-data">03/09/2026</span></div>
+  <div class="atualizado">Atualizado em: <span class="badge-data">04/09/2026</span></div>
   <button class="bt-menu" id="bt-menu" onclick="alternarMenu()"
           aria-label="Abrir o menu" aria-expanded="false" aria-controls="sidebar">
     <svg class="ico-abrir" viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
@@ -5043,6 +5151,66 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </div>
     </section>
 
+    <div class="ilustracao">
+      <svg viewBox="0 0 720 90" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+
+        <!-- shapes: o porte segmenta os municípios, o funil qualifica e
+             conduz a venda, a passagem de bastão mantém o ritmo entre as
+             áreas, o preço é definido pela faixa e o contrato fecha o ciclo -->
+        <g fill="none" stroke="#F3FFC3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="16" y="58" width="16" height="20" rx="3" fill="#DFF08F" fill-opacity=".25"/>
+          <rect x="38" y="42" width="16" height="36" rx="3" fill="#C6E628" fill-opacity=".32"/>
+          <rect x="60" y="22" width="16" height="56" rx="3" fill="#C6E628" fill-opacity=".42"/>
+          <line x1="12" y1="80" x2="84" y2="80"/>
+
+          <rect x="140" y="10" width="120" height="14" rx="5" fill="#E8EF9E" fill-opacity=".16"/>
+          <rect x="154" y="29" width="92"  height="14" rx="5" fill="#DFF08F" fill-opacity=".22"/>
+          <rect x="168" y="48" width="64"  height="14" rx="5" fill="#C6E628" fill-opacity=".30"/>
+          <rect x="182" y="67" width="36"  height="14" rx="5" fill="#C6E628" fill-opacity=".42"/>
+
+          <circle cx="300" cy="45" r="10" fill="#DFF08F" fill-opacity=".28"/>
+          <circle cx="344" cy="45" r="10" fill="#C6E628" fill-opacity=".32"/>
+          <circle cx="388" cy="45" r="10" fill="#C6E628" fill-opacity=".42"/>
+          <line x1="313" y1="45" x2="331" y2="45"/>
+          <path d="M326 41 l5 4 -5 4"/>
+          <line x1="357" y1="45" x2="375" y2="45"/>
+          <path d="M370 41 l5 4 -5 4"/>
+
+          <path d="M440 24 H468 L488 45 L468 66 H440 Z" fill="#C6E628" fill-opacity=".30"/>
+          <circle cx="452" cy="45" r="4"/>
+
+          <rect x="540" y="16" width="48" height="58" rx="5" fill="#DFF08F" fill-opacity=".18"/>
+          <line x1="550" y1="32" x2="578" y2="32"/>
+          <line x1="550" y1="42" x2="578" y2="42"/>
+          <line x1="550" y1="52" x2="566" y2="52"/>
+          <circle cx="576" cy="60" r="7" fill="#C6E628" fill-opacity=".34"/>
+          <path d="M572 60 l3 3 6 -7"/>
+
+          <circle cx="660" cy="45" r="20" fill="#C6E628" fill-opacity=".34"/>
+          <path d="M650 45 l7 8 15 -17"/>
+        </g>
+
+        <!-- linhas e setas: do porte ao funil, do funil à passagem entre as
+             áreas, ao preço, ao contrato e ao fechamento -->
+        <g fill="none" stroke="#F3FFC3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="92" y1="45" x2="130" y2="45"/>
+          <path d="M123 40 l7 5 -7 5"/>
+
+          <line x1="264" y1="45" x2="286" y2="45"/>
+          <path d="M279 40 l7 5 -7 5"/>
+
+          <line x1="410" y1="45" x2="436" y2="45"/>
+          <path d="M429 40 l7 5 -7 5"/>
+
+          <line x1="492" y1="45" x2="536" y2="45"/>
+          <path d="M529 40 l7 5 -7 5"/>
+
+          <line x1="592" y1="45" x2="636" y2="45"/>
+          <path d="M629 40 l7 5 -7 5"/>
+        </g>
+      </svg>
+    </div>
+
     <section id="etapa9">
       <h2>#9 Pipeline de Vendas</h2>
       <p class="lead">Estruturação do funil comercial e da abordagem de vendas do produto.</p>
@@ -5580,6 +5748,19 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           <p>Um edital publicado sem trabalho comercial anterior é uma disputa de preço. Um edital publicado depois de diagnóstico e demonstração é uma disputa de aderência.</p>
         </div>
       </div>
+
+      <div class="objetivo">
+        <svg class="setas" viewBox="0 0 100 64" aria-hidden="true">
+          <path d="M8 12 L30 32 L8 52"/>
+          <path d="M36 12 L58 32 L36 52"/>
+          <path d="M64 12 L86 32 L64 52"/>
+        </svg>
+        <div>
+          <h4>Estratégia de Prospecção Automática</h4>
+          <p>Criar um software que lê todas as licitações vigentes no Brasil e nos envia alertas sobre aquelas que fazem “fit” com o Protocolo 3.0.</p>
+          <p><b>Ver exemplo:</b> Portal de Compras Públicas (<a href="https://lp.portaldecompraspublicas.com.br" target="_blank" rel="noopener noreferrer">lp.portaldecompraspublicas.com.br</a>).</p>
+        </div>
+      </div>
     </section>
 
     <section id="etapa9-etapas" class="sub">
@@ -5814,15 +5995,52 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         </table>
       </div>
 
-      <h4 class="colado">Estrutura de faixas</h4>
-      <p>A assinatura é organizada em faixas por porte do município. Cada faixa precisa ter definido:</p>
+      <h4 class="colado">Modelo 1: Estrutura de faixas</h4>
+      <p>A assinatura é organizada em faixas por porte do município. Cada faixa é um <b>range</b>: os critérios abaixo avançam dentro dele em medidas diferentes e, somados, determinam onde o município se enquadra e o que está incluído no contrato.</p>
 
-      <ul class="lista">
-        <li>o critério objetivo de enquadramento (população, número de usuários ou volume de protocolos);</li>
-        <li>o que está incluído — número de fluxos modelados na implantação, usuários, armazenamento, suporte;</li>
-        <li>o que é cobrado à parte;</li>
-        <li>o valor de implantação correspondente.</li>
-      </ul>
+      <div class="range-faixas">
+        <span class="guia ini" aria-hidden="true"></span>
+        <span class="guia fim" aria-hidden="true"></span>
+
+        <div class="eixo"><span>Range</span></div>
+
+        <div class="trilha">
+          <span class="barra b1" aria-hidden="true"></span>
+          <p class="rot">Tamanho da população</p>
+        </div>
+        <div class="trilha">
+          <span class="barra b2" aria-hidden="true"></span>
+          <p class="rot">Quantidade de processos <span class="det">(fluxos)</span></p>
+        </div>
+        <div class="trilha">
+          <span class="barra b3" aria-hidden="true"></span>
+          <p class="rot">Volume de protocolos tramitados <span class="det">(dia/mês/ano)</span></p>
+        </div>
+        <div class="trilha">
+          <span class="barra b4" aria-hidden="true"></span>
+          <p class="rot">Horas em consultoria <span class="det">(modelagem de fluxos: performance e eficiência)</span></p>
+        </div>
+        <div class="trilha">
+          <span class="barra b5" aria-hidden="true"></span>
+          <p class="rot">Setup de implantação e treinamento</p>
+        </div>
+        <div class="trilha">
+          <span class="barra b6" aria-hidden="true"></span>
+          <p class="rot">Academia Centi <span class="det">(conteúdo autoinstrucional)</span></p>
+        </div>
+        <div class="trilha">
+          <span class="barra b7" aria-hidden="true"></span>
+          <p class="rot">Serviços adicionais <span class="det">(migração, integração, entre outros)</span></p>
+        </div>
+      </div>
+
+      <h4>Modelo 2: Baseado na concorrência</h4>
+      <p>O segundo modelo parte do preço que o município <b>já paga hoje</b>. O painel de benchmark reúne os <b>159 contratos</b> das três empresas que a Centi encontra no município — 1Doc, Aprova e Gove —, publicados no Portal Nacional de Contratações Públicas, com mediana por faixa de porte, modalidade de contratação e a proposta de preço da Centi testada contra cada concorrente.</p>
+
+      <fieldset class="riscos acesso">
+        <legend>Acessar</legend>
+        <a class="botao" href="benchmark-precos.html">Benchmark de preços</a>
+      </fieldset>
     </section>
 
     <section id="etapa9-contratacao" class="sub">
