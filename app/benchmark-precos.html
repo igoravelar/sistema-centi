@@ -423,9 +423,16 @@ tr.total:hover td { background: #EFF8C8; }
 .cel-barra .n b { color: var(--txt-strong); }
 
 /* ── gráfico de medianas: um grupo de barras por faixa ──── */
-.grafico { display: grid; gap: 22px; }
+.grafico { display: grid; gap: 20px; }
 
 .grafico .faixa-grupo { display: grid; gap: 7px; }
+
+/* filete entre uma faixa e a seguinte: o olho não mistura as barras de duas
+   faixas, que estão na mesma escala mas respondem a portes diferentes */
+.grafico .faixa-grupo + .faixa-grupo {
+  padding-top: 20px;
+  border-top: 1px solid var(--cinza-linha);
+}
 
 .grafico .faixa-nome {
   font-size: 12px;
@@ -476,11 +483,14 @@ tr.total:hover td { background: #EFF8C8; }
 /* a proposta da Centi entra destacada, separada dos três concorrentes */
 .grafico .serie.s-centi { padding-top: 7px; border-top: 1px dashed var(--verde-linha); }
 
+/* a chave de cores fecha com um filete, separada das barras */
 .legenda {
   display: flex;
   flex-wrap: wrap;
   gap: 6px 20px;
   margin: 0 0 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--cinza-linha);
   font-size: 12px;
 }
 
