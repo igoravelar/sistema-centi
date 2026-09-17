@@ -1,0 +1,8 @@
+# Ruído do Finder
+.DS_Store
+
+# Instrumentos assinados dos contratos da Centi: têm CPF, RG e endereço de
+# pessoas identificadas, e este repositório é público. Os números que o painel
+# de benchmark usa já estão em app/assets/siafic-dados.js; os documentos ficam
+# só na máquina e na base interna. Para versionar mesmo assim, remova esta linha.
+files/contratos-centi/

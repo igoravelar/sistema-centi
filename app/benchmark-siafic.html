@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Centi · Benchmark de preços</title>
+<title>Centi · Benchmark de preços SIAFICs de Goiás</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+
 * { box-sizing: border-box; }
 
 :root {
@@ -23,11 +24,11 @@
   --abas-h:      50px;
 
   /* cor de cada série nos comparativos: os três concorrentes na escala de
-     verde da marca e a Centi no verde vivo, para o nosso preço saltar */
-  --c-1doc:   #8BA81D;
-  --c-aprova: #C3CE9A;
-  --c-gove:   #5D6725;
-  --c-centi:  #C6E628;
+     verde da marca e a Centi no verde vivo, para o nosso dado saltar */
+  --c-megasoft: #8BA81D;
+  --c-prodata:  #5D6725;
+  --c-sigep:    #C3CE9A;
+  --c-centi:    #C6E628;
 }
 
 html { scroll-padding-top: calc(var(--topbar-h) + var(--faixa-h) + var(--abas-h) + 20px); }
@@ -99,15 +100,6 @@ body {
 }
 
 .topbar .voltar:hover { background: #F5FCD9; border-color: var(--verde); }
-
-/* atalho para o painel dos SIAFICs: avança em vez de voltar, então vem cheio */
-.topbar .voltar.adiante {
-  background: #F3FFC3;
-  border-color: #9BB61A;
-  color: #5D6725;
-}
-
-.topbar .voltar.adiante:hover { background: var(--verde); border-color: #7F9612; color: #FFFFFF; }
 
 .topbar .voltar svg {
   width: 14px; height: 14px;
@@ -339,12 +331,13 @@ tr.total:hover td { background: #EFF8C8; }
   padding: 16px 18px;
   background: #FFFFFF;
   border: 1px solid var(--cinza-linha);
-  border-left: 4px solid var(--c-1doc);
+  border-left: 4px solid var(--c-megasoft);
   border-radius: 10px;
 }
 
-.selo.aprova { border-left-color: var(--c-aprova); }
-.selo.gove   { border-left-color: var(--c-gove); }
+.selo.prodata { border-left-color: var(--c-prodata); }
+.selo.sigep   { border-left-color: var(--c-sigep); }
+.selo.centi   { border-left-color: var(--c-centi); background: #FCFDF6; }
 
 .selo h4 {
   margin: 0;
@@ -482,10 +475,10 @@ tr.total:hover td { background: #EFF8C8; }
   white-space: nowrap;
 }
 
-.grafico .serie.s-1doc   .barra span.b { background: var(--c-1doc); }
-.grafico .serie.s-aprova .barra span.b { background: var(--c-aprova); }
-.grafico .serie.s-gove   .barra span.b { background: var(--c-gove); }
-.grafico .serie.s-centi  .barra span.b { background: var(--c-centi); }
+.grafico .serie.s-megasoft .barra span.b { background: var(--c-megasoft); }
+.grafico .serie.s-prodata  .barra span.b { background: var(--c-prodata); }
+.grafico .serie.s-sigep    .barra span.b { background: var(--c-sigep); }
+.grafico .serie.s-centi    .barra span.b { background: var(--c-centi); }
 
 .grafico .serie.s-centi .nome { color: #3F440C; }
 
@@ -511,10 +504,10 @@ tr.total:hover td { background: #EFF8C8; }
   background: var(--verde);
 }
 
-.legenda .l-1doc i   { background: var(--c-1doc); }
-.legenda .l-aprova i { background: var(--c-aprova); }
-.legenda .l-gove i   { background: var(--c-gove); }
-.legenda .l-centi i  { background: var(--c-centi); }
+.legenda .l-megasoft i { background: var(--c-megasoft); }
+.legenda .l-prodata i  { background: var(--c-prodata); }
+.legenda .l-sigep i    { background: var(--c-sigep); }
+.legenda .l-centi i    { background: var(--c-centi); }
 
 /* ── filtros das abas de contratos ──────────────────────── */
 .filtros {
@@ -551,6 +544,9 @@ tr.total:hover td { background: #EFF8C8; }
 
 .filtros input { min-width: 190px; }
 
+/* o filtro de razão social tem rótulos longos: limita a largura do campo */
+.filtros select { max-width: 230px; }
+
 .filtros .limpar {
   padding: 7px 14px;
   background: #FFFFFF;
@@ -582,7 +578,7 @@ th.ord .seta { color: var(--verde); font-size: 10px; }
 /* tabela de contratos: densa, com rolagem horizontal própria. Nenhuma célula
    quebra linha — a linha do contrato tem sempre a mesma altura, e o texto que
    não cabe é cortado com reticências e recuperado no title */
-.tab-contratos { min-width: 1240px; }
+.tab-contratos { min-width: 1300px; }
 .tab-contratos th,
 .tab-contratos td { padding: 8px 12px; white-space: nowrap; }
 
@@ -599,7 +595,8 @@ th.ord .seta { color: var(--verde); font-size: 10px; }
 .tab-contratos .orgao { font-weight: 700; color: var(--txt-strong); }
 .tab-contratos .obj { font-size: 11px; font-weight: 400; color: var(--txt-mute); }
 
-.tab-contratos a.pncp {
+/* link para o contrato no portal: vale em qualquer tabela do painel */
+a.pncp {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -609,9 +606,10 @@ th.ord .seta { color: var(--verde); font-size: 10px; }
   white-space: nowrap;
 }
 
-.tab-contratos a.pncp:hover { text-decoration: underline; }
+a.pncp:hover { text-decoration: underline; }
 
-.tab-contratos a.pncp svg {
+a.pncp svg {
+  flex: 0 0 auto;
   width: 12px; height: 12px;
   fill: none; stroke: currentColor; stroke-width: 2.2;
   stroke-linecap: round; stroke-linejoin: round;
@@ -634,6 +632,9 @@ th.ord .seta { color: var(--verde); font-size: 10px; }
 .nota b { color: var(--txt-strong); }
 
 .nota ul { margin: 0; padding-left: 18px; }
+
+/* dentro da caixa de recado o (i) acompanha a frase, e não a margem direita */
+.nota .bt-info { display: inline-grid; margin: 0 0 0 6px; vertical-align: -5px; }
 .nota li { margin: 4px 0; }
 
 .leitura {
@@ -755,6 +756,63 @@ th.ord .seta { color: var(--verde); font-size: 10px; }
   .quadro > header { padding: 12px 14px; }
   .modal .painel { padding: 24px 20px; }
 }
+
+/* ── ficha da empresa: as razões sociais que assinam os contratos ──────── */
+.razoes { margin: 12px 0 0; padding: 0; list-style: none; }
+
+.razoes li {
+  padding: 6px 0;
+  border-top: 1px solid #F0F0F0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.razoes b { color: var(--txt-strong); }
+.razoes .cnpj { font-variant-numeric: tabular-nums; }
+.razoes i { color: var(--txt-mute); font-style: normal; }
+
+/* ── distribuição por faixa: a barra empilhada de uma linha ───────────── */
+.pilha { display: flex; height: 22px; border-radius: 5px; overflow: hidden; background: #F0F0F0; }
+
+.pilha span {
+  display: block;
+  min-width: 2px;
+  border-right: 1px solid #FFFFFF;
+}
+
+.pilha span:last-child { border-right: 0; }
+
+.pilha .p1 { background: #EDF6D0; }
+.pilha .p2 { background: #D2E795; }
+.pilha .p3 { background: #A1BB3E; }
+.pilha .p4 { background: #5D6725; }
+
+.legenda-faixas { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 12px 0 0; font-size: 11.5px; }
+.legenda-faixas span { display: inline-flex; align-items: center; gap: 6px; }
+.legenda-faixas i { width: 11px; height: 11px; border-radius: 3px; }
+.legenda-faixas .f1 i { background: #EDF6D0; }
+.legenda-faixas .f2 i { background: #D2E795; }
+.legenda-faixas .f3 i { background: #A1BB3E; }
+.legenda-faixas .f4 i { background: #5D6725; }
+
+/* ── a linha da Centi nos comparativos: destacada, e separada dos três ── */
+tr.centi td {
+  background: #F5FCD9;
+  border-top: 1px dashed var(--verde);
+  font-weight: 700;
+  color: #3F440C;
+}
+
+tr.centi:hover td { background: #EFF8C8; }
+
+th.centi, td.centi-col { background: #FBFDF1; }
+
+table th.centi:last-child,
+table td.centi-col:last-child { padding-right: 12px; }
+
+/* os quatro contratos da Centi: cabem na largura da página, sem quebrar datas */
+table.tab-centi th,
+table.tab-centi td { white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -763,37 +821,36 @@ th.ord .seta { color: var(--verde); font-size: 10px; }
   <a class="marca" href="index.html" title="Voltar ao início">
     <img src="assets/img/marca-centi.png" alt="Centi">
   </a>
-  <h1>Benchmark de preços</h1>
+  <h1>Benchmark de preços SIAFICs de Goiás</h1>
   <div class="fim">
-    <div class="coleta">Coleta no PNCP em <span class="badge-data">03/09/2026</span></div>
+    <div class="coleta">Coleta no PNCP em <span class="badge-data">09/09/2026</span></div>
+    <a class="voltar" href="benchmark-precos.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="20" y1="12" x2="5" y2="12"/><polyline points="11,6 5,12 11,18"/></svg>
+      Protocolo 3.0
+    </a>
     <a class="voltar" href="documentacao.html#etapa9-preco">
       <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="20" y1="12" x2="5" y2="12"/><polyline points="11,6 5,12 11,18"/></svg>
       Documentação
-    </a>
-    <a class="voltar adiante" href="benchmark-siafic.html">
-      SIAFICs
-      <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13,6 19,12 13,18"/></svg>
     </a>
   </div>
 </header>
 
 <div class="faixa">
-  <p>Preços praticados por concorrentes no setor público · dados do Portal Nacional de Contratações Públicas.</p>
+  <p>Sistemas completos de gestão pública municipal · as quatro empresas que disputam o SIAFIC em Goiás.</p>
 </div>
 
 <nav class="abas" id="abas" role="tablist" aria-label="Seções do painel"></nav>
 
 <main class="conteudo">
-  <section class="aba" id="aba-resumo" role="tabpanel" aria-labelledby="bt-resumo"></section>
-  <section class="aba" id="aba-1doc" role="tabpanel" aria-labelledby="bt-1doc" hidden></section>
-  <section class="aba" id="aba-aprova" role="tabpanel" aria-labelledby="bt-aprova" hidden></section>
-  <section class="aba" id="aba-gove" role="tabpanel" aria-labelledby="bt-gove" hidden></section>
-  <section class="aba" id="aba-centi" role="tabpanel" aria-labelledby="bt-centi" hidden></section>
+  <section class="aba" id="aba-comparativo" role="tabpanel" aria-labelledby="bt-comparativo"></section>
+  <section class="aba" id="aba-megasoft" role="tabpanel" aria-labelledby="bt-megasoft" hidden></section>
+  <section class="aba" id="aba-prodata" role="tabpanel" aria-labelledby="bt-prodata" hidden></section>
+  <section class="aba" id="aba-sigep" role="tabpanel" aria-labelledby="bt-sigep" hidden></section>
 </main>
 
 <footer class="rodape">
   <hr>
-  <p>Centi · Protocolo 3.0 · Etapa #9 Comercialização. Fonte dos contratos: Portal Nacional de Contratações Públicas (PNCP), API pública de consulta, coleta em 03/09/2026. População municipal: IBGE, Estimativas da População 2024. Valores mensais são o valor global do contrato dividido pelos meses de vigência — aproximação, não o valor de assinatura informado pelo fornecedor.</p>
+  <p>Centi · Protocolo 3.0 · Etapa #9 Comercialização. Fonte dos contratos: Portal Nacional de Contratações Públicas (PNCP), busca por palavra-chave com confirmação individual do CNPJ do fornecedor pela API oficial, coleta em 09/09/2026. População municipal: IBGE, Estimativas da População 2024. Valores mensais são o valor global do contrato dividido pelos meses de vigência — aproximação, não o valor de assinatura informado pelo fornecedor.</p>
 </footer>
 
 <div class="modal" id="modal" hidden onclick="if (event.target === this) fecharModal()">
@@ -805,7 +862,7 @@ th.ord .seta { color: var(--verde); font-size: 10px; }
   </div>
 </div>
 
-<script src="assets/benchmark-dados.js"></script>
-<script src="assets/benchmark-painel.js"></script>
+<script src="assets/siafic-dados.js"></script>
+<script src="assets/siafic-painel.js"></script>
 </body>
 </html>
