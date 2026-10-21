@@ -20,6 +20,8 @@ python3 -m http.server 5173
 | `protocolo.html` | Menu Protocolo (menu do módulo) | frame `Menu Protocolo` + `Menu_V2.html` |
 | `po002.html` | PO002 - Protocolo (Pesquisa / Cadastro) | frames `PO002 - Aba Pesquisa`, `PO002 - Aba Cadastro` |
 | `po011.html` | PO011 - Central de Protocolos (BPMN + drawer) | frames `PO011 - Drawer Dados / Documentos / Checklist` |
+| `gestao-folha.html` | Menu Gestão da Folha (submódulo da Folha de Pagamento) | menu do ERP |
+| `fp296.html` | FP296 - Gestão Folha de Pagamento (Pesquisa / Cadastro: Comparativo e Ficha Financeira) | `files/Telas Premium.fig` — frames `FP296 - Gestão Folha Pagto > Comparativo 1` e `> Financeiro 1`; Pesquisa conforme o ERP |
 
 Caminhos de navegação:
 
@@ -28,6 +30,13 @@ Caminhos de navegação:
   Centi no topo dele volta para a index
 - **sidebar → Protocolo** abre o `protocolo.html`
 - **protocolo** → item `Protocolo PO002` abre o `po002.html`; `Tela Protocolo PO011` abre o `po011.html`
+- **sidebar → Folha de Pagamento → Gestão da Folha** abre o `gestao-folha.html`; o item
+  `Gestão folha de pagamento FP296` abre o `fp296.html`
+- **fp296 · Pesquisa** → `Pesquisar` preenche a grid; um clique seleciona o servidor e o
+  segundo clique (ou o duplo clique) abre o Cadastro. No Cadastro, as setas ao lado do
+  nome passam ao servidor anterior/seguinte da grid, e as abas internas trocam entre
+  Comparativo e Ficha Financeira (Movimentações, Eventos, Apontamentos e Históricos
+  ainda em construção). Estados por URL: `fp296.html?servidor=0&aba=ficha`
 - **po002 · Pesquisa** → clique numa linha de resultado leva ao Cadastro
 - **po002 · Cadastro** → botão `Guia do Fluxo` abre o `po011.html`
 - **po011** abre **sem drawer**, com o fluxograma ocupando todo o modal. Clicar

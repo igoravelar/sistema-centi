@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centi · Gestão da Folha</title>
+<link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
+<link rel="stylesheet" href="assets/centi.css?v=21">
+<link rel="stylesheet" href="assets/menu.css?v=3">
+</head>
+<body>
+
+<div class="app"></div>
+
+<script src="assets/shell.js?v=18"></script>
+<script>
+/* ícones extras usados só nesta tela */
+Object.assign(ICO, {
+  ciclo:      '<polyline points="23,4 23,10 17,10"/><polyline points="1,20 1,14 7,14"/><path d="M3.5 9a9 9 0 0 1 14.9-3.4L23 10M1 14l4.6 4.4A9 9 0 0 0 20.5 15"/>',
+  relatorio:  '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14,2 14,8 20,8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/>',
+  camadas:    '<polygon points="12,3 22,8 12,13 2,8"/><polyline points="2,13 12,18 22,13"/>',
+  cubo:       '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.3,7 12,12 20.7,7"/><line x1="12" y1="22" x2="12" y2="12"/>',
+  conferir:   '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><polyline points="9,13 11,15 15,11"/>',
+  balanca:    '<line x1="12" y1="3" x2="12" y2="21"/><line x1="7" y1="21" x2="17" y2="21"/><line x1="4" y1="7" x2="20" y2="7"/><path d="M4 7 1.5 13a3 3 0 0 0 5 0z"/><path d="M20 7l-2.5 6a3 3 0 0 0 5 0z"/>',
+  cifrao:     '<line x1="12" y1="2" x2="12" y2="22"/><path d="M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  ferias:     '<path d="M3 20h18"/><path d="M12 20V9"/><path d="M5 9a7 7 0 0 1 14 0z"/>',
+  rescisao:   '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14,2 14,8 20,8"/><line x1="9.5" y1="12.5" x2="14.5" y2="17.5"/><line x1="14.5" y1="12.5" x2="9.5" y2="17.5"/>',
+  andar:      '<circle cx="13" cy="4" r="2"/><path d="M10 22l2-7 3 3v4"/><path d="M8 12l2-4 4 1 3 4"/>',
+  medalha:    '<circle cx="12" cy="9" r="6"/><path d="M8.5 14 7 22l5-3 5 3-1.5-8"/>',
+  readaptar:  '<circle cx="9" cy="7" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 11-4.7"/><circle cx="18" cy="17" r="3"/><path d="M18 12.5v1.5M18 20v1.5M13.5 17H15M21 17h1.5"/>',
+  maisCirc:   '<circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>',
+  documento:  '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14,2 14,8 20,8"/>',
+  cartao:     '<rect x="2" y="5" width="20" height="14" rx="2"/><line x1="6" y1="10" x2="10" y2="10"/><line x1="6" y1="14" x2="14" y2="14"/>',
+  tabela:     '<rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="10" x2="9" y2="20"/><line x1="15" y1="10" x2="15" y2="20"/>',
+  lista:      '<line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3" y2="6"/><line x1="3" y1="12" x2="3" y2="12"/><line x1="3" y1="18" x2="3" y2="18"/>',
+  moedas:     '<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/>',
+  copiar:     '<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>',
+  alerta:     '<line x1="12" y1="5" x2="12" y2="14"/><line x1="12" y1="19" x2="12" y2="19"/>',
+  historico:  '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><polyline points="3,3 3,8 8,8"/><polyline points="12,7 12,12 15,14"/>',
+  cadeado:    '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/>',
+  borrachaD:  '<path d="M4 16 12 8l6 6-5 5H7z"/><line x1="4" y1="21" x2="20" y2="21"/>',
+});
+
+const CAST = [
+  { titulo: 'CENTICAST | Sua Folha está pronta para o fechamento?',     autor: 'Rangel Machado e Tatielle Santana' },
+  { titulo: 'CENTICAST | Fechamento Seguro da Folha: o que conferir',   autor: 'Alexandre Lopes' },
+  { titulo: 'CENTICAST | Preparação e conferência da folha',            autor: 'Tatielle do Prado' },
+  { titulo: 'CADASTRO CONCURSO PÚBLICO',                                autor: 'Fernando Vidal' },
+  { titulo: 'DOMINE O 13º SALÁRIO',                                     autor: 'Fernando Vidal' },
+  { titulo: 'FOLHA DE PAGAMENTO | CENTI',                               autor: 'Rubens Comprev e Bruno Quintino' },
+];
+
+/* Itens conforme o menu Gestão da Folha do ERP. Só a FP296 abre tela no
+   protótipo; as demais ficam listadas para a busca e a navegação visual. */
+const MODULOS_MENU = [
+  {
+    classe: 'remessa', titulo: 'Movimentações e Processamento', ico: 'ciclo',
+    itens: [
+      { txt: 'Processar folha',                cod: 'FP029', ico: 'engrenagens', fav: true },
+      { txt: 'Ficha financeira',               cod: 'FP024', ico: 'cifrao', tag: 'video' },
+      { txt: 'Gestão folha de pagamento',      cod: 'FP296', ico: 'balanca', href: 'fp296.html', tag: 'novo' },
+      { txt: 'Calcular contribuição patronal', cod: 'FP278', ico: 'calculadora' },
+      { txt: 'Férias',                         cod: 'FP026', ico: 'ferias' },
+      { txt: 'Rescisão',                       cod: 'FP027', ico: 'rescisao', tag: 'video' },
+      { txt: 'Afastamento',                    cod: 'FP028', ico: 'andar' },
+      { txt: 'Licença prêmio',                 cod: 'FP188', ico: 'medalha' },
+      { txt: 'Readaptação',                    cod: 'FP203', ico: 'readaptar' },
+      { txt: 'Inclusão/ajuste de eventos',     cod: 'FP011', ico: 'maisCirc' },
+    ],
+  },
+  {
+    classe: 'gestao', titulo: 'Relatórios Financeiros', ico: 'relatorio',
+    itens: [
+      { txt: 'Ocorrências',                 cod: 'FP033', ico: 'documento' },
+      { txt: 'Demonstrativo de pagto',      cod: 'FP034', ico: 'documento' },
+      { txt: 'Folha de pagamento',          cod: 'FP035', ico: 'cartao' },
+      { txt: 'Ficha financeira anual',      cod: 'FP063', ico: 'tabela', tag: 'video' },
+      { txt: 'Listagem de eventos',         cod: 'FP038', ico: 'lista' },
+      { txt: 'Relação salário líquido',     cod: 'FP036', ico: 'moedas' },
+      { txt: 'Demonstrativo IRRF',          cod: 'FP082', ico: 'cifrao', tag: 'video' },
+      { txt: 'Demonstrativo previdenciário', cod: 'FP093', ico: 'cifrao', tag: 'video', fav: true },
+      { txt: 'Demonstrativo do ipasgo',     cod: 'FP232', ico: 'documento' },
+      { txt: 'Folha de pagamento - modelo', cod: 'FP102', ico: 'copiar' },
+    ],
+  },
+  {
+    classe: 'relatorios', titulo: 'Relatórios de Movimentação', ico: 'relatorio',
+    itens: [
+      { txt: 'Relação de férias',            cod: 'FP079', ico: 'ferias' },
+      { txt: 'Relação de licença prêmio',    cod: 'FP221', ico: 'medalha' },
+      { txt: 'Relação de férias vencidas',   cod: 'FP080', ico: 'alerta' },
+      { txt: 'Relação de afastamentos',      cod: 'FP071', ico: 'andar', tag: 'video' },
+      { txt: 'Emissão de comprovante férias', cod: 'FP054', ico: 'documento' },
+      { txt: 'Requerimento de férias',       cod: 'FP107', ico: 'documento' },
+      { txt: 'Listagem de apontamentos',     cod: 'FP081', ico: 'conferir' },
+      { txt: 'Histórico de movimentação',    cod: 'FP183', ico: 'historico' },
+    ],
+  },
+  {
+    classe: 'cubo', titulo: 'Cubos Financeiros e Movimentação', ico: 'cubo',
+    itens: [
+      { txt: 'Cubo financeiro',                  cod: 'FP040', ico: 'cifrao' },
+      { txt: 'Cubo demonstrativo previdenciário', cod: 'FP288', ico: 'cifrao', tag: 'video' },
+    ],
+  },
+  {
+    classe: 'documentos', titulo: 'Relatórios de Anexos e Conferência', ico: 'conferir',
+    itens: [
+      { txt: 'Conf. base de cálculo',   cod: 'FP106', ico: 'calculadora' },
+      { txt: 'Conferência de bases',    cod: 'FP074', ico: 'conferir' },
+    ],
+  },
+  {
+    classe: 'massa', titulo: 'Operações em Massa', ico: 'camadas',
+    itens: [
+      { txt: 'Exclusão e alteração de férias em massa',  cod: 'FP177', ico: 'borrachaD' },
+      { txt: 'Termo de rescisão em massa',               cod: 'FP181', ico: 'rescisao' },
+      { txt: 'Bloqueio/desbloqueio de pagamento em massa', cod: 'FP266', ico: 'cadeado' },
+      { txt: 'Exclusão de pagamento',                    cod: 'FP030', ico: 'lixeira' },
+    ],
+  },
+];
+
+const TAGS = { video: 'VÍDEO', novo: 'NOVO', treino: 'TREINO' };
+
+function itemHTML(it) {
+  const tag = it.tag ? `<span class="tag ${it.tag}">${TAGS[it.tag]}</span>` : '';
+  const alvo = it.href ? ` onclick="location.href='${it.href}'"` : '';
+  return `
+    <div class="menu-item" data-busca="${(it.txt + ' ' + it.cod).toLowerCase()}"${alvo}>
+      ${tag}
+      <span class="menu-item-favorite${it.fav ? ' ativo' : ''}"
+            onclick="event.stopPropagation();this.classList.toggle('ativo')">★</span>
+      <span class="menu-item-icon">${svg(it.ico)}</span>
+      <span class="menu-item-text">${it.txt}</span>
+      <span class="menu-item-code">${it.cod}</span>
+    </div>`;
+}
+
+function menuHTML() {
+  const cards = MODULOS_MENU.map(m => `
+    <section class="module ${m.classe}">
+      <div class="module-header">
+        <div class="module-icon">${svg(m.ico)}</div>
+        <div class="module-title">${m.titulo}</div>
+      </div>
+      ${m.itens.map(itemHTML).join('')}
+    </section>`).join('');
+
+  const cast = CAST.map(c => `
+    <div class="webcast-item">
+      <div class="webcast-title">${svg('play')}<span>${c.titulo}</span></div>
+      <div class="webcast-details">${c.autor}</div>
+    </div>`).join('');
+
+  return `
+  <div class="menu">
+    <div class="menu-header">
+      <div>
+        <h1><span class="header-icon">${svg('calculadora')}</span> Gestão da Folha</h1>
+        <div class="search-container">
+          <input class="search-input" placeholder="Buscar funcionalidades..." oninput="filtrar(this.value)">
+          <span class="search-icon">${svg('lupa')}</span>
+        </div>
+      </div>
+      <div class="centi-cast">
+        <div class="centi-cast-badge">${svg('play', 'width="12" height="12"')} Centi Cast</div>
+        <div class="webcast-list">${cast}</div>
+      </div>
+    </div>
+    <div class="menu-grid">${cards}</div>
+  </div>`;
+}
+
+/** Filtra os itens do menu pelo texto ou código da funcionalidade. */
+function filtrar(termo) {
+  const t = termo.trim().toLowerCase();
+  document.querySelectorAll('.module').forEach(mod => {
+    let visiveis = 0;
+    mod.querySelectorAll('.menu-item').forEach(it => {
+      const bate = !t || it.dataset.busca.includes(t);
+      it.hidden = !bate;
+      if (bate) visiveis++;
+    });
+    mod.style.display = visiveis ? '' : 'none';
+  });
+}
+
+const main = montarShell('gestaofolha');
+main.insertAdjacentHTML('beforeend', `<div class="tela">${menuHTML()}</div>`);
+</script>
+</body>
+</html>

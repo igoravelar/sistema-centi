@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centi · FP296 - Gestão Folha de Pagamento</title>
+<link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/centi.css?v=21">
+<style>
+  .vazio-vista { flex: 1; display: grid; place-items: center; color: var(--txt-mute); }
+
+  /* ------------------------------- Pesquisa -------------------------------
+     Mesmo desenho da Pesquisa do PO051: filtros à esquerda, Últimas Buscas à
+     direita com divisória vertical, e a grid preenchida só após Pesquisar. */
+  .pesq { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 6px; }
+  .filtros { padding: 14px 16px; display: flex; gap: 16px; }
+  .filtros-esq { flex: 1; min-width: 0; border-right: 1px solid var(--tab-bd);
+                 margin: -14px 0; padding: 14px 16px 14px 0; }
+  .filtros-grid { display: grid; grid-template-columns: 240px 240px 1fr 30px; gap: 10px 12px; }
+  .filtros-grid .cab { font-size: 11.5px; font-weight: bold; color: var(--txt); text-align: left; }
+  .filtros-grid select, .filtros-grid input {
+    height: 32px; border: 1px solid var(--fld-bd); border-radius: 4px;
+    padding: 0 10px; color: var(--txt); background: #FFFFFF; outline: none; width: 100%;
+  }
+  .filtros-grid select:focus, .filtros-grid input:focus { border-color: var(--g); }
+  .filtros .divisor { height: 1px; background: var(--tab-bd); margin-top: 14px; }
+  .filtros .acoes { display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin-top: 12px; }
+  .ultimas {
+    flex: 0 0 330px; min-width: 0; max-width: 330px; overflow: hidden;
+    background: #FFFFFF; border: 1px solid var(--tab-bd); border-radius: 5px; padding: 10px 14px;
+  }
+  .ultimas h3 { margin: 0 0 8px; font-size: 13px; font-weight: bold; color: var(--txt); display: flex; align-items: center; gap: 8px; }
+  .ultimas h3 svg { width: 14px; height: 14px; }
+  .ultimas ul { margin: 0; padding: 0; }
+  .ultimas li { list-style: none; font-size: 12px; padding: 5px 0; color: var(--txt);
+                overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+  .ultimas li:hover { color: var(--g-dark); }
+  .res-topo { display: flex; align-items: center; gap: 12px; padding: 12px 16px; flex: 0 0 auto; }
+  .res-topo h2 { margin: 0; font-size: 18px; font-weight: bold; color: var(--txt); }
+  .res-topo .conta { font-size: 13px; color: var(--txt); }
+  .res-topo .dir { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  .res-topo select { height: 29px; border: 1px solid var(--fld-bd); border-radius: 4px; padding: 0 8px; background: #FFFFFF; color: var(--txt); }
+  .res-corpo { flex: 1; min-height: 0; margin: 0 12px 12px; background: #FFFFFF; border: 1px solid var(--tab-bd); border-radius: 4px; overflow: auto; }
+  .pesq .tabela td { max-width: 320px; }
+
+  /* ------------------------------- Cadastro -------------------------------
+     Conforme "Telas Premium.fig" (FP296 > Comparativo 1 / Financeiro 1):
+     faixa do servidor no topo, ficha cadastral, cards de valores e o corpo
+     com as abas internas Comparativo · Ficha Financeira · Movimentações. */
+  .cad { background: #F9F9F9; border-radius: 6px; font-family: 'Open Sans', 'Segoe UI', Verdana, sans-serif; }
+  .cad-topo { flex: 0 0 46px; background: #EDEFF2; border-bottom: 1px solid var(--tab-bd); }
+  .cad-topo .esq { flex: 0 0 auto; gap: 10px; padding: 0 12px; overflow: visible; }
+  .cad-topo .esq .serv { width: 17px; height: 17px; color: #9DC815; }
+  .cad-topo .esq .nome { font-size: 14px; color: #5C5B5C; text-decoration: underline; text-underline-offset: 4px;
+                         overflow: visible; text-overflow: clip; }
+  .cad-topo .esq .nome-vazio { font-style: italic; font-weight: normal; color: #5C5B5B; text-decoration: none; }
+  .cad-topo .nav { display: flex; align-items: center; gap: 10px; margin-right: 5px; font-size: 12px; color: #5C5B5C; }
+  .cad-topo .nav button {
+    width: 23px; height: 23px; padding: 0; border-radius: 50%;
+    background: var(--btc-bg); border: 1px solid var(--btc-bd); color: var(--btc-ico);
+    display: grid; place-items: center;
+  }
+  .cad-topo .nav button svg { width: 12px; height: 12px; stroke-width: 3; }
+  .cad-topo .nav button:hover { background: var(--btc-bg-h); border-color: var(--btc-bd-h); color: var(--btc-ico-h); }
+  .cad-topo .nav button:disabled { opacity: .4; cursor: default; }
+  .cad-topo .nav button:disabled:hover { background: var(--btc-bg); border-color: var(--btc-bd); color: var(--btc-ico); }
+  .cad-topo .dir { justify-content: flex-end; padding: 0 7px; gap: 10px; }
+  .cad-topo .btn { height: 30px; font-size: 12px; font-family: Verdana, sans-serif; }
+
+  .cad-corpo { flex: 1; min-height: 0; overflow: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+
+  /* ficha cadastral */
+  .ficha { flex: 0 0 auto; display: flex; align-items: center; gap: 26px; min-height: 55px; padding: 0 14px;
+           background: #FFFFFF; border: 1px solid #E0E2D8; border-radius: 6px; }
+  .ficha .f { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .ficha .f span { font-size: 10px; font-weight: 500; color: #959595; }
+  .ficha .f b { font-size: 12px; font-weight: normal; color: #434343; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ficha .f.ent { flex: 1; min-width: 120px; }
+  .ficha .btn { height: 26px; margin-left: auto; font-family: Verdana, sans-serif; }
+
+  /* cards de valores */
+  .valores { flex: 0 0 auto; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+  .vcard { background: #FFFFFF; border: 1px solid #E0E2D8; border-radius: 6px; overflow: hidden; }
+  .vcard h4 { margin: 0; height: 31px; padding: 0 13px; display: flex; align-items: center; border-bottom: 1px solid #E0E2D8;
+              font-size: 10.5px; font-weight: 600; color: #747474; text-transform: uppercase; letter-spacing: .2px; }
+  .vcard .lin { display: flex; align-items: baseline; gap: 8px; padding: 9px 13px 0; white-space: nowrap; }
+  /* card estreito: todos passam ao mesmo arranjo — anterior em cima, atual
+     embaixo —, em vez de cada um quebrar num ponto diferente */
+  .vcard { container-type: inline-size; }
+  @container (max-width: 250px) {
+    .vcard .lin { display: grid; grid-template-columns: auto auto 1fr; row-gap: 1px; }
+    .vcard .lin .atu { grid-column: 1 / -1; }
+  }
+  .vcard .ant { font-size: 12px; color: #747474; }
+  .vcard .seta { color: #C9CDC0; font-size: 12px; }
+  .vcard .atu { font-size: 17px; font-weight: bold; color: #434343; }
+  .vcard .dif { display: flex; align-items: center; gap: 6px; padding: 5px 13px 12px 13px; font-size: 10.5px; }
+  .vcard .dif svg { width: 8px; height: 8px; }
+  .dif.ruim { color: #FF5656; } .dif.bom { color: #11C638; }
+
+  /* corpo com as abas internas à esquerda (lidas de baixo para cima) */
+  .area { flex: 1 0 380px; min-height: 380px; display: flex; }
+  .itabs { flex: 0 0 36px; display: flex; flex-direction: column; gap: 0; padding-top: 0; }
+  .itab {
+    width: 36px; padding: 22px 0; margin-bottom: -1px;
+    background: #F5FFD3; border: 1px solid #A1C518; border-right: 0; border-radius: 6px 0 0 6px;
+    color: #8BA81D; font-size: 13.5px; font-weight: bold; cursor: pointer;
+    display: flex; justify-content: center; position: relative;
+  }
+  .itab span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; }
+  .itab:hover { background: #ECF8C4; }
+  .itab.ativa { background: #FFFFFF; border-color: #E0E2D8; color: #5C5B5C; z-index: 1; margin-right: -1px; width: 37px; }
+  .area-corpo { flex: 1; min-width: 0; background: #FFFFFF; border: 1px solid #E0E2D8; border-radius: 0 6px 6px 6px;
+                padding: 12px 14px; display: flex; flex-direction: column; gap: 12px; }
+
+  /* grupo rótulo + campo dos cabeçalhos internos (Competências, Tipo Folha...) */
+  .grupo { display: inline-flex; height: 33px; font-size: 13px; color: #747474; }
+  .grupo > * { border: 1px solid #CBCBCB; background: #FFFFFF; display: flex; align-items: center; padding: 0 11px; }
+  .grupo > * + * { margin-left: -1px; }
+  .grupo > :first-child { background: #F1F4E7; border-radius: 4px 0 0 4px; }
+  .grupo > :last-child { border-radius: 0 4px 4px 0; }
+  .grupo select { appearance: none; -webkit-appearance: none; font: inherit; color: inherit; outline: none; cursor: pointer;
+                  padding-right: 28px; min-width: 96px;
+                  background: #FFFFFF url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238BA81D' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 8px center / 11px; }
+
+  /* ---------------------------- Comparativo ---------------------------- */
+  .comp-cab { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .busca-ev { position: relative; width: 180px; height: 28px; }
+  .busca-ev input { width: 100%; height: 100%; border: 1px solid #CBCBCB; border-radius: 4px; padding: 0 10px 0 30px;
+                    font: 11px 'Open Sans', sans-serif; color: #5C5B5C; outline: none; }
+  .busca-ev input::placeholder { color: #CBCBCB; }
+  .busca-ev input:focus { border-color: var(--g); }
+  .busca-ev svg { position: absolute; left: 10px; top: 7px; width: 13px; height: 13px; color: #A2C812; }
+  .filtros-sit { display: flex; align-items: center; gap: 15px; margin-left: 5px; font-size: 11px; color: #747474; }
+  .filtros-sit > b { font-weight: bold; }
+  /* barra do Comparativo no tamanho do Figma (Competências, busca e Filtros) */
+  .comp-cab .grupo, .fin-filtros .grupo { height: 28px; font-size: 11px; }
+  .comp-cab .grupo select, .fin-filtros .grupo select { padding-right: 26px; min-width: 84px; }
+  .filtros-sit .chk { gap: 5px; }
+  .filtros-sit .chk i { width: 16px; height: 16px; }
+  .filtros-sit .chk i svg { width: 11px; height: 11px; }
+  .filtros-sit .chk .n { font-size: 9px; font-weight: normal; border: 0; border-radius: 8px; min-width: 15px; text-align: center; padding: 0 4px; line-height: 15px; }
+  .chk { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; user-select: none; }
+  .chk i { width: 18px; height: 18px; border-radius: 4px; background: #FBFCFE; border: 1px solid #CBCBCB; display: grid; place-items: center; }
+  .chk i svg { width: 12px; height: 12px; color: #FFFFFF; stroke-width: 3; display: none; }
+  .chk.on i { background: #8BA81E; border-color: #A1C518; }
+  .chk.on i svg { display: block; }
+  .chk .n { font-size: 9.5px; font-weight: 600; color: #8BA81D; background: #F5FFD3; border: 1px solid #DDEBA8; border-radius: 8px; padding: 0 5px; line-height: 14px; }
+
+  .comp-tab { border: 1px solid #E0E2D8; border-radius: 6px; overflow: auto; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .comp-tab table { flex: 0 0 auto; width: 100%; min-width: 1160px; border-collapse: collapse; table-layout: fixed; font-size: 12px; color: #5C5B5C; }
+  /* respiro das células: 12px nas laterais, para os valores não encostarem
+     nas divisórias dos blocos; a primeira coluna afasta 16px da borda */
+  .comp-tab th:first-child, .comp-tab td:first-child { padding-left: 16px !important; }
+  .comp-tab th, .comp-tab td { padding: 0 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* o cabeçalho gruda no topo como um bloco só: com cada th grudado por conta
+     própria, sobrava uma fresta de 1px entre as duas linhas por onde o texto
+     das linhas aparecia na rolagem. As linhas de baixo dos títulos são sombras
+     internas, porque a borda colapsada fica para trás quando o bloco gruda. */
+  .comp-tab thead { position: sticky; top: 0; z-index: 2; }
+  .comp-tab thead th { background: #FFFFFF; }
+  .comp-tab .g1 th { height: 37px; font-size: 14px; font-weight: bold; color: #747474; box-shadow: inset 0 -1px 0 #E0E2D8; }
+  .comp-tab .g2 th { height: 33px; white-space: normal; line-height: 1.15; padding-top: 4px; padding-bottom: 4px; font-size: 10px; font-weight: bold; color: #747474; box-shadow: inset 0 -1px 0 #B1B4A5; text-align: right; }
+  .comp-tab .g2 th.ev { text-align: left; }
+  .comp-tab .g2 th.c { text-align: center; }
+  .comp-tab .g2 th.sit { text-align: center; }
+  .comp-tab .g1 .tb { text-align: left; }
+  .comp-tab .g1 .cp { text-align: center; }
+  .comp-tab .g1 .base { background: #D7E6FF; text-align: center; border-left: 1px solid #E0E2D8; }
+  .comp-tab .g1 .comp { background: #D2F2C3; text-align: center; border-left: 1px solid #E0E2D8; border-right: 1px solid #E0E2D8; }
+  .comp-tab .pill { display: inline-block; margin-left: 6px; padding: 2px 8px; border-radius: 10px; font-size: 9.5px; font-weight: 600;
+                    color: #FFFFFF; vertical-align: 2px; text-transform: uppercase; }
+  .pill.p-base { background: #4C83E4; } .pill.p-comp { background: #52B423; }
+  .comp-tab td { height: 35px; border-bottom: 1px solid #E7E9E1; text-align: right; }
+  .comp-tab td.ev { text-align: left; }
+  .comp-tab td.ev .dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #D9D9D9; margin-right: 7px; vertical-align: 2px; }
+  .comp-tab td.ev .dot.alto { background: #F19224; }
+  .comp-tab td.ev .cod { color: #A4A991; margin-right: 5px; }
+  .comp-tab .cb { background: #F2F6FD; border-left: 1px solid #E0E2D8; }
+  .comp-tab .cc { background: #F1F7EE; }
+  .comp-tab .cc.l { border-left: 1px solid #E0E2D8; }
+  .comp-tab .cc.r { border-right: 1px solid #E0E2D8; }
+  .comp-tab .ref { text-align: center; }
+  .comp-tab .neg { color: #FF5656; }
+  .comp-tab tr.total td { font-weight: bold; border-bottom: 1px solid #B1B4A5; background-color: #F7F8FA; }
+  .comp-tab tr.total td.cb { background-color: #EAF0FB; }
+  .comp-tab tr.total td.cc { background-color: #E7F1E2; }
+  .comp-tab tr.total .qtd { display: inline-block; margin-left: 8px; padding: 0 8px; border-radius: 10px; background: #E3F4D6;
+                            color: #3E8E1A; font-size: 11px; font-weight: 600; line-height: 18px; }
+  .comp-tab tbody tr:not(.total):hover td { background-image: linear-gradient(rgba(161,187,62,.08), rgba(161,187,62,.08)); }
+  .comp-tab td.sit { text-align: center; }
+  .sit-pill { display: inline-block; min-width: 42px; padding: 2px 9px; border-radius: 10px; font-size: 9.5px; font-weight: 600; line-height: 14px; text-transform: uppercase; }
+  .sit-pill.mantido  { background: #EFF0EC; color: #747474; }
+  .sit-pill.saiu     { background: #FFE6E6; color: #FF5656; }
+  .sit-pill.alterado { background: #FFE48C; color: #7D630E; }
+  .sit-pill.entrou   { background: #DDF3D2; color: #3E8E1A; }
+  .comp-tab .vazia td { text-align: center; color: #A8A8A8; font-style: italic; height: 56px; }
+  .comp-rod { margin-top: auto; position: sticky; bottom: 0; display: flex; align-items: center; gap: 7px; flex: 0 0 40px; height: 40px; padding: 0 14px;
+              background: #FFFFFF; border-top: 1px solid #E0E2D8; font-size: 11.5px; color: #747474; }
+  .comp-rod .dot { width: 5px; height: 5px; border-radius: 50%; background: #F19224; }
+  .comp-rod em { margin-left: -2px; }
+  .comp-rod .conta { margin-left: auto; }
+
+  /* ------------------------- Ficha Financeira ------------------------- */
+  .stabs { display: flex; margin-bottom: -13px; position: relative; z-index: 1; }
+  .stab { height: 34px; padding: 0 22px; margin-right: -1px; background: #F5FFD3; border: 1px solid #A1C518; border-bottom: 0;
+          border-radius: 6px 6px 0 0; color: #8BA81D; font: bold 12.5px 'Open Sans', sans-serif; cursor: pointer; }
+  .stab:hover { background: #ECF8C4; }
+  .stab.ativa { background: #FFFFFF; border-color: #E0E2D8; color: #5C5B5C; height: 35px; }
+  .fin-painel { flex: 1; min-height: 0; border: 1px solid #E0E2D8; border-radius: 0 6px 6px 6px; padding: 10px 14px 14px;
+                display: flex; flex-direction: column; gap: 10px; }
+  .fin-filtros { display: flex; gap: 10px; flex-wrap: wrap; }
+  .fin-tab { border: 1px solid #E0E2D8; border-radius: 6px; overflow: auto; }
+  .fin-tab table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 12px; color: #5C5B5C; }
+  .fin-tab th { height: 37px; padding: 0 12px; font-size: 12px; font-weight: bold; color: #747474; text-align: right; text-transform: uppercase;
+                border-bottom: 1px solid #E0E2D8; position: sticky; top: 0; background: #F9F9F9; }
+  .fin-tab td { height: 38px; padding: 0 12px; border-bottom: 1px solid #E0E2D8; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fin-tab .ev { text-align: left; }
+  .fin-tab .ref { text-align: center; }
+  .fin-tab .tipo { text-align: left; }
+  .fin-tab td.ev { box-shadow: inset 4px 0 0 #11C638; }
+  .fin-tab tr.desc td { background: #FFF6F6; }
+  .fin-tab tr.desc td.ev { box-shadow: inset 4px 0 0 #FF5656; }
+  .fin-tab tr.tot td { background: #F9F9F9; font-weight: bold; border-bottom: 0; }
+  .fin-tab tr.tot td.ev { box-shadow: inset 4px 0 0 #D5D5D5; }
+  .fin-tab tbody tr:not(.tot):hover td { background-image: linear-gradient(rgba(161,187,62,.08), rgba(161,187,62,.08)); cursor: pointer; }
+  .fin-tab .cod { color: #A4A991; margin-right: 5px; }
+  /* sub-abas Eventos, Apontamentos e Históricos: a mesma tabela, sem o
+     filete de provento/desconto */
+  .fin-tab table.simples th { white-space: nowrap; }
+  .fin-tab .bt-lapis { width: 26px; height: 26px; padding: 0; margin-left: -6px; border: 0; border-radius: 4px; background: none; color: #747474;
+                       display: inline-grid; place-items: center; cursor: pointer; }
+  .fin-tab .bt-lapis svg { width: 14px; height: 14px; }
+  .fin-tab .bt-lapis:hover { background: var(--btc-bg); color: var(--btc-txt); }
+  /* situação nas grids de Movimentações */
+  .sit-mov { display: inline-block; padding: 1px 10px; border-radius: 10px; border: 1px solid; font-size: 11.5px; font-weight: 600; line-height: 18px; }
+  .sit-mov.ok     { background: #EEF9EA; border-color: #C9EBBE; color: #3E8E1A; }
+  .sit-mov.neutro { background: #F2F3F0; border-color: #E0E2D8; color: #747474; }
+  .sit-mov.info   { background: #EAF1FD; border-color: #C6D8F8; color: #2F64C4; }
+  .sit-mov.alerta { background: #FFF6D9; border-color: #F3DE8F; color: #7D630E; }
+  .sit-mov.erro   { background: #FFECEC; border-color: #F7C4C4; color: #D13C3C; }
+  .fin-rod { flex: 0 0 auto; display: flex; align-items: center; gap: 10px; min-height: 54px; padding: 0 10px 0 16px;
+             border: 1px solid #E0E2D8; border-radius: 6px; background: #FFFFFF; flex-wrap: wrap; }
+  .fin-rod .chk { font: 12.5px Verdana, sans-serif; color: #747474; margin-right: auto; }
+  .fin-rod .btn { height: 30px; font-size: 12px; font-family: Verdana, sans-serif; }
+  .modal-overlay {
+    position: absolute;
+    inset: calc(var(--moldura) + var(--tab-h)) var(--moldura) var(--moldura) calc(var(--moldura) + 30px);
+    background: rgba(0,0,0,.4);
+    border-radius: 5px;
+    display: flex; align-items: stretch;
+    padding: 20px;
+    z-index: 10;
+  }
+  .modal {
+    flex: 1; min-width: 0;
+    background: #FFFFFF;
+    border-radius: 5px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .modal-cab { flex: 0 0 52px; display: flex; align-items: center; gap: 10px; padding: 0 18px; }
+  .modal-cab h2 { margin: 0; flex: 1; font-size: 16px; font-weight: normal; color: var(--txt-strong); }
+
+  .modal-corpo {
+    flex: 1; min-height: 0;
+    display: flex;
+    margin: 0 14px 14px;
+    border: 1px solid var(--tab-bd); border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .arvore { flex: 0 0 240px; overflow: auto; padding: 12px 10px; border-right: 1px solid var(--tab-bd); }
+  .arvore .pasta { position: relative; display: flex; align-items: center; gap: 9px; font-size: 12px;
+                   color: #5C5B5B; padding: 7px 4px; border-radius: 4px; cursor: pointer; }
+  .arvore .pasta:hover { background: #F1F5E4; }
+  .arvore .pasta .chev { flex: 0 0 13px; display: flex; }
+  .arvore .pasta .chev svg { width: 13px; height: 13px; color: var(--g); }
+  .arvore .pasta .ico { flex: 0 0 15px; display: flex; }
+  .arvore .pasta .ico svg { width: 15px; height: 15px; color: var(--g); }
+  .arvore .pasta .rot-no { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .arvore .n1 { padding-left: 22px; }
+  .arvore .n2 { padding-left: 44px; }
+  .arvore .pasta.sel { background: var(--g-soft-bg); color: var(--g-olive); font-weight: bold; }
+
+  /* botão + que aparece ao passar o mouse na linha da pasta */
+  .arvore .pasta .add {
+    position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+    width: 22px; height: 22px; padding: 0;
+    border: 1px solid var(--btc-bd); border-radius: 50%;
+    background: var(--btc-bg); color: var(--btc-txt);
+    display: none; place-items: center;
+  }
+  .arvore .pasta:hover .add { display: grid; }
+  .arvore .pasta .add:hover {
+    --btc-bg: var(--btc-bg-h); --btc-txt: var(--btc-txt-h);
+    --btc-ico: var(--btc-ico-h); --btc-bd: var(--btc-bd-h);
+  }
+  .arvore .pasta .add svg { width: 12px; height: 12px; color: var(--btc-ico); }
+
+  /* raiz da árvore: o próprio item da linha clicada */
+  .modal-arvore .cab-arv { display: flex; align-items: center; gap: 7px; padding: 6px 4px 10px;
+                           font-size: 12.5px; font-weight: bold; color: #5C5B5B; cursor: pointer; }
+  .modal-arvore .cab-arv svg { width: 14px; height: 14px; flex: 0 0 auto; color: var(--g); }
+  .modal-arvore .cab-arv .nome-item { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+                                      text-decoration: underline; }
+  .modal-arvore .cab-arv:hover .nome-item { color: var(--g-dark); }
+
+  /* pasta ainda sem conteúdo: pastinha cinza, como na tela do sistema */
+  .arvore .pasta.vazia .ico svg { color: #9A9A9A; }
+
+  /* raiz da modal de Novo Protocolo: só rótulo, sem link para outra vista */
+  .modal-arvore .cab-arv.estatica { cursor: default; }
+  .modal-arvore .cab-arv.estatica .nome-item { text-decoration: none; }
+  .modal-arvore .cab-arv.estatica:hover .nome-item { color: #5C5B5B; }
+  /* protocolo novo (sem id ainda): a marca de inclusão vem no azul do sistema */
+  .modal-arvore .cab-arv .marca.novo svg { color: var(--selecao); }
+
+  /* botão só de ícone na faixa de ações da modal */
+  .modal-toolbar .btn.so-ico { padding: 0 10px; }
+
+  .modal-dir { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  /* faixa de ações: um cinza acima do cinza do formulário. As ações andam todas
+     juntas, encostadas na direita — em qualquer modal, e por padrão: é para lá
+     que se olha depois de preencher o formulário. */
+  .modal-toolbar { flex: 0 0 49px; display: flex; align-items: center;
+                   justify-content: flex-end; gap: 10px; padding: 0 14px;
+                   background: var(--panel-2); }
+  .modal-form { flex: 1; min-height: 0; overflow: auto; padding: 14px 16px;
+                background: var(--panel-1); display: flex; flex-direction: column; gap: 10px; }
+  .modal-form .campo { max-width: 1100px; }
+
+
+  /* nome do servidor: abre a ficha cadastral na modal (o mesmo link do título
+     do protocolo na PO051) */
+  .cad-topo .esq .nome.link { cursor: pointer; transition: color .15s ease; }
+  .cad-topo .esq .nome.link:hover { color: #A6D100; }
+
+  /* foto do funcionário: a área de soltar arquivo do ERP, com câmera e zoom */
+  .campo-foto { display: flex; align-items: center; gap: 10px; padding: 4px 0 4px 146px; }
+  .campo-foto .soltar { width: 150px; padding: 10px 12px; border: 1px dashed var(--g-soft-bd); border-radius: 6px;
+                        background: #FFFFFF; color: var(--txt); font-size: 11px; line-height: 1.5; text-align: center; cursor: pointer; }
+  .campo-foto .soltar:hover { border-color: var(--g); background: var(--g-soft-bg); }
+  .campo-foto .acoes-foto { display: flex; flex-direction: column; gap: 6px; }
+  .campo-foto .acoes-foto button { width: 26px; height: 26px; padding: 0; display: grid; place-items: center;
+                                   border: 1px solid var(--btb-bd); border-radius: 4px; background: var(--btb-bg); color: var(--btb-ico); }
+  .campo-foto .acoes-foto button svg { width: 13px; height: 13px; }
+  .campo-foto .acoes-foto button:hover { background: var(--btb-bg-h); border-color: var(--btb-bd-h); color: var(--btb-ico-h); }
+  .campo > .rot .ajuda { float: right; width: 13px; height: 13px; color: var(--txt); margin-top: 1px; }
+  .pasta-vazia { flex: 1; display: grid; place-items: center; color: var(--txt-mute); font-size: 12px; background: var(--panel-1); }
+  /* fechar da modal (mesma caixa do .bt-fechar do fluxo.css) */
+  .bt-fechar { width: 20px; height: 20px; border: 1px solid var(--btc-bd); border-radius: 4px;
+               background: var(--btc-bg); color: var(--btc-txt); display: grid; place-items: center; padding: 0; }
+  .bt-fechar:hover { --btc-bg: var(--btc-bg-h); --btc-txt: var(--btc-txt-h); --btc-ico: var(--btc-ico-h); --btc-bd: var(--btc-bd-h); }
+  .bt-fechar svg { width: 11px; height: 11px; color: var(--btc-ico); }
+  .construcao { flex: 1; display: grid; place-items: center; color: var(--txt-mute); font-size: 13.5px; min-height: 200px; }
+</style>
+</head>
+<body>
+
+<div class="app"></div>
+
+<script src="assets/shell.js?v=18"></script>
+<script>
+/* ícones extras usados só nesta tela */
+Object.assign(ICO, {
+  atualizar:   '<polyline points="23,4 23,10 17,10"/><polyline points="1,20 1,14 7,14"/><path d="M3.5 9a9 9 0 0 1 14.9-3.4L23 10M1 14l4.6 4.4A9 9 0 0 0 20.5 15"/>',
+  olho:        '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+  esquerda:    '<polyline points="15,18 9,12 15,6"/>',
+  direita:     '<polyline points="9,18 15,12 9,6"/>',
+  impressora:  '<polyline points="6,9 6,2 18,2 18,9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>',
+  calculadora: '<rect x="5" y="2" width="14" height="20" rx="2"/><rect x="8" y="5" width="8" height="4" rx="1"/><line x1="8.5" y1="13" x2="8.5" y2="13"/><line x1="12" y1="13" x2="12" y2="13"/><line x1="15.5" y1="13" x2="15.5" y2="13"/><line x1="8.5" y1="17" x2="8.5" y2="17"/><line x1="12" y1="17" x2="12" y2="17"/><line x1="15.5" y1="17" x2="15.5" y2="17"/>',
+  enviar:      '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/>',
+  trianguloB:  '<polygon points="4,6 20,6 12,19" fill="currentColor" stroke="none"/>',
+  trianguloC:  '<polygon points="4,18 20,18 12,5" fill="currentColor" stroke="none"/>',
+  camera:      '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+  zoom:        '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>',
+});
+
+/* ícones sólidos da árvore da modal (mesmo conjunto da PO051) */
+const FA = {
+  pasta: { vb: '0 0 512 512', d: 'M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z' },
+  chevronBaixo: { vb: '0 0 512 512', d: 'M504 256c0 137-111 248-248 248S8 393 8 256 119 8 256 8s248 111 248 248zM273 369.9l135.5-135.5c9.4-9.4 9.4-24.6 0-33.9l-17-17c-9.4-9.4-24.6-9.4-33.9 0L256 285.1 154.4 183.5c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L239 369.9c9.4 9.4 24.6 9.4 34 0z' },
+  check: { vb: '0 0 512 512', d: 'M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 448c-110.532 0-200-89.451-200-200 0-110.532 89.451-200 200-200 110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200zm140.204-254.804c4.686 4.686 4.686 12.284 0 16.971l-159.196 159.196c-4.686 4.686-12.284 4.686-16.971 0l-72.708-72.708c-4.686-4.686-4.686-12.284 0-16.971l16.97-16.97c4.686-4.686 12.284-4.686 16.971 0l47.253 47.253 133.741-133.741c4.686-4.686 12.284-4.686 16.971 0l16.969 16.97z' },
+};
+function fa(nome) {
+  const i = FA[nome];
+  return `<svg viewBox="${i.vb}" fill="currentColor" aria-hidden="true"><path d="${i.d}"/></svg>`;
+}
+
+const VISTAS = [
+  { id: 'pesquisa', rot: 'Pesquisa', ico: 'lupa' },
+  { id: 'cadastro', rot: 'Cadastro', ico: 'lapis' },
+  { id: 'notas',    rot: 'Notas',    ico: 'notas' },
+  { id: 'vicenti',  rot: 'ViCenti',  ico: 'robo' },
+];
+
+let vista = 'pesquisa';
+
+/* ------------------------------- Pesquisa -------------------------------
+   Colunas conforme a Pesquisa da FP296 no ERP. Os servidores são fictícios:
+   nomes, CPFs e matrículas inventados para o protótipo. */
+
+const COLUNAS_P = ['ID', 'ID FUNCIONÁRIO', 'FOLHA', 'MATRÍCULA', 'NOME', 'CPF', 'DATA ADMISSÃO', 'CARGO'];
+const NUM_P = [0, 1, 3];
+
+const RESULTADOS_P = [
+  ['68490100000862',  '862', 'MENSAL', '1000901', 'JOSE ALMEIDA DE SOUZA',            '111.222.333-01', '28/06/1989', 'AUXILIAR DE SERVICOS GERAIS'],
+  ['68490100001351', '1351', 'MENSAL', '1001401', 'JOSE CARLOS PEREIRA LIMA',         '111.222.333-02', '02/05/1986', 'AUXILIAR DE SERVICOS GERAIS'],
+  ['68490100001995', '1995', 'MENSAL', '1002068', 'JOSE ROBERTO MENDES',              '111.222.333-03', '28/06/1989', 'AUXILIAR DE SERVICOS GERAIS'],
+  ['68490100003370', '3370', 'MENSAL', '1003459', 'JOSE ANTONIO FERREIRA',            '111.222.333-04', '01/07/1991', 'MOTORISTA DE VEICULOS PESADOS'],
+  ['68490100003372', '3372', 'MENSAL', '1003461', 'JOSELIA MARTINS COSTA',            '111.222.333-05', '01/07/1991', 'GUARDA'],
+  ['68490100014161','14161', 'MENSAL', '1015657', 'JOSE RICARDO DA SILVA JUNIOR',     '111.222.333-06', '09/04/2008', 'ELETRICISTA DE LINHA VIVA'],
+  ['68490100015140','15140', 'MENSAL', '1016650', 'JOSENILDO RAMOS',                  '111.222.333-07', '10/09/2008', 'GUARDA'],
+  ['68490100015347','15347', 'MENSAL', '1016873', 'PAULO JOSE DE OLIVEIRA',           '111.222.333-08', '02/01/2009', 'SMIR - COORDENADOR DE MANUTENCAO DE PONTES E BUEIROS'],
+  ['68490100016507','16507', 'MENSAL', '1018054', 'ANDRE JOSE DE LIMA',               '111.222.333-09', '01/04/2009', 'GUARDA'],
+  ['68490100017755','17755', 'MENSAL', '1019306', 'JOSE AUGUSTO NOGUEIRA',            '111.222.333-10', '01/07/2010', 'MOTORISTA DE VEICULOS LEVES'],
+  ['68490100018381','18381', 'MENSAL', '1021235', 'JOSE HENRIQUE BARBOSA NETO',       '111.222.333-11', '25/04/2011', 'AUXILIAR ADMINISTRATIVO'],
+  ['68490100020906','20906', 'MENSAL', '1025146', 'MARCOS JOSE DOS SANTOS',           '111.222.333-12', '05/04/2013', 'PROCURADOR - V'],
+  ['68490100025573','25573', 'MENSAL', '1042841', 'JOSE LUIZ CARVALHO FILHO',         '111.222.333-13', '16/09/2016', 'AUXILIAR DE SERVICOS GERAIS'],
+  ['68490100027461','27461', 'MENSAL', '1044811', 'JOSE NASCIMENTO ROCHA',            '111.222.333-14', '06/06/2017', 'MOTORISTA DE VEICULOS PESADOS'],
+  ['68490100027508','27508', 'MENSAL', '1044858', 'JOSE EDUARDO MORAES GARCIA',       '111.222.333-15', '01/06/2017', 'SMAPA - COORDENADOR DE ALMOXARIFADO E SUPRIMENTOS'],
+  ['68490100029193','29193', 'MENSAL', '1046564', 'DOUGLAS JOSE SANTANA',             '111.222.333-16', '03/12/2018', 'GUARDA CIVIL MUNICIPAL'],
+  ['68490100029205','29205', 'MENSAL', '1046576', 'JOSE DANIEL ALVES',                '111.222.333-17', '03/12/2018', 'GUARDA CIVIL MUNICIPAL'],
+  ['68490100038940','38940', 'MENSAL', '3007900', 'JOSE LUCAS AMARAL',                '111.222.333-18', '01/06/2022', 'AUXILIAR ADMINISTRATIVO'],
+  ['68490100043260','43260', 'MENSAL', '3009839', 'DANIEL JOSE FERNANDES',            '111.222.333-19', '01/02/2023', 'ANALISTA DE PROJETOS URBANISTICOS'],
+];
+
+const ULTIMAS_P = [
+  '21/10/2026 - 15:16: Nome - Contendo - José',
+  '21/10/2026 - 15:15: Nome - Contendo - José',
+  '21/10/2026 - 15:06: Nome - Contendo - Maria',
+];
+
+/* a grid nasce vazia; o botão Pesquisar traz os resultados */
+let pesquisou = false;
+let servSel = null;      /* linha selecionada na grid */
+let servAberto = null;   /* linha aberta no Cadastro; null = instrução */
+
+function pesquisar() {
+  pesquisou = true;
+  main.querySelector('.pesq').innerHTML = pesquisaHTML();
+}
+
+/* clique simples seleciona a linha; um novo clique na linha já selecionada
+   (ou o duplo clique) abre o servidor no Cadastro */
+function clicarLinha(i) {
+  if (servSel === i) { abrirServidor(i); return; }
+  servSel = i;
+  main.querySelectorAll('.pesq tbody tr').forEach((tr, n) => tr.classList.toggle('sel', n === i));
+}
+
+function pesquisaHTML() {
+  const linhas = !pesquisou ? '' : RESULTADOS_P.map((r, i) => `
+    <tr${i === servSel ? ' class="sel"' : ''} onclick="clicarLinha(${i})" ondblclick="abrirServidor(${i})">${r.map((c, j) =>
+      `<td class="${NUM_P.includes(j) ? 'num' : ''}" title="${c}">${c}</td>`).join('')}</tr>`).join('');
+
+  return `
+  <div class="painel filtros">
+    <div class="filtros-esq">
+      <div class="filtros-grid">
+        <div class="cab">Campo</div><div class="cab">Operação</div><div class="cab">Valor</div><div></div>
+        <select><option>Nome</option><option>Matrícula</option><option>CPF</option><option>Cargo</option><option>Lotação</option></select>
+        <select><option>Contendo</option><option>Igual</option><option>Diferente</option></select>
+        <input value="José">
+        <div></div>
+      </div>
+      <div class="divisor"></div>
+      <div class="acoes">
+        <button class="btn btn-claro">${svg('mais')} Adicionar Filtro</button>
+        <button class="btn btn-claro">${svg('borracha')} Limpar Filtros</button>
+        <button class="btn btn-primario" onclick="pesquisar()">${svg('lupa')} Pesquisar</button>
+        <button class="btn btn-neutro">${svg('salvar')} Salvar Filtros</button>
+      </div>
+    </div>
+    <aside class="ultimas">
+      <h3>${svg('relogio')} Últimas Buscas ${svg('ajuda', 'style="width:13px;height:13px;margin-left:auto"')}</h3>
+      <ul>${ULTIMAS_P.map(u => `<li title="${u}">${u}</li>`).join('')}</ul>
+    </aside>
+  </div>
+
+  <div class="painel resultado">
+    <div class="res-topo">
+      <h2>Resultados</h2>
+      <span class="conta">${pesquisou ? `Exibindo ${RESULTADOS_P.length} de ${RESULTADOS_P.length}` : 'Nenhum resultado encontrado.'}</span>
+      <div class="dir">
+        <span>Mostrar:</span>
+        <select><option>50</option><option>100</option></select>
+        <button class="btn btn-claro">${svg('download')} Exportar</button>
+      </div>
+    </div>
+    <div class="res-corpo scroll">
+      <table class="tabela">
+        <thead><tr>${COLUNAS_P.map((c, j) => `<th${NUM_P.includes(j) ? ' style="text-align:right"' : ''}>${c}</th>`).join('')}</tr></thead>
+        <tbody>${linhas}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+/* ------------------------------- Cadastro -------------------------------
+   Cada servidor tem os seus valores, fictícios: o primeiro abre com o
+   conjunto montado a partir do Figma, e os demais com valores gerados a
+   partir da posição dele na grid (sempre os mesmos para o mesmo servidor).
+   Cards, Comparativo e Ficha Financeira saem do mesmo conjunto de eventos,
+   por isso os três sempre batem entre si. */
+
+const FICHA_FIXA = { tabela: '761|I-4878|A', lotacao: 'SMPG - PENSAO MERCE', entidade: 'PREFEITURA MUNICIPAL DE RIO VERDE' };
+
+
+/* Comparativo entre a competência base e a comparada: 9 proventos e 5
+   descontos. `b` e `c` são [base de cálculo, referência, valor] de cada
+   competência. A diferença e a variação são calculadas aqui (a variação é a
+   diferença ÷ total de proventos da competência comparada), e os totais de
+   cada grupo batem com os cards de valores do topo. */
+const COMPARATIVO_FIGMA = [
+  { cod: '50',   ev: 'VENCIMENTO BASE',               grupo: 'p', b: ['3.728,99', '30,00', '3.728,99'],   c: ['3.728,99', '30,00', '3.728,99'] },
+  { cod: '200',  ev: 'PRODUTIVIDADE',                 grupo: 'p', b: ['3.728,99', '200,00', '7.457,98'],  c: ['3.728,99', '200,00', '7.457,98'] },
+  { cod: '73',   ev: 'GRATIFICAÇÃO TITULARIDADE 25%', grupo: 'p', b: ['3.728,99', '25,00', '932,25'],     c: ['3.728,99', '25,00', '932,25'] },
+  { cod: '659',  ev: 'ADICIONAL TEMPO SERVIÇO',       grupo: 'p', b: ['2.247,50', '14,50%', '325,89'],    c: ['2.247,50', '14,50%', '325,89'] },
+  { cod: '1105', ev: 'AUXÍLIO ALIMENTAÇÃO',           grupo: 'p', b: ['–', '–', '650,00'],                c: ['–', '–', '650,00'] },
+  { cod: '1210', ev: 'ADICIONAL NOTURNO',             grupo: 'p', b: ['3.728,99', '12,00', '454,65'],     c: ['3.728,99', '7,45', '282,25'] },
+  { cod: '1020', ev: 'DIF. DE PRODUTIVIDADE',         grupo: 'p', b: ['–', '–', '217,22'],                c: ['–', '–', '–'] },
+  { cod: '2190', ev: 'HORA EXTRA 50% 200H',           grupo: 'p', b: ['3.728,99', '35,00', '978,86'],     c: ['–', '–', '–'] },
+  { cod: '163',  ev: '1/3 FÉRIAS',                    grupo: 'p', b: ['13.377,36', '1/3', '4.459,12'],    c: ['–', '–', '–'] },
+  { cod: '86',   ev: '96/50 - CONSIGNADO ITAU 1',     grupo: 'd', b: ['–', '–', '570,47'],                c: ['–', '–', '570,47'] },
+  { cod: '412',  ev: 'PENSÃO ALIMENTÍCIA',            grupo: 'd', b: ['5.403,33', '15,00%', '810,50'],    c: ['5.403,33', '15,00%', '810,50'] },
+  { cod: '142',  ev: 'SADPREV',                       grupo: 'd', b: ['6.091,78', '14,00%', '852,85'],    c: ['5.919,38', '14,00%', '828,71'] },
+  { cod: '203',  ev: 'SINDICATO - SINDSAD',           grupo: 'd', b: ['13.766,98', '2,00%', '275,34'],    c: ['13.377,36', '2,00%', '267,55'] },
+  { cod: '160',  ev: 'IRRF',                          grupo: 'd', b: ['18.352,11', '27,50%', '4.138,10'], c: ['12.548,65', '27,50%', '2.542,15'] },
+];
+const GRUPOS_COMP = [{ id: 'p', rot: 'Proventos' }, { id: 'd', rot: 'Descontos' }];
+
+const num = s => parseFloat(String(s).replace('%', '').replace(/\./g, '').replace(',', '.')) || 0;
+const brl = v => v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const valorEv = s => (s === '–' ? 0 : num(s));
+const SITUACOES = [
+  { id: 'entrou', rot: 'Entrou' }, { id: 'saiu', rot: 'Saiu' },
+  { id: 'alterado', rot: 'Alterado' }, { id: 'mantido', rot: 'Mantido' },
+];
+
+/* gerador determinístico: a mesma semente dá sempre os mesmos números */
+function sorteador(semente) {
+  let t = semente >>> 0;
+  return () => {
+    t += 0x6D2B79F5;
+    let r = Math.imul(t ^ t >>> 15, 1 | t);
+    r ^= r + Math.imul(r ^ r >>> 7, 61 | r);
+    return ((r ^ r >>> 14) >>> 0) / 4294967296;
+  };
+}
+const r2 = v => Math.round(v * 100) / 100;
+const pct = v => brl(v) + '%';
+
+/** Eventos fictícios de um servidor nas duas competências. Cada mês é
+    [base de cálculo, referência, valor] em número, ou null quando o evento
+    não existe naquele mês (é o que faz o evento entrar ou sair). */
+function gerarEventos(i) {
+  const rnd = sorteador(i * 7919 + 13);
+  const pega = l => l[Math.floor(rnd() * l.length)];
+  const venc = r2(1800 + rnd() * 5200);
+  const ev = [];
+  const add = (cod, nome, grupo, b, c) => { if (b || c) ev.push({ cod, ev: nome, grupo, bN: b, cN: c }); };
+
+  add('50', 'VENCIMENTO BASE', 'p', [venc, '30,00', venc], [venc, '30,00', venc]);
+  const prod = pega([50, 100, 150, 200]), vProd = [venc, brl(prod), r2(venc * prod / 100)];
+  add('200', 'PRODUTIVIDADE', 'p', vProd, rnd() < .8 ? vProd : null);
+  if (rnd() < .6) { const g = [venc, '25,00', r2(venc * .25)]; add('73', 'GRATIFICAÇÃO TITULARIDADE 25%', 'p', g, g); }
+  const ats = pega([5, 10, 14.5, 20]), bAts = r2(venc * .6), vAts = [bAts, pct(ats), r2(bAts * ats / 100)];
+  add('659', 'ADICIONAL TEMPO SERVIÇO', 'p', vAts, vAts);
+  const aux = pega([450, 650, 800]);
+  add('1105', 'AUXÍLIO ALIMENTAÇÃO', 'p', [null, '–', aux], [null, '–', aux]);
+  const hN = 4 + Math.floor(rnd() * 12), hN2 = rnd() < .5 ? hN : 1 + Math.floor(rnd() * 12);
+  const not = h => [venc, brl(h), r2(venc / 200 * .2 * h)];
+  if (rnd() < .25) add('1210', 'ADICIONAL NOTURNO', 'p', null, not(hN2));
+  else add('1210', 'ADICIONAL NOTURNO', 'p', not(hN), not(hN2));
+  if (rnd() < .6) add('1020', 'DIF. DE PRODUTIVIDADE', 'p', [null, '–', r2(venc * (.03 + rnd() * .06))], null);
+  const he = h => [venc, brl(h), r2(venc / 200 * 1.5 * h)], h1 = 10 + Math.floor(rnd() * 30), h2 = 10 + Math.floor(rnd() * 30), qHe = rnd();
+  add('2190', 'HORA EXTRA 50%', 'p', qHe < .6 || qHe >= .8 ? he(h1) : null, qHe >= .4 && qHe < .8 ? he(h2) : qHe >= .8 ? he(h1) : null);
+  if (rnd() < .5) add('163', '1/3 FÉRIAS', 'p', [venc, '1/3', r2(venc / 3)], null);
+
+  const tot = k => ev.filter(e => e.grupo === 'p' && e[k]).reduce((t, e) => t + e[k][2], 0);
+  const auxDe = k => { const e = ev.find(x => x.cod === '1105'); return e && e[k] ? e[k][2] : 0; };
+  if (rnd() < .7) { const c = r2(200 + rnd() * 700); add('86', '96/50 - CONSIGNADO ITAU 1', 'd', [null, '–', c], [null, '–', c]); }
+  if (rnd() < .3) { const bp = r2(venc * 1.45), v = [bp, '15,00%', r2(bp * .15)]; add('412', 'PENSÃO ALIMENTÍCIA', 'd', v, v); }
+  const prev = k => { const base = r2(tot(k) - auxDe(k)); return [base, '14,00%', r2(base * .14)]; };
+  const pB = prev('bN'), pC = prev('cN');
+  add('142', 'SADPREV', 'd', pB, pC);
+  if (rnd() < .7) add('203', 'SINDICATO - SINDSAD', 'd', [r2(tot('bN')), '2,00%', r2(tot('bN') * .02)], [r2(tot('cN')), '2,00%', r2(tot('cN') * .02)]);
+  const irrf = (k, sp) => { const base = r2(tot(k) - sp[2]), v = r2(base * .275 - 896); return v > 0 ? [base, '27,50%', v] : null; };
+  add('160', 'IRRF', 'd', irrf('bN', pB), irrf('cN', pC));
+
+  const fmt = m => m ? [m[0] === null ? '–' : brl(m[0]), m[1], brl(m[2])] : ['–', '–', '–'];
+  return ev.map(e => ({ cod: e.cod, ev: e.ev, grupo: e.grupo, b: fmt(e.bN), c: fmt(e.cN) }));
+}
+
+/** Tudo o que o Cadastro mostra de um servidor: eventos do Comparativo com
+    diferença e situação, cards de valores e lançamentos da Ficha Financeira. */
+const DADOS_SERV = {};
+function dadosServidor(i = servAberto) {
+  if (DADOS_SERV[i]) return DADOS_SERV[i];
+  const comp = i === 0 ? COMPARATIVO_FIGMA.map(l => ({ ...l })) : gerarEventos(i);
+  const soma = (g, k) => comp.filter(l => l.grupo === g).reduce((t, l) => t + valorEv(l[k][2]), 0);
+  const PB = soma('p', 'b'), PC = soma('p', 'c'), DB = soma('d', 'b'), DC = soma('d', 'c');
+  comp.forEach(l => {
+    const vb = valorEv(l.b[2]), vc = valorEv(l.c[2]);
+    l.difN = vc - vb;
+    l.vrN = l.difN / PC * 100;
+    l.dif = brl(l.difN);
+    l.vr = brl(l.vrN) + '%';
+    l.sit = l.b[2] === '–' ? 'entrou' : l.c[2] === '–' ? 'saiu' : Math.abs(l.difN) < .005 ? 'mantido' : 'alterado';
+  });
+  const sad = comp.find(l => l.cod === '142');
+  const prevB = sad ? valorEv(sad.b[0]) : 0, prevC = sad ? valorEv(sad.c[0]) : 0;
+  const sadB = sad ? valorEv(sad.b[2]) : 0, sadC = sad ? valorEv(sad.c[2]) : 0;
+  /* card: anterior → atual e a diferença; `menorBom` inverte a cor (desconto
+     que cai é bom) */
+  const card = (rot, ant, atu, menorBom = false) => {
+    const d = atu - ant, p = ant ? d / ant * 100 : 0;
+    return { rot, ant: 'R$ ' + brl(ant), atu: 'R$ ' + brl(atu),
+             dif: `R$ ${brl(Math.abs(d))} ( ${p >= 0 ? '+' : ''}${brl(p)}% )`,
+             bom: menorBom ? d <= 0 : d >= 0, sobe: d > 0 };
+  };
+  const valores = [
+    card('Total de proventos', PB, PC),
+    card('Total de descontos', DB, DC, true),
+    card('Líquido a receber', PB - DB, PC - DC),
+    card('Base previdenciária', prevB, prevC),
+    card('Base IRRF', PB - sadB, PC - sadC),
+  ];
+  /* Ficha Financeira: os lançamentos da competência comparada */
+  const fin = comp.filter(l => l.c[2] !== '–').map(l => ({
+    cod: l.cod, ev: l.ev, base: l.c[0] === '–' ? '0,00' : l.c[0], ref: l.c[1] === '–' ? '0,00' : l.c[1].replace('%', ''),
+    prov: l.grupo === 'p' ? l.c[2] : '0,00', desc: l.grupo === 'd' ? l.c[2] : '0,00', d: l.grupo === 'd' }));
+  return DADOS_SERV[i] = { comp, PC, valores, fin, totProv: brl(PC), totDesc: brl(DC), idProc: String(98943 + i * 37) };
+}
+
+const ABAS_INT = [
+  { id: 'comparativo',   rot: 'Comparativo' },
+  { id: 'ficha',         rot: 'Ficha Financeira' },
+  { id: 'movimentacoes', rot: 'Movimentações' },
+];
+const SUBABAS_FICHA = ['Financeiro', 'Eventos', 'Apontamentos', 'Históricos'];
+
+let abaInt = 'comparativo';
+let subFicha = 'Financeiro';
+let filtroSit = [];          /* vazio = Nenhum (mostra tudo) */
+let buscaEv = '';
+let compBase = '08/2026', compComp = '09/2026';
+
+
+function abrirServidor(i) {
+  servSel = i; servAberto = i;
+  irPara('cadastro');
+}
+
+function navServidor(passo) {
+  const n = servAberto + passo;
+  if (n < 0 || n >= RESULTADOS_P.length) return;
+  servAberto = servSel = n;
+  pintarCadastro();
+  main.querySelectorAll('.pesq tbody tr').forEach((tr, k) => tr.classList.toggle('sel', k === n));
+}
+
+function topoCadHTML() {
+  if (servAberto === null) return `
+    <div class="esq"><span class="nome nome-vazio">Selecione um servidor na Pesquisa para abrir o cadastro</span></div>
+    <div class="dir"><button class="btn btn-primario">${svg('gerais')} Operações</button></div>`;
+  const r = RESULTADOS_P[servAberto];
+  return `
+    <div class="esq">
+      <div class="nav">
+        <button title="Servidor anterior" onclick="navServidor(-1)"${servAberto === 0 ? ' disabled' : ''}>${svg('esquerda')}</button>
+        <span>${String(servAberto + 1).padStart(2, '0')} de ${String(RESULTADOS_P.length).padStart(2, '0')}</span>
+        <button title="Próximo servidor" onclick="navServidor(1)"${servAberto === RESULTADOS_P.length - 1 ? ' disabled' : ''}>${svg('direita')}</button>
+      </div>
+      <a class="nome link" title="Abrir a ficha cadastral do servidor" onclick="abrirFichaServidor()">${r[4]}</a>
+    </div>
+    <div class="dir">
+      <button class="btn btn-claro">${svg('atualizar')} Atualizar</button>
+      <button class="btn btn-primario">${svg('gerais')} Operações</button>
+    </div>`;
+}
+
+function fichaHTML() {
+  const r = RESULTADOS_P[servAberto];
+  const f = (rot, v, cls = '') => `<div class="f ${cls}"><span>${rot}</span><b title="${v}">${v}</b></div>`;
+  return `
+  <div class="ficha">
+    ${f('Matrícula', r[3])}${f('CPF', r[5])}${f('Admissão', r[6])}${f('Cargo', r[7])}
+    ${f('Tabela Salarial', FICHA_FIXA.tabela)}${f('Lotação', FICHA_FIXA.lotacao)}${f('Entidade', FICHA_FIXA.entidade, 'ent')}
+    <button class="btn btn-claro">${svg('olho')} Ver mais</button>
+  </div>`;
+}
+
+function valoresHTML() {
+  return `<div class="valores">${dadosServidor().valores.map(v => `
+    <div class="vcard">
+      <h4>${v.rot}</h4>
+      <div class="lin"><span class="ant">${v.ant}</span><span class="seta">→</span><span class="atu">${v.atu}</span></div>
+      <div class="dif ${v.bom ? 'bom' : 'ruim'}">${svg(v.sobe ? 'trianguloC' : 'trianguloB')}${v.dif}</div>
+    </div>`).join('')}</div>`;
+}
+
+/* ---- Comparativo ---- */
+function passaFiltro(l) {
+  const t = buscaEv.trim().toLowerCase();
+  return (!filtroSit.length || filtroSit.includes(l.sit))
+      && (!t || l.ev.toLowerCase().includes(t) || l.cod.includes(t));
+}
+
+function comparativoHTML() {
+  const { comp: COMPARATIVO, PC: TOTAL_PROV_COMP } = dadosServidor();
+  const conta = id => COMPARATIVO.filter(l => l.sit === id).length;
+  const visEv = COMPARATIVO.filter(passaFiltro).length;
+  const linhaEv = l => {
+    const neg = l.difN < -.004 ? ' neg' : '';
+    const alto = Math.abs(l.vrN) > 2;
+    return `<tr>
+      <td class="ev" title="${l.cod} ${l.ev}"><span class="dot${alto ? ' alto' : ''}"></span><span class="cod">${l.cod}</span>${l.ev}</td>
+      <td class="cb">${l.b[0]}</td><td class="cb ref">${l.b[1]}</td><td class="cb">${l.b[2]}</td>
+      <td class="cc l">${l.c[0]}</td><td class="cc ref">${l.c[1]}</td><td class="cc r">${l.c[2]}</td>
+      <td class="${neg}">${l.dif}</td><td class="${neg}">${l.vr}</td>
+      <td class="sit"><span class="sit-pill ${l.sit}">${l.sit}</span></td></tr>`;
+  };
+  /* cada grupo fecha com a linha-resumo: o rótulo leva quantos eventos do
+     grupo estão visíveis com os filtros, e os valores somam o grupo inteiro */
+  const tr = GRUPOS_COMP.map(g => {
+    const doGrupo = COMPARATIVO.filter(l => l.grupo === g.id);
+    const vis = doGrupo.filter(passaFiltro);
+    const soma = k => doGrupo.reduce((t, l) => t + valorEv(l[k][2]), 0);
+    const dif = soma('c') - soma('b'), vr = dif / TOTAL_PROV_COMP * 100;
+    const neg = dif < -.004 ? ' neg' : '';
+    return vis.map(linhaEv).join('') + `
+      <tr class="total"><td class="ev">${g.rot}<span class="qtd">${vis.length}/${doGrupo.length}</span></td>
+        <td class="cb"></td><td class="cb"></td><td class="cb">${brl(soma('b'))}</td>
+        <td class="cc l"></td><td class="cc"></td><td class="cc r">${brl(soma('c'))}</td>
+        <td class="${neg}">${brl(dif)}</td><td class="${neg}">${brl(vr)}%</td><td></td></tr>`;
+  }).join('');
+  const vazio = visEv ? '' : `<tr class="vazia"><td colspan="10">Nenhum evento para os filtros escolhidos.</td></tr>`;
+  const chk = (id, rot, on, n) => `<span class="chk${on ? ' on' : ''}" onclick="alternarSit('${id}')"><i>${svg('check')}</i>${rot}${n !== undefined ? ` <span class="n">${n}</span>` : ''}</span>`;
+  const opc = sel => ['07/2026', '08/2026', '09/2026', '10/2026'].map(c => `<option${c === sel ? ' selected' : ''}>${c}</option>`).join('');
+  return `
+    <div class="comp-cab">
+      <div class="grupo"><span>Competências</span>
+        <select onchange="compBase=this.value;pintarArea()" aria-label="Competência base">${opc(compBase)}</select>
+        <select onchange="compComp=this.value;pintarArea()" aria-label="Competência comparada">${opc(compComp)}</select></div>
+      <div class="busca-ev">${svg('lupa')}<input placeholder="Filtrar evento ou código..." value="${buscaEv}" oninput="buscaEv=this.value;pintarTabComp()"></div>
+      <div class="filtros-sit"><b>Filtros:</b>
+        ${chk('nenhum', 'Nenhum', !filtroSit.length)}
+        ${SITUACOES.map(s => chk(s.id, s.rot, filtroSit.includes(s.id), conta(s.id))).join('')}
+      </div>
+    </div>
+    <div class="comp-tab scroll">
+      <table>
+        <colgroup><col style="width:21%"><col style="width:9.5%"><col style="width:8.5%"><col style="width:8%">
+          <col style="width:9.5%"><col style="width:8.5%"><col style="width:8%"><col style="width:8%"><col style="width:9%"><col style="width:10%"></colgroup>
+        <thead>
+          <tr class="g1"><th class="tb">TABELA</th>
+            <th class="base" colspan="3">${compBase}<span class="pill p-base">Base</span></th>
+            <th class="comp" colspan="3">${compComp}<span class="pill p-comp">Comparada</span></th>
+            <th class="cp" colspan="3">COMPARATIVO</th></tr>
+          <tr class="g2"><th class="ev">EVENTO</th><th class="c">BASE CÁLCULO</th><th class="c">REFERÊNCIA</th><th class="c">VALOR</th>
+            <th class="c">BASE CÁLCULO</th><th class="c">REFERÊNCIA</th><th class="c">VALOR</th>
+            <th>DIFERENÇA</th><th>VAR. S/ PROV.</th><th class="sit">SITUAÇÃO</th></tr>
+        </thead>
+        <tbody>${tr}${vazio}</tbody>
+      </table>
+      <div class="comp-rod"><span class="dot"></span>Variação acima de 2%<em>( Variação = diferença ÷ total de proventos de ${compComp} )</em>
+        <span class="conta">${visEv} de ${COMPARATIVO.length} eventos.</span></div>
+    </div>`;
+}
+
+function alternarSit(id) {
+  if (id === 'nenhum') filtroSit = [];
+  else filtroSit = filtroSit.includes(id) ? filtroSit.filter(x => x !== id) : [...filtroSit, id];
+  pintarArea();
+}
+
+/* a busca repinta só a tabela, para o campo não perder o foco a cada letra */
+function pintarTabComp() {
+  const html = new DOMParser().parseFromString(`<div>${comparativoHTML()}</div>`, 'text/html');
+  main.querySelector('.comp-tab').replaceWith(html.querySelector('.comp-tab'));
+}
+
+/* ---- Ficha Financeira ---- */
+/* Sub-abas da Ficha Financeira além do Financeiro: Eventos (eventos fixos
+   lançados para o servidor), Apontamentos (variáveis que o cálculo da folha
+   usa) e Históricos (o que aconteceu com a ficha). Conforme as telas do ERP;
+   os valores que também aparecem no Comparativo vêm do servidor aberto. */
+function eventosFichaLinhas(D) {
+  const ev = cod => D.comp.find(l => l.cod === cod);
+  const val = (cod, i, alt) => { const l = ev(cod); return l && l.c[i] !== '–' ? l.c[i] : alt; };
+  const prod = val('200', 1, '200,00'), ats = val('659', 0, '2.247,50'), cons = val('86', 2, null), grat = ev('73');
+  return [
+    ['626', '175526', 'PERCENTUAL PRODUTIVIDADE', '082026', '082026', prod],
+    ['654', '166627', 'BASE DE CÁLC. ADIC TEMPO SERVIÇO INFORMADA', '072026', '', ats],
+    cons && ['86', '174485', 'CONSIGNADO ITAU 1', '082026', '082026', cons],
+    ['1177', '49964', 'MSG DEMONSTRATIVO PAGAMENTO', '022023', '', '1,00'],
+    ['200', '41685', 'PERCENTUAL SINDICATO - SINDSAD', '', '', '2,00'],
+    ['666', '16900', 'QTD ADICIONAL TEMPO SERVIÇO INFORMADA', '', '', '29,00'],
+    ['772', '12874', 'QTD QUINQUENIO DEZ 2020', '', '', '5,00'],
+    ['661', '432', 'RECEBE ADICIONAL TEMPO SERVIÇO', '', '', '1,00'],
+    grat && ['72', '208', 'PERCENTUAL GRATIFICAÇÃO TITULARIDADE', '', '', '25,00'],
+  ].filter(Boolean);
+}
+
+const APONTAMENTOS = [
+  ['686',  'ALIQUOTA FUNPAUR',     'aliq_funpaur',        '14,00'],
+  ['1010', 'ALIQUOTA FUNPREVAL',   'aliq_funpreval',      '14,00'],
+  ['1118', 'ALIQUOTA GOIAS PREV',  'aliq_goiasprev',      '14,25'],
+  ['1139', 'ALIQUOTA IPASVAL',     'aliq_ipasval',        '14,00'],
+  ['57',   'ALIQUOTA INSS',        'aliquota_inss',       '14,00'],
+  ['159',  'ALIQUOTA IRRF',        'aliquota_irrf',       '27,50'],
+  ['2240', 'ALIQUOTA IRRF OCULTA', 'aliquota_irrf_oculta', '27,50'],
+  ['166',  'ALIQUOTA RPPS',        'aliquota_rpps',       '14,00'],
+  ['284',  'ALIQUOTA RPPS 13',     'aliquota_rpps_13',    '14,00'],
+  ['1',    'ANO',                  'ano',                 '2.026,00'],
+  ['2',    'ANO ADMISSAO',         'anoadmissao',         null],
+  ['3',    'DIAS TRABALHADOS',     'dias_trabalhados',    '30,00'],
+  ['4',    'MES',                  'mes',                 '8,00'],
+  ['18',   'QTD DEPENDENTES IRRF', 'qtd_dep_irrf',        '0,00'],
+];
+
+function historicosLinhas(D) {
+  const ev = cod => D.comp.find(l => l.cod === cod);
+  const prod = ev('200'), cons = ev('86'), ats = ev('659');
+  return [
+    ['28/08/2026 09:14', 'Mensal 08/2026', 'Cálculo da folha', 'sistema', `Processamento ${D.idProc}`],
+    prod && ['27/08/2026 16:40', 'Mensal 08/2026', 'Evento lançado', 'maria.souza', `626 Percentual produtividade = ${prod.c[1] !== '–' ? prod.c[1] : prod.b[1]}`],
+    cons && ['27/08/2026 16:38', 'Mensal 08/2026', 'Evento lançado', 'maria.souza', `86 Consignado Itau 1 = ${cons.c[2] !== '–' ? cons.c[2] : cons.b[2]}`],
+    ['29/07/2026 10:02', 'Férias 07/2026', 'Cálculo da folha', 'sistema', `Processamento ${+D.idProc - 1133}`],
+    ats && ['15/07/2026 11:20', 'Mensal 07/2026', 'Evento alterado', 'joao.lima', `654 Base adic. tempo serviço = ${ats.b[0]}`],
+  ].filter(Boolean);
+}
+
+/* tabela das sub-abas: `cols` = [título, largura, alinhamento, mono?] */
+function tabelaFichaHTML(cols, linhas) {
+  return `
+      <div class="fin-tab scroll">
+        <table class="simples">
+          <colgroup>${cols.map(c => `<col style="width:${c[1]}">`).join('')}</colgroup>
+          <thead><tr>${cols.map(c => `<th style="text-align:${c[2]}">${c[0]}</th>`).join('')}</tr></thead>
+          <tbody>${linhas.map(l => `<tr>${l.map((v, i) => {
+            const c = cols[i];
+            const conteudo = v === '__lapis' ? `<button class="bt-lapis" title="${c[0] === 'OBSERVAÇÃO' ? 'Observação' : 'Alterar evento'}">${svg('lapis')}</button>` : (v ?? '');
+            return `<td style="text-align:${c[2]}"${c[3] ? ' class="mono"' : ''}${v && v !== '__lapis' && !String(v).includes('<') ? ` title="${v}"` : ''}>${conteudo}</td>`;
+          }).join('')}</tr>`).join('')}</tbody>
+        </table>
+      </div>`;
+}
+
+function fichaFinanceiraHTML() {
+  const D = dadosServidor();
+  const filtros = `
+      <div class="fin-filtros">
+        <div class="grupo"><span>Tipo Folha</span><select style="min-width:105px"><option>MENSAL</option><option>13º SALÁRIO</option><option>FÉRIAS</option><option>RESCISÃO</option></select></div>
+        <div class="grupo"><span>ID Processamento</span><span>${D.idProc}</span></div>
+        <div class="grupo"><span>Data de Pagto</span><span>28/08/2026</span></div>
+      </div>`;
+  const anoAdm = RESULTADOS_P[servAberto][6].split('/')[2];
+  const corpo = subFicha === 'Eventos'
+    ? filtros + tabelaFichaHTML(
+        [['ID EVENTO', '10%', 'left'], ['ID', '10%', 'left'], ['EVENTO', '36%', 'left'], ['REF. INICIAL', '11%', 'left'],
+         ['REF. FINAL', '11%', 'left'], ['VALOR', '10%', 'right'], ['ALTERAR EVENTO', '12%', 'left']],
+        eventosFichaLinhas(D).map(l => [...l, '__lapis']))
+    : subFicha === 'Apontamentos'
+    ? filtros + tabelaFichaHTML(
+        [['ID', '8%', 'left'], ['EVENTO', '34%', 'left'], ['CHAVE', '28%', 'left'], ['VALOR', '15%', 'right'], ['OBSERVAÇÃO', '15%', 'left']],
+        APONTAMENTOS.map(a => [a[0], a[1], a[2], a[3] ?? `${anoAdm.slice(0, 1)}.${anoAdm.slice(1)},00`, '__lapis']))
+    : subFicha === 'Históricos'
+    ? filtros + tabelaFichaHTML(
+        [['DATA / HORA', '17%', 'left'], ['FOLHA', '16%', 'left'], ['AÇÃO', '16%', 'left'], ['USUÁRIO', '15%', 'left'], ['DETALHE', '36%', 'left']],
+        historicosLinhas(D))
+    : filtros + `
+      <div class="fin-tab scroll">
+        <table>
+          <colgroup><col style="width:32%"><col style="width:12%"><col style="width:12%"><col style="width:14%"><col style="width:13%"><col style="width:17%"></colgroup>
+          <thead><tr><th class="ev">EVENTO</th><th>BASE CÁLCULO</th><th class="ref">Referência</th><th>Provento</th><th>Descontos</th><th class="tipo">Tipo de cálculo</th></tr></thead>
+          <tbody>
+            ${D.fin.map(l => `<tr class="${l.d ? 'desc' : ''}"><td class="ev"><span class="cod">${l.cod}</span>${l.ev}</td>
+              <td>${l.base}</td><td class="ref">${l.ref}</td><td>${l.prov}</td><td>${l.desc}</td><td class="tipo">Automático</td></tr>`).join('')}
+            <tr class="tot"><td class="ev">TOTAIS</td><td></td><td></td><td>${D.totProv}</td><td>${D.totDesc}</td><td></td></tr>
+          </tbody>
+        </table>
+      </div>`;
+  return `
+    <div class="stabs">${SUBABAS_FICHA.map(s => `<button class="stab${s === subFicha ? ' ativa' : ''}" onclick="subFicha='${s}';pintarArea()">${s}</button>`).join('')}</div>
+    <div class="fin-painel">${corpo}</div>
+    <div class="fin-rod">
+      <span class="chk" onclick="this.classList.toggle('on')"><i>${svg('check')}</i>Servidor Conferido</span>
+      <button class="btn btn-claro">${svg('lixeira')} Excluir</button>
+      <button class="btn btn-claro">${svg('atualizar')} Recalcular</button>
+      <button class="btn btn-claro">${svg('impressora')} Emitir</button>
+      <button class="btn btn-claro">${svg('calculadora')} Cálculo evento</button>
+      <button class="btn btn-claro">${svg('enviar')} Solicitar evento</button>
+      <button class="btn btn-primario">${svg('mais')} Adicionar evento</button>
+    </div>`;
+}
+
+
+/* ------------------------------ Movimentações ------------------------------
+   Sub-abas no mesmo desenho da Ficha Financeira: Férias, Afastamentos,
+   Licença Prêmio, Atestados e Bloqueio Financeiro. Os períodos são
+   fictícios, gerados a partir da data de admissão do servidor aberto. */
+const SUBABAS_MOV = ['Férias', 'Afastamentos', 'Licença Prêmio', 'Atestados', 'Bloqueio Financeiro'];
+let subMov = 'Férias';
+
+const dataBR = d => `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+const somaDias = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const situ = (rot, tom) => `<span class="sit-mov ${tom}">${rot}</span>`;
+
+function movimentacoesDados(i) {
+  const r = RESULTADOS_P[i];
+  const [dd, mm, aa] = r[6].split('/').map(Number);
+  const rnd = sorteador(i * 104729 + 7);
+  /* Férias: um período aquisitivo por ano de casa, do mais recente ao mais
+     antigo; cada um gozado em 30 dias ou em duas parcelas de 15. O período
+     que ainda corre fica "A adquirir", e gozo marcado para depois de hoje
+     fica "Programadas". */
+  const HOJE = new Date(2026, 9, 21);
+  let ultimoAniv = new Date(2026, mm - 1, dd);
+  if (ultimoAniv > HOJE) ultimoAniv = new Date(2025, mm - 1, dd);
+  const ferias = [[`${dataBR(ultimoAniv)} a ${dataBR(somaDias(new Date(ultimoAniv.getFullYear() + 1, mm - 1, dd), -1))}`, '–', '30', 'Não', situ('A adquirir', 'neutro')]];
+  const gozo = (ini, dias) => [`${dataBR(ini)} a ${dataBR(somaDias(ini, dias - 1))}`, ini > HOJE ? situ('Programadas', 'info') : situ('Gozadas', 'ok')];
+  for (let fimAno = ultimoAniv.getFullYear(); fimAno > aa && ferias.length < 17; fimAno--) {
+    const ini = new Date(fimAno - 1, mm - 1, dd), fim = somaDias(new Date(fimAno, mm - 1, dd), -1);
+    const periodo = `${dataBR(ini)} a ${dataBR(fim)}`;
+    const g1 = somaDias(fim, 30 + Math.floor(rnd() * 300));
+    if (rnd() < .5) {
+      const [txt, sit] = gozo(g1, 30);
+      ferias.push([periodo, txt, '30', rnd() < .15 ? 'Sim' : 'Não', sit]);
+    } else {
+      const g2 = somaDias(g1, 60 + Math.floor(rnd() * 120));
+      const [t2, s2] = gozo(g2, 15), [t1, s1] = gozo(g1, 15);
+      ferias.push([periodo, t2, '15', 'Não', s2], [periodo, t1, '15', 'Não', s1]);
+    }
+  }
+
+  const motivos = [['LICENÇA PARA TRATAMENTO DE SAÚDE', 'Médica'], ['LICENÇA POR MOTIVO DE DOENÇA EM PESSOA DA FAMÍLIA', 'Familiar'],
+                   ['LICENÇA PATERNIDADE/MATERNIDADE', 'Legal'], ['LICENÇA PARA TRATAR DE INTERESSES PARTICULARES', 'Sem vencimento']];
+  const afast = [];
+  for (let k = 0, n = 1 + Math.floor(rnd() * 3); k < n; k++) {
+    const m = motivos[Math.floor(rnd() * motivos.length)];
+    const ini = new Date(2019 + Math.floor(rnd() * 7), Math.floor(rnd() * 12), 1 + Math.floor(rnd() * 27));
+    const dias = 5 + Math.floor(rnd() * 40);
+    afast.push([m[0], m[1], dataBR(ini), dataBR(somaDias(ini, dias - 1)), String(dias), situ('Encerrado', 'neutro')]);
+  }
+  afast.sort((a, b) => b[2].split('/').reverse().join('').localeCompare(a[2].split('/').reverse().join('')));
+
+  const lic = [];
+  for (let ini = aa, k = 1; ini + 5 <= 2026; ini += 5, k++) {
+    const pIni = new Date(ini, mm - 1, dd), pFim = somaDias(new Date(ini + 5, mm - 1, dd), -1);
+    const q = rnd(), g = somaDias(pFim, 90 + Math.floor(rnd() * 400));
+    const goza = q < .5;
+    lic.unshift([`${k}º quinquênio`, `${dataBR(pIni)} a ${dataBR(pFim)}`,
+      goza ? `${dataBR(g)} a ${dataBR(somaDias(g, 89))}` : '–', '90',
+      goza ? (g > HOJE ? situ('Programada', 'info') : situ('Gozada', 'ok'))
+           : q < .8 ? situ('Convertida em pecúnia', 'info') : situ('A gozar', 'alerta')]);
+  }
+
+  const atest = [];
+  for (let k = 0, n = 2 + Math.floor(rnd() * 4); k < n; k++) {
+    const d = new Date(2024 + Math.floor(rnd() * 3), Math.floor(rnd() * 12), 1 + Math.floor(rnd() * 27));
+    if (d > new Date(2026, 9, 20)) continue;
+    const dias = 1 + Math.floor(rnd() * 5);
+    atest.push([dataBR(d), rnd() < .8 ? 'Médico' : 'Odontológico', String(dias), dataBR(somaDias(d, dias - 1)),
+                rnd() < .85 ? situ('Homologado', 'ok') : situ('Em análise', 'alerta')]);
+  }
+  atest.sort((a, b) => b[0].split('/').reverse().join('').localeCompare(a[0].split('/').reverse().join('')));
+
+  const bloq = rnd() < .35
+    ? [['08/2026', 'PAGAMENTO EM DUPLICIDADE NA COMPETÊNCIA ANTERIOR', 'maria.souza', '27/08/2026', situ('Bloqueado', 'erro')],
+       ['03/2025', 'AGUARDANDO RECADASTRAMENTO', 'joao.lima', '12/03/2025', situ('Liberado', 'ok')]]
+    : [];
+  return { ferias, afast, lic, atest, bloq };
+}
+
+function movimentacoesHTML() {
+  const M = movimentacoesDados(servAberto);
+  const vazio = txt => `<div class="construcao">${txt}</div>`;
+  const corpo = subMov === 'Férias'
+    ? tabelaFichaHTML([['PERÍODO AQUISITIVO', '30%', 'left'], ['GOZO', '30%', 'left'], ['DIAS', '12%', 'left'], ['ABONO', '12%', 'left'], ['SITUAÇÃO', '16%', 'left']], M.ferias)
+    : subMov === 'Afastamentos'
+    ? tabelaFichaHTML([['MOTIVO', '38%', 'left'], ['TIPO', '14%', 'left'], ['INÍCIO', '12%', 'left'], ['FIM', '12%', 'left'], ['DIAS', '10%', 'left'], ['SITUAÇÃO', '14%', 'left']], M.afast)
+    : subMov === 'Licença Prêmio'
+    ? tabelaFichaHTML([['QUINQUÊNIO', '16%', 'left'], ['PERÍODO AQUISITIVO', '27%', 'left'], ['GOZO', '27%', 'left'], ['DIAS', '10%', 'left'], ['SITUAÇÃO', '20%', 'left']], M.lic)
+    : subMov === 'Atestados'
+    ? tabelaFichaHTML([['DATA', '18%', 'left'], ['TIPO', '22%', 'left'], ['DIAS', '14%', 'left'], ['ATÉ', '18%', 'left'], ['SITUAÇÃO', '28%', 'left']], M.atest)
+    : M.bloq.length
+    ? tabelaFichaHTML([['COMPETÊNCIA', '12%', 'left'], ['MOTIVO', '40%', 'left'], ['USUÁRIO', '14%', 'left'], ['DATA', '14%', 'left'], ['SITUAÇÃO', '20%', 'left']], M.bloq)
+    : vazio('Nenhum bloqueio financeiro para este servidor.');
+  return `
+    <div class="stabs">${SUBABAS_MOV.map(t => `<button class="stab${t === subMov ? ' ativa' : ''}" onclick="subMov='${t}';pintarArea()">${t}</button>`).join('')}</div>
+    <div class="fin-painel">${corpo}</div>`;
+}
+
+function areaHTML() {
+  if (abaInt === 'comparativo') return comparativoHTML();
+  if (abaInt === 'ficha') return fichaFinanceiraHTML();
+  return movimentacoesHTML();
+}
+
+function trocarAbaInt(id) { abaInt = id; pintarCadastro(); }
+
+function pintarArea() { main.querySelector('.area-corpo').innerHTML = areaHTML(); }
+
+function pintarCadastro() {
+  const cad = main.querySelector('.cad');
+  cad.querySelector('.cad-topo').innerHTML = topoCadHTML();
+  cad.querySelector('.cad-corpo').innerHTML = servAberto === null
+    ? `<div class="construcao">Nenhum servidor aberto.</div>`
+    : `${fichaHTML()}${valoresHTML()}
+      <div class="area">
+        <div class="itabs">${ABAS_INT.map(a => `<button class="itab${a.id === abaInt ? ' ativa' : ''}" onclick="trocarAbaInt('${a.id}')"><span>${a.rot}</span></button>`).join('')}</div>
+        <div class="area-corpo">${areaHTML()}</div>
+      </div>`;
+}
+
+
+/* ------------------- modal da ficha cadastral do servidor -------------------
+   O nome do servidor no topo do Cadastro abre a ficha dele na modal do
+   protótipo — a mesma moldura da modal de Tramitação de protocolo da PO051:
+   pastas do Funcionário à esquerda e o formulário à direita. Os campos são os
+   da tela Funcionário do ERP, preenchidos com o servidor aberto. */
+
+const PASTAS_FUNC = ['Legais', 'Digitalizações', 'Dependentes', 'Pensão alimentícia', 'Dados de pensão',
+  'Dados de aposentado', 'Controle de cessão', 'Dados de estágio', 'Eventos', 'Eventos base',
+  'Concessão mensal', 'Outras fontes', 'Prev. complementar', 'Eventos herdados', 'Evolução salarial',
+  'Férias', 'Afastamentos'];
+
+const TITULO_ACAO = { lupa: 'Pesquisar', lapis: 'Editar', calendario: 'Escolher data' };
+
+/* linha de formulário (rótulo + campo), no mesmo molde do campoHTML da PO051 */
+function campoHTML({ rot, val = '', cod, ro = false, lupa = false, ph = '', acoes = [], opcoes, codL = false, ajuda = false }) {
+  const codBox = cod !== undefined
+    ? `<input class="cx cod${codL ? ' cod-l' : ''}${ro ? ' ro' : ''}" value="${cod}" ${ro ? 'readonly' : ''}>` : '';
+  const entrada = opcoes
+    ? `<select class="cx${ro ? ' ro' : ''}" ${ro ? 'disabled' : ''}>${opcoes.map(o => `<option${o === val ? ' selected' : ''}>${o}</option>`).join('')}</select>`
+    : `<input class="cx${ro ? ' ro' : ''}" value="${val}" placeholder="${ph}" ${ro ? 'readonly' : ''}>`;
+  const bts = (lupa ? ['lupa'] : acoes).map(a => `<button class="act" title="${TITULO_ACAO[a] || ''}">${svg(a)}</button>`).join('');
+  return `
+    <div class="campo">
+      <div class="rot">${rot}${ajuda ? svg('ajuda', 'class="ajuda"') : ''}</div>
+      <div class="val">${codBox}${entrada}${bts}</div>
+    </div>`;
+}
+
+let fichaAberta = false;
+let pastaFicha = null;     /* null = formulário do Funcionário */
+
+function abrirFichaServidor() { if (servAberto === null) return; fichaAberta = true; pastaFicha = null; renderFicha(); }
+function fecharFichaServidor() { fichaAberta = false; renderFicha(); }
+function irPastaFicha(p) { pastaFicha = p; renderFicha(); }
+
+function camposFuncionarioHTML() {
+  const r = RESULTADOS_P[servAberto];
+  const req = '<span class="req">*</span>';
+  return [
+    campoHTML({ rot: 'Id', val: r[1], ro: true }),
+    campoHTML({ rot: `Pessoa${req}`, cod: String(400000 + +r[1]), codL: true, val: r[4], acoes: ['lapis', 'lupa'], ajuda: true }),
+    campoHTML({ rot: `Tipo${req}`, val: 'Servidor', opcoes: ['Servidor', 'Pensionista', 'Estagiário', 'Autônomo'] }),
+    campoHTML({ rot: 'Beneficiário RPPS', val: 'Não', opcoes: ['Não', 'Sim'] }),
+    `<div class="campo-foto">
+       <div class="soltar">Arraste arquivo aqui ou clique para adicionar</div>
+       <div class="acoes-foto"><button title="Tirar foto">${svg('camera')}</button><button title="Ampliar foto">${svg('zoom')}</button></div>
+     </div>`,
+    campoHTML({ rot: 'Data de admissão', val: r[6], acoes: ['calendario'] }),
+    campoHTML({ rot: 'Ato', cod: '', codL: true, ph: 'Pesquisar', lupa: true }),
+    campoHTML({ rot: 'Tipo de admissão', cod: '2', codL: true, val: 'CONCURSO PÚBLICO', lupa: true }),
+    campoHTML({ rot: `Controle de<br>salário${req}`, val: 'Cargo', opcoes: ['Cargo', 'Tabela salarial', 'Valor fixo'] }),
+    campoHTML({ rot: 'Horário', cod: '1', codL: true, val: '40 HORAS SEMANAIS', lupa: true }),
+    campoHTML({ rot: `Exige ponto${req}`, val: 'Não', opcoes: ['Não', 'Sim'] }),
+    campoHTML({ rot: 'Cargo', cod: String(100 + servAberto * 7), codL: true, val: r[7], lupa: true }),
+    campoHTML({ rot: 'Tabela salarial', cod: '761', codL: true, val: 'I-4878', lupa: true }),
+    campoHTML({ rot: 'Classe/Nível', cod: 'A', codL: true, val: 'CLASSE A - NÍVEL I', lupa: true }),
+    campoHTML({ rot: 'Lotação', cod: '312', codL: true, val: FICHA_FIXA.lotacao, lupa: true }),
+  ].join('');
+}
+
+function fichaModalHTML() {
+  const r = RESULTADOS_P[servAberto];
+  const raiz = `Funcionário - ${r[1]}`;
+  const arvore = PASTAS_FUNC.map(p => `
+    <div class="pasta n1${pastaFicha === p ? ' sel' : ''}" onclick="irPastaFicha('${p}')">
+      <span class="chev"></span>
+      <span class="ico">${fa('pasta')}</span>
+      <span class="rot-no">${p}</span>
+    </div>`).join('');
+  const corpo = pastaFicha === null
+    ? `<div class="modal-form scroll">${camposFuncionarioHTML()}</div>`
+    : `<div class="pasta-vazia">${pastaFicha} — em construção</div>`;
+  const salvar = pastaFicha === null
+    ? `<button class="btn btn-primario" onclick="fecharFichaServidor()">${svg('salvar')} Salvar(1)</button>`
+    : `<button class="btn btn-neutro" disabled>${svg('salvar')} Salvar</button>`;
+  return `
+  <div class="modal-overlay" onclick="if(event.target===this)fecharFichaServidor()">
+    <div class="modal">
+      <div class="modal-cab">
+        <h2>Funcionário</h2>
+        <button class="bt-fechar" onclick="fecharFichaServidor()" title="Fechar">${svg('x')}</button>
+      </div>
+      <div class="modal-corpo">
+        <div class="arvore modal-arvore scroll">
+          <div class="cab-arv" onclick="irPastaFicha(null)">
+            <span>${fa('chevronBaixo')}</span>
+            <span class="marca">${fa('check')}</span>
+            <span class="nome-item" title="${raiz}">${raiz}</span>
+          </div>
+          ${arvore}
+        </div>
+        <div class="modal-dir">
+          <div class="modal-toolbar">
+            ${salvar}
+            <button class="btn btn-primario">${svg('gerais')} Operações</button>
+          </div>
+          ${corpo}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderFicha() {
+  const tela = main.querySelector('.tela');
+  tela.querySelector('.modal-overlay')?.remove();
+  if (fichaAberta) tela.insertAdjacentHTML('beforeend', fichaModalHTML());
+}
+
+/* Esc fecha a modal */
+addEventListener('keydown', e => { if (e.key === 'Escape' && fichaAberta) fecharFichaServidor(); });
+
+/* --------------------------------- vistas --------------------------------- */
+
+function irPara(id) {
+  if (!VISTAS.some(v => v.id === id)) id = VISTAS[0].id;
+  vista = id;
+  main.querySelectorAll('.vtab').forEach((b, i) => b.classList.toggle('ativa', VISTAS[i].id === id));
+  main.querySelector('.cad').hidden = id !== 'cadastro';
+  main.querySelector('.pesq').hidden = id !== 'pesquisa';
+  const outra = main.querySelector('.vazio-vista');
+  outra.hidden = id === 'cadastro' || id === 'pesquisa';
+  outra.textContent = (VISTAS.find(v => v.id === id) || {}).rot + ' — em construção';
+  if (id === 'cadastro') pintarCadastro();
+}
+
+const main = montarShell('fp296');
+
+const ESTADO = lerEstado('fp296') || {};
+if (ESTADO.pesquisou) pesquisou = true;
+if (ESTADO.servSel !== undefined) servSel = ESTADO.servSel;
+if (ESTADO.servAberto !== undefined) servAberto = ESTADO.servAberto;
+if (ESTADO.abaInt) abaInt = ESTADO.abaInt;
+if (ESTADO.subFicha) subFicha = ESTADO.subFicha;
+if (ESTADO.subMov) subMov = ESTADO.subMov;
+if (Array.isArray(ESTADO.filtroSit)) filtroSit = ESTADO.filtroSit;
+
+main.insertAdjacentHTML('beforeend', `
+  <div class="tela">
+    <div class="vtabs">
+      ${VISTAS.map(v => `
+        <button class="vtab${v.id === vista ? ' ativa' : ''}" onclick="irPara('${v.id}')">
+          ${svg(v.ico)}<span>${v.rot}</span>
+        </button>`).join('')}
+    </div>
+    <div class="conteudo">
+      <div class="pesq">${pesquisaHTML()}</div>
+      <div class="cad" hidden>
+        <div class="cad-topo"></div>
+        <div class="cad-corpo scroll"></div>
+      </div>
+      <div class="painel vazio-vista" hidden></div>
+    </div>
+  </div>`);
+
+if (ESTADO.vista) irPara(ESTADO.vista);
+
+/* estados via URL, para revisar telas específicas:
+   fp296.html?servidor=0&aba=ficha   abre o primeiro servidor na Ficha Financeira */
+const q = new URLSearchParams(location.search);
+if (q.has('servidor')) { pesquisou = true; main.querySelector('.pesq').innerHTML = pesquisaHTML(); abrirServidor(Math.max(0, Math.min(RESULTADOS_P.length - 1, +q.get('servidor') || 0))); }
+if (q.get('aba') && ABAS_INT.some(a => a.id === q.get('aba'))) trocarAbaInt(q.get('aba'));
+if (q.get('view') && VISTAS.some(v => v.id === q.get('view'))) irPara(q.get('view'));
+
+guardarEstadoAoSair('fp296', () => ({ vista, pesquisou, servSel, servAberto, abaInt, subFicha, subMov, filtroSit }));
+</script>
+</body>
+</html>

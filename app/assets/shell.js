@@ -55,6 +55,14 @@ const ICO = {
   contrato: '<path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14,2 14,8 20,8"/><path d="M8 17c1.5-3 3-3 4 0s2.5 3 4 0"/>',
   publicar: '<path d="M4 21h16"/><path d="M4 21v-8l8-5 8 5v8"/><polyline points="9,14.5 12,11.5 15,14.5"/><line x1="12" y1="11.5" x2="12" y2="18"/>',
   bussola: '<circle cx="12" cy="12" r="9"/><polygon points="15.5,8.5 10.5,10.5 8.5,15.5 13.5,13.5"/>',
+  pessoas: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7"/><path d="M18.5 14.5A6.5 6.5 0 0 1 21.5 20"/>',
+  calculadora: '<rect x="5" y="2" width="14" height="20" rx="2"/><rect x="8" y="5" width="8" height="4" rx="1"/><line x1="8.5" y1="13" x2="8.5" y2="13"/><line x1="12" y1="13" x2="12" y2="13"/><line x1="15.5" y1="13" x2="15.5" y2="13"/><line x1="8.5" y1="17" x2="8.5" y2="17"/><line x1="12" y1="17" x2="12" y2="17"/><line x1="15.5" y1="17" x2="15.5" y2="17"/>',
+  avaliacao: '<path d="M9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
+  saude: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="12" y1="10.5" x2="12" y2="16.5"/><line x1="9" y1="13.5" x2="15" y2="13.5"/>',
+  organograma: '<rect x="9" y="2" width="6" height="5" rx="1"/><rect x="2" y="17" width="6" height="5" rx="1"/><rect x="16" y="17" width="6" height="5" rx="1"/><path d="M12 7v5M5 17v-3h14v3"/>',
+  integracao: '<polyline points="17,3 21,7 17,11"/><line x1="21" y1="7" x2="7" y2="7"/><polyline points="7,13 3,17 7,21"/><line x1="3" y1="17" x2="17" y2="17"/>',
+  globo: '<circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"/>',
+  nos: '<circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="12" cy="18" r="3"/><path d="M8.5 7.5 10.5 15.5M15.5 7.5 13.5 15.5"/>',
   pin: '<path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>',
 };
 
@@ -84,7 +92,20 @@ const MODULOS = [
       { nome: 'Contratos',                         ico: 'contrato' },
       { nome: 'Prestação de Contas e Publicações', ico: 'publicar' },
     ] },
-  { nome: 'Folha de Pagamento',  ico: 'folha',         chev: true },
+  { nome: 'Folha de Pagamento',  ico: 'folha', subs: [
+      { nome: 'Gestão de Pessoal',                 ico: 'pessoas' },
+      { nome: 'Gestão da Folha',                   ico: 'calculadora', href: 'gestao-folha.html',
+        paginas: ['gestao-folha.html', 'fp296.html'] },
+      { nome: 'Configurações Folha',               ico: 'gerais' },
+      { nome: 'Processos Seletivos e Avaliações',  ico: 'avaliacao' },
+      { nome: 'Saúde e Segurança do Trabalho',     ico: 'saude' },
+      { nome: 'Ponto Eletrônico',                  ico: 'relogio' },
+      { nome: 'Estrutura Organizacional',          ico: 'organograma' },
+      { nome: 'Integrações',                       ico: 'integracao' },
+      { nome: 'eSocial',                           ico: 'globo' },
+      { nome: 'Colare',                            ico: 'nos' },
+      { nome: 'Tribunais',                         ico: 'martelo' },
+    ] },
   { nome: 'Arrecadação',         ico: 'arrecadacao',   chev: true },
   { nome: 'Contabilidade',       ico: 'contabilidade', chev: true },
   { nome: 'Financeiro',          ico: 'financeiro' },
@@ -107,6 +128,8 @@ const ABAS = {
   po011:     { cod: 'PO011', rotulo: 'Central de Protocolos', href: 'po011.html', fechavel: true },
   po050:     { cod: 'PO050', rotulo: 'Fluxo de Processos', href: 'po050.html', fechavel: true },
   po051:     { cod: 'PO051', rotulo: 'Tramitação de Protocolo', href: 'po051.html', fechavel: true },
+  gestaofolha: { menu: true, rotulo: 'Gestão da Folha', href: 'gestao-folha.html', fechavel: true },
+  fp296:     { cod: 'FP296', rotulo: 'Gestão Folha de Pagamento', href: 'fp296.html', fechavel: true },
 };
 
 function topbarHTML() {
@@ -114,7 +137,7 @@ function topbarHTML() {
   return `
   <header class="topbar">
     <a href="index.html" title="Início"><img class="marca" src="assets/img/marca-centi.png" alt="Centi"></a>
-    <div class="burger" title="Recolher menu"><i></i><i></i><i></i></div>
+    <div class="burger" title="${menuRecolhido() ? 'Expandir menu' : 'Recolher menu'}" onclick="alternarMenuLateral()"><i></i><i></i><i></i></div>
     <div class="grupos-ref">
       <div class="field-group">
         <span class="lbl">Referência</span>
@@ -149,9 +172,35 @@ function moduloAberto() {
   catch { return ''; }
 }
 
-/** Abre o submenu do módulo, fechando o que estiver aberto: só um por vez. */
+/* Menu lateral recolhido (só os ícones). É preferência de quem usa, e não do
+   momento: fica no localStorage e vale para todas as telas e visitas. */
+const CHAVE_RECOLHIDO = 'centi:menu-recolhido';
+
+function menuRecolhido() {
+  try { return localStorage.getItem(CHAVE_RECOLHIDO) === '1'; }
+  catch { return false; }
+}
+
+/** Recolhe ou expande o menu lateral pelo botão ☰ da topbar. */
+function alternarMenuLateral(recolher) {
+  const app = document.querySelector('.app');
+  const r = recolher === undefined ? !app.classList.contains('recolhido') : recolher;
+  app.classList.toggle('recolhido', r);
+  const b = app.querySelector('.topbar .burger');
+  if (b) b.title = r ? 'Expandir menu' : 'Recolher menu';
+  try { localStorage.setItem(CHAVE_RECOLHIDO, r ? '1' : '0'); }
+  catch { /* sem armazenamento: vale só nesta página */ }
+}
+
+/** Abre o submenu do módulo, fechando o que estiver aberto: só um por vez.
+    Com o menu recolhido não há onde mostrar o submenu: o clique expande o
+    menu e já abre o submenu do módulo escolhido. */
 function alternarModulo(nome, elo) {
   const grupo = elo.closest('.mod-grupo');
+  if (document.querySelector('.app').classList.contains('recolhido')) {
+    alternarMenuLateral(false);
+    if (grupo.classList.contains('aberto')) return;
+  }
   const abrir = !grupo.classList.contains('aberto');
   grupo.parentNode.querySelectorAll('.mod-grupo.aberto')
        .forEach(g => g.classList.remove('aberto'));
@@ -164,9 +213,11 @@ function sidebarHTML() {
   // o módulo só fica marcado quando a tela aberta pertence a ele (o Início não marca nenhum)
   const pagina = location.pathname.split('/').pop() || 'index.html';
   const aberto = moduloAberto();
+  const subDaPagina = sub => (sub.paginas || [sub.href]).includes(pagina);
   const itens = MODULOS.map(m => {
+    const temPagina = m.subs && m.subs.some(subDaPagina);
     const linha = `
-    <a class="mod${(m.paginas || []).includes(pagina) ? ' ativo' : ''}" href="${m.href || '#'}"
+    <a class="mod${(m.paginas || []).includes(pagina) ? ' ativo' : ''}" href="${m.href || '#'}" title="${m.nome}"
        ${m.subs ? `onclick="event.preventDefault();alternarModulo('${m.nome}', this)"` : ''}>
       <span class="tile">${svg(m.ico)}</span>
       <span class="nome">${m.nome}</span>
@@ -176,12 +227,12 @@ function sidebarHTML() {
     /* o módulo com submenu vira um grupo: a classe 'aberto' fica no grupo, e é
        ela que mostra o segundo nível e vira o chevron */
     const filhos = m.subs.map(sub => `
-      <a class="sub" href="${sub.href || '#'}">
+      <a class="sub${subDaPagina(sub) ? ' ativo' : ''}" href="${sub.href || '#'}">
         <span class="ico">${svg(sub.ico)}</span>
         <span class="nome">${sub.nome}</span>
       </a>`).join('');
     return `
-    <div class="mod-grupo${m.nome === aberto ? ' aberto' : ''}">${linha}
+    <div class="mod-grupo${m.nome === aberto || temPagina ? ' aberto' : ''}${temPagina ? ' tem-ativo' : ''}">${linha}
       <div class="submenu"><div class="lista">${filhos}</div></div>
     </div>`;
   }).join('');
@@ -190,7 +241,7 @@ function sidebarHTML() {
   <aside class="sidebar">
     <div class="busca"><input placeholder="Pesquisar..." aria-label="Pesquisar no menu"></div>
     <nav class="scroll">${itens}</nav>
-    <a class="mod treinamentos" href="#">
+    <a class="mod treinamentos" href="#" title="Central de Treinamentos">
       <span class="tile">${svg('treinamentos')}</span>
       <span class="nome">Central de Treinamentos</span>
     </a>
@@ -323,6 +374,12 @@ function montarShell(atual) {
   guardarAbas(abertas);
 
   const app = document.querySelector('.app');
+  /* o estado recolhido entra antes do primeiro desenho e sem animação: a
+     tela já nasce como o menu estava, em vez de vê-lo encolher ao abrir */
+  if (menuRecolhido()) {
+    app.classList.add('recolhido', 'sem-anim');
+    requestAnimationFrame(() => requestAnimationFrame(() => app.classList.remove('sem-anim')));
+  }
   app.insertAdjacentHTML('afterbegin', topbarHTML() + sidebarHTML());
   const main = document.createElement('main');
   main.className = 'main';

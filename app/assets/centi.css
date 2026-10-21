@@ -133,7 +133,28 @@ a { color: inherit; text-decoration: none; }
   grid-template-rows: var(--topbar-h) 1fr;
   grid-template-areas: "top top" "side main";
   height: 100vh;
+  transition: grid-template-columns .28s cubic-bezier(.25, .8, .3, 1);
 }
+
+/* ---------------------- menu lateral recolhido ----------------------
+   O ☰ da topbar estreita a coluna para 50px e deixa só os ícones dos módulos
+   (o nome aparece no title). Busca, nomes, chevrons e submenus saem; o filete
+   verde do item ativo continua, e o módulo cujo submenu tem a tela aberta
+   herda o filete. */
+.app.recolhido { grid-template-columns: 50px 1fr; }
+.app.sem-anim { transition: none; }
+.app.recolhido .sidebar .busca,
+.app.recolhido .sidebar .mod .nome,
+.app.recolhido .sidebar .mod .chev,
+.app.recolhido .sidebar .submenu { display: none; }
+.app.recolhido .sidebar .mod { justify-content: center; padding: 0; }
+.app.recolhido .sidebar nav { overflow-x: hidden; scrollbar-width: none; }
+.app.recolhido .sidebar nav::-webkit-scrollbar { display: none; }
+.app.recolhido .mod-grupo.tem-ativo > .mod::after {
+  content: ""; position: absolute; right: 0; top: 0;
+  width: 4px; height: 50px; background: var(--g);
+}
+.app.recolhido .mod.treinamentos .tile { width: 31px; }
 
 /* ============================== topbar ============================== */
 
@@ -315,6 +336,10 @@ a { color: inherit; text-decoration: none; }
   cursor: pointer;
 }
 .sub:hover { background: #F5F9E9; }
+/* item do submenu da tela aberta: fundo cinza e o mesmo filete do módulo ativo */
+.sub { position: relative; }
+.sub.ativo { background: #F1F3F5; }
+.sub.ativo::after { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 4px; background: var(--g); }
 /* o ícone do submenu ocupa a mesma coluna do tile do módulo, mas sem a caixa:
    só o traço verde, para o segundo nível pesar menos que o primeiro */
 .sub .ico {
