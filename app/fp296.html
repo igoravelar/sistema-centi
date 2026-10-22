@@ -54,7 +54,7 @@
   .cad-topo { flex: 0 0 46px; background: #EDEFF2; border-bottom: 1px solid var(--tab-bd); }
   .cad-topo .esq { flex: 0 0 auto; gap: 10px; padding: 0 12px; overflow: visible; }
   .cad-topo .esq .serv { width: 17px; height: 17px; color: #9DC815; }
-  .cad-topo .esq .nome { font-size: 14px; color: #5C5B5C; text-decoration: underline; text-underline-offset: 4px;
+  .cad-topo .esq .nome { font-size: 14px; color: #5C5B5C; text-decoration: none;
                          overflow: visible; text-overflow: clip; }
   .cad-topo .esq .nome-vazio { font-style: italic; font-weight: normal; color: #5C5B5B; text-decoration: none; }
   .cad-topo .nav { display: flex; align-items: center; gap: 10px; margin-right: 5px; font-size: 12px; color: #5C5B5C; }
@@ -73,11 +73,12 @@
   .cad-corpo { flex: 1; min-height: 0; overflow: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
 
   /* ficha cadastral */
-  .ficha { flex: 0 0 auto; display: flex; align-items: center; gap: 26px; min-height: 55px; padding: 0 14px;
+  .ficha { flex: 0 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 22px; min-height: 55px; padding: 8px 14px;
            background: #FFFFFF; border: 1px solid #E0E2D8; border-radius: 6px; }
-  .ficha .f { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .ficha .f { display: flex; flex-direction: column; gap: 1px; flex: 0 0 auto; }
   .ficha .f span { font-size: 10px; font-weight: 500; color: #959595; }
-  .ficha .f b { font-size: 12px; font-weight: normal; color: #434343; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ficha .f b { font-size: 12px; font-weight: normal; color: #434343; white-space: nowrap; }
+  .ficha .f b[title] { cursor: help; }
   .ficha .f.ent { flex: 1; min-width: 120px; }
   .ficha .btn { height: 26px; margin-left: auto; font-family: Verdana, sans-serif; }
 
@@ -120,7 +121,9 @@
   .grupo { display: inline-flex; height: 33px; font-size: 13px; color: #747474; }
   .grupo > * { border: 1px solid #CBCBCB; background: #FFFFFF; display: flex; align-items: center; padding: 0 11px; }
   .grupo > * + * { margin-left: -1px; }
-  .grupo > :first-child { background: #F1F4E7; border-radius: 4px 0 0 4px; }
+  .grupo > :first-child { background: #F2F2F0; border-radius: 4px 0 0 4px; }
+  /* rótulo dos campos do formulário da modal: o mesmo cinza das etiquetas */
+  .campo > .rot { background: #F2F2F0; }
   .grupo > :last-child { border-radius: 0 4px 4px 0; }
   .grupo select { appearance: none; -webkit-appearance: none; font: inherit; color: inherit; outline: none; cursor: pointer;
                   padding-right: 28px; min-width: 96px;
@@ -216,12 +219,14 @@
   .fin-tab { border: 1px solid #E0E2D8; border-radius: 6px; overflow: auto; }
   .fin-tab table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 12px; color: #5C5B5C; }
   .fin-tab th { height: 37px; padding: 0 12px; font-size: 12px; font-weight: bold; color: #747474; text-align: right; text-transform: uppercase;
-                border-bottom: 1px solid #E0E2D8; position: sticky; top: 0; background: #F9F9F9; }
+                border-bottom: 1px solid #E0E2D8; position: sticky; top: 0; background: #F2F2F0; }
   .fin-tab td { height: 38px; padding: 0 12px; border-bottom: 1px solid #E0E2D8; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .fin-tab .ev { text-align: left; }
   .fin-tab .ref { text-align: center; }
   .fin-tab .tipo { text-align: left; }
   .fin-tab td.ev { box-shadow: inset 4px 0 0 #11C638; }
+  /* respiro entre a listra colorida e o código do evento; o título acompanha */
+  .fin-tab td.ev, .fin-tab th.ev { padding-left: 20px; }
   .fin-tab tr.desc td { background: #FFF6F6; }
   .fin-tab tr.desc td.ev { box-shadow: inset 4px 0 0 #FF5656; }
   .fin-tab tr.tot td { background: #F9F9F9; font-weight: bold; border-bottom: 0; }
@@ -336,8 +341,7 @@
 
   /* nome do servidor: abre a ficha cadastral na modal (o mesmo link do título
      do protocolo na PO051) */
-  .cad-topo .esq .nome.link { cursor: pointer; transition: color .15s ease; }
-  .cad-topo .esq .nome.link:hover { color: #A6D100; }
+
 
   /* foto do funcionário: a área de soltar arquivo do ERP, com câmera e zoom */
   .campo-foto { display: flex; align-items: center; gap: 10px; padding: 4px 0 4px 146px; }
@@ -677,7 +681,7 @@ function topoCadHTML() {
         <span>${String(servAberto + 1).padStart(2, '0')} de ${String(RESULTADOS_P.length).padStart(2, '0')}</span>
         <button title="Próximo servidor" onclick="navServidor(1)"${servAberto === RESULTADOS_P.length - 1 ? ' disabled' : ''}>${svg('direita')}</button>
       </div>
-      <a class="nome link" title="Abrir a ficha cadastral do servidor" onclick="abrirFichaServidor()">${r[4]}</a>
+      <span class="nome">${r[4]} - <b>${r[3]}</b></span>
     </div>
     <div class="dir">
       <button class="btn btn-claro">${svg('atualizar')} Atualizar</button>
@@ -685,14 +689,22 @@ function topoCadHTML() {
     </div>`;
 }
 
+/* Cargo, Lotação e Entidade mostram até 30 caracteres; passou disso, corta
+   com reticências e o valor completo aparece no tooltip */
+const LIMITE_FICHA = 30;
 function fichaHTML() {
   const r = RESULTADOS_P[servAberto];
-  const f = (rot, v, cls = '') => `<div class="f ${cls}"><span>${rot}</span><b title="${v}">${v}</b></div>`;
+  const f = (rot, v, cls = '', limite = 0) => {
+    const corta = limite && v.length > limite;
+    const txt = corta ? v.slice(0, limite).trimEnd() + '…' : v;
+    return `<div class="f ${cls}"><span>${rot}</span><b${corta ? ` title="${v}"` : ''}>${txt}</b></div>`;
+  };
   return `
   <div class="ficha">
-    ${f('Matrícula', r[3])}${f('CPF', r[5])}${f('Admissão', r[6])}${f('Cargo', r[7])}
-    ${f('Tabela Salarial', FICHA_FIXA.tabela)}${f('Lotação', FICHA_FIXA.lotacao)}${f('Entidade', FICHA_FIXA.entidade, 'ent')}
-    <button class="btn btn-claro">${svg('olho')} Ver mais</button>
+    ${f('CPF', r[5])}${f('Admissão', r[6])}${f('Cargo', r[7], '', LIMITE_FICHA)}
+    ${f('Tabela Salarial', FICHA_FIXA.tabela)}
+    ${f('Lotação', FICHA_FIXA.lotacao, '', LIMITE_FICHA)}${f('Entidade', FICHA_FIXA.entidade, '', LIMITE_FICHA)}${f('Previdência', 'RPPS')}
+    <button class="btn btn-claro" onclick="abrirFichaServidor()" title="Abrir a ficha cadastral do servidor">${svg('olho')} Ver mais</button>
   </div>`;
 }
 
