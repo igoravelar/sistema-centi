@@ -22,12 +22,14 @@ python3 -m http.server 5173
 | `po011.html` | PO011 - Central de Protocolos (BPMN + drawer) | frames `PO011 - Drawer Dados / Documentos / Checklist` |
 | `gestao-folha.html` | Menu Gestão da Folha (submódulo da Folha de Pagamento) | menu do ERP |
 | `fp296.html` | FP296 - Gestão Folha de Pagamento (Pesquisa / Cadastro: Comparativo e Ficha Financeira) | `files/Telas Premium.fig` — frames `FP296 - Gestão Folha Pagto > Comparativo 1` e `> Financeiro 1`; Pesquisa conforme o ERP |
+| `ass-doc.html` | Portal Assinatura Digital de Documento(s) — documento protegido antes da liberação | imagem de referência enviada pelo time |
 
 Caminhos de navegação:
 
 - **index (Início)** é a tela que abre por padrão
 - **index** → botão `Design System` abre o `Centi Design System.dc.html`; a marca da
   Centi no topo dele volta para a index
+- **topbar → ícone da pessoa** abre o `ass-doc.html`; a marca da Centi no topo dele volta para a index
 - **sidebar → Protocolo** abre o `protocolo.html`
 - **protocolo** → item `Protocolo PO002` abre o `po002.html`; `Tela Protocolo PO011` abre o `po011.html`
 - **sidebar → Folha de Pagamento → Gestão da Folha** abre o `gestao-folha.html`; o item

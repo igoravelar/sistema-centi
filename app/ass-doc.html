@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Assinatura Digital de Documento(s) — Centi</title>
+<link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #F2F3EF; font-family: "Open Sans", Verdana, Geneva, sans-serif; color: #2B3445; }
+
+  /* Topo: mesmo do Design System, com o degradê invertido (verde escuro à esquerda) */
+  .topo {
+    position: sticky; top: 0; z-index: 30; height: 74px;
+    display: flex; align-items: center; justify-content: space-between; padding: 0 32px;
+    background: linear-gradient(90deg, #9BBF2E, #FAFFE2);
+    border-bottom: 3px solid #9BBF2E; box-shadow: 0 1px 6px rgba(60,70,40,.08);
+  }
+  .topo h1 { margin: 0; font-size: 20px; font-weight: 700; color: #404632; }
+  .topo img { height: 28px; width: auto; display: block; }
+
+  main { max-width: 1280px; margin: 0 auto; padding: 32px 40px 24px; }
+
+  .cab { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .cab h2 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -.3px; color: #2B3445; }
+  .prazo { position: relative; top: 3px; display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 12px; background: #FCF1CF; color: #7A5410; font-size: 12px; font-weight: 700; }
+  .sub { margin: 8px 0 24px; font-size: 14px; color: #6B7280; }
+
+  .grade { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+  .card { background: #F8F9FB; border: 1px solid #DDE1E8; border-radius: 8px; box-shadow: 0 1px 3px rgba(43,52,69,.06); overflow: hidden; }
+  .card > .tit { padding: 12px 14px; border-bottom: 1px solid #DDE1E8; font-size: 14px; font-weight: 700; color: #4F5B6E; }
+
+  /* Documentos em accordion: um aberto por vez */
+  .doc + .doc { border-top: 1px solid #DDE1E8; }
+  .doc-cab { display: flex; align-items: center; gap: 10px; padding: 12px 14px; cursor: pointer; user-select: none; transition: background .2s; }
+  .doc-cab:hover { background: #F1F3F6; }
+  .doc-cab input {
+    flex-shrink: 0; width: 16px; height: 16px; margin: 0; border: 1.5px solid #B8BFCB; border-radius: 4px; background: #FFFFFF;
+    -webkit-appearance: none; appearance: none; cursor: pointer; transition: background-color .15s, border-color .15s;
+  }
+  .doc-cab input:hover { border-color: #9BBF2E; }
+  .doc-cab input:checked {
+    border-color: #7D9C2F; background: #9BBF2E no-repeat center / 11px
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M1.5 5.2 4.6 8.2 10.5 1.8' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+  .doc-cab input:focus-visible { outline: 2px solid rgba(155,191,46,.45); outline-offset: 2px; }
+  .doc-cab .nome { font-size: 14px; font-weight: 700; color: #4F5B6E; text-transform: uppercase; }
+  .doc-cab .seta { margin-left: auto; padding: 4px; color: #6B7280; font-size: 13px; transition: transform .35s ease-in-out; }
+  .doc.aberto .seta { transform: rotate(180deg); }
+  .doc-corpo { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s ease-in-out; }
+  .doc.aberto .doc-corpo { grid-template-rows: 1fr; }
+  .doc-corpo > div { min-height: 0; overflow: hidden; }
+
+  /* Documento borrado até a liberação */
+  .visor { position: relative; padding: 18px 64px; background: #EEF0F4; border-top: 1px solid #DDE1E8; }
+  .folha { position: relative; height: 400px; padding: 30px 40px; background: #F8F9FB; box-shadow: 0 4px 18px rgba(43,52,69,.08); }
+  .folha .borrado { filter: blur(3px); opacity: .7; transition: filter .4s ease-in-out, opacity .4s ease-in-out; }
+  .liberado .folha .borrado { filter: none; opacity: 1; }
+  .folha .lt { height: 8px; margin: 0 auto 20px; width: 55%; border-radius: 5px; background: #C9CED8; }
+  .folha .ln { height: 6px; margin-bottom: 19px; border-radius: 4px; background: #D3D8E1; }
+  .folha .ln.m { width: 72%; } .folha .ln.c { width: 88%; }
+  .trava { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding-top: 40px; transition: opacity .3s ease-in-out, visibility .3s; }
+  .liberado .trava { opacity: 0; visibility: hidden; }
+  .trava .bola { width: 42px; height: 42px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #5F6878; font-size: 14px; box-shadow: 0 2px 10px rgba(43,52,69,.1); }
+  .trava b { margin-top: 10px; font-size: 15px; font-weight: 700; color: #2B3445; }
+  .trava p { margin: 4px 0 0; max-width: 320px; font-size: 12px; line-height: 1.35; color: #6B7280; }
+
+  .rodape { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 12px 14px; border-top: 1px solid #DDE1E8; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border: 0; border-radius: 5px;
+    background: #9BBF2E; color: #FFFFFF; font-family: inherit; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px;
+    cursor: pointer; transition: background .2s;
+  }
+  .btn:hover { background: #7D9C2F; }
+  .bloqueio { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 16px; background: #EEF0F4; color: #4F5B6E; font-size: 12px; font-weight: 700; transition: background .3s, color .3s; }
+  .bloqueio.ok { background: #EEF4DC; color: #5D6A38; }
+
+  .lado { display: flex; flex-direction: column; gap: 16px; }
+  .sig { list-style: none; margin: 0; padding: 8px 14px 10px; }
+  .sig li { display: flex; align-items: center; gap: 12px; padding: 5px 0; }
+  .sig .n { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: #E8EBF0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #6B7280; }
+  .sig b { display: block; font-size: 13px; color: #2B3445; }
+  .sig span { font-size: 12px; color: #6B7280; }
+  .passos { margin: 0; padding: 12px 14px 12px 16px; list-style: none; counter-reset: p; }
+  .passos li { counter-increment: p; margin: 0 0 8px; font-size: 13px; color: #6B7280; }
+  .passos li:last-child { margin-bottom: 0; }
+  .passos li::before { content: counter(p) ". "; font-weight: 700; }
+  .passos li.atual { font-weight: 700; color: #2B3445; }
+
+  @media (max-width: 1100px) {
+    .grade { grid-template-columns: 1fr; }
+    .visor { padding: 24px; min-height: 0; }
+  }
+  @media (max-width: 640px) {
+    .topo { padding: 0 16px; height: 56px; }
+    .topo h1 { font-size: 16px; }
+    .topo img { height: 22px; }
+    main { padding: 20px 16px; }
+    .cab h2 { font-size: 24px; }
+    .folha { padding: 24px 20px; }
+  }
+
+  /* Modal Validar acesso */
+  .fundo { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(20,24,32,.55); opacity: 0; visibility: hidden; transition: opacity .25s ease-in-out, visibility .25s; }
+  .fundo.aberto { opacity: 1; visibility: visible; }
+  .modal { width: 100%; max-width: 440px; background: #FFFFFF; border-radius: 10px; box-shadow: 0 18px 48px rgba(20,24,32,.25); transform: translateY(12px) scale(.98); transition: transform .25s ease-in-out; }
+  .fundo.aberto .modal { transform: none; }
+  .modal-cab { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid #DDE1E8; }
+  .modal-cab .ico { position: relative; flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: #EEF4DC; display: flex; align-items: center; justify-content: center; color: #8FAE3A; font-size: 15px; }
+  .modal-cab .ico .fa-check-circle { position: absolute; right: 9px; bottom: 10px; font-size: 8px; color: #7D9C2F; background: #EEF4DC; border-radius: 50%; }
+  .modal-cab h3 { margin: 0; font-size: 19px; font-weight: 700; color: #8FAE3A; }
+  .fechar { margin-left: auto; width: 32px; height: 32px; border: 0; border-radius: 50%; background: none; color: #5F6878; font-size: 18px; cursor: pointer; transition: background .2s; }
+  .fechar:hover { background: #F1F3F6; }
+  .modal-corpo { padding: 18px 20px 8px; }
+  .modal-corpo h4 { margin: 0; font-size: 15px; font-weight: 700; color: #2B3445; }
+  .modal-corpo > p { margin: 6px 0 16px; font-size: 13px; line-height: 1.5; color: #6B7280; }
+  .campo { margin-bottom: 14px; }
+  .campo label { display: block; margin-bottom: 6px; font-size: 12px; font-weight: 700; color: #5F6878; }
+  .campo input { width: 100%; height: 40px; padding: 0 12px; border: 1px solid #DDE1E8; border-radius: 6px; background: #EEF0F4; font-family: inherit; font-size: 13px; font-weight: 600; color: #2B3445; outline: none; transition: border-color .2s, box-shadow .2s, background .2s; }
+  .campo input::placeholder { color: #94A0B4; font-weight: 600; }
+  .campo input:focus { background: #FFFFFF; border-color: #9BBF2E; box-shadow: 0 0 0 3px rgba(155,191,46,.2); }
+  .link { display: block; margin: 4px auto 12px; border: 0; background: none; font-family: inherit; font-size: 12px; color: #6B7280; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; transition: color .2s; }
+  .link:hover { color: #9BBF2E; }
+  .etapa-codigo .modal-corpo { text-align: center; }
+  .codigo { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin: 6px 0 14px; }
+  .codigo input { width: 100%; height: 54px; padding: 0; border: 1px solid #DDE1E8; border-radius: 6px; background: #EEF0F4; font-family: inherit; font-size: 22px; font-weight: 700; text-align: center; color: #2B3445; outline: none; transition: border-color .2s, box-shadow .2s, background .2s; }
+  .codigo input::placeholder { color: #B8BFCB; }
+  .codigo input:focus { background: #FFFFFF; border-color: #9BBF2E; box-shadow: 0 0 0 3px rgba(155,191,46,.2); }
+  .btn:disabled { background: #E1E3E6; color: #A3A8B0; cursor: default; }
+  .modal-rodape { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-top: 1px solid #DDE1E8; }
+  .btn-sec { padding: 8px 16px; border: 1px solid #DDE1E8; border-radius: 5px; background: #FFFFFF; color: #2B3445; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .2s; }
+  .btn-sec:hover { background: #F1F3F6; }
+  .modal-rodape .btn { text-transform: none; font-size: 13px; letter-spacing: 0; }
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <h1>Assinatura Digital de Documento(s)</h1>
+  <a href="index.html" title="Voltar ao início"><img src="uploads/marca-centi.png" alt="Centi"></a>
+</header>
+
+<main>
+  <div class="cab">
+    <h2>Documento(s) para assinar</h2>
+    <span class="prazo"><i class="fas fa-pen"></i> Assinar até 22/10/2026</span>
+  </div>
+  <p class="sub">Protocolo 5264/2026</p>
+
+  <div class="grade">
+    <section class="card">
+      <div id="docs"></div>
+      <div class="rodape">
+        <button class="btn" type="button" id="liberar"><i class="fas fa-lock"></i> Liberar Visualização</button>
+        <span class="bloqueio" id="acesso"><i class="fas fa-lock"></i> Acesso não liberado</span>
+      </div>
+    </section>
+
+    <aside class="lado">
+      <section class="card">
+        <div class="tit">Signatários</div>
+        <ul class="sig">
+          <li><span class="n">1</span><div><b>Signatário</b><span>Pode assinar agora</span></div></li>
+          <li><span class="n">2</span><div><b>Signatário</b><span>Aguardando a vez</span></div></li>
+        </ul>
+      </section>
+      <section class="card">
+        <div class="tit">Como funciona</div>
+        <ol class="passos">
+          <li class="atual">Habilitar Visualização do documento</li>
+          <li>Informe CPF/CNPJ e e-mail</li>
+          <li>Digite o código recebido por e-mail</li>
+          <li>Leia o(s) documento(s)</li>
+          <li>Clique em assinar ou recusar assinatura</li>
+        </ol>
+      </section>
+    </aside>
+  </div>
+</main>
+
+<div class="fundo" id="validar" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="validar-tit">
+    <div class="modal-cab">
+      <span class="ico"><i class="fas fa-envelope"></i><i class="fas fa-check-circle"></i></span>
+      <h3 id="validar-tit">Validar acesso</h3>
+      <button class="fechar" type="button" title="Fechar" data-fechar><i class="fas fa-times"></i></button>
+    </div>
+    <div class="etapa-dados">
+    <div class="modal-corpo">
+      <h4>Confirme seus dados para liberar o documento.</h4>
+      <p>Ao preencher os dados, enviaremos um código de 6 dígitos para o seu e-mail.</p>
+      <div class="campo">
+        <label for="cpf">CPF/CNPJ</label>
+        <input id="cpf" type="text" inputmode="numeric" placeholder="000.000.000-00" autocomplete="off">
+      </div>
+      <div class="campo">
+        <label for="email">E-mail</label>
+        <input id="email" type="email" placeholder="Escreva" autocomplete="email">
+      </div>
+      <button class="link" type="button" data-etapa="codigo">Já tenho um código</button>
+    </div>
+    <div class="modal-rodape">
+      <button class="btn-sec" type="button" data-fechar>Cancelar</button>
+      <button class="btn" type="button" data-etapa="codigo">Enviar</button>
+    </div>
+    </div>
+    <div class="etapa-codigo" hidden>
+    <div class="modal-corpo">
+      <h4>Digite o código de acesso</h4>
+      <p>Informe o código de 6 dígitos que você recebeu por e-mail.</p>
+      <div class="codigo" id="codigo">
+        <input inputmode="numeric" placeholder="0" aria-label="Dígito 1" autocomplete="one-time-code">
+        <input inputmode="numeric" placeholder="0" aria-label="Dígito 2">
+        <input inputmode="numeric" placeholder="0" aria-label="Dígito 3">
+        <input inputmode="numeric" placeholder="0" aria-label="Dígito 4">
+        <input inputmode="numeric" placeholder="0" aria-label="Dígito 5">
+        <input inputmode="numeric" placeholder="0" aria-label="Dígito 6">
+      </div>
+      <button class="link" type="button" data-etapa="dados">Não recebi o código</button>
+    </div>
+    <div class="modal-rodape">
+      <button class="btn-sec" type="button" data-etapa="dados">Voltar</button>
+      <button class="btn" type="button" id="validar-codigo" disabled>Validar código</button>
+    </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const documentos = ['Cupom teste', 'Contrato de prestação de serviços', 'Termo aditivo nº 01/2026'];
+
+const folha = `
+  <div class="visor">
+    <div class="folha">
+      <div class="borrado">
+        <div class="lt"></div>
+        <div class="ln"></div><div class="ln"></div><div class="ln m"></div><div class="ln c"></div>
+        <div class="ln"></div><div class="ln"></div><div class="ln m"></div><div class="ln"></div>
+        <div class="ln c"></div><div class="ln"></div><div class="ln m"></div><div class="ln"></div>
+      </div>
+      <div class="trava">
+        <div class="bola"><i class="fas fa-lock"></i></div>
+        <b>Documento Protegido</b>
+        <p>Para ler o documento, libere a visualização<br>confirmando seus dados de acesso.</p>
+      </div>
+    </div>
+  </div>`;
+
+const lista = document.getElementById('docs');
+lista.innerHTML = documentos.map((nome, i) => `
+  <div class="doc${i === 0 ? ' aberto' : ''}">
+    <div class="doc-cab" role="button" aria-expanded="${i === 0}">
+      <input type="checkbox" aria-label="Selecionar ${nome}">
+      <span class="nome">${nome}</span>
+      <i class="fas fa-chevron-down seta"></i>
+    </div>
+    <div class="doc-corpo"><div>${folha}</div></div>
+  </div>`).join('');
+
+/* Abrir um documento fecha o outro; clicar no aberto o recolhe.
+   O checkbox só marca o documento, sem mexer no accordion. */
+lista.addEventListener('click', e => {
+  const cab = e.target.closest('.doc-cab');
+  if (!cab || e.target.matches('input')) return;
+  const doc = cab.parentElement;
+  const abrir = !doc.classList.contains('aberto');
+  lista.querySelectorAll('.doc').forEach(d => {
+    const aberto = abrir && d === doc;
+    d.classList.toggle('aberto', aberto);
+    d.querySelector('.doc-cab').setAttribute('aria-expanded', aberto);
+  });
+});
+
+/* Modal Validar acesso: abre pelo Liberar Visualização e fecha pelo ×,
+   pelo Cancelar, pelo fundo escurecido ou pelo Esc. Tem duas etapas:
+   dados (CPF/CNPJ e e-mail) e código de 6 dígitos. */
+const validar = document.getElementById('validar');
+const digitos = [...document.querySelectorAll('#codigo input')];
+const btnValidar = document.getElementById('validar-codigo');
+const btnLiberar = document.getElementById('liberar');
+
+function etapa(nome) {
+  validar.querySelector('.etapa-dados').hidden = nome !== 'dados';
+  validar.querySelector('.etapa-codigo').hidden = nome !== 'codigo';
+  setTimeout(() => (nome === 'dados' ? document.getElementById('cpf') : digitos.find(d => !d.value) || digitos[5]).focus(), 0);
+}
+function modal(abrir) {
+  validar.classList.toggle('aberto', abrir);
+  validar.setAttribute('aria-hidden', !abrir);
+  if (abrir) setTimeout(() => etapa('dados'), 250);
+}
+btnLiberar.addEventListener('click', () => {
+  if (!document.body.classList.contains('liberado')) modal(true);
+});
+validar.addEventListener('click', e => {
+  if (e.target === validar || e.target.closest('[data-fechar]')) return modal(false);
+  const ir = e.target.closest('[data-etapa]');
+  if (ir) etapa(ir.dataset.etapa);
+});
+
+/* Código: um dígito por caixa, avança sozinho, Backspace volta e colar
+   preenche todas. Com os 6 números o Validar código fica habilitado. */
+function conferirCodigo() {
+  btnValidar.disabled = !digitos.every(d => /^\d$/.test(d.value));
+}
+digitos.forEach((d, i) => {
+  d.addEventListener('input', () => {
+    d.value = d.value.replace(/\D/g, '').slice(-1);
+    if (d.value && digitos[i + 1]) digitos[i + 1].focus();
+    conferirCodigo();
+  });
+  d.addEventListener('keydown', e => {
+    if (e.key === 'Backspace' && !d.value && digitos[i - 1]) digitos[i - 1].focus();
+    if (e.key === 'Enter' && !btnValidar.disabled) btnValidar.click();
+  });
+  d.addEventListener('paste', e => {
+    e.preventDefault();
+    const n = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6 - i);
+    [...n].forEach((c, k) => { digitos[i + k].value = c; });
+    digitos[Math.min(i + n.length, 5)].focus();
+    conferirCodigo();
+  });
+});
+
+/* Código validado: fecha a modal e libera os documentos */
+btnValidar.addEventListener('click', () => {
+  modal(false);
+  document.body.classList.add('liberado');
+  btnLiberar.innerHTML = '<i class="fas fa-pen"></i> Assinar Documento';
+  const acesso = document.getElementById('acesso');
+  acesso.classList.add('ok');
+  acesso.innerHTML = '<i class="fas fa-lock-open"></i> Acesso liberado';
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') modal(false); });
+
+/* Máscara de CPF (até 11 dígitos) e CNPJ (12 a 14) */
+document.getElementById('cpf').addEventListener('input', e => {
+  const d = e.target.value.replace(/\D/g, '').slice(0, 14);
+  e.target.value = d.length <= 11
+    ? d.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+    : d.replace(/^(\d{2})(\d)/, '$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3').replace(/\.(\d{3})(\d)/, '.$1/$2').replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+});
+</script>
+
+</body>
+</html>
