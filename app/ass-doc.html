@@ -20,14 +20,14 @@
     background: linear-gradient(90deg, #9BBF2E, #FAFFE2);
     border-bottom: 3px solid #9BBF2E; box-shadow: 0 1px 6px rgba(60,70,40,.08);
   }
-  .topo h1 { margin: 0; font-size: 20px; font-weight: 700; color: #404632; }
+  .topo h1 { margin: 0; font-size: 24px; font-weight: 800; color: #404632; }
   .topo img { height: 28px; width: auto; display: block; }
 
   main { max-width: 1280px; margin: 0 auto; padding: 32px 40px 24px; }
 
   .cab { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
-  .cab h2 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -.3px; color: #2B3445; }
-  .prazo { position: relative; top: 3px; display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 12px; background: #FCF1CF; color: #7A5410; font-size: 12px; font-weight: 700; }
+  .cab h2 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.2px; color: #2B3445; }
+  .prazo { position: relative; top: 1px; display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 12px; background: #FCF1CF; color: #7A5410; font-size: 12px; font-weight: 700; }
   .sub { margin: 8px 0 24px; font-size: 14px; color: #6B7280; }
 
   .grade { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
@@ -42,7 +42,8 @@
     flex-shrink: 0; width: 16px; height: 16px; margin: 0; border: 1.5px solid #B8BFCB; border-radius: 4px; background: #FFFFFF;
     -webkit-appearance: none; appearance: none; cursor: pointer; transition: background-color .15s, border-color .15s;
   }
-  .doc-cab input:hover { border-color: #9BBF2E; }
+  .doc-cab input:hover:not(:disabled) { border-color: #9BBF2E; }
+  .doc-cab input:disabled { background: #EEF0F4; border-color: #D3D8E1; cursor: not-allowed; }
   .doc-cab input:checked {
     border-color: #7D9C2F; background: #9BBF2E no-repeat center / 11px
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M1.5 5.2 4.6 8.2 10.5 1.8' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -76,6 +77,9 @@
     cursor: pointer; transition: background .2s;
   }
   .btn:hover { background: #7D9C2F; }
+  .btn-recusar { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border: 1px solid #C1272D; border-radius: 5px; background: #FFFFFF; color: #C1272D; font-family: inherit; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; cursor: pointer; transition: background .2s; }
+  .btn-recusar:hover { background: #FDECEC; }
+  .btn-recusar[hidden] { display: none; }
   .bloqueio { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 16px; background: #EEF0F4; color: #4F5B6E; font-size: 12px; font-weight: 700; transition: background .3s, color .3s; }
   .bloqueio.ok { background: #EEF4DC; color: #5D6A38; }
 
@@ -90,6 +94,7 @@
   .passos li:last-child { margin-bottom: 0; }
   .passos li::before { content: counter(p) ". "; font-weight: 700; }
   .passos li.atual { font-weight: 700; color: #2B3445; }
+  .passos li.feito { color: #9AA1AD; text-decoration: line-through; }
 
   @media (max-width: 1100px) {
     .grade { grid-template-columns: 1fr; }
@@ -97,10 +102,10 @@
   }
   @media (max-width: 640px) {
     .topo { padding: 0 16px; height: 56px; }
-    .topo h1 { font-size: 16px; }
+    .topo h1 { font-size: 18px; }
     .topo img { height: 22px; }
     main { padding: 20px 16px; }
-    .cab h2 { font-size: 24px; }
+    .cab h2 { font-size: 17px; }
     .folha { padding: 24px 20px; }
   }
 
@@ -125,6 +130,7 @@
   .campo input:focus { background: #FFFFFF; border-color: #9BBF2E; box-shadow: 0 0 0 3px rgba(155,191,46,.2); }
   .link { display: block; margin: 4px auto 12px; border: 0; background: none; font-family: inherit; font-size: 12px; color: #6B7280; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; transition: color .2s; }
   .link:hover { color: #9BBF2E; }
+  .sub .link { display: inline; margin: 0 0 0 12px; padding: 0; font-size: 13px; }
   .etapa-codigo .modal-corpo { text-align: center; }
   .codigo { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin: 6px 0 14px; }
   .codigo input { width: 100%; height: 54px; padding: 0; border: 1px solid #DDE1E8; border-radius: 6px; background: #EEF0F4; font-family: inherit; font-size: 22px; font-weight: 700; text-align: center; color: #2B3445; outline: none; transition: border-color .2s, box-shadow .2s, background .2s; }
@@ -135,6 +141,19 @@
   .btn-sec { padding: 8px 16px; border: 1px solid #DDE1E8; border-radius: 5px; background: #FFFFFF; color: #2B3445; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .2s; }
   .btn-sec:hover { background: #F1F3F6; }
   .modal-rodape .btn { text-transform: none; font-size: 13px; letter-spacing: 0; }
+
+  /* Modal Recusar assinatura */
+  .modal.perigo .modal-cab .ico { background: #FDECEC; color: #C1272D; }
+  .modal.perigo .modal-cab h3 { color: #B3261E; }
+  .alerta { display: flex; gap: 10px; margin-bottom: 16px; padding: 12px 14px; border-radius: 6px; background: #FDECEC; color: #A3261F; font-size: 13px; line-height: 1.5; }
+  .alerta i { margin-top: 3px; }
+  .campo textarea { display: block; width: 100%; height: 96px; padding: 10px 12px; border: 1px solid #DDE1E8; border-radius: 6px; background: #EEF0F4; font-family: inherit; font-size: 13px; font-weight: 600; color: #2B3445; resize: none; outline: none; transition: border-color .2s, box-shadow .2s, background .2s; }
+  .campo textarea::placeholder { color: #94A0B4; font-weight: 600; }
+  .campo textarea:focus { background: #FFFFFF; border-color: #C1272D; box-shadow: 0 0 0 3px rgba(193,39,45,.15); }
+  .contador { margin-top: 4px; text-align: right; font-size: 11px; color: #94A0B4; }
+  .btn.vermelho { background: #C1272D; }
+  .btn.vermelho:hover { background: #A11F24; }
+  .btn.vermelho:disabled { background: #E1E3E6; color: #A3A8B0; }
 </style>
 </head>
 <body>
@@ -149,13 +168,14 @@
     <h2>Documento(s) para assinar</h2>
     <span class="prazo"><i class="fas fa-pen"></i> Assinar até 22/10/2026</span>
   </div>
-  <p class="sub">Protocolo 5264/2026</p>
+  <p class="sub">Protocolo 5264/2026 <button class="link" type="button">Ver detalhes do protocolo</button></p>
 
   <div class="grade">
     <section class="card">
       <div id="docs"></div>
       <div class="rodape">
         <button class="btn" type="button" id="liberar"><i class="fas fa-lock"></i> Liberar Visualização</button>
+        <button class="btn-recusar" type="button" id="recusar" hidden><i class="fas fa-ban"></i> Recusar Assinatura</button>
         <span class="bloqueio" id="acesso"><i class="fas fa-lock"></i> Acesso não liberado</span>
       </div>
     </section>
@@ -170,8 +190,8 @@
       </section>
       <section class="card">
         <div class="tit">Como funciona</div>
-        <ol class="passos">
-          <li class="atual">Habilitar Visualização do documento</li>
+        <ol class="passos" id="passos">
+          <li>Habilitar Visualização do documento</li>
           <li>Informe CPF/CNPJ e e-mail</li>
           <li>Digite o código recebido por e-mail</li>
           <li>Leia o(s) documento(s)</li>
@@ -181,6 +201,28 @@
     </aside>
   </div>
 </main>
+
+<div class="fundo" id="recusa" aria-hidden="true">
+  <div class="modal perigo" role="dialog" aria-modal="true" aria-labelledby="recusa-tit">
+    <div class="modal-cab">
+      <span class="ico"><i class="fas fa-ban"></i></span>
+      <h3 id="recusa-tit">Recusar assinatura</h3>
+      <button class="fechar" type="button" title="Fechar" data-fechar><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-corpo">
+      <div class="alerta"><i class="fas fa-exclamation-triangle"></i><span>A recusa encerra o documento para todos os signatários e não pode ser desfeita. O órgão solicitante é avisado por e-mail com o motivo informado.</span></div>
+      <div class="campo">
+        <label for="motivo">Justificativa da recusa</label>
+        <textarea id="motivo" maxlength="500" placeholder="Escreva o motivo da recusa"></textarea>
+        <div class="contador"><span id="motivo-conta">0</span>/500</div>
+      </div>
+    </div>
+    <div class="modal-rodape">
+      <button class="btn-sec" type="button" data-fechar>Cancelar</button>
+      <button class="btn vermelho" type="button" id="confirmar-recusa" disabled><i class="fas fa-ban"></i> Recusar</button>
+    </div>
+  </div>
+</div>
 
 <div class="fundo" id="validar" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="validar-tit">
@@ -254,7 +296,7 @@ const lista = document.getElementById('docs');
 lista.innerHTML = documentos.map((nome, i) => `
   <div class="doc${i === 0 ? ' aberto' : ''}">
     <div class="doc-cab" role="button" aria-expanded="${i === 0}">
-      <input type="checkbox" aria-label="Selecionar ${nome}">
+      <input type="checkbox" aria-label="Selecionar ${nome}" title="Libere a visualização para marcar" disabled>
       <span class="nome">${nome}</span>
       <i class="fas fa-chevron-down seta"></i>
     </div>
@@ -283,7 +325,17 @@ const digitos = [...document.querySelectorAll('#codigo input')];
 const btnValidar = document.getElementById('validar-codigo');
 const btnLiberar = document.getElementById('liberar');
 
+/* Como funciona: o passo atual em negrito e os anteriores riscados */
+function passo(n) {
+  document.querySelectorAll('#passos li').forEach((li, i) => {
+    li.classList.toggle('feito', i < n - 1);
+    li.classList.toggle('atual', i === n - 1);
+  });
+}
+passo(1);
+
 function etapa(nome) {
+  passo(nome === 'dados' ? 2 : 3);
   validar.querySelector('.etapa-dados').hidden = nome !== 'dados';
   validar.querySelector('.etapa-codigo').hidden = nome !== 'codigo';
   setTimeout(() => (nome === 'dados' ? document.getElementById('cpf') : digitos.find(d => !d.value) || digitos[5]).focus(), 0);
@@ -291,6 +343,7 @@ function etapa(nome) {
 function modal(abrir) {
   validar.classList.toggle('aberto', abrir);
   validar.setAttribute('aria-hidden', !abrir);
+  if (!abrir && !document.body.classList.contains('liberado')) passo(1);
   if (abrir) setTimeout(() => etapa('dados'), 250);
 }
 btnLiberar.addEventListener('click', () => {
@@ -334,8 +387,45 @@ btnValidar.addEventListener('click', () => {
   const acesso = document.getElementById('acesso');
   acesso.classList.add('ok');
   acesso.innerHTML = '<i class="fas fa-lock-open"></i> Acesso liberado';
+  lista.querySelectorAll('.doc-cab input').forEach(c => { c.disabled = false; c.removeAttribute('title'); });
+  document.getElementById('recusar').hidden = false;
+  conferirMarcados();
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') modal(false); });
+
+/* Liberados os documentos, o Assinar Documento só fica verde com pelo
+   menos um documento marcado; aí falta só assinar ou recusar. */
+function conferirMarcados() {
+  const algum = [...lista.querySelectorAll('.doc-cab input')].some(c => c.checked);
+  btnLiberar.disabled = !algum;
+  passo(algum ? 5 : 4);
+}
+lista.addEventListener('change', () => {
+  if (document.body.classList.contains('liberado')) conferirMarcados();
+});
+
+/* Modal Recusar assinatura: o Recusar só habilita com a justificativa escrita */
+const recusa = document.getElementById('recusa');
+const motivo = document.getElementById('motivo');
+function modalRecusa(abrir) {
+  recusa.classList.toggle('aberto', abrir);
+  recusa.setAttribute('aria-hidden', !abrir);
+  if (abrir) setTimeout(() => motivo.focus(), 250);
+}
+document.getElementById('recusar').addEventListener('click', () => modalRecusa(true));
+recusa.addEventListener('click', e => {
+  if (e.target === recusa || e.target.closest('[data-fechar]')) modalRecusa(false);
+});
+motivo.addEventListener('input', () => {
+  document.getElementById('motivo-conta').textContent = motivo.value.length;
+  document.getElementById('confirmar-recusa').disabled = !motivo.value.trim();
+});
+document.getElementById('confirmar-recusa').addEventListener('click', () => modalRecusa(false));
+
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (validar.classList.contains('aberto')) modal(false);
+  if (recusa.classList.contains('aberto')) modalRecusa(false);
+});
 
 /* Máscara de CPF (até 11 dígitos) e CNPJ (12 a 14) */
 document.getElementById('cpf').addEventListener('input', e => {
