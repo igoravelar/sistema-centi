@@ -6,6 +6,7 @@
 <title>Centi · PO002 - Protocolo</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
 <link rel="stylesheet" href="assets/centi.css?v=21">
+<link rel="stylesheet" href="assets/chat.css?v=22">
 <style>
   /* -------------------------------- Pesquisa -------------------------------- */
   .filtros { padding: 14px 16px; position: relative; }
@@ -68,6 +69,79 @@
 
   .form { flex: 1; min-width: 0; max-width: 576px; display: flex; flex-direction: column; gap: 10px;
           overflow: auto; padding: 14px 16px; }
+
+  /* Coluna das pastas: a árvore rola e a seção Conversas fica presa no pé */
+  .col-pastas { flex: 0 0 240px; min-height: 0; display: flex; flex-direction: column; border-right: 1px solid var(--tab-bd); }
+  .col-pastas .arvore { flex: 1; min-height: 0; border-right: 0; }
+  .conversas { flex: 0 0 auto; border-top: 1px solid var(--tab-bd); }
+  .conversas .cab { display: flex; align-items: center; gap: 9px; padding: 11px 14px; background: #F4F6EE;
+                    font-size: 12.5px; font-weight: bold; color: #5C5B5B; cursor: pointer; }
+  .conversas .cab:hover, .conversas.ativa .cab { background: var(--g-soft-bg); }
+  .conversas .cab svg { width: 13px; height: 13px; color: var(--g); flex: 0 0 auto; }
+  .conversas .cab svg.balao { width: 15px; height: 15px; color: #5C5B5B; }
+  .conversas .vazio { margin: 0; padding: 9px 14px 11px 36px; font-size: 11px; font-style: italic; color: var(--txt); }
+
+  /* ----------------------------- Conversas ----------------------------- */
+  .conv { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .conv-topo { flex: 0 0 auto; display: flex; align-items: center; gap: 14px; padding: 8px 14px; background: #FFFFFF; border-bottom: 1px solid #E4E4E4; }
+  .conv-marca { flex: 0 0 34px; width: 34px; height: 34px; border-radius: 50%; background: #E7F4D6; color: var(--g-dark); display: grid; place-items: center; }
+  .conv-marca svg { width: 17px; height: 17px; }
+  .conv-tit { white-space: nowrap; }
+  .conv-tit b { display: block; font-size: 13px; color: #4A4A4A; }
+  .conv-tit span { display: inline-flex; align-items: center; gap: 5px; margin-top: 2px; font-size: 11px; color: var(--txt); cursor: pointer; }
+  .conv-tit span b { display: inline; font-size: 11px; }
+  .conv-tit span svg { width: 11px; height: 11px; color: var(--g); }
+  /* aviso numa linha só, da altura do botão, encostado no Novo Grupo */
+  .conv-aviso { margin-left: auto; min-width: 0; height: 29px; display: flex; align-items: center; gap: 8px; padding: 0 12px;
+                border: 1px dashed var(--g); border-radius: 6px; background: #FAFDF0; font-size: 12px; color: #5C5B5B; white-space: nowrap; }
+  .conv-aviso span { overflow: hidden; text-overflow: ellipsis; }
+  .conv-aviso svg { flex: 0 0 16px; width: 16px; height: 16px; color: var(--g-dark); }
+  .conv-aviso .fechar-aviso { flex: 0 0 18px; width: 18px; height: 18px; margin-left: 2px; padding: 0; border: 0; border-radius: 50%; background: none;
+                              color: #8A8A8A; display: grid; place-items: center; cursor: pointer; }
+  .conv-aviso .fechar-aviso svg { width: 12px; height: 12px; flex: 0 0 12px; color: currentColor; }
+  .conv-aviso .fechar-aviso:hover { background: #EEF4DC; color: var(--g-dark); }
+  /* sinal de proibido sobre o robô do Vicenti: círculo e corte em verde */
+  .proibido { position: relative; flex: 0 0 22px; width: 22px; height: 22px; display: grid; place-items: center; }
+  .proibido svg { width: 13px; height: 13px; flex: 0 0 13px; }
+  .proibido::before { content: ''; position: absolute; inset: 0; border: 2px solid var(--g-dark); border-radius: 50%; }
+  .proibido::after { content: ''; position: absolute; top: 50%; left: 1px; right: 1px; height: 2px; margin-top: -1px; background: var(--g-dark); transform: rotate(-45deg); }
+  .conv-aviso b { color: var(--g-dark); }
+  .conv-topo .btn { flex: 0 0 auto; margin-left: auto; }
+  .conv-aviso + .btn { margin-left: 0; }
+  /* corpo do chat: a faixa fixa desliza por baixo do título, por cima das falas */
+  .conv-corpo { position: relative; flex: 1; min-height: 0; display: flex; overflow: hidden; }
+  .conv-msgs { position: relative; flex: 1; min-height: 0; overflow: auto; padding: 24px 24px 20px; }
+  .conv-falas { margin-top: 28px; }
+  .conv-falas:empty { display: none; }
+  .conv-faixa { position: absolute; top: 0; left: 0; right: 0; z-index: 2; display: flex; align-items: center; gap: 10px;
+                height: 34px; padding: 0 8px 0 16px; background: #FFFFFF; border-bottom: 1px solid #E4E4E4;
+                box-shadow: 0 2px 6px rgba(0,0,0,.06); transform: translateY(-100%); visibility: hidden;
+                transition: transform .3s ease-in-out, visibility .3s; }
+  .conv-faixa.visivel { transform: none; visibility: visible; }
+  .conv-faixa p { flex: 1; min-width: 0; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11.5px; color: #4A4A4A; }
+  .conv-faixa p strong { color: #4A4A4A; }
+  .conv-faixa button { flex: 0 0 26px; width: 26px; height: 26px; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--g-dark);
+                       display: grid; place-items: center; cursor: pointer; }
+  .conv-faixa button:hover { background: var(--g-soft-bg); }
+  .conv-faixa button svg { width: 15px; height: 15px; }
+  .conv-vazio { max-width: 470px; margin: 0 auto; text-align: center; color: #5C5B5B; font-size: 13px; line-height: 1.7; }
+  /* ícone grande ao lado do título em duas linhas */
+  .conv-vazio .cabeca { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 16px; }
+  .conv-vazio .cabeca svg { width: 64px; height: 64px; color: var(--btp-bg); }
+  .conv-vazio h3 { margin: 0; text-align: left; font-size: 22px; line-height: 1.15; font-weight: bold; color: #4A4A4A; }
+  .conv-vazio p { margin: 0 0 12px; }
+  .conv-vazio b { font-weight: normal; }
+  .conv-vazio p.menor { font-size: 12px; }
+  /* quadro de atenção: o fone à esquerda, separado por um filete, e a orientação do suporte */
+  .atencao { display: flex; align-items: stretch; margin-top: 22px; border: 1px solid var(--g); border-radius: 8px;
+             text-align: left; }
+  .atencao .rot { flex: 0 0 auto; display: flex; align-items: center; padding: 0 14px; border-right: 1px solid var(--g); color: var(--g-dark); }
+  .atencao .rot svg { width: 26px; height: 26px; }
+  .atencao p { margin: 0; padding: 9px 14px; font-size: 11px; line-height: 1.6; color: #5C5B5B; }
+  .atencao em { font-style: normal; font-weight: bold; color: var(--g-dark); }
+  .conv-vazio strong { color: #4A4A4A; }
+  .conv-vazio hr { width: 56px; margin: 16px auto; border: 0; border-top: 2px solid #C9DA9C; }
+  .conv .chat-input { border-top: 1px solid #E4E4E4; }
 </style>
 </head>
 <body>
@@ -87,6 +161,17 @@ const FA = {
   chevronBaixo: { vb: '0 0 512 512', d: 'M504 256c0 137-111 248-248 248S8 393 8 256 119 8 256 8s248 111 248 248zM273 369.9l135.5-135.5c9.4-9.4 9.4-24.6 0-33.9l-17-17c-9.4-9.4-24.6-9.4-33.9 0L256 285.1 154.4 183.5c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L239 369.9c9.4 9.4 24.6 9.4 34 0z' },
   check: { vb: '0 0 512 512', d: 'M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 448c-110.532 0-200-89.451-200-200 0-110.532 89.451-200 200-200 110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200zm140.204-254.804c4.686 4.686 4.686 12.284 0 16.971l-159.196 159.196c-4.686 4.686-12.284 4.686-16.971 0l-72.708-72.708c-4.686-4.686-4.686-12.284 0-16.971l16.97-16.97c4.686-4.686 12.284-4.686 16.971 0l47.253 47.253 133.741-133.741c4.686-4.686 12.284-4.686 16.971 0l16.969 16.97z' },
 };
+
+/* ícones do chat: o balão duplo e o fone (Lucide) e o avião de enviar (cheio, do Figma) */
+Object.assign(ICO, {
+  baloes: '<path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/>',
+  fone: '<path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/>',
+  clipe: '<path d="M21.4 11.05 12.25 20.2a6 6 0 0 1-8.49-8.49l9.2-9.19a4 4 0 0 1 5.65 5.66l-9.19 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
+});
+Object.assign(FA, {
+  enviar: { vb: '0 0 12 12', d: 'M11.3186 4.90008L1.77651 0.133111C0.7689 -0.370273 -0.324647 0.642234 0.0902771 1.69434L1.19657 4.49945C1.36264 4.92055 1.74458 5.21629 2.19162 5.27001L5.1157 5.62131C5.59286 5.67863 5.59794 6.37346 5.12166 6.43784L2.17374 6.83626C1.73631 6.89538 1.36415 7.18635 1.19907 7.59819L0.116616 10.2993C-0.305331 11.3522 0.789751 12.3717 1.80033 11.8668L11.3186 7.11176C12.2271 6.65791 12.2271 5.35393 11.3186 4.90008Z' },
+  comentarios: { vb: '0 0 576 512', d: 'M416 192c0-88.4-93.1-160-208-160S0 103.6 0 192c0 34.3 14.1 65.9 38 92-13.4 30.2-35.5 54.2-35.8 54.5-2.2 2.3-2.8 5.7-1.5 8.7S4.8 352 8 352c36.6 0 66.9-12.3 88.7-25 32.2 15.7 70.3 25 111.3 25 114.9 0 208-71.6 208-160zm122 220c23.9-26 38-57.7 38-92 0-66.9-53.5-124.2-129.3-148.1.9 6.6 1.3 13.3 1.3 20.1 0 105.9-107.7 192-240 192-10.8 0-21.3-.8-31.7-1.9C207.8 439.6 281.8 480 368 480c41 0 79.1-9.2 111.3-25 21.8 12.7 52.1 25 88.7 25 3.2 0 6.1-1.9 7.3-4.8 1.3-2.9.7-6.3-1.5-8.7-.3-.3-22.4-24.2-35.8-54.5z' },
+});
 
 function fa(nome) {
   const i = FA[nome];
@@ -211,7 +296,7 @@ function campo({ rot, val, ro = true, cod, acoes = [], alto = false, ph = '' }) 
 
 function cadastroHTML() {
   const pastas = PASTAS.map(p => `
-    <div class="pasta n${p.n}${p.sel ? ' sel' : ''}">
+    <div class="pasta n${p.n}${p.sel && painel === 'form' ? ' sel' : ''}" onclick="abrirPainel('form')">
       <span class="chev">${p.chev ? fa(p.chev === 'baixo' ? 'chevronBaixo' : 'chevronDireita') : ''}</span>
       <span class="ico">${fa('pasta')}</span>
       <span>${p.txt}</span>
@@ -250,11 +335,128 @@ function cadastroHTML() {
     </div>
 
     <div class="cad-corpo">
-      <div class="arvore scroll">${pastas}</div>
-      <div class="form scroll">${campos}</div>
+      <div class="col-pastas">
+        <div class="arvore scroll">${pastas}</div>
+        <div class="conversas${painel === 'conversas' ? ' ativa' : ''}">
+          <div class="cab" onclick="abrirPainel('conversas')">${fa('chevronDireita')}${fa('comentarios').replace('<svg', '<svg class="balao"')} Conversas</div>
+          <p class="vazio">Sem conversas privadas.</p>
+        </div>
+      </div>
+      ${painel === 'conversas' ? conversasHTML() : `<div class="form scroll">${campos}</div>`}
     </div>
   </div>`;
 }
+
+/* ------------------------------- Conversas -------------------------------
+   Chat interno do protocolo, aberto pela seção Conversas no pé das pastas.
+   Ainda sem grupo: mostra o estado vazio com a orientação de uso. */
+
+let painel = 'form';
+let avisoFechado = false;   /* o aviso do Vicenti, uma vez fechado, não volta nesta visita */   /* o que ocupa o lado direito do Cadastro: 'form' ou 'conversas' */
+
+function abrirPainel(qual) { painel = qual; render(); }
+function fecharAviso() { avisoFechado = true; render(); }
+
+function conversasHTML() {
+  return `
+  <div class="conv">
+    <div class="conv-topo">
+      <span class="conv-marca">${fa('comentarios')}</span>
+      <div class="conv-tit">
+        <b>Conversas entre Servidores Públicos</b>
+        <span>${svg('usuario')} Chat com <b>1</b> participante ${svg('chevronBaixo')}</span>
+      </div>
+      ${avisoFechado ? '' : `<div class="conv-aviso"><span class="proibido">${svg('robo')}</span><span>Este <b>NÃO</b> é o chat do Vicenti ou do Suporte Centi.</span><button class="fechar-aviso" type="button" title="Fechar aviso" onclick="fecharAviso()">${svg('x')}</button></div>`}
+      <button class="btn btn-claro">${svg('pessoas')} Novo Grupo</button>
+    </div>
+    <div class="conv-corpo">
+    <div class="conv-faixa" id="conv-faixa">
+      <p><strong>Conversas internas:</strong> Este chat é destinado apenas para conversas internas entre usuários do sistema Centi a respeito do registro acessado.</p>
+      <button type="button" title="Dispensar" onclick="dispensarFaixa()">${svg('pin')}</button>
+    </div>
+    <div class="conv-msgs fundo-pontos scroll" id="conv-msgs" onscroll="conferirFaixa()">
+      <div class="conv-vazio" id="conv-intro">
+        <div class="cabeca">${fa('comentarios')}<h3>Conversas<br>Internas</h3></div>
+        <p>Este chat é destinado apenas para conversas internas entre usuários do sistema Centi a respeito do registro acessado.</p>
+        <hr>
+        <p class="menor"><strong>Conversas públicas:</strong> todas as pessoas que entrarem neste registro irão ver e realizar comentários.</p>
+        <p class="menor"><strong>Conversas privadas:</strong> crie um <b>NOVO GRUPO</b> selecionando as pessoas com quem deseja conversar reservadamente sobre o registro.</p>
+        <div class="atencao">
+          <span class="rot" title="Atenção">${svg('fone')}</span>
+          <p>Para falar com um atendente do Suporte CENTI, acesse a aba <em>VICENTI</em>, selecione <em>Orientação</em> e escreva sua dúvida.</p>
+        </div>
+      </div>
+      <div class="conv-falas" id="conv-falas">${falasConv.map(falaHTML).join('')}</div>
+    </div>
+    </div>
+    <div class="chat-input">
+      <div class="linha">
+        <input type="text" id="conv-texto" placeholder="Digite aqui..." onkeydown="if (event.key === 'Enter') enviarFala()">
+        <button class="clipe" title="Anexar arquivo">${svg('clipe')}</button>
+        <button class="enviar" title="Enviar" onclick="enviarFala()">${fa('enviar')}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* Falas: as minhas entram em balões verdes, à direita, embaixo da mensagem
+   inicial. A mensagem começa centrada e sobe com a rolagem à medida que a
+   conversa cresce; quando ela sai de vista, a faixa fixa desce do título. */
+const EU = { quem: 'Igor Avelar', ini: 'IA', cor: '#25C35F' };
+let falasConv = [];          /* falas desta visita */
+let faixaDispensada = false; /* o pino recolhe a faixa de vez */
+
+const escapar = t => t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+
+function falaHTML(f) {
+  return `
+    <div class="fala eu">
+      <div class="cab"><span class="avatar" style="background:${EU.cor}">${EU.ini}</span><b>${EU.quem}</b></div>
+      <div class="bolha">${f.txt}</div>
+      <div class="hora">${svg('relogio')}<span>${f.hora}</span></div>
+    </div>`;
+}
+
+function enviarFala() {
+  const campo = document.getElementById('conv-texto');
+  const txt = campo.value.trim();
+  if (!txt) return;
+  const agora = new Date();
+  const f = { txt: escapar(txt), hora: agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) };
+  falasConv.push(f);
+  document.getElementById('conv-falas').insertAdjacentHTML('beforeend', falaHTML(f));
+  campo.value = '';
+  campo.focus();
+  const msgs = document.getElementById('conv-msgs');
+  msgs.scrollTo({ top: msgs.scrollHeight, behavior: 'smooth' });
+}
+
+/* a mensagem inicial nasce centrada: o recuo de cima é calculado só por ela,
+   então as falas ocupam o espaço de baixo e, quando ele acaba, empurram tudo */
+function ajustarConversa() {
+  const msgs = document.getElementById('conv-msgs');
+  if (!msgs) return;
+  const intro = document.getElementById('conv-intro');
+  msgs.style.paddingTop = Math.max(24, (msgs.clientHeight - intro.offsetHeight) / 2) + 'px';
+  msgs.scrollTop = msgs.scrollHeight;
+  conferirFaixa();
+}
+
+function conferirFaixa() {
+  const msgs = document.getElementById('conv-msgs');
+  const faixa = document.getElementById('conv-faixa');
+  if (!msgs || !faixa) return;
+  const intro = document.getElementById('conv-intro');
+  const sumiu = intro.offsetTop + intro.offsetHeight - msgs.scrollTop < 0;
+  faixa.classList.toggle('visivel', sumiu && !faixaDispensada);
+}
+
+function dispensarFaixa() {
+  faixaDispensada = true;
+  conferirFaixa();
+}
+
+addEventListener('resize', ajustarConversa);
 
 /* --------------------------------- shell --------------------------------- */
 
@@ -282,6 +484,7 @@ function render() {
   main.querySelector('.tela')?.remove();
   main.insertAdjacentHTML('beforeend',
     `<div class="tela"><div class="vtabs">${vt}</div><div class="conteudo">${corpo}</div></div>`);
+  ajustarConversa();
 }
 
 function irPara(id) { vista = id; render(); }
@@ -294,14 +497,16 @@ const main = montarShell('po002');
 /* retoma a vista em que a aba estava; o ?view, quando vem, vence depois */
 const ESTADO_B = lerEstado('po002');
 if (ESTADO_B && ESTADO_B.vista) vista = ESTADO_B.vista;
+if (ESTADO_B && ESTADO_B.painel) painel = ESTADO_B.painel;
 
 render();
 
 /* estado inicial via ?view=cadastro */
 const q = new URLSearchParams(location.search).get('view');
+if (new URLSearchParams(location.search).get('painel') === 'conversas') painel = 'conversas';
 if (q && VTABS.some(v => v.id === q)) irPara(q);
 
-guardarEstadoAoSair('po002', () => ({ vista }));
+guardarEstadoAoSair('po002', () => ({ vista, painel }));
 </script>
 </body>
 </html>

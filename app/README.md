@@ -46,6 +46,7 @@ Caminhos de navegação:
   ainda em construção). Estados por URL: `fp296.html?servidor=0&aba=ficha`
 - **po002 · Pesquisa** → clique numa linha de resultado leva ao Cadastro
 - **po002 · Cadastro** → botão `Guia do Fluxo` abre o `po011.html`
+- **po002 · Cadastro** → a seção `Conversas`, no pé da coluna de pastas, troca o formulário pelo chat interno do protocolo (estado vazio); clicar numa pasta volta ao formulário. Estado por URL: `po002.html?view=cadastro&painel=conversas`
 - **po011** abre **sem drawer**, com o fluxograma ocupando todo o modal. Clicar
   numa etapa faz o drawer entrar deslizando da direita e traz o card clicado
   para o centro da área que sobra; o `×` do drawer o fecha com o movimento
