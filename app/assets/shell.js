@@ -160,6 +160,8 @@ function topbarHTML() {
     <span class="user">admin|3.0.209.55</span>
     <div class="icons">${icones.map(i => i === 'usuario'
       ? `<button title="Assinatura Digital de Documento(s)" onclick="location.href='ass-doc.html'">${svg(i)}</button>`
+      : i === 'relogio'
+      ? `<button title="Portal de Assinaturas" onclick="location.href='portal-ass.html'">${svg(i)}</button>`
       : `<button title="${i}">${svg(i)}</button>`).join('')}</div>
   </header>`;
 }

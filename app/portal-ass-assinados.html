@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documentos Assinados — Portal de Assinaturas</title>
+<link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #F2F3EF; font-family: "Open Sans", Verdana, Geneva, sans-serif; color: #2B3445; }
+  :root { --topo: 74px; --menu: 200px; --menu-rec: 64px; }
+
+  /* Topo: o mesmo da Assinatura Digital de Documento(s) */
+  .topo {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 30; height: var(--topo);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 32px;
+    background: linear-gradient(90deg, #9BBF2E, #FAFFE2);
+    border-bottom: 3px solid #9BBF2E; box-shadow: 0 1px 6px rgba(60,70,40,.08);
+  }
+  .topo h1 { margin: 0; font-size: 24px; font-weight: 800; color: #404632; white-space: nowrap; }
+  .usuario { display: flex; align-items: center; gap: 10px; }
+  .usuario .nome { text-align: right; line-height: 1.25; }
+  .usuario .nome b { display: block; font-size: 13px; font-weight: 700; color: #404632; text-transform: uppercase; }
+  .usuario .nome span { font-size: 11px; font-weight: 600; color: #5D6A38; }
+  .bola { flex-shrink: 0; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+  .bola.avatar { background: transparent; color: #5D6A38; border: 1px solid #9BBF2E; }
+  .bola.sair { background: #9BBF2E; color: #FFFFFF; cursor: pointer; text-decoration: none; transition: background .2s; }
+  .bola.sair:hover { background: #7D9C2F; }
+
+  /* Menu lateral: começa abaixo do topo e recolhe só para os ícones */
+  .menu {
+    position: fixed; top: var(--topo); left: 0; bottom: 0; z-index: 20; width: var(--menu);
+    display: flex; flex-direction: column; background: #F8F9FB; border-right: 1px solid #DDE1E8;
+    transition: width .3s ease-in-out;
+  }
+  /* Recolher: centrado sobre a borda do menu, na altura da primeira opção */
+  .recolher {
+    position: absolute; top: 19px; right: -15px; z-index: 2; width: 30px; height: 30px; border: 1px solid #DDE1E8; border-radius: 50%; box-shadow: 0 1px 4px rgba(43,52,69,.1);
+    background: #FFFFFF; color: #6B7280; font-size: 13px; cursor: pointer; transition: background .2s, color .2s, transform .3s ease-in-out;
+  }
+  .recolher:hover { background: #EEF4DC; color: #7D9C2F; }
+  .menu nav { display: flex; flex-direction: column; gap: 4px; padding: 12px; }
+  .item {
+    display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 7px 12px; border-radius: 8px; border-left: 3px solid transparent;
+    color: #5F6878; font-size: 13px; font-weight: 700; line-height: 1.25; text-decoration: none; overflow: hidden; transition: background .2s, color .2s;
+  }
+  .item i { flex-shrink: 0; width: 18px; text-align: center; font-size: 14px; }
+  .item:hover { background: #F1F3F6; color: #2B3445; }
+  .item.ativo { background: #EEF4DC; border-left-color: #9BBF2E; color: #7D9C2F; }
+  /* Rodapé com a marca centrada sobre um leve degradê verde que sobe do pé do menu */
+  .menu .rodape { display: block; margin-top: auto; padding: 64px 20px 40px; background: linear-gradient(to top, #E6EFCB, rgba(248,249,251,0)); }
+  .menu .rodape img { display: block; height: 26px; width: auto; margin: 0 auto; }
+  .menu .rodape .simbolo { display: none; height: 28px; margin: 0 auto; }
+
+  body.recolhido .menu { width: var(--menu-rec); }
+  body.recolhido .recolher { transform: rotate(180deg); }
+  body.recolhido .menu nav { padding: 12px 8px; }
+  body.recolhido .item { justify-content: center; padding: 0; gap: 0; }
+  body.recolhido .item span { display: none; }
+  body.recolhido .menu .rodape { padding: 64px 0 40px; }
+  body.recolhido .menu .rodape .marca { display: none; }
+  body.recolhido .menu .rodape .simbolo { display: block; }
+
+  main { margin: var(--topo) 0 0 var(--menu); padding: 24px 28px; transition: margin-left .3s ease-in-out; }
+  body.recolhido main { margin-left: var(--menu-rec); }
+
+  .cab { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .cab h2 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -.2px; color: #2B3445; }
+  .selo { position: relative; top: 1px; display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 12px; background: #FCF1CF; color: #7A5410; font-size: 12px; font-weight: 700; }
+  .selo.ok { background: #E3F1DC; color: #2E6B2E; }
+  .sub { margin: 8px 0 24px; font-size: 14px; color: #6B7280; }
+
+  .card { background: #F8F9FB; border: 1px solid #DDE1E8; border-radius: 8px; box-shadow: 0 1px 3px rgba(43,52,69,.06); }
+  .card + .card { margin-top: 16px; }
+
+  .filtros { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) auto; gap: 14px; align-items: end; padding: 16px; }
+  .campo label { display: block; margin-bottom: 6px; font-size: 12px; font-weight: 700; color: #5F6878; }
+  .campo input {
+    width: 100%; height: 40px; padding: 0 12px; border: 1px solid #DDE1E8; border-radius: 6px; background: #EEF0F4;
+    font-family: inherit; font-size: 13px; font-weight: 600; color: #2B3445; outline: none; transition: border-color .2s, box-shadow .2s, background .2s;
+  }
+  .campo input::placeholder { color: #94A0B4; font-weight: 600; }
+  .campo input:focus::placeholder { color: transparent; }
+  .campo input:focus { background: #FFFFFF; border-color: #9BBF2E; box-shadow: 0 0 0 3px rgba(155,191,46,.2); }
+  .atualizar { width: 40px; height: 40px; border: 0; border-radius: 6px; background: #9BBF2E; color: #FFFFFF; font-size: 15px; cursor: pointer; transition: background .2s; }
+  .atualizar:hover { background: #7D9C2F; }
+
+  .total { padding: 16px; font-size: 14px; font-weight: 700; color: #4F5B6E; }
+  .tabela { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th { padding: 12px 16px; background: #FFFFFF; border-top: 1px solid #DDE1E8; border-bottom: 2px solid #DDE1E8; font-size: 11px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: #5F6878; text-align: left; white-space: nowrap; }
+  th.ck { width: 44px; padding-right: 0; }
+  td.vazio { padding: 36px 16px; background: #FFFFFF; text-align: center; font-size: 15px; font-weight: 700; color: #7D9C2F; }
+  input[type=checkbox] {
+    display: block; width: 16px; height: 16px; margin: 0; border: 1.5px solid #B8BFCB; border-radius: 4px; background: #FFFFFF;
+    -webkit-appearance: none; appearance: none; cursor: pointer; transition: background-color .15s, border-color .15s;
+  }
+  input[type=checkbox]:hover:not(:disabled) { border-color: #9BBF2E; }
+  input[type=checkbox]:checked {
+    border-color: #7D9C2F; background: #9BBF2E no-repeat center / 11px
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M1.5 5.2 4.6 8.2 10.5 1.8' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+  input[type=checkbox]:disabled { background: #EEF0F4; border-color: #D3D8E1; cursor: not-allowed; }
+
+  .paginacao { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 10px 16px; border-top: 1px solid #DDE1E8; font-size: 13px; color: #6B7280; }
+  .paginacao .setas { justify-self: end; display: flex; gap: 4px; }
+  .paginacao button { width: 30px; height: 30px; border: 0; border-radius: 50%; background: none; color: #6B7280; cursor: pointer; }
+  .paginacao button:disabled { color: #C9CED8; cursor: default; }
+
+  @media (max-width: 900px) {
+    .filtros { grid-template-columns: 1fr 1fr; }
+    .filtros .campo:first-child { grid-column: 1 / -1; }
+    main { padding: 24px 16px; }
+    .usuario .nome { display: none; }
+  }
+  @media (max-width: 640px) {
+    .topo { padding: 0 16px; }
+    .topo h1 { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <h1>Portal de Assinaturas</h1>
+  <div class="usuario">
+    <div class="nome"><b>Matheus Rodrigues Tolentino</b><span id="acesso">Contribuinte/Fornecedor</span></div>
+    <span class="bola avatar" title="Usuário"><i class="fas fa-user"></i></span>
+    <a class="bola sair" href="portal-ass.html" title="Sair" aria-label="Sair"><i class="fas fa-sign-out-alt"></i></a>
+  </div>
+</header>
+
+<aside class="menu">
+  <button class="recolher" type="button" id="recolher" title="Recolher menu" aria-label="Recolher menu"><i class="fas fa-angle-double-left"></i></button>
+  <nav>
+    <a class="item" href="portal-ass-pendentes.html" title="Documentos Pendentes"><i class="fas fa-pen"></i><span>Documentos Pendentes</span></a>
+    <a class="item ativo" href="portal-ass-assinados.html" title="Documentos Assinados"><i class="fas fa-history"></i><span>Documentos Assinados</span></a>
+  </nav>
+  <a class="rodape" href="index.html" title="Ir para o ERP Centi">
+    <img class="marca" src="uploads/marca-centi.png" alt="Centi">
+    <img class="simbolo" src="assets/img/ico-favicon-centi-prototipo.svg" alt="Centi">
+  </a>
+</aside>
+
+<main>
+  <div class="conteudo">
+    <div class="cab">
+      <h2>Documentos Assinados</h2>
+      <span class="selo ok"><i class="fas fa-check"></i> Assinados</span>
+    </div>
+    <p class="sub">Consulte o histórico de documentos que já foram assinados.</p>
+
+    <section class="card filtros">
+      <div class="campo">
+        <label for="pesquisa">Pesquisar</label>
+        <input id="pesquisa" type="text" placeholder="Protocolo, documento, interessado...">
+      </div>
+      <div class="campo">
+        <label for="inicio">Data Início</label>
+        <input id="inicio" type="date" value="2026-09-23">
+      </div>
+      <div class="campo">
+        <label for="fim">Data Fim</label>
+        <input id="fim" type="date" value="2026-11-23">
+      </div>
+      <button class="atualizar" type="button" title="Atualizar" aria-label="Atualizar"><i class="fas fa-sync-alt"></i></button>
+    </section>
+
+    <section class="card">
+      <div class="total">0 documentos assinados</div>
+      <div class="tabela">
+        <table>
+          <thead>
+            <tr>
+              <th>Protocolo</th>
+              <th>Data assinatura</th>
+              <th>Documento</th>
+              <th>Sequencial</th>
+              <th>Tipo</th>
+              <th>Situação</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="vazio" colspan="7">Sem registros</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="paginacao">
+        <span>Linhas por página: 10</span>
+        <span>0-0 de 0</span>
+        <div class="setas">
+          <button type="button" disabled aria-label="Página anterior"><i class="fas fa-chevron-left"></i></button>
+          <button type="button" disabled aria-label="Próxima página"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+/* Tipo de acesso escolhido na aba do login */
+document.querySelectorAll('.menu .item').forEach(a => { a.search = location.search; });
+if (new URLSearchParams(location.search).get('acesso') === 'servidor') {
+  document.getElementById('acesso').textContent = 'Servidor Público';
+}
+
+/* Menu lateral recolhido: preferência de quem usa, guardada no navegador */
+const CHAVE = 'portal-ass:menu-recolhido';
+const btn = document.getElementById('recolher');
+function recolher(r) {
+  document.body.classList.toggle('recolhido', r);
+  btn.title = r ? 'Expandir menu' : 'Recolher menu';
+  btn.setAttribute('aria-label', btn.title);
+}
+try { recolher(localStorage.getItem(CHAVE) === '1'); } catch { /* sem armazenamento */ }
+btn.addEventListener('click', () => {
+  const r = !document.body.classList.contains('recolhido');
+  recolher(r);
+  try { localStorage.setItem(CHAVE, r ? '1' : '0'); } catch { /* vale só nesta página */ }
+});
+</script>
+
+</body>
+</html>
