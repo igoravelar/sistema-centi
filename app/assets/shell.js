@@ -162,6 +162,8 @@ function topbarHTML() {
       ? `<button title="Assinatura Digital de Documento(s)" onclick="location.href='ass-doc.html'">${svg(i)}</button>`
       : i === 'relogio'
       ? `<button title="Portal de Assinaturas" onclick="location.href='portal-ass.html'">${svg(i)}</button>`
+      : i === 'monitor'
+      ? `<button title="Portal de Serviços" onclick="location.href='portal-servicos.html'">${svg(i)}</button>`
       : `<button title="${i}">${svg(i)}</button>`).join('')}</div>
   </header>`;
 }

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portal de Serviços — Prefeitura Municipal de Rio Verde</title>
+<link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+    background: linear-gradient(135deg, #F4F6F9 0%, #DDE3EC 55%, #C9D2E0 100%) fixed;
+    font-family: "Open Sans", Verdana, Geneva, sans-serif; color: #2F3437;
+  }
+
+  /* Topo verde: brasão e nome do órgão à esquerda, marca da Centi à direita */
+  .topo { background: #8DBB57; box-shadow: 0 2px 8px rgba(60,80,30,.15); }
+  .topo .faixa { max-width: 1340px; margin: 0 auto; height: 80px; padding: 0 100px 0 100px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .orgao { display: flex; align-items: center; gap: 16px; color: #FFFFFF; }
+  .brasao { flex: 0 0 50px; width: 50px; height: 50px; border-radius: 50%; background: #FFFFFF; display: grid; place-items: center; color: #3D6FB6; font-size: 22px; box-shadow: 0 1px 4px rgba(0,0,0,.18); }
+  .orgao h1 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: .2px; text-transform: uppercase; }
+  .marca { display: grid; place-items: center; height: 48px; padding: 0 22px; border-radius: 24px; background: #FFFFFF; box-shadow: 0 1px 5px rgba(0,0,0,.14); }
+  .marca img { display: block; height: 22px; width: auto; }
+
+  main { flex: 1; width: 100%; max-width: 1340px; margin: 0 auto; padding: 32px 0 20px; display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 32px; align-items: stretch; }
+  .card { background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 20px rgba(40,55,80,.08); }
+
+  /* Serviços disponíveis */
+  .servicos { padding: 34px 32px 36px; }
+  .servicos h2 { margin: 0; text-align: center; font-size: 27px; font-weight: 800; color: #2F3437; }
+  .servicos .sub { margin: 10px 0 28px; text-align: center; font-size: 16px; color: #5F6670; }
+  .grade { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+  .servico {
+    padding: 24px 24px 26px; background: #F8FAFC; border: 1px solid #E3EAF2; border-radius: 12px;
+    box-shadow: 0 8px 18px rgba(141,187,87,.12); cursor: pointer; transition: transform .2s, box-shadow .2s, border-color .2s;
+  }
+  .servico:hover { transform: translateY(-3px); border-color: #C7DDAA; box-shadow: 0 12px 26px rgba(141,187,87,.22); }
+  .servico .ico { width: 50px; height: 50px; border-radius: 50%; background: #8DBB57; display: grid; place-items: center; color: #FFFFFF; font-size: 20px; }
+  .servico h3 { margin: 22px 0 8px; font-size: 18px; font-weight: 700; color: #2F3437; }
+  .servico p { margin: 0; font-size: 15px; line-height: 1.6; color: #5F6670; }
+
+  /* Acesso ao portal */
+  .acesso { padding: 34px 32px 32px; display: flex; flex-direction: column; }
+  .acesso h2 { margin: 0; text-align: center; font-size: 20px; font-weight: 700; color: #2F3437; }
+  .acesso .sub { margin: 10px 0 26px; text-align: center; font-size: 13.5px; color: #2F3437; }
+  .campo { margin-bottom: 16px; }
+  .campo label { display: block; margin-bottom: 8px; font-size: 13.5px; font-weight: 700; color: #2F3437; }
+  .campo input {
+    width: 100%; height: 40px; padding: 0 12px; border: 2px solid #D5D9DF; border-radius: 7px; background: #F3F4F6;
+    font-family: inherit; font-size: 15px; color: #2F3437; outline: none; transition: border-color .2s, background .2s, box-shadow .2s;
+  }
+  .campo input::placeholder { color: #8A9099; }
+  .campo input:focus::placeholder { color: transparent; }
+  .campo input:focus { background: #FFFFFF; border-color: #8DBB57; box-shadow: 0 0 0 3px rgba(141,187,87,.2); }
+  .btn { display: block; width: 100%; height: 46px; border-radius: 6px; font-family: inherit; font-size: 16px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: background .2s, color .2s; }
+  .btn.primario { margin-top: 2px; border: 0; background: #8DBB57; color: #FFFFFF; }
+  .btn.primario:hover { background: #79A646; }
+  .btn.contorno { margin-top: 16px; border: 1px solid #8DBB57; background: #FFFFFF; color: #8DBB57; }
+  .btn.contorno:hover { background: #F2F8EA; }
+  .esqueci { display: block; margin: 20px auto 0; font-size: 11.5px; color: #79A646; text-decoration: none; }
+  .esqueci:hover { text-decoration: underline; }
+  .acesso hr { width: 100%; margin: 24px 0 34px; border: 0; border-top: 1px solid #E3E6EA; }
+
+  .ajuda { flex: 1; padding: 22px 18px 24px; border-radius: 10px; background: #F6F8FA; text-align: center; }
+  .ajuda h3 { margin: 0 0 12px; font-size: 14px; font-weight: 700; color: #2F3437; }
+  .ajuda p { margin: 0 0 14px; font-size: 12px; color: #4A5058; }
+  .ajuda .fone { font-size: 13px; font-weight: 700; color: #5F6670; }
+  .ajuda i { color: #E0362B; }
+  .ajuda .redes { display: flex; justify-content: center; gap: 6px; margin-top: 22px; font-size: 14px; }
+  .ajuda .redes a { color: #E0362B; }
+
+  footer { padding: 6px 16px 16px; text-align: center; font-size: 11.5px; color: #4A5058; text-transform: uppercase; }
+  footer span { text-transform: none; }
+
+  @media (max-width: 1400px) {
+    .topo .faixa { padding: 0 32px; }
+    main { padding: 32px 32px 20px; }
+  }
+  @media (max-width: 800px) {
+    main { grid-template-columns: 1fr; }
+    .grade { grid-template-columns: 1fr; }
+    .orgao h1 { font-size: 15px; }
+    .topo .faixa { padding: 0 16px; height: 64px; }
+    main { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="faixa">
+    <div class="orgao">
+      <span class="brasao" title="Brasão do município"><i class="fas fa-shield-alt"></i></span>
+      <h1>Prefeitura Municipal de Rio Verde</h1>
+    </div>
+    <a class="marca" href="index.html" title="Ir para o ERP Centi"><img src="uploads/marca-centi.png" alt="Centi"></a>
+  </div>
+</header>
+
+<main>
+  <section class="card servicos">
+    <h2>Serviços Disponíveis</h2>
+    <p class="sub">Acesse os serviços digitais da PREFEITURA MUNICIPAL DE RIO VERDE de forma rápida e segura</p>
+    <div class="grade">
+      <article class="servico">
+        <span class="ico"><i class="fas fa-clipboard-list"></i></span>
+        <h3>Prestadores e Tomadores</h3>
+        <p>Emissão de notas fiscais, declarações de serviços prestados e tomados, consulta de débitos e processos.</p>
+      </article>
+      <article class="servico">
+        <span class="ico"><i class="fas fa-building"></i></span>
+        <h3>Contribuintes</h3>
+        <p>Consulta de débitos, emissão de guias, certidões negativas e acompanhamento de processos.</p>
+      </article>
+      <article class="servico">
+        <span class="ico"><i class="fas fa-user"></i></span>
+        <h3>Funcionários</h3>
+        <p>Emissão de contra-cheques, espelho de ponto, consulta de processos e documentos funcionais.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="card acesso">
+    <h2>Acesso ao Portal</h2>
+    <p class="sub">Faça login para acessar os serviços</p>
+    <form id="entrar">
+      <div class="campo">
+        <label for="usuario">E-mail ou CPF/CNPJ:</label>
+        <input id="usuario" type="text" placeholder="Usuário" autocomplete="username">
+      </div>
+      <div class="campo">
+        <label for="senha">Senha:</label>
+        <input id="senha" type="password" placeholder="Senha" autocomplete="current-password">
+      </div>
+      <button class="btn primario" type="submit">Entrar</button>
+      <button class="btn contorno" type="button">Cadastre-se</button>
+    </form>
+    <a class="esqueci" href="#">Esqueci minha senha</a>
+    <hr>
+    <div class="ajuda">
+      <h3>Precisa de ajuda?</h3>
+      <p>Entre em contato conosco:</p>
+      <p class="fone"><i class="fas fa-phone-alt"></i> (64) 3602-8000</p>
+      <p><i class="far fa-envelope"></i></p>
+      <p>Seg a Sex das 08:00 às 11:30 / 13h às 17h</p>
+      <div class="redes">
+        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" title="Facebook"><i class="fab fa-facebook"></i></a>
+        <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>Prefeitura Municipal de Rio Verde | <span>Endereço: Av. Presidente Vargas, 3215, Vila Maria CEP: 75905900</span> | Rio Verde</footer>
+
+<script>
+/* Protótipo sem autenticação: o Entrar vai direto para a página inicial */
+document.getElementById('entrar').addEventListener('submit', e => {
+  e.preventDefault();
+  location.href = 'portal-servicos-home.html';
+});
+</script>
+
+</body>
+</html>

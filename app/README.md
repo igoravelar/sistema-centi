@@ -26,6 +26,9 @@ python3 -m http.server 5173
 | `portal-ass.html` | Portal de Assinaturas — login com abas Contribuinte/Fornecedor e Servidor Público | imagem de referência enviada pelo time |
 | `portal-ass-pendentes.html` | Portal de Assinaturas — Documentos Pendentes (área logada, menu lateral recolhível) | imagem de referência enviada pelo time |
 | `portal-ass-assinados.html` | Portal de Assinaturas — Documentos Assinados (histórico) | imagem de referência enviada pelo time |
+| `portal-servicos.html` | Portal de Serviços — login da Prefeitura com os serviços disponíveis | imagem de referência enviada pelo time |
+| `portal-servicos-home.html` | Portal de Serviços — página inicial (topo verde, menu lateral recolhível, rodapé) | imagem de referência enviada pelo time |
+| `portal-servicos-protocolos.html` | Portal de Serviços — Meus Protocolos (abas Em aberto / Arquivados, filtro, ordenação e paginação; modais do protocolo, regularidades e fluxo do processo) | imagens de referência enviadas pelo time |
 
 Caminhos de navegação:
 
@@ -33,6 +36,9 @@ Caminhos de navegação:
 - **index** → botão `Design System` abre o `Centi Design System.dc.html`; a marca da
   Centi no topo dele volta para a index
 - **topbar → ícone do relógio** abre o `portal-ass.html`
+- **topbar → ícone do monitor** abre o `portal-servicos.html`
+- **portal-servicos** → `Entrar` abre o `portal-servicos-home.html`; o `Sair` (⋮ no topo) volta ao login
+- **portal-servicos-home** → menu lateral com os módulos abrindo seus itens (topo, menu e rodapé vêm de `assets/portal-servicos.js` e `.css`); `Protocolo › Meus Protocolos` abre o `portal-servicos-protocolos.html` e `Assinatura Documentos` abre o Portal de Assinaturas em nova aba
 - **portal-ass** → `Entrar` abre o `portal-ass-pendentes.html?acesso=contribuinte|servidor` (conforme a aba aberta); o botão de sair no topo volta ao login
 - **topbar → ícone da pessoa** abre o `ass-doc.html`; a marca da Centi no topo dele volta para a index
 - **sidebar → Protocolo** abre o `protocolo.html`

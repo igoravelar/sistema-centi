@@ -1,0 +1,78 @@
+/* ==========================================================================
+   Portal de Serviços — topo, menu lateral e rodapé comuns às telas logadas
+   (portal-servicos-home.html, portal-servicos-protocolos.html)
+   ========================================================================== */
+* { box-sizing: border-box; }
+:root { --topo: 54px; --menu: 240px; --menu-rec: 56px; --rodape: 50px; --verde: #A6BA57; --verde-esc: #8FA346; }
+html, body { height: 100%; }
+body { margin: 0; background: #F5F6F8; font-family: "Open Sans", Verdana, Geneva, sans-serif; color: #4A5058; }
+
+/* Topo verde-oliva: marca, menu e município à esquerda; cliente, avisos e mais opções à direita */
+.topo { position: fixed; top: 0; left: 0; right: 0; z-index: 30; height: var(--topo); display: flex; align-items: center; gap: 18px; padding: 0 16px 0 18px; background: var(--verde); color: #FFFFFF; }
+.topo .marca { display: block; height: 26px; width: auto; filter: brightness(0) invert(1); }
+.topo .marca-elo { display: block; }
+.burger { width: 34px; height: 34px; margin-left: 12px; padding: 0; border: 0; background: none; color: #FFFFFF; font-size: 22px; cursor: pointer; }
+.topo .municipio { font-size: 16px; text-transform: uppercase; }
+.topo .dir { margin-left: auto; display: flex; align-items: center; gap: 22px; }
+.cliente { display: flex; align-items: center; gap: 10px; font-size: 16px; text-transform: uppercase; }
+.cliente svg { width: 28px; height: 28px; }
+.ico-topo { position: relative; width: 32px; height: 32px; padding: 0; border: 0; background: none; color: #FFFFFF; font-size: 18px; cursor: pointer; display: grid; place-items: center; }
+.sino { color: #7E8C3C; }
+.badge { position: absolute; top: -4px; right: -6px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #E57373; color: #FFFFFF; font-size: 10px; font-weight: 700; line-height: 18px; text-align: center; }
+
+/* mais opções: menu suspenso com o Sair */
+.opcoes { position: relative; }
+.opcoes-menu { position: absolute; top: calc(100% + 8px); right: 0; min-width: 160px; padding: 6px 0; background: #FFFFFF; border-radius: 6px; box-shadow: 0 6px 18px rgba(0,0,0,.15);
+               opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity .2s, transform .2s, visibility .2s; }
+.opcoes.aberto .opcoes-menu { opacity: 1; visibility: visible; transform: none; }
+.opcoes-menu a { display: flex; align-items: center; gap: 10px; padding: 9px 16px; font-size: 14px; color: #4A5058; text-decoration: none; }
+.opcoes-menu a:hover { background: #F2F4EA; color: #2F3437; }
+
+/* ------------------------------ menu lateral ------------------------------
+   Cada módulo abre os seus itens embaixo (mais de um pode ficar aberto). O
+   módulo aberto e os itens ficam cinza-claros; passar o mouse pinta de verde;
+   a tela atual fica no cinza mais escuro. */
+.menu { position: fixed; top: var(--topo); left: 0; bottom: 0; z-index: 20; width: var(--menu); display: flex; flex-direction: column; background: #FFFFFF; box-shadow: 1px 0 3px rgba(0,0,0,.04); transition: width .3s ease-in-out; overflow: hidden; }
+.menu nav { flex: 1; overflow-y: auto; overflow-x: hidden; }
+.item { display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 10px 16px 10px 18px; border-bottom: 1px solid #E3E3E3; color: #4A5058; font-size: 15px; font-weight: 600; line-height: 1.3; text-decoration: none; cursor: pointer; transition: background .15s, color .15s; }
+.item > i:first-child { flex: 0 0 16px; text-align: center; font-size: 14px; color: #6B7280; transition: color .15s; }
+.item .seta { margin-left: auto; font-size: 10px; color: #6B7280; transition: transform .25s ease-in-out, color .15s; }
+.item .badge-menu { margin-left: auto; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 4px; background: #E57373; color: #FFFFFF; font-size: 10px; font-weight: 700; line-height: 18px; text-align: center; }
+.grupo.aberto > .item { background: #F4F4F4; }
+.grupo.aberto > .item .seta { transform: rotate(180deg); }
+/* os itens descem e sobem com a altura animada (0fr ↔ 1fr) */
+.subitens { display: grid; grid-template-rows: 0fr; background: #F4F4F4; transition: grid-template-rows .3s ease-in-out; }
+.subitens > div { min-height: 0; overflow: hidden; }
+.grupo.aberto > .subitens { grid-template-rows: 1fr; }
+.subitem { display: flex; align-items: center; gap: 6px; min-height: 46px; padding: 10px 14px 10px 64px; border-bottom: 1px solid #E3E3E3; color: #5F6670; font-size: 14.5px; font-weight: 600; line-height: 1.3; text-decoration: none; transition: background .15s, color .15s; }
+.subitem .externo { font-size: 13px; }
+.item:hover, .grupo.aberto > .item:hover, .subitem:hover { background: var(--verde); color: #FFFFFF; }
+.item:hover > i, .subitem:hover i { color: #FFFFFF; }
+.item.ativo, .subitem.ativo { background: #D9D9D9; color: #4A5058; }
+.item.ativo:hover, .subitem.ativo:hover { background: #D9D9D9; color: #4A5058; }
+.item.ativo:hover > i { color: #6B7280; }
+/* a Home ativa fica com o texto branco, como no portal atual */
+.item.ativo.home, .item.ativo.home:hover, .item.ativo.home > i { color: #FFFFFF; }
+
+.recolher { flex: 0 0 var(--rodape); display: flex; align-items: center; justify-content: flex-end; padding: 0 22px; border: 0; background: #D6D6D6; color: #5F6670; font-size: 18px; cursor: pointer; }
+.recolher i { transition: transform .3s ease-in-out; }
+
+body.recolhido .menu { width: var(--menu-rec); }
+body.recolhido .item { justify-content: center; padding: 0; gap: 0; }
+body.recolhido .item span, body.recolhido .item .seta, body.recolhido .item .badge-menu { display: none; }
+body.recolhido .subitens { display: none !important; }
+body.recolhido .recolher { justify-content: center; padding: 0; }
+body.recolhido .recolher i { transform: rotate(180deg); }
+
+/* Área de conteúdo e rodapé */
+main { position: fixed; top: var(--topo); left: var(--menu); right: 0; bottom: var(--rodape); overflow: auto; border-top: 1px solid #DADDE2; transition: left .3s ease-in-out; }
+footer { position: fixed; left: var(--menu); right: 0; bottom: 0; height: var(--rodape); display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 0 14px 0 16px;
+         background: #F0F0F0; border-top: 1px solid #DADDE2; font-size: 11.5px; line-height: 1.55; color: #4A5058; transition: left .3s ease-in-out; }
+footer .copy { font-size: 14px; }
+footer .copy b { font-weight: 400; color: var(--verde); }
+body.recolhido main, body.recolhido footer { left: var(--menu-rec); }
+
+@media (max-width: 900px) {
+  .topo .municipio, .cliente span { display: none; }
+  footer .info:not(:last-child) { display: none; }
+}

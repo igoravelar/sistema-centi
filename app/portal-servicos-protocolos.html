@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meus Protocolos — Portal de Serviços</title>
+<link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="assets/portal-servicos.css">
+<style>
+  main { padding: 24px 16px 24px 16px; }
+  .painel { background: #FFFFFF; border: 1px solid #DCDFE3; border-radius: 4px; }
+  .painel-cab { padding: 14px 20px; background: #F5F5F5; border-bottom: 1px solid #DCDFE3; border-radius: 4px 4px 0 0; font-size: 15px; font-weight: 700; color: #2F3437; }
+  .painel-corpo { padding: 20px 20px 22px; }
+
+  /* abas Em aberto / Arquivados */
+  .abas { display: flex; gap: 2px; padding-left: 0; border-bottom: 1px solid #DCDFE3; }
+  .aba { margin-bottom: -1px; padding: 10px 16px; border: 1px solid transparent; border-radius: 4px 4px 0 0; background: none; font-family: inherit; font-size: 14.5px; color: #2F3437; cursor: pointer; }
+  .aba:hover { background: #F4F5F7; }
+  .aba.ativa { background: #FFFFFF; border-color: #DCDFE3 #DCDFE3 #FFFFFF; font-weight: 600; cursor: default; }
+  .aba-corpo { padding: 16px 16px 20px; border: 1px solid #DCDFE3; border-top: 0; border-radius: 0 0 4px 4px; }
+
+  .filtro { position: relative; margin-bottom: 16px; }
+  .filtro i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #8A9099; font-size: 13px; }
+  .filtro input { width: 100%; height: 36px; padding: 0 12px 0 34px; border: 1px solid #E3E5E8; border-radius: 4px; font-family: inherit; font-size: 14px; color: #2F3437; outline: none; }
+  .filtro input::placeholder { color: #8A9099; }
+  .filtro input:focus { border-color: var(--verde); box-shadow: 0 0 0 3px rgba(166,186,87,.2); }
+
+  .tabela { overflow-x: auto; border: 1px solid #DCDFE3; border-radius: 4px; }
+  table { width: 100%; min-width: 980px; border-collapse: collapse; table-layout: fixed; }
+  th { padding: 10px 10px 8px; background: #FFFFFF; border-bottom: 2px solid #DCDFE3; font-size: 14.5px; font-weight: 700; color: #2F3437; text-align: left; white-space: nowrap; cursor: pointer; user-select: none; }
+  th.sem-ordem { cursor: default; }
+  th i { margin-left: 4px; font-size: 11px; color: #C4C8CD; }
+  th.ordenado i { color: #2F3437; }
+  td { padding: 7px 10px; border-right: 1px solid #DCDFE3; border-bottom: 1px solid #DCDFE3; font-size: 14px; color: #2F3437; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; }
+  td:last-child { border-right: 0; text-overflow: clip; }
+  tbody tr:nth-child(odd) td { background: #F2F2F2; }
+  tbody tr:hover td { background: #EEF3DF; }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.vazio { padding: 28px; text-align: center; text-transform: none; color: #8A9099; }
+  .acoes { display: flex; gap: 12px; }
+  .acao { padding: 0; border: 0; background: none; color: var(--verde); font-size: 16px; cursor: pointer; }
+  .acao:hover { color: var(--verde-esc); }
+
+  /* paginação, linhas por página e total */
+  .rodape-grade { display: flex; align-items: center; gap: 14px; margin-top: 18px; font-size: 12.5px; color: #8A9099; }
+  .paginas { display: flex; border: 1px solid #DCDFE3; border-radius: 4px; overflow: hidden; }
+  .paginas button { min-width: 26px; height: 28px; padding: 0 8px; border: 0; border-right: 1px solid #DCDFE3; background: #F5F5F5; font-family: inherit; font-size: 12.5px; color: var(--verde-esc); cursor: pointer; }
+  .paginas button:last-child { border-right: 0; }
+  .paginas button:hover:not(:disabled):not(.atual) { background: #EEF3DF; }
+  .paginas button.atual { background: #6E8292; color: #FFFFFF; cursor: default; }
+  .paginas button:disabled { color: #B4BAC1; cursor: default; }
+  .linhas { display: flex; border: 1px solid #DCDFE3; border-radius: 4px; overflow: hidden; }
+  .linhas span { display: grid; place-items: center; padding: 0 12px; background: #F5F5F5; border-right: 1px solid #DCDFE3; font-size: 12px; color: #2F3437; }
+  .linhas select { height: 28px; width: 76px; padding: 0 8px; border: 0; background: #FFFFFF; font-family: inherit; font-size: 12.5px; color: #2F3437; outline: none; }
+
+  /* ------------------------- modal do protocolo ------------------------- */
+  .fundo { position: fixed; inset: 0; z-index: 50; display: flex; align-items: flex-start; justify-content: center; padding: 24px 16px; overflow-y: auto; background: rgba(0,0,0,.5);
+           opacity: 0; visibility: hidden; transition: opacity .2s ease-in-out, visibility .2s; }
+  .fundo.aberto { opacity: 1; visibility: visible; }
+  .modal { width: 100%; max-width: 1480px; background: #FFFFFF; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,.3); transform: translateY(-12px); transition: transform .2s ease-in-out; }
+  .fundo.aberto .modal { transform: none; }
+  .modal-cab { display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 16px 16px; border-bottom: 1px solid #DCDFE3; }
+  .modal-cab h3 { margin: 0; font-size: 17px; font-weight: 600; color: #2F3437; }
+  .fechar { width: 24px; height: 24px; padding: 0; border: 1.5px solid var(--verde); border-radius: 2px; background: #FFFFFF; color: var(--verde); font-size: 13px; cursor: pointer; }
+  .fechar:hover { background: var(--verde); color: #FFFFFF; }
+  .modal-corpo { padding: 16px; }
+  .resumo { display: grid; grid-template-columns: 350px 1fr; background: #F1F2F4; border: 1px solid #DCDFE3; }
+  .resumo dl { margin: 0; padding: 14px 18px; display: grid; grid-template-columns: max-content 1fr; gap: 9px 14px; align-content: start; font-size: 12px; }
+  .resumo dl + dl { border-left: 1px solid #DCDFE3; grid-template-columns: 90px 1fr; }
+  .resumo dt { font-weight: 700; color: #2F3437; }
+  .resumo dd { margin: 0; color: #2F3437; }
+  .modal .abas { margin-top: 20px; }
+  .modal .aba-corpo { padding: 18px; }
+  .modal table { min-width: 860px; }
+  .modal td { text-transform: none; }
+  .modal .mov th { padding: 4px 10px; border-bottom-width: 1px; }
+  .modal .mov td { padding: 4px 10px; }
+  /* regularidades: cabeçalho verde-claro na aberta, tabela dos documentos embaixo */
+  .regs { border: 1px solid #DCDFE3; }
+  .reg + .reg { border-top: 1px solid #DCDFE3; }
+  .reg-cab { display: flex; align-items: center; height: 38px; cursor: pointer; font-size: 13.5px; font-weight: 600; color: #2F3437; transition: background .2s; }
+  .reg-cab:hover { background: #F4F7EA; }
+  .reg.aberta .reg-cab { background: #E8EFD3; }
+  .reg-data { align-self: stretch; display: flex; align-items: center; padding: 0 14px; border-right: 1px solid #DCDFE3; }
+  .reg-nome { flex: 1; padding: 0 14px; text-transform: uppercase; }
+  .selo-reg { padding: 3px 10px; border-radius: 10px; font-size: 9.5px; font-weight: 600; letter-spacing: .5px; }
+  .selo-reg.ok { background: #DDF0D6; color: #3F7A34; }
+  .selo-reg.pend { background: #FCEBD0; color: #A2621B; }
+  .reg-cab .seta { width: 40px; text-align: center; font-size: 12px; color: #4A5058; transition: transform .25s ease-in-out; }
+  .reg.aberta .reg-cab .seta { transform: rotate(180deg); }
+  .reg-corpo { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease-in-out; }
+  .reg.aberta .reg-corpo { grid-template-rows: 1fr; }
+  .reg-corpo > div { min-height: 0; overflow: hidden; }
+  .modal .reg-tabela { margin: 0 2px; border-radius: 0; }
+  .modal .reg-tabela table { min-width: 760px; }
+  .modal .reg-tabela th { padding: 6px 10px 4px; border-bottom-width: 1px; }
+  .reg-todos { justify-content: flex-end; padding: 14px 16px; border-top: 1px solid #DCDFE3; }
+  .modal .nenhuma { padding: 14px 18px; border: 1px solid #DCDFE3; border-radius: 2px; font-size: 14px; color: #5F6670; }
+  /* dica branca com o texto inteiro das células cortadas */
+  .dica { position: fixed; z-index: 100; max-width: 420px; padding: 12px 16px; background: #FFFFFF; border: 1px solid #E3E5E8; border-radius: 8px;
+          box-shadow: 0 4px 14px rgba(0,0,0,.12); font-size: 14px; line-height: 1.55; color: #2F3437; pointer-events: none;
+          opacity: 0; visibility: hidden; transition: opacity .15s, visibility .15s; }
+  .dica.visivel { opacity: 1; visibility: visible; }
+  .modal tfoot td { background: #E6E7EA; border: 0; padding: 14px 10px; font-weight: 700; text-transform: none; }
+  .modal-rodape { display: flex; justify-content: flex-end; gap: 8px; padding: 16px; border-top: 1px solid #DCDFE3; }
+  .btn-verde { height: 36px; padding: 0 14px; border: 0; border-radius: 3px; background: var(--verde); color: #FFFFFF; font-family: inherit; font-size: 14px; cursor: pointer; }
+  .btn-verde:hover { background: var(--verde-esc); }
+
+  /* ------------------------- modal do fluxo do processo ------------------------- */
+  .fluxo-modal .modal-cab { align-items: flex-start; }
+  .fluxo-modal .modal-cab p { margin: 4px 0 0; font-size: 13.5px; color: #6B7280; text-transform: uppercase; }
+  .fluxo-area { position: relative; height: calc(100vh - 230px); min-height: 360px; overflow: hidden; cursor: grab; user-select: none;
+                background-color: #F5F6F8;
+                background-image: linear-gradient(to right, rgba(166,186,87,.09) 1px, transparent 1px), linear-gradient(to bottom, rgba(166,186,87,.09) 1px, transparent 1px);
+                background-size: 22px 22px; }
+  .fluxo-area.arrastando { cursor: grabbing; }
+  .fluxo-tela { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  .fluxo-tela svg { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+  .no { position: absolute; width: 170px; padding: 6px 10px 9px; background: #ECECE8; border: 2px solid #B9CC6E; border-radius: 6px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .no .chip { position: absolute; top: 4px; left: 4px; display: inline-flex; align-items: center; gap: 4px; padding: 1px 6px; border-radius: 3px; background: #F4F8DF; font-size: 8px; color: #6B7A2E; }
+  .no .chip::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #8FAE3A; }
+  .no .tit { margin-top: 14px; font-size: 11.5px; font-weight: 700; line-height: 1.3; color: #A3A3A0; }
+  .no .tit i { margin-right: 4px; color: #8FAE3A; }
+  .no .rep { display: flex; align-items: center; gap: 6px; margin: 7px 0 3px; font-size: 6.5px; letter-spacing: .8px; color: #B3B3AE; }
+  .no .rep::before, .no .rep::after { content: ''; flex: 1; border-top: 1px solid #D3D3CE; }
+  .no .rep-val { font-size: 9.5px; color: #8A8A86; line-height: 1.4; }
+  /* etapa em andamento: moldura verde e cartão branco por dentro, texto escuro */
+  .no.andamento { padding: 6px; background: #F4F6EC; }
+  .no.andamento .int { position: relative; padding: 6px 8px 10px; background: #FFFFFF; border: 2px solid #8A8F96; border-radius: 6px; }
+  .no.andamento .chip { top: 4px; left: 4px; }
+  .no.andamento .chip::before { background: #F0A43A; }
+  .no.andamento .tit { color: #1F2328; }
+  .no.andamento .rep-val { color: #6B7280; }
+  .fluxo-zoom { position: absolute; left: 16px; bottom: 16px; display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #E3E5E8; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+  .fluxo-zoom button { width: 30px; height: 30px; padding: 0; border: 0; background: none; color: #2F3437; font-size: 14px; cursor: pointer; }
+  .fluxo-zoom button + button { border-top: 1px solid #E3E5E8; }
+  .fluxo-zoom button:hover { background: #F2F5E8; color: var(--verde-esc); }
+</style>
+</head>
+<body>
+
+<main>
+  <section class="painel">
+    <div class="painel-cab">Meus Protocolos</div>
+    <div class="painel-corpo">
+      <div class="abas" role="tablist">
+        <button class="aba ativa" type="button" role="tab" data-aba="aberto">Em aberto</button>
+        <button class="aba" type="button" role="tab" data-aba="arquivado">Arquivados</button>
+      </div>
+      <div class="aba-corpo">
+        <div class="filtro"><i class="fas fa-filter"></i><input id="filtro" type="text" placeholder="Escreva para filtrar em todas as colunas..."></div>
+        <div class="tabela">
+          <table>
+            <colgroup><col style="width:9%"><col style="width:8%"><col style="width:22%"><col style="width:18%"><col style="width:13%"><col style="width:20%"><col style="width:10%"></colgroup>
+            <thead><tr id="cabecalho"></tr></thead>
+            <tbody id="linhas"></tbody>
+          </table>
+        </div>
+        <div class="rodape-grade">
+          <div class="paginas" id="paginas"></div>
+          <div class="linhas"><span>LINHAS</span><select id="por-pagina"><option>10</option><option>25</option><option>50</option></select></div>
+          <span id="registros"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="fundo" id="fluxo" aria-hidden="true">
+  <div class="modal fluxo-modal" role="dialog" aria-modal="true" aria-labelledby="fluxo-tit">
+    <div class="modal-cab">
+      <div><h3 id="fluxo-tit">Fluxo do Processo</h3><p id="fluxo-sub"></p></div>
+      <button class="fechar" type="button" title="Fechar" data-fechar><i class="fas fa-times"></i></button>
+    </div>
+    <div class="fluxo-area" id="fluxo-area">
+      <div class="fluxo-tela" id="fluxo-tela"></div>
+      <div class="fluxo-zoom">
+        <button type="button" title="Aproximar" onclick="zoomFluxo(1.2)"><i class="fas fa-plus"></i></button>
+        <button type="button" title="Afastar" onclick="zoomFluxo(1 / 1.2)"><i class="fas fa-minus"></i></button>
+        <button type="button" title="Enquadrar o fluxo" onclick="enquadrarFluxo()"><i class="fas fa-expand"></i></button>
+      </div>
+    </div>
+    <div class="modal-rodape"><button class="btn-verde" type="button" data-fechar>Voltar</button></div>
+  </div>
+</div>
+
+<div class="fundo" id="ver" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="ver-tit">
+    <div class="modal-cab">
+      <h3 id="ver-tit">Protocolo</h3>
+      <button class="fechar" type="button" title="Fechar" data-fechar><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-corpo">
+      <div class="resumo" id="ver-resumo"></div>
+      <div class="abas" role="tablist" id="ver-abas">
+        <button class="aba ativa" type="button" data-aba="andamentos">Andamentos</button>
+        <button class="aba" type="button" data-aba="documentos">Documentos</button>
+        <button class="aba" type="button" data-aba="movimentacoes">Movimentações</button>
+        <button class="aba" type="button" data-aba="regularidades" id="aba-reg">Regularidades</button>
+        <button class="aba" type="button" data-aba="transparencia">Transparência</button>
+        <button class="aba" type="button" data-aba="interacoes">Interações</button>
+      </div>
+      <div class="aba-corpo" id="ver-conteudo"></div>
+    </div>
+    <div class="modal-rodape">
+      <button class="btn-verde" type="button" data-fechar>Voltar</button>
+      <button class="btn-verde" type="button" onclick="window.print()">Imprimir</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/portal-servicos.js"></script>
+<script>
+montarPortal('meus-protocolos');
+
+/* Protocolos do Cliente Teste (dados fictícios do protótipo).
+   a: tem assinatura a fazer · f: tem fluxo para acompanhar */
+const COOP = 'COOP. AGROINDUSTRIAL DOS PROD. RURAIS DO SUDOESTE GOIANO';
+const BASE = {
+  aberto: [
+    ['116649/2026', '19/10/2026', 'DIEGO BORGES SAITO', 'DIEGO BORGES SAITO', 'INEXIGIBILIDADE DE LICITAÇÃO - PD', 'TESTE MATHEUS', 'a'],
+    ['116648/2026', '16/10/2026', 'DIEGO BORGES SAITO', '', '1º TERMO ADITIVO - PD', 'ADITIVAR PROCESSO', ''],
+    ['116602/2026', '11/09/2026', 'CLIENTE TESTE', 'CLIENTE TESTE', 'COMPRAS DIRETA (DISPENSA)', 'SOLICITAÇÃO DE ABERTURA DO PROCESSO DE COMPRA', 'af'],
+    ['116485/2026', '06/08/2026', 'DIEGO BORGES SAITO', '', 'ABERTURA DE LICITAÇÃO', 'PROTOCOLO 03', 'f'],
+    ['116484/2026', '06/08/2026', 'DIEGO BORGES SAITO', '', 'ABERTURA DE LICITAÇÃO', 'TESTE PROTOCOLO 02', 'f'],
+    ['116482/2026', '06/08/2026', 'DIEGO BORGES SAITO', 'JOAO LAZARO DA CUNHA', 'ABERTURA DE LICITAÇÃO', 'PROTOCOLO INTELIGENTE TESTE PRAZO', 'f'],
+    ['114421/2026', '22/07/2026', 'EMPRESA TESTE', '', 'TESTE - PD', 'TESTE', ''],
+    ['108528/2026', '09/07/2026', COOP, 'RICHER WILLIAN DA SILVA', 'PRORROGAÇÃO DA CERTIDÃO', 'PROCESSO Nº 538536/2019', ''],
+    ['108261/2026', '08/07/2026', COOP, 'RICHER WILLIAN DA SILVA', 'PRORROGAÇÃO DA CERTIDÃO', 'PROCESSO Nº 538536/2019', 'a'],
+    ['101259/2026', '26/06/2026', 'EMPRESA TESTE', '', 'TESTE - PD', 'TESTE', ''],
+  ],
+  arquivado: [
+    ['53031/2026', '07/04/2026', COOP, 'MARIA APARECIDA DA SILVA CRUZ', 'CANCELAMENTO DE DÉBITO', 'CANCELAMENTO DEBITO', ''],
+    ['150909/2025', '02/10/2025', 'EMPRESA TESTE', '', 'ALERTA DE DIVERGÊNCIA', 'PROTOCOLO CRIADO ATRAVÉS DO E-MAIL', ''],
+    ['134855/2025', '03/09/2025', 'G10 TRANSPORTES S.A.', 'EDIVANIO ALVES MENDES', 'CANCELAMENTO DE NFS-E', 'CANCELAR NFS 25635/25608', ''],
+    ['103498/2025', '04/07/2025', 'EMPRESA TESTE', '', 'ALERTA DE DIVERGÊNCIA', 'PROTOCOLO CRIADO ATRAVÉS DO E-MAIL', ''],
+    ['100750/2025', '01/07/2025', 'EMPRESA TESTE', '', 'ALERTA DE DIVERGÊNCIA', 'PROTOCOLO CRIADO ATRAVÉS DO E-MAIL', ''],
+    ['92818/2025', '17/06/2025', 'EMPRESA TESTE', '', 'TESTE - PD', 'PROTOCOLO CRIADO ATRAVÉS DO E-MAIL', ''],
+    ['92811/2025', '17/06/2025', 'EMPRESA TESTE', '', 'TESTE - PD', 'PROTOCOLO CRIADO ATRAVÉS DO E-MAIL', ''],
+    ['81722/2025', '28/05/2025', 'AUTO POSTO BRASIL PETRO RIO VERDE LTDA', 'NATAN ALMEIDA MARTINS', 'DEPARTAMENTO DE IPTU', 'REEMEMBRAMENTO DOS IMOVEIS CITADOS', ''],
+    ['57056/2025', '11/04/2025', COOP, 'JOSE BATISTA FERREIRA.', 'CANCELAMENTO DE DUAM', 'SOLICITO CANCELAMENTO DE DUAM', ''],
+    ['6359/2025', '14/01/2025', 'G10 TRANSPORTES S.A.', '', 'ALVARÁ DE LICENÇA E FUNCIONAMENTO', 'NÃO REQUER ALVARA SANITARIO', 'a'],
+  ],
+};
+
+/* completa até o total de registros do portal atual repetindo os modelos com
+   números e datas mais antigos */
+const paraData = t => { const [d, m, a] = t.split('/'); return new Date(+a, m - 1, +d); };
+const daData = d => d.toLocaleDateString('pt-BR');
+function completar(base, total) {
+  const lista = base.slice();
+  let num = parseInt(base[base.length - 1][0]);
+  let data = paraData(base[base.length - 1][1]);
+  for (let k = base.length; k < total; k++) {
+    const modelo = base[k % base.length];
+    num -= 97 + (k * 37) % 400;
+    data = new Date(data.getTime() - (1 + (k * 7) % 5) * 86400000);
+    const ano = data.getFullYear();
+    lista.push([`${Math.max(num, 100 + k)}/${ano}`, daData(data), ...modelo.slice(2, 6), k % 9 === 0 ? 'a' : '']);
+  }
+  return lista;
+}
+const DADOS = { aberto: completar(BASE.aberto, 247), arquivado: completar(BASE.arquivado, 78) };
+
+const COLUNAS = ['Nº Protocolo', 'Data', 'Interessado', 'Solicitante', 'Natureza', 'Descrição', 'Ação'];
+let aba = 'aberto', pagina = 1, ordem = { col: 1, desc: true };
+
+const chave = (linha, col) => col === 1 ? paraData(linha[1]).getTime()
+                             : col === 0 ? parseInt(linha[0].split('/')[1] + linha[0].split('/')[0].padStart(7, '0'))
+                             : linha[col];
+
+function filtrados() {
+  const q = document.getElementById('filtro').value.trim().toUpperCase();
+  const lista = DADOS[aba].filter(l => !q || l.slice(0, 6).some(c => c.toUpperCase().includes(q)));
+  return lista.sort((x, y) => {
+    const a = chave(x, ordem.col), b = chave(y, ordem.col);
+    return (a > b ? 1 : a < b ? -1 : 0) * (ordem.desc ? -1 : 1);
+  });
+}
+
+function acoesHTML(f, num) {
+  return `<div class="acoes">
+    <button class="acao" type="button" title="Visualizar" data-ver="${num}"><i class="fas fa-eye"></i></button>
+    <button class="acao" type="button" title="Imprimir"><i class="fas fa-print"></i></button>
+    ${f.includes('a') ? `<button class="acao" type="button" title="Regularidades" data-reg="${num}"><i class="fas fa-clipboard-check"></i></button>` : ''}
+    ${f.includes('f') ? `<button class="acao" type="button" title="Fluxo do processo" data-fluxo="${num}"><i class="fas fa-sitemap"></i></button>` : ''}
+  </div>`;
+}
+
+function render() {
+  document.getElementById('cabecalho').innerHTML = COLUNAS.map((c, i) => {
+    if (i === 6) return `<th class="sem-ordem">${c}</th>`;
+    const ativo = ordem.col === i;
+    const ico = ativo ? (ordem.desc ? 'fa-caret-down' : 'fa-caret-up') : 'fa-sort';
+    return `<th class="${ativo ? 'ordenado' : ''}" onclick="ordenar(${i})">${c}<i class="fas ${ico}"></i></th>`;
+  }).join('');
+
+  const lista = filtrados();
+  const por = +document.getElementById('por-pagina').value;
+  const total = Math.max(1, Math.ceil(lista.length / por));
+  pagina = Math.min(pagina, total);
+  const fatia = lista.slice((pagina - 1) * por, pagina * por);
+
+  document.getElementById('linhas').innerHTML = fatia.length
+    ? fatia.map(l => `<tr>${l.slice(0, 6).map(c => `<td>${c}</td>`).join('')}<td>${acoesHTML(l[6], l[0])}</td></tr>`).join('')
+    : '<tr><td class="vazio" colspan="7">Nenhum protocolo encontrado.</td></tr>';
+
+  /* janela de três páginas em volta da atual */
+  const ini = Math.max(1, Math.min(pagina - 1, total - 2));
+  const nums = [];
+  for (let p = ini; p <= Math.min(total, ini + 2); p++) nums.push(p);
+  document.getElementById('paginas').innerHTML =
+    `<button type="button" title="Anterior" ${pagina === 1 ? 'disabled' : ''} onclick="irPagina(${pagina - 1})"><i class="fas fa-angle-double-left"></i></button>` +
+    nums.map(p => `<button type="button" class="${p === pagina ? 'atual' : ''}" onclick="irPagina(${p})">${p}</button>`).join('') +
+    `<button type="button" title="Próxima" ${pagina === total ? 'disabled' : ''} onclick="irPagina(${pagina + 1})"><i class="fas fa-angle-double-right"></i></button>`;
+  document.getElementById('registros').textContent = `${lista.length} registros.`;
+}
+
+function irPagina(p) { pagina = p; render(); }
+function ordenar(i) {
+  ordem = ordem.col === i ? { col: i, desc: !ordem.desc } : { col: i, desc: i === 1 };
+  pagina = 1; render();
+}
+
+document.querySelectorAll('.painel .aba').forEach(b => b.addEventListener('click', () => {
+  if (b.dataset.aba === aba) return;
+  aba = b.dataset.aba; pagina = 1;
+  document.querySelectorAll('.painel .aba').forEach(x => x.classList.toggle('ativa', x === b));
+  render();
+}));
+document.getElementById('filtro').addEventListener('input', () => { pagina = 1; render(); });
+document.getElementById('por-pagina').addEventListener('change', () => { pagina = 1; render(); });
+
+/* --------------------- modal do protocolo (olhinho) ---------------------
+   Resumo do protocolo em cima e as abas de andamentos, documentos,
+   movimentações e interações. O 53031/2026 traz os dados reais do exemplo;
+   os demais são montados a partir da linha da grade. */
+const NATUREZA_COMPLETA = {
+  'CANCELAMENTO DE DÉBITO': 'CANCELAMENTO DE DÉBITO - FISCALIZAÇÃO - ADMINISTRATIVO - PD',
+};
+const ANDAMENTOS = {
+  '53031/2026': [
+    ['07/04/2026 - 14:55', 'FISCALIZAÇÃO (SEFAZ) - ATENDIMENTO', 'admin', 'Entrada', 'entrada pela ouvidoria', '18:41:45'],
+    ['08/04/2026 - 09:37', 'Coordenação Fiscalização - Sefaz', 'cristina.alves', 'Saída', 'para assinar o.s. e encaminhar ao auditor', '00:00:00'],
+    ['08/04/2026 - 09:37', 'Coordenação Fiscalização - Sefaz', 'cristina.alves', 'Entrada', 'recebimento automático de processo digital. para assinar o.s. e encaminhar ao auditor', '00:29:12'],
+    ['08/04/2026 - 10:06', 'AUDITORA MARIA EMILIA - SEFAZ', 'maria.cichini', 'Saída', 'cancelamento de débito', '00:00:01'],
+    ['08/04/2026 - 10:06', 'AUDITORA MARIA EMILIA - SEFAZ', 'maria.cichini', 'Entrada', 'recebimento automático de processo digital. cancelamento de débito', '00:00:00'],
+  ],
+};
+
+function andamentosDe(l) {
+  if (ANDAMENTOS[l[0]]) return ANDAMENTOS[l[0]];
+  const d = l[1];
+  return [
+    [`${d} - 08:12`, 'PROTOCOLO GERAL - ATENDIMENTO', 'admin', 'Entrada', 'entrada pelo portal de serviços', '01:24:10'],
+    [`${d} - 09:36`, 'PROTOCOLO GERAL - ATENDIMENTO', 'admin', 'Saída', `encaminhado para análise: ${l[5].toLowerCase()}`, '00:00:00'],
+    [`${d} - 09:36`, 'Setor de Análise', 'ana.ribeiro', 'Entrada', `recebimento automático de processo digital. ${l[5].toLowerCase()}`, '02:05:33'],
+  ];
+}
+
+const segundos = t => t.split(':').reduce((a, n) => a * 60 + +n, 0);
+const hms = s => [Math.floor(s / 3600), Math.floor(s / 60) % 60, s % 60].map(n => String(n).padStart(2, '0')).join(':');
+
+let verLinha = null, verAba = 'andamentos';
+
+/* dados do resumo que diferem da linha da grade, como nos exemplos */
+const RESUMO = {
+  '53031/2026': { gerado: 'maria.cichini', solicitante: 'MARIA APARECIDA DA SILVA CRUVINEL', interessado: COOP + '.' },
+  '116649/2026': { gerado: 'diego.saito', natureza: 'INEXIGIBILIDADE DE LICITACAO - PD', dataDoc: '' },
+};
+
+/** Abre a modal do protocolo; `abaInicial` vem do ícone clicado na grade. */
+function abrirVer(num, abaInicial = 'andamentos') {
+  verLinha = Object.values(DADOS).flat().find(l => l[0] === num);
+  const l = verLinha;
+  const temReg = l[6].includes('a');
+  document.getElementById('aba-reg').hidden = !temReg;
+  verAba = abaInicial === 'regularidades' && !temReg ? 'andamentos' : abaInicial;
+  regAberta = 0;
+  document.getElementById('ver-tit').textContent = `Protocolo: ${l[0]}`;
+  const r = RESUMO[l[0]] || {};
+  const gerado = r.gerado || 'portal.servicos';
+  const solicitante = r.solicitante || l[3];
+  document.getElementById('ver-resumo').innerHTML = `
+    <dl>
+      <dt>Nº Documento:</dt><dd></dd>
+      <dt>Data Documento:</dt><dd>${r.dataDoc ?? l[1]}</dd>
+      <dt>Data Protocolo:</dt><dd>${l[1]}</dd>
+      <dt>Protocolo Origem:</dt><dd></dd>
+      <dt>Valor (R$):</dt><dd>0,00</dd>
+    </dl>
+    <dl>
+      <dt>Natureza:</dt><dd>${r.natureza || NATUREZA_COMPLETA[l[4]] || l[4]}</dd>
+      <dt>Interessado:</dt><dd>${r.interessado || l[2]}</dd>
+      <dt>Solicitante:</dt><dd>${solicitante}</dd>
+      <dt>Gerado por:</dt><dd>${gerado}</dd>
+      <dt>Descrição:</dt><dd>${l[5]}</dd>
+    </dl>`;
+  renderVer();
+  const v = document.getElementById('ver');
+  v.classList.add('aberto');
+  v.setAttribute('aria-hidden', 'false');
+}
+
+function fecharVer() {
+  const v = document.getElementById('ver');
+  v.classList.remove('aberto');
+  v.setAttribute('aria-hidden', 'true');
+}
+
+/* documentos e movimentações do 53031/2026, como no exemplo; os demais são genéricos */
+const DOCUMENTOS = {
+  '53031/2026': [
+    ['07/04/2026 - 14:55', 'FISCALIZAÇÃO (SEFAZ) - ATENDIMENTO', '', 'Entrada', 'REQUERIMENTO ASSINADO'],
+    ['07/04/2026 - 14:55', 'FISCALIZAÇÃO (SEFAZ) - ATENDIMENTO', '', 'Entrada', 'CÓPIA DOS DOC. PESSOAIS DO(S) PROP. OU REPRESENTANTE LEGAL'],
+    ['07/04/2026 - 14:55', 'FISCALIZAÇÃO (SEFAZ) - ATENDIMENTO', '', 'Entrada', 'DUAM REF. AO DÉBITO A SER CANCELADO'],
+    ['07/04/2026 - 14:55', 'FISCALIZAÇÃO (SEFAZ) - ATENDIMENTO', '', 'Entrada', 'COMPROVANTE DE PAGAMENTO'],
+    ['08/04/2026 - 09:44', 'Coordenação Fiscalização - Sefaz', 'maria.cichini', 'Entrada', 'ORDEM DE SERVIÇO - 14937'],
+  ],
+};
+const MOVIMENTACOES = {
+  '53031/2026': [
+    ['07/04/2026 - 14:55', '', 'admin', 'Em Andamento', 'INÍCIO DO PROCESSO', ''],
+    ['08/04/2026 - 11:00', 'AUDITORA MARIA EMILIA - SEFAZ', 'maria.cichini', 'Arquivado/Encerrado', 'RESOLVIDO DUAM 10261314 CANCELADO CONFORME ORDEM DE SERVIÇO 14937', 'ARQUIVO FISCALIZAÇÃO TRIBUTÁRIA - SEFAZ'],
+  ],
+};
+const arquivado = l => DADOS.arquivado.includes(l);
+
+function documentosDe(l) {
+  return DOCUMENTOS[l[0]] || [
+    [`${l[1]} - 08:12`, 'PROTOCOLO GERAL - ATENDIMENTO', '', 'Entrada', 'REQUERIMENTO ASSINADO'],
+    [`${l[1]} - 08:12`, 'PROTOCOLO GERAL - ATENDIMENTO', '', 'Entrada', 'CÓPIA DOS DOC. PESSOAIS DO(S) PROP. OU REPRESENTANTE LEGAL'],
+  ];
+}
+function movimentacoesDe(l) {
+  if (MOVIMENTACOES[l[0]]) return MOVIMENTACOES[l[0]];
+  const lista = [[`${l[1]} - 08:12`, '', 'admin', 'Em Andamento', 'INÍCIO DO PROCESSO', '']];
+  if (arquivado(l)) lista.push([`${l[1]} - 16:40`, 'Setor de Análise', 'ana.ribeiro', 'Arquivado/Encerrado', `RESOLVIDO: ${l[5]}`, 'ARQUIVO GERAL - PROTOCOLO']);
+  return lista;
+}
+
+/* Regularidades: cada uma abre como accordion, com os documentos exigidos */
+const REGULARIDADES = {
+  '116649/2026': [
+    { data: '19/10/2026', nome: 'TESTE 2 REG', status: 'APROVADO', docs: [
+      ['01 VIA DA CI - COMUNICAÇÃO INTERNA - PATRIMÔNIO', 'Anexado', 'CAPTURA_DE_TELA_DE_20261018_122454.PNG', '19/10/2026 - 14:51'],
+    ] },
+    { data: '19/10/2026', nome: 'TESTE REGULARIDADE', status: 'APROVADO', docs: [
+      ['DECLARAÇÃO DE REGULARIDADE FISCAL', 'Anexado', 'DECLARACAO_REGULARIDADE_FISCAL.PDF', '19/10/2026 - 14:32'],
+    ] },
+  ],
+};
+let regAberta = 0;
+function regularidadesDe(l) {
+  return REGULARIDADES[l[0]] || [
+    { data: l[1], nome: 'REGULARIDADE FISCAL', status: 'PENDENTE', docs: [
+      ['CERTIDÃO NEGATIVA DE DÉBITOS MUNICIPAIS', 'Pendente', '', ''],
+    ] },
+  ];
+}
+function alternarReg(i) {
+  const regs = document.querySelectorAll('#ver-conteudo .reg');
+  const abrir = !regs[i].classList.contains('aberta');
+  regs.forEach((r, k) => r.classList.toggle('aberta', abrir && k === i));
+  regAberta = abrir ? i : -1;
+}
+
+/* Transparência: quem abriu o protocolo, do acesso mais recente ao mais antigo.
+   Dados fictícios, sorteados de forma fixa a partir do número do protocolo. */
+const VISITANTES = [
+  ['CRISTINA ALVES PEREIRA', 'COORDENAÇÃO FISCALIZAÇÃO - SEFAZ'],
+  ['MARIA EMILIA CICHINI', 'AUDITORIA FISCAL - SEFAZ'],
+  ['DIEGO BORGES SAITO', 'DEPARTAMENTO DE COMPRAS - SEC. ADMINISTRAÇÃO'],
+  ['ANA PAULA RIBEIRO', 'PROTOCOLO CENTRAL'],
+  ['JOÃO LÁZARO DA CUNHA', 'CONTROLE INTERNO'],
+  ['FERNANDA SOUZA LIMA', 'PROCURADORIA GERAL DO MUNICÍPIO'],
+  ['RICARDO MENDES OLIVEIRA', 'CONTABILIDADE'],
+  ['PATRÍCIA GOMES CARVALHO', 'SECRETARIA DE FINANÇAS'],
+];
+function acessosDe(l) {
+  const semente = parseInt(l[0]) || 1;
+  const base = paraData(l[1]).getTime();
+  const lista = [];
+  for (let k = 0; k < 6 + semente % 4; k++) {
+    const v = VISITANTES[(semente + k * 3) % VISITANTES.length];
+    const quando = new Date(base + (k * 19 + semente % 7) * 3600000 + ((semente * (k + 3)) % 60) * 60000);
+    lista.push({ t: quando.getTime(), quando: `${quando.toLocaleDateString('pt-BR')} - ${quando.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`, nome: v[0], rep: v[1] });
+  }
+  return lista.sort((a, b) => b.t - a.t);
+}
+
+function renderVer() {
+  document.querySelectorAll('#ver-abas .aba').forEach(b => b.classList.toggle('ativa', b.dataset.aba === verAba));
+  const alvo = document.getElementById('ver-conteudo');
+  const cab = (cols, ordem = true) => `<thead><tr>${cols.map(c => `<th class="sem-ordem">${c}${ordem && c !== 'Arquivo' ? '<i class="fas fa-sort"></i>' : ''}</th>`).join('')}</tr></thead>`;
+  const linhas = (lista, extra = () => '') => lista.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}${extra(r)}</tr>`).join('');
+  if (verAba === 'andamentos') {
+    const and = andamentosDe(verLinha);
+    const total = hms(and.reduce((t, a) => t + segundos(a[5]), 0));
+    alvo.innerHTML = `
+      <div class="tabela"><table>
+        <colgroup><col style="width:12%"><col style="width:23%"><col style="width:13%"><col style="width:8%"><col style="width:32%"><col style="width:12%"></colgroup>
+        ${cab(['Data e hora', 'Repartição', 'Responsável', 'Tipo', 'Observação', 'Tempo'])}
+        <tbody>${linhas(and)}</tbody>
+        <tfoot><tr><td colspan="4"></td><td style="text-align:right;padding-right:50px">Total</td><td>${total}</td></tr></tfoot>
+      </table></div>`;
+  } else if (verAba === 'documentos') {
+    alvo.innerHTML = `
+      <div class="tabela"><table>
+        <colgroup><col style="width:12%"><col style="width:23%"><col style="width:13%"><col style="width:8%"><col style="width:31%"><col style="width:13%"></colgroup>
+        ${cab(['Data e hora', 'Repartição', 'Responsável', 'Tipo', 'Descrição', 'Arquivo'])}
+        <tbody>${linhas(documentosDe(verLinha), () => `<td><div class="acoes">
+          <button class="acao" type="button" title="Visualizar"><i class="fas fa-eye"></i></button>
+          <button class="acao" type="button" title="Baixar"><i class="fas fa-download"></i></button></div></td>`)}</tbody>
+      </table></div>`;
+  } else if (verAba === 'movimentacoes') {
+    alvo.innerHTML = `
+      <div class="tabela mov"><table>
+        <colgroup><col style="width:12%"><col style="width:23%"><col style="width:13%"><col style="width:13%"><col style="width:23%"><col style="width:16%"></colgroup>
+        ${cab(['Data e hora', 'Repartição', 'Responsável', 'Situação', 'Motivo', 'Localização'], false)}
+        <tbody>${linhas(movimentacoesDe(verLinha))}</tbody>
+      </table></div>`;
+  } else if (verAba === 'transparencia') {
+    alvo.innerHTML = `
+      <div class="tabela"><table style="min-width:640px">
+        <colgroup><col style="width:20%"><col style="width:38%"><col style="width:42%"></colgroup>
+        ${cab(['Acesso', 'Nome', 'Repartição'], false)}
+        <tbody>${linhas(acessosDe(verLinha).map(a => [a.quando, a.nome, a.rep]))}</tbody>
+      </table></div>`;
+  } else if (verAba === 'regularidades') {
+    alvo.innerHTML = `<div class="regs">${regularidadesDe(verLinha).map((g, i) => `
+      <div class="reg${i === regAberta ? ' aberta' : ''}">
+        <div class="reg-cab" onclick="alternarReg(${i})">
+          <span class="reg-data">${g.data}</span>
+          <span class="reg-nome">${g.nome}</span>
+          <span class="selo-reg ${g.status === 'APROVADO' ? 'ok' : 'pend'}">${g.status}</span>
+          <i class="fas fa-chevron-down seta"></i>
+        </div>
+        <div class="reg-corpo"><div>
+          <div class="tabela reg-tabela"><table>
+            <colgroup><col style="width:34%"><col style="width:14%"><col style="width:28%"><col style="width:14%"><col style="width:10%"></colgroup>
+            <thead><tr><th class="sem-ordem">Documento exigido</th><th class="sem-ordem">Situação</th><th class="sem-ordem">Arquivo enviado</th><th class="sem-ordem">Enviado em</th><th class="sem-ordem">Arquivo</th></tr></thead>
+            <tbody>${g.docs.map(d => `<tr>${d.map(c => `<td>${c}</td>`).join('')}<td><div class="acoes">
+              <button class="acao" type="button" title="Visualizar"><i class="fas fa-eye"></i></button>
+              <button class="acao" type="button" title="Baixar"><i class="fas fa-download"></i></button></div></td></tr>`).join('')}</tbody>
+          </table></div>
+          <div class="reg-todos acoes">
+            <button class="acao" type="button" title="Visualizar todos"><i class="fas fa-eye"></i></button>
+            <button class="acao" type="button" title="Baixar todos"><i class="fas fa-download"></i></button>
+          </div>
+        </div></div>
+      </div>`).join('')}</div>`;
+  } else {
+    alvo.innerHTML = `<div class="nenhuma">Nenhuma interação enviada.</div>`;
+  }
+}
+
+/* Dica branca: ao passar o mouse sobre um texto cortado com reticências,
+   mostra o texto inteiro logo abaixo da célula */
+const dica = document.createElement('div');
+dica.className = 'dica';
+document.body.appendChild(dica);
+document.addEventListener('mouseover', e => {
+  const cel = e.target.closest('td');
+  if (!cel || cel.scrollWidth <= cel.clientWidth || cel.querySelector('button')) { dica.classList.remove('visivel'); return; }
+  dica.textContent = cel.textContent.trim();
+  const r = cel.getBoundingClientRect();
+  dica.classList.add('visivel');
+  const largura = dica.offsetWidth, altura = dica.offsetHeight;
+  let x = Math.min(r.left - 10, innerWidth - largura - 12);
+  let y = r.bottom + 4;
+  if (y + altura > innerHeight - 8) y = r.top - altura - 4;
+  dica.style.left = Math.max(8, x) + 'px';
+  dica.style.top = y + 'px';
+});
+document.addEventListener('scroll', () => dica.classList.remove('visivel'), true);
+
+document.getElementById('linhas').addEventListener('click', e => {
+  const b = e.target.closest('[data-ver]');
+  if (b) abrirVer(b.dataset.ver);
+  const r = e.target.closest('[data-reg]');
+  if (r) abrirVer(r.dataset.reg, 'regularidades');
+  const fl = e.target.closest('[data-fluxo]');
+  if (fl) abrirFluxo(fl.dataset.fluxo);
+});
+document.getElementById('ver-abas').addEventListener('click', e => {
+  const b = e.target.closest('.aba');
+  if (b) { verAba = b.dataset.aba; renderVer(); }
+});
+document.getElementById('ver').addEventListener('click', e => {
+  if (e.target.id === 'ver' || e.target.closest('[data-fechar]')) fecharVer();
+});
+
+/* ------------------------- fluxo do processo (fluxograma) -------------------------
+   Etapas com posição (x = centro, y = topo) e ligações em ângulo reto. A
+   linha que já foi percorrida fica cinza; a de retorno, tracejada. A área
+   arrasta com o mouse, a roda do mouse rola e os botões dão zoom. */
+const FLUXOS = {
+  compra: {
+    nome: 'FLUXOGRAMA COMPRA DIRETA',
+    nos: {
+      req:   { x: 0,    y: 0,   est: 'concluida', tit: 'REQUISITANTES: SECRETARIAS - PEDIDO DE COMPRA' },
+      setor: { x: 0,    y: 160, est: 'andamento', tit: 'SETOR DE COMPRAS - GERAR DISPENSA/INEXIGIBILIDADE', rep: 'DEPARTAMENTO DE COMPRAS (5055)' },
+      cont:  { x: 0,    y: 335, est: 'nao',       tit: 'CONTABILIDADE - SALDO ORÇAMENTÁRIO', rep: 'CONTABILIDADE (5058)' },
+      saldo: { x: 0,    y: 500, est: 'nao',       tit: 'HÁ SALDO ORÇAMENTÁRIO?', decisao: true },
+      fin:   { x: -140, y: 640, est: 'nao',       tit: 'SECRETARIA DE FINANÇAS - EMPENHO', rep: 'FINANÇAS (5061)' },
+      indef: { x: 140,  y: 640, est: 'nao',       tit: 'PROCESSO INDEFERIDO' },
+      ordem: { x: -140, y: 800, est: 'nao',       tit: 'SETOR DE COMPRAS - ORDEM DE COMPRA', rep: 'DEPARTAMENTO DE COMPRAS (5055)' },
+    },
+    ligacoes: [['req', 'setor', 'feita'], ['setor', 'cont'], ['cont', 'saldo'], ['saldo', 'fin'], ['saldo', 'indef'], ['fin', 'ordem']],
+  },
+  licitacao: {
+    nome: 'ABERTURA DE LICITAÇÃO 01',
+    nos: {
+      inicio: { x: -180, y: 0,   est: 'concluida', tit: 'Início' },
+      indef:  { x: 0,    y: 0,   est: 'nao',       tit: 'Solicitação indeferida na conferência' },
+      maria:  { x: 180,  y: 0,   est: 'nao',       tit: 'MARIA', chip: 'Não iniciada' },
+      conf:   { x: 0,    y: 135, est: 'andamento', tit: 'Conferência da solicitação', rep: 'PROTOCOLO CENTRAL' },
+      valor:  { x: 0,    y: 290, est: 'nao',       tit: 'Valor exige análise ampliada?', decisao: true },
+      parecer:{ x: 0,    y: 425, est: 'nao',       tit: 'Parecer do Controle Interno', rep: 'CONTROLE INTERNO - UNIRV' },
+      teste:  { x: 92,   y: 560, est: 'nao',       tit: 'TESTE', chip: 'Não iniciada' },
+      termo:  { x: 0,    y: 700, est: 'nao',       tit: 'Elaboração do termo de referência', rep: 'COMPRAS - UNIRV' },
+      edital: { x: 0,    y: 860, est: 'nao',       tit: 'Publicação do edital', rep: 'LICITAÇÕES - UNIRV' },
+    },
+    ligacoes: [['inicio', 'conf', 'feita'], ['conf', 'valor'], ['valor', 'parecer'], ['parecer', 'termo'], ['parecer', 'teste'],
+               ['teste', 'termo'], ['teste', 'valor', 'retorno'], ['termo', 'edital']],
+  },
+};
+/* qual fluxo cada protocolo da grade mostra */
+const FLUXO_DO_PROTOCOLO = { '116602/2026': 'compra', '116485/2026': 'licitacao', '116484/2026': 'licitacao', '116482/2026': 'licitacao' };
+
+const ROTULO = { concluida: 'Concluída', andamento: 'Em Andamento', nao: 'Não Iniciada' };
+const OX = 420, OY = 36;   /* folga do desenho dentro da tela */
+let fz = 1, fx = 0, fy = 0, fluxoAtual = null;
+
+function noHTML(id, n) {
+  const miolo = `<span class="chip">${n.chip || ROTULO[n.est]}</span>
+    <div class="tit">${n.decisao ? '<i class="fas fa-code-branch"></i>' : ''}${n.tit}</div>
+    ${n.rep ? `<div class="rep">REPARTIÇÃO</div><div class="rep-val">${n.rep}</div>` : ''}`;
+  return `<div class="no ${n.est}" data-no="${id}" style="left:${OX + n.x - 85}px;top:${OY + n.y}px">
+    ${n.est === 'andamento' ? `<div class="int">${miolo}</div>` : miolo}</div>`;
+}
+
+function ligacoesSVG(f, tela) {
+  const caixa = id => { const e = tela.querySelector(`[data-no="${id}"]`); return { x: e.offsetLeft, y: e.offsetTop, w: e.offsetWidth, h: e.offsetHeight }; };
+  const cor = { feita: '#6B6F75', retorno: '#A6BA57' };
+  let html = '', pontos = '';
+  f.ligacoes.forEach(([de, para, tipo]) => {
+    const a = caixa(de), b = caixa(para);
+    let pts;
+    if (tipo === 'retorno') {
+      /* sai da esquerda de quem devolve e entra pela esquerda da decisão */
+      const xs = Math.min(a.x, b.x) - 60;
+      pts = [[a.x, a.y + a.h / 2], [xs, a.y + a.h / 2], [xs, b.y + b.h / 2], [b.x, b.y + b.h / 2]];
+    } else {
+      const x1 = a.x + a.w / 2, y1 = a.y + a.h, x2 = b.x + b.w / 2, y2 = b.y;
+      const meio = x1 === x2 ? null : y1 + Math.min(45, (y2 - y1) / 2);
+      pts = meio === null ? [[x1, y1], [x2, y2]] : [[x1, y1], [x1, meio], [x2, meio], [x2, y2]];
+    }
+    const c = cor[tipo] || '#A6BA57';
+    html += `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="${c}" stroke-width="2"${tipo === 'retorno' ? ' stroke-dasharray="6 4"' : ''}/>`;
+    [pts[0], pts[pts.length - 1]].forEach(p => { pontos += `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="${c}"/>`; });
+  });
+  return `<svg width="1" height="1">${html}${pontos}</svg>`;
+}
+
+function aplicarFluxo() {
+  document.getElementById('fluxo-tela').style.transform = `translate(${fx}px, ${fy}px) scale(${fz})`;
+}
+function zoomFluxo(fator) {
+  const area = document.getElementById('fluxo-area');
+  const cx = area.clientWidth / 2, cy = area.clientHeight / 2;
+  const nz = Math.min(2, Math.max(0.3, fz * fator));
+  fx = cx - (cx - fx) * nz / fz; fy = cy - (cy - fy) * nz / fz; fz = nz;
+  aplicarFluxo();
+}
+function limitesFluxo() {
+  const nos = [...document.querySelectorAll('#fluxo-tela .no')];
+  const x0 = Math.min(...nos.map(n => n.offsetLeft)) - 70, x1 = Math.max(...nos.map(n => n.offsetLeft + n.offsetWidth)) + 20;
+  const y0 = Math.min(...nos.map(n => n.offsetTop)) - 20, y1 = Math.max(...nos.map(n => n.offsetTop + n.offsetHeight)) + 20;
+  return { x0, y0, x1, y1 };
+}
+function enquadrarFluxo() {
+  const area = document.getElementById('fluxo-area');
+  const l = limitesFluxo();
+  fz = Math.min(1.2, (area.clientWidth - 40) / (l.x1 - l.x0), (area.clientHeight - 40) / (l.y1 - l.y0));
+  fx = (area.clientWidth - (l.x1 - l.x0) * fz) / 2 - l.x0 * fz;
+  fy = (area.clientHeight - (l.y1 - l.y0) * fz) / 2 - l.y0 * fz;
+  aplicarFluxo();
+}
+
+function abrirFluxo(num) {
+  const f = FLUXOS[FLUXO_DO_PROTOCOLO[num] || 'licitacao'];
+  fluxoAtual = f;
+  document.getElementById('fluxo-sub').textContent = f.nome;
+  const tela = document.getElementById('fluxo-tela');
+  tela.innerHTML = Object.entries(f.nos).map(([id, n]) => noHTML(id, n)).join('');
+  const v = document.getElementById('fluxo');
+  v.classList.add('aberto');
+  v.setAttribute('aria-hidden', 'false');
+  /* as ligações dependem da altura real de cada etapa: medem depois de abrir */
+  tela.insertAdjacentHTML('afterbegin', ligacoesSVG(f, tela));
+  const area = document.getElementById('fluxo-area');
+  fz = 1; fx = area.clientWidth / 2 - OX; fy = 0;
+  aplicarFluxo();
+}
+function fecharFluxo() {
+  const v = document.getElementById('fluxo');
+  v.classList.remove('aberto');
+  v.setAttribute('aria-hidden', 'true');
+}
+
+(function arrastoFluxo() {
+  const area = document.getElementById('fluxo-area');
+  let ini = null;
+  area.addEventListener('pointerdown', e => {
+    if (e.target.closest('.fluxo-zoom')) return;
+    ini = { x: e.clientX - fx, y: e.clientY - fy };
+    area.classList.add('arrastando');
+    area.setPointerCapture(e.pointerId);
+  });
+  area.addEventListener('pointermove', e => { if (ini) { fx = e.clientX - ini.x; fy = e.clientY - ini.y; aplicarFluxo(); } });
+  const soltar = () => { ini = null; area.classList.remove('arrastando'); };
+  area.addEventListener('pointerup', soltar);
+  area.addEventListener('pointercancel', soltar);
+  area.addEventListener('wheel', e => { e.preventDefault(); fx -= e.deltaX; fy -= e.deltaY; aplicarFluxo(); }, { passive: false });
+})();
+
+document.getElementById('fluxo').addEventListener('click', e => {
+  if (e.target.id === 'fluxo' || e.target.closest('[data-fechar]')) fecharFluxo();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { fecharVer(); fecharFluxo(); } });
+
+render();
+</script>
+
+</body>
+</html>
