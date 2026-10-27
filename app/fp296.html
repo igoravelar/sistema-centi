@@ -361,6 +361,105 @@
   .bt-fechar:hover { --btc-bg: var(--btc-bg-h); --btc-txt: var(--btc-txt-h); --btc-ico: var(--btc-ico-h); --btc-bd: var(--btc-bd-h); }
   .bt-fechar svg { width: 11px; height: 11px; color: var(--btc-ico); }
   .construcao { flex: 1; display: grid; place-items: center; color: var(--txt-mute); font-size: 13.5px; min-height: 200px; }
+
+  /* ------------------------------ tour da tela ------------------------------
+     Boas-vindas numa modal (imagem provisória em degradê verde com linhas de
+     projeto) e, em seguida, os passos com o destaque recortado sobre a tela. */
+  .tour-fundo, .tour-balao { font-family: 'Open Sans', 'Segoe UI', Verdana, sans-serif; }
+  .tour-fundo button, .tour-balao button { font-family: inherit; }
+  .tour-fundo { position: fixed; inset: 0; z-index: 400; display: grid; place-items: center; padding: 16px; background: rgba(20,24,16,.55);
+                opacity: 0; visibility: hidden; transition: opacity .25s ease-in-out, visibility .25s; }
+  .tour-fundo.aberto { opacity: 1; visibility: visible; }
+  .tour-modal { width: 100%; max-width: 620px; overflow: hidden; background: #FFFFFF; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,.3);
+                transform: translateY(14px) scale(.98); transition: transform .25s ease-in-out; }
+  .tour-fundo.aberto .tour-modal { transform: none; }
+  /* Topo da modal: o fundo verde de projeto (degradê + linhas) e, por cima, a cena dos três
+     cards de competência em perspectiva — os laterais atrás do central e virados para ele,
+     maiores que a faixa, cortados pela borda de baixo, com valores soltos em volta */
+  .tour-img { position: relative; height: 230px; overflow: hidden;
+              background: linear-gradient(120deg, #5E7A0B 0%, #8BA81D 45%, #BBD957 80%, #E4F2B0 100%); }
+  .tour-img > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .cena { position: absolute; inset: 0; perspective: 900px; perspective-origin: 50% 35%; font-family: 'Open Sans', 'Segoe UI', sans-serif; }
+  .cartao { position: absolute; top: 34px; width: 170px; height: 250px; padding: 14px 14px 0; border-radius: 14px;
+            background: rgba(255,255,255,.34); border: 1.5px solid rgba(255,255,255,.75);
+            box-shadow: 0 18px 40px rgba(40,60,0,.28), inset 0 1px 0 rgba(255,255,255,.6);
+            -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+  .cartao.centro { left: 220px; width: 180px; top: 26px; z-index: 3; transform: translateZ(30px); }
+  /* laterais: a borda de dentro vem para a frente, a de fora vai para trás */
+  .cartao.esq { left: 74px;  top: 42px; z-index: 1; transform: rotateY(-24deg); transform-origin: 100% 50%; }
+  .cartao.dir { right: 74px; top: 42px; z-index: 1; transform: rotateY(24deg);  transform-origin: 0 50%; }
+  .cartao.dir h5 { font-size: 14px; }
+  .cartao h5 { margin: 0 0 10px; font-size: 17px; line-height: 1.1; font-weight: 800; color: #34460A; letter-spacing: -.2px; }
+  .cartao h5 small { display: inline-block; margin-top: 4px; padding: 1px 8px; border-radius: 10px; background: rgba(52,70,10,.85);
+                     font-size: 9.5px; font-weight: 700; letter-spacing: .6px; color: #F2FAD2; vertical-align: middle; }
+  .cartao .cols, .cartao .lin { display: grid; grid-template-columns: 1.15fr .8fr 1.15fr; gap: 6px; }
+  .cartao .cols { margin-bottom: 6px; font-size: 7.5px; font-weight: 700; letter-spacing: .4px; color: #4C5F14; }
+  /* visão explodida: cada linha sai um pouco do card, cada uma para um lado */
+  .cartao .lin { margin-bottom: 5px; padding: 5px 7px; border-radius: 6px; background: rgba(255,255,255,.78);
+                 box-shadow: 0 4px 10px rgba(40,60,0,.18); transform: translateX(var(--dx, 0)) translateY(var(--dy, 0));
+                 font-size: 8.5px; font-weight: 600; color: #3A4A10; }
+  .cartao .lin span:last-child { text-align: right; }
+  .cartao .lin:nth-of-type(2) { --dx: -12px; } .cartao .lin:nth-of-type(3) { --dx: 9px; --dy: 1px; }
+  .cartao .lin:nth-of-type(4) { --dx: -6px; --dy: 2px; } .cartao .lin:nth-of-type(5) { --dx: 13px; --dy: 3px; } .cartao .lin:nth-of-type(6) { --dx: -9px; --dy: 4px; }
+  .cartao .ok  { color: #3E7C16; } .cartao .neg { color: #A4372B; }
+  /* o canto direito da imagem é claro: o X vai numa bola verde-clara, em verde-escuro, para não sumir */
+  .tour-fechar { position: absolute; top: 14px; right: 14px; z-index: 1; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; background: var(--btc-bg);
+                 color: #4F6510; display: grid; place-items: center; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,.15); transition: background .2s, color .2s; }
+  .tour-fechar:hover { background: #E8F7B2; color: #2E3D05; }
+  .tour-fechar svg { width: 16px; height: 16px; }
+  .tour-texto { padding: 32px 38px 10px; text-align: center; }
+  .tour-texto small { display: block; font-size: 13px; font-weight: 600; color: var(--g-dark); letter-spacing: .3px; }
+  /* código da tela numa badge branca de contorno verde, à frente do título; os dois centrados */
+  .tour-titulo { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 6px 0 20px; }
+  .tour-titulo .cod { padding: 3px 10px; border: 1.5px solid var(--btp-bg); border-radius: 6px; background: #FFFFFF; font-size: 13px; font-weight: 700; letter-spacing: .4px; color: var(--g-dark); }
+  .tour-texto h2 { margin: 0; font-size: 22px; font-weight: 700; color: #2B2B2B; }
+  .tour-texto p { margin: 0; font-size: 13.5px; line-height: 1.7; color: #5C5B5C; text-align: left; }
+  .tour-rodape { display: flex; align-items: center; gap: 10px; padding: 26px 26px 24px; }
+  .tour-rodape label { margin-right: auto; display: flex; align-items: center; gap: 8px; font-size: 12px; color: #5C5B5C; cursor: pointer; }
+  /* mesmo checkbox dos Filtros do Comparativo (.chk): verde com o check branco */
+  .tour-rodape input { flex: 0 0 18px; width: 18px; height: 18px; margin: 0; border: 1px solid #CBCBCB; border-radius: 4px; background: #FBFCFE;
+                       -webkit-appearance: none; appearance: none; cursor: pointer; transition: background-color .15s, border-color .15s; }
+  .tour-rodape input:hover { border-color: #A1C518; }
+  .tour-rodape input:checked {
+    background: #8BA81E no-repeat center / 12px
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+    border-color: #A1C518;
+  }
+  .tour-rodape input:focus-visible { outline: 2px solid rgba(161,197,24,.45); outline-offset: 2px; }
+  .tour-rodape .btn { height: 34px; padding: 0 16px; font-size: 12px; }
+
+  .tour-rodape .btn svg { width: 13px; height: 13px; }
+  /* vídeo do YouTube por cima da modal de boas-vindas */
+  .tour-video { position: fixed; inset: 0; z-index: 450; display: grid; place-items: center; padding: 24px; background: rgba(10,12,8,.75);
+                opacity: 0; visibility: hidden; transition: opacity .25s ease-in-out, visibility .25s; }
+  .tour-video.aberto { opacity: 1; visibility: visible; }
+  .tour-video .quadro { position: relative; width: min(960px, 100%); aspect-ratio: 16 / 9; background: #000000; border-radius: 10px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  .tour-video iframe { display: block; width: 100%; height: 100%; border: 0; }
+  /* passos: recorte sobre o elemento e o balão com a explicação */
+  .tour-recorte { position: fixed; z-index: 401; border-radius: 8px; box-shadow: 0 0 0 9999px rgba(20,24,16,.55), 0 0 0 3px #879A27;
+                  pointer-events: none; transition: left .3s ease-in-out, top .3s ease-in-out, width .3s ease-in-out, height .3s ease-in-out; }
+  /* balão verde do passo: título, texto curto, contador e as setas; o bico aponta para o destaque */
+  .tour-balao { position: fixed; z-index: 402; width: 330px; padding: 18px 20px 16px; background: #879A27; border-radius: 6px; color: #FFFFFF;
+                box-shadow: 0 10px 28px rgba(0,0,0,.28); transition: left .3s ease-in-out, top .3s ease-in-out; }
+  .tour-balao::before { content: ''; position: absolute; width: 14px; height: 14px; background: #879A27; transform: rotate(45deg); }
+  .tour-balao.abaixo::before   { top: -7px;    left: var(--bico, 30px); }
+  .tour-balao.acima::before    { bottom: -7px; left: var(--bico, 30px); }
+  .tour-balao.direita::before  { left: -7px;   top: var(--bico, 24px); }
+  .tour-balao.esquerda::before { right: -7px;  top: var(--bico, 24px); }
+  .tour-balao h3 { margin: 0 28px 8px 0; font-size: 16px; font-weight: 600; color: #FFFFFF; }
+  .tour-balao p { margin: 0; font-size: 12.5px; line-height: 1.6; color: #FFFFFF; }
+  .tour-balao .x { position: absolute; top: 12px; right: 12px; width: 24px; height: 24px; padding: 0; border: 0; border-radius: 50%; background: none;
+                   color: #FFFFFF; display: grid; place-items: center; cursor: pointer; transition: background .2s; }
+  .tour-balao .x:hover { background: rgba(255,255,255,.2); }
+  .tour-balao .x svg { width: 15px; height: 15px; }
+  .tour-balao .acoes { display: flex; align-items: center; gap: 8px; margin-top: 16px; }
+  .tour-balao .conta { margin-right: auto; font-size: 12px; font-weight: 600; color: #FFFFFF; }
+  .tour-balao .seta { height: 30px; min-width: 38px; padding: 0 12px; border: 1px solid #E6F2B8; border-radius: 4px; background: #F5FFD3; color: #6E8A12;
+                      display: grid; place-items: center; font-size: 12px; font-weight: 700; letter-spacing: .5px; cursor: pointer; transition: background .2s; }
+  .tour-balao .seta:hover:not(:disabled) { background: #FFFFFF; }
+  .tour-balao .seta svg { width: 15px; height: 15px; stroke-width: 2.6; }
+  /* no primeiro passo não há para onde voltar: o botão fica verde-escuro e travado */
+  .tour-balao .seta:disabled { background: #6C7D1C; border-color: #6C7D1C; color: #9CB04A; cursor: default; }
 </style>
 </head>
 <body>
@@ -685,6 +784,7 @@ function topoCadHTML() {
     </div>
     <div class="dir">
       <button class="btn btn-claro">${svg('atualizar')} Atualizar</button>
+      <button class="btn btn-claro tour-btn" title="Rever o tour da tela" onclick="abrirBoasVindas()">${bandeiraSVG()} Tour</button>
       <button class="btn btn-primario">${svg('gerais')} Operações</button>
     </div>`;
 }
@@ -1198,6 +1298,221 @@ if (q.get('aba') && ABAS_INT.some(a => a.id === q.get('aba'))) trocarAbaInt(q.ge
 if (q.get('view') && VISTAS.some(v => v.id === q.get('view'))) irPara(q.get('view'));
 
 guardarEstadoAoSair('fp296', () => ({ vista, pesquisou, servSel, servAberto, abaInt, subFicha, subMov, filtroSit }));
+
+/* ------------------------------ tour da tela ------------------------------
+   Abre ao chegar no Cadastro, uma vez por visita, enquanto quem usa não marcar
+   "Não mostrar novamente". ?tour=1 força a abertura, para revisar. */
+const CHAVE_TOUR = 'fp296:tour-oculto';
+let tourMostrado = false;
+
+/* cada passo diz o que enquadrar: um ou mais elementos (o destaque cobre todos)
+   e, quando a área rola por dentro, o recorte para na borda visível dela */
+const PASSOS_TOUR = [
+  { alvos: ['.cad-topo .nav', '.cad-topo .nome'], tit: 'Funcionário',
+    txt: 'Mostra o nome e a matrícula do servidor aberto na tela. Pelas setas, você alterna entre os funcionários do resultado da pesquisa.' },
+  { alvos: ['.ficha'], tit: 'Informações do Funcionário',
+    txt: 'Alguns dados da ficha cadastral são apresentados nesta parte. Clicando em Ver mais, você abre a ficha completa.' },
+  { alvos: ['.valores'], tit: 'Proventos e Descontos',
+    txt: 'Comparam a competência anterior com a atual: proventos, descontos, líquido e bases. A seta e a cor mostram se o valor subiu ou caiu.' },
+  { alvos: ['.comp-tab th.base', '.comp-tab th.cp', '.comp-tab tbody'], dentro: '.comp-tab', tit: 'Comparativo de Competências',
+    txt: 'Base e Comparada mostram a base de cálculo, a referência e o valor de cada evento nas duas competências, e o Comparativo aponta a diferença e a variação. Assim, você confere evento a evento de forma fácil e rápida.' },
+  { alvos: ['.filtros-sit', '.comp-tab th.sit', '.comp-tab tbody td.sit'], dentro: '.comp-tab', tit: 'Filtros das Ocorrências',
+    txt: 'Marque os filtros Entrou, Saiu, Alterado ou Mantido para ver só o que mudou na folha. Junto com a coluna Situação, você identifica rapidamente o que entrou ou saiu.' },
+  { alvos: ['.itab:nth-child(2)', '.itab:nth-child(3)'], tit: 'Ficha Financeira e Movimentações',
+    txt: 'Antes, era preciso abrir a FP001 e a FP024 para lançar e editar eventos. Agora, a ficha financeira, as férias, os afastamentos e as demais movimentações ficam aqui, na mesma tela.' },
+  { alvos: ['.cad-topo .dir .btn:not(.tour-btn)'], tit: 'Operações e Atualizar',
+    txt: 'As operações de outras telas foram reunidas aqui, centralizando a gestão da folha. Com o Atualizar, várias pessoas trabalham na mesma folha e você confere o que cada uma fez a qualquer momento.' },
+];
+
+/* retângulo que envolve todos os alvos do passo, cortado pela área que rola */
+function retanguloPasso(p) {
+  const els = p.alvos.flatMap(sel => [...main.querySelectorAll(sel)]).filter(e => e.offsetParent);
+  if (!els.length) return null;
+  const rs = els.map(e => e.getBoundingClientRect());
+  const r = { left: Math.min(...rs.map(x => x.left)), top: Math.min(...rs.map(x => x.top)),
+              right: Math.max(...rs.map(x => x.right)), bottom: Math.max(...rs.map(x => x.bottom)) };
+  const caixa = p.dentro && main.querySelector(p.dentro);
+  if (caixa) r.bottom = Math.min(r.bottom, caixa.getBoundingClientRect().bottom - 40);   /* 40px: o rodapé fixo da tabela fica de fora */
+  r.width = r.right - r.left; r.height = r.bottom - r.top;
+  return r;
+}
+
+/* topo da modal de boas-vindas: linhas de projeto sobre o degradê e a cena dos cards */
+const LINHAS_TOUR = `
+  <svg viewBox="0 0 620 230" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs><pattern id="tour-grade" width="29" height="29" patternUnits="userSpaceOnUse"><path d="M29 0H0V29" fill="none" stroke="rgba(228,242,176,.18)" stroke-width="1"/></pattern></defs>
+    <rect width="620" height="230" fill="url(#tour-grade)"/>
+    <g fill="none" stroke="rgba(236,248,190,.55)" stroke-width="1.2">
+      <circle cx="310" cy="115" r="58"/><circle cx="310" cy="115" r="96"/><circle cx="310" cy="115" r="140" stroke-opacity=".5"/>
+      <line x1="0" y1="230" x2="620" y2="0"/><line x1="0" y1="0" x2="620" y2="230" stroke-opacity=".6"/>
+      <line x1="310" y1="0" x2="310" y2="230"/><line x1="0" y1="115" x2="620" y2="115"/>
+      <rect x="252" y="57" width="116" height="116" rx="4" stroke-opacity=".7"/>
+    </g>
+  </svg>`;
+const cartaoTour = (cls, tit, tag, cols, linhas) => `
+  <div class="cartao ${cls}">
+    <h5>${tit}<br><small>${tag}</small></h5>
+    <div class="cols">${cols.map(c => `<span>${c}</span>`).join('')}</div>
+    ${linhas.map(l => `<div class="lin">${l.map(c => `<span>${c}</span>`).join('')}</div>`).join('')}
+  </div>`;
+const CENA_TOUR = LINHAS_TOUR + `<div class="cena">
+  ${cartaoTour('esq', '10/2026', 'BASE', ['BASE', 'REF.', 'VALOR'],
+     [['3.418,59', '30,00', '3.418,59'], ['1.024,35', '25%', '1.024,35'], ['5.627,10', '–', '1.627,88'], ['7.409,78', '11%', '815,08'], ['–', '–', '–']])}
+  ${cartaoTour('dir', 'COMPARATIVO', 'DIFERENÇA', ['DIF.', 'VAR.', 'SITUAÇÃO'],
+     [['+310,40', '+8,3%', '<b class="ok">Alterado</b>'], ['–92,10', '–2,1%', '<b class="neg">Saiu</b>'], ['+325,89', '+12%', '<b class="ok">Entrou</b>'], ['0,00', '0%', 'Mantido'], ['+48,20', '+1,3%', '<b class="ok">Alterado</b>']])}
+  ${cartaoTour('centro', '11/2026', 'COMPARADA', ['BASE', 'REF.', 'VALOR'],
+     [['3.728,99', '30,00', '3.728,99'], ['932,25', '25%', '932,25'], ['5.919,40', '–', '1.627,88'], ['7.457,98', '11%', '820,38'], ['325,89', '1,00', '325,89']])}
+</div>`;
+
+/* bandeira do botão Iniciar tour (ícone "flag" do Magnific/Flaticon, em assets/img/ico-bandeira.svg) */
+/* função (e não const) porque o topo do Cadastro já a usa antes deste trecho rodar */
+function bandeiraSVG() { return `<svg viewBox="0 0 2000 2000" fill="currentColor" aria-hidden="true"><path d="m1321.065 775.629c-26.7-26.706-26.7-70.008 0-96.713l569.047-569.042c40.549-40.544 11.83-109.874-45.521-109.874h-1571.866c-100.409 0-181.818 81.398-181.818 181.818v1727.272c0 50.204 40.705 90.909 90.909 90.909s90.909-40.705 90.909-90.909v-454.546h1571.866c57.351 0 86.071-69.33 45.521-109.88z"/></svg>`; }
+
+/* vídeo de apresentação da tela: abre o YouTube numa janela por cima da modal */
+const VIDEO_TOUR = '3SlBN-oGTBs';
+function abrirVideoTour() {
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="tour-video" id="tour-video" onclick="if (event.target === this) fecharVideoTour()">
+      <div class="quadro">
+        <button class="tour-fechar" type="button" title="Fechar vídeo" onclick="fecharVideoTour()">${svg('x')}</button>
+        <iframe src="https://www.youtube-nocookie.com/embed/${VIDEO_TOUR}?autoplay=1&rel=0" title="Vídeo da tela FP296"
+                allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+      </div>
+    </div>`);
+  requestAnimationFrame(() => requestAnimationFrame(() => document.getElementById('tour-video').classList.add('aberto')));
+}
+function fecharVideoTour() {
+  const v = document.getElementById('tour-video');
+  if (!v) return;
+  v.classList.remove('aberto');
+  setTimeout(() => v.remove(), 250);
+}
+
+function tourOculto() { try { return localStorage.getItem(CHAVE_TOUR) === '1'; } catch { return false; } }
+
+function abrirBoasVindas() {
+  if (document.getElementById('tour-boas')) return;
+  encerrarTour();
+  tourMostrado = true;
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="tour-fundo" id="tour-boas">
+      <div class="tour-modal" role="dialog" aria-modal="true" aria-labelledby="tour-tit">
+        <div class="tour-img">${CENA_TOUR}
+          <button class="tour-fechar" type="button" title="Fechar" onclick="fecharBoasVindas()">${svg('x')}</button>
+        </div>
+        <div class="tour-texto">
+          <small>Conheça a nova tela</small>
+          <div class="tour-titulo"><span class="cod">FP296</span><h2 id="tour-tit">Gestão de Folha de Pagamento</h2></div>
+          <p>Faça toda a gestão da sua folha em um só lugar. Aqui, você confere proventos, compara valores entre competências,
+             faz lançamentos na ficha financeira e acompanha todas as movimentações, tudo ao mesmo tempo. Siga o tour para
+             conhecer os principais pontos de navegação da tela.</p>
+        </div>
+        <div class="tour-rodape">
+          <label><input type="checkbox" id="tour-nao-mostrar"> Não mostrar novamente.</label>
+          <button class="btn btn-claro" type="button" onclick="fecharBoasVindas()">Já conheço a tela</button>
+          <button class="btn btn-primario" type="button" onclick="abrirVideoTour()">${svg('play')} Ver vídeo</button>
+          <button class="btn btn-primario" type="button" onclick="iniciarTour()">${bandeiraSVG()} Iniciar tour</button>
+        </div>
+      </div>
+    </div>`);
+  requestAnimationFrame(() => requestAnimationFrame(() => document.getElementById('tour-boas').classList.add('aberto')));
+}
+
+function fecharBoasVindas() {
+  const m = document.getElementById('tour-boas');
+  if (!m) return;
+  if (document.getElementById('tour-nao-mostrar').checked) { try { localStorage.setItem(CHAVE_TOUR, '1'); } catch { /* sem armazenamento */ } }
+  m.classList.remove('aberto');
+  setTimeout(() => m.remove(), 250);
+}
+
+let passoTour = -1;
+
+function iniciarTour() {
+  fecharBoasVindas();
+  /* o tour precisa de um servidor aberto no Cadastro */
+  if (servAberto === null) { pesquisou = true; main.querySelector('.pesq').innerHTML = pesquisaHTML(); abrirServidor(0); }
+  else if (vista !== 'cadastro') irPara('cadastro');
+  /* os passos 4 e 5 mostram a tabela e os filtros do Comparativo */
+  if (abaInt !== 'comparativo') trocarAbaInt('comparativo');
+  document.body.insertAdjacentHTML('beforeend', `<div class="tour-recorte" id="tour-recorte"></div><div class="tour-balao" id="tour-balao" role="dialog" aria-live="polite"></div>`);
+  irPassoTour(0);
+}
+
+function irPassoTour(i) {
+  passoTour = i;
+  const p = PASSOS_TOUR[i];
+  const alvo = main.querySelector(p.alvos[0]);
+  if (!alvo) { if (i < PASSOS_TOUR.length - 1) irPassoTour(i + 1); else encerrarTour(); return; }
+  alvo.scrollIntoView({ block: 'nearest' });
+  const ultimo = i === PASSOS_TOUR.length - 1;
+  document.getElementById('tour-balao').innerHTML = `
+    <button class="x" type="button" title="Fechar o tour" onclick="encerrarTour()">${svg('x')}</button>
+    <h3>${p.tit}</h3>
+    <p>${p.txt}</p>
+    <div class="acoes">
+      <span class="conta">${i + 1} de ${PASSOS_TOUR.length}</span>
+      <button class="seta" type="button" title="Passo anterior" onclick="irPassoTour(${i - 1})"${i === 0 ? ' disabled' : ''}>${svg('esquerda')}</button>
+      ${ultimo
+        ? '<button class="seta" type="button" onclick="encerrarTour()">FIM</button>'
+        : `<button class="seta" type="button" title="Próximo passo" onclick="irPassoTour(${i + 1})">${svg('direita')}</button>`}
+    </div>`;
+  posicionarTour();
+}
+
+/* recorte com folga de 6px em volta do alvo; o balão vai embaixo, em cima ou
+   ao lado, onde couber, e o bico aponta para o meio do destaque */
+function posicionarTour() {
+  if (passoTour < 0) return;
+  const r = retanguloPasso(PASSOS_TOUR[passoTour]);
+  const rec = document.getElementById('tour-recorte'), bal = document.getElementById('tour-balao');
+  if (!r || !rec) return;
+  const f = 6;
+  Object.assign(rec.style, { left: r.left - f + 'px', top: r.top - f + 'px', width: r.width + 2 * f + 'px', height: r.height + 2 * f + 'px' });
+  const bw = bal.offsetWidth, bh = bal.offsetHeight, m = 16;
+  /* alvo na metade direita da tela: o balão encosta pela direita e o bico fica no canto dele */
+  const pelaDireita = r.left + r.width / 2 > innerWidth / 2;
+  const alvoX = pelaDireita ? r.right - Math.min(r.width / 2, 160) : r.left + Math.min(r.width / 2, 160);
+  const xH = pelaDireita ? alvoX - bw + 40 : alvoX - 40;
+  let x, y, lado;
+  if (r.bottom + f + m + bh < innerHeight)      { lado = 'abaixo';   y = r.bottom + f + m; x = xH; }
+  else if (r.top - f - m - bh > 0)               { lado = 'acima';    y = r.top - f - m - bh; x = xH; }
+  else if (r.right + f + m + bw < innerWidth)    { lado = 'direita';  x = r.right + f + m; y = r.top + 20; }
+  else                                           { lado = 'esquerda'; x = r.left - f - m - bw; y = r.top + 20; }
+  x = Math.max(12, Math.min(x, innerWidth - bw - 12));
+  y = Math.max(12, Math.min(y, innerHeight - bh - 12));
+  bal.className = 'tour-balao ' + lado;
+  const bico = lado === 'abaixo' || lado === 'acima'
+    ? Math.max(14, Math.min(alvoX - x - 7, bw - 28))
+    : Math.max(14, Math.min(r.top + Math.min(r.height / 2, 60) - y - 7, bh - 28));
+  bal.style.setProperty('--bico', bico + 'px');
+  bal.style.left = x + 'px';
+  bal.style.top = y + 'px';
+}
+
+function encerrarTour() {
+  passoTour = -1;
+  document.getElementById('tour-recorte')?.remove();
+  document.getElementById('tour-balao')?.remove();
+}
+
+addEventListener('resize', posicionarTour);
+addEventListener('scroll', posicionarTour, true);
+addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (document.getElementById('tour-video')) fecharVideoTour();
+  else if (passoTour >= 0) encerrarTour();
+  else fecharBoasVindas();
+});
+
+/* abre as boas-vindas na primeira chegada ao Cadastro */
+const irParaSemTour = irPara;
+irPara = function (id) {
+  irParaSemTour(id);
+  if (id === 'cadastro' && !tourMostrado && !tourOculto()) abrirBoasVindas();
+};
+if (q.get('tour') === '1') { try { localStorage.removeItem(CHAVE_TOUR); } catch { /* sem armazenamento */ } }
+if (vista === 'cadastro' && !tourMostrado && (!tourOculto() || q.get('tour') === '1')) abrirBoasVindas();
 </script>
 </body>
 </html>
