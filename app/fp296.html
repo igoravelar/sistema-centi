@@ -1314,9 +1314,9 @@ const PASSOS_TOUR = [
     txt: 'Alguns dados da ficha cadastral são apresentados nesta parte. Clicando em Ver mais, você abre a ficha completa.' },
   { alvos: ['.valores'], tit: 'Proventos e Descontos',
     txt: 'Comparam a competência anterior com a atual: proventos, descontos, líquido e bases. A seta e a cor mostram se o valor subiu ou caiu.' },
-  { alvos: ['.comp-tab th.base', '.comp-tab th.cp', '.comp-tab tbody'], dentro: '.comp-tab', tit: 'Comparativo de Competências',
+  { alvos: ['.comp-tab th.base', '.comp-tab th.cp'], dentro: '.comp-tab', ateFim: true, tit: 'Comparativo de Competências',
     txt: 'Base e Comparada mostram a base de cálculo, a referência e o valor de cada evento nas duas competências, e o Comparativo aponta a diferença e a variação. Assim, você confere evento a evento de forma fácil e rápida.' },
-  { alvos: ['.filtros-sit', '.comp-tab th.sit', '.comp-tab tbody td.sit'], dentro: '.comp-tab', tit: 'Filtros das Ocorrências',
+  { alvos: ['.filtros-sit'], tit: 'Filtros das Ocorrências',
     txt: 'Marque os filtros Entrou, Saiu, Alterado ou Mantido para ver só o que mudou na folha. Junto com a coluna Situação, você identifica rapidamente o que entrou ou saiu.' },
   { alvos: ['.itab:nth-child(2)', '.itab:nth-child(3)'], tit: 'Ficha Financeira e Movimentações',
     txt: 'Antes, era preciso abrir a FP001 e a FP024 para lançar e editar eventos. Agora, a ficha financeira, as férias, os afastamentos e as demais movimentações ficam aqui, na mesma tela.' },
@@ -1332,7 +1332,8 @@ function retanguloPasso(p) {
   const r = { left: Math.min(...rs.map(x => x.left)), top: Math.min(...rs.map(x => x.top)),
               right: Math.max(...rs.map(x => x.right)), bottom: Math.max(...rs.map(x => x.bottom)) };
   const caixa = p.dentro && main.querySelector(p.dentro);
-  if (caixa) r.bottom = Math.min(r.bottom, caixa.getBoundingClientRect().bottom - 40);   /* 40px: o rodapé fixo da tabela fica de fora */
+  /* ateFim: a largura vem dos alvos e a altura desce até o fim visível da tabela */
+  if (caixa) r.bottom = p.ateFim ? caixa.getBoundingClientRect().bottom - 40 : Math.min(r.bottom, caixa.getBoundingClientRect().bottom - 40);   /* 40px: o rodapé fixo da tabela fica de fora */
   r.width = r.right - r.left; r.height = r.bottom - r.top;
   return r;
 }
