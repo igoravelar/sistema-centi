@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Centi · Documentação Protocolo 3.0</title>
+<title>Centi · Documentação Zarpi</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -474,6 +474,21 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 }
 
 .pagina a:hover { text-decoration-color: currentColor; }
+
+/* perfil externo na tabela de perfis: os que não operam o ERP */
+.pagina .tag-externo {
+  margin-left: 6px;
+  background: #F3FFC3;
+  border: 1px solid #C9DA86;
+  border-radius: 5px;
+  padding: 0 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #6D8415;
+  white-space: nowrap;
+}
 
 /* estrutura de conta no CRM: árvore em monoespaçado, como um bloco de código */
 .pagina .estrutura-crm {
@@ -1333,8 +1348,10 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 .pagina .raias fieldset.riscos p { margin: 0; font-size: 12px; }
 
 /* na tela estreita as raias viram uma embaixo da outra */
+.pagina .raias.externas { grid-template-columns: repeat(2, 1fr); }
+
 @media (max-width: 760px) {
-  .pagina .raias { grid-template-columns: 1fr; }
+  .pagina .raias, .pagina .raias.externas { grid-template-columns: 1fr; }
 }
 
 /* infográfico radial: o usuário no centro e, em volta, o que a camada
@@ -2032,8 +2049,8 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
   <a class="marca" href="index.html" title="Voltar ao início">
     <img src="assets/img/marca-centi.png" alt="Centi">
   </a>
-  <h1>Documentação Protocolo 3.0</h1>
-  <div class="atualizado">Atualizado em: <span class="badge-data">27/10/2026</span></div>
+  <h1>Documentação Zarpi</h1>
+  <div class="atualizado">Atualizado em: <span class="badge-data">29/10/2026</span></div>
   <button class="bt-menu" id="bt-menu" onclick="alternarMenu()"
           aria-label="Abrir o menu" aria-expanded="false" aria-controls="sidebar">
     <svg class="ico-abrir" viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
@@ -2123,18 +2140,78 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa1">
       <h2>#1 Modelo de Negócios</h2>
-      <p class="lead">Definição do modelo de negócios do Novo Protocolo: proposta de valor, segmentos atendidos e modelo de receita.</p>
+      <p class="lead">Definição do modelo de negócios do Zarpi: proposta de valor, segmentos atendidos e modelo de receita.</p>
     </section>
 
     <section id="etapa1-descricao" class="sub">
       <h3>Descrição do Produto</h3>
       <div class="definicao">
-        <p>É o 3º nível da ferramenta de protocolo municipal da CENTI, que permite tramitar processos administrativos por fluxos configuráveis e visuais, orientando os servidores em cada etapa e permitindo que diferentes departamentos trabalhem de forma integrada e simultânea, com controle de documentos, prazos e checklist para execução da etapa.</p>
+        <p>É a plataforma da CENTI para a tramitação de processos administrativos municipais, que conduz cada processo por fluxos configuráveis e visuais, orientando os servidores em cada etapa e permitindo que diferentes departamentos trabalhem de forma integrada e simultânea, com controle de documentos, prazos e checklist para execução de cada etapa. Pelos seus canais externos, o cidadão, o contribuinte e o fornecedor também acompanham e assinam os protocolos sem precisar ir à prefeitura.</p>
       </div>
-      <p>O Protocolo 3.0 é a solução da CENTI para tornar a tramitação de processos administrativos mais simples, organizada e eficiente, eliminando esperas, retrabalhos e obstáculos que podem ser evitados no dia a dia da prefeitura.</p>
-      <p>Mais do que apenas digitalizar documentos, o Protocolo 3.0 orienta cada processo pelo caminho adequado, deixando claro o que precisa ser feito, por quem, em qual etapa e dentro de qual prazo, permitindo que atividades sejam realizadas simultaneamente quando possível, que decisões sejam apoiadas por checklists, documentos e regras, e que toda a comunicação e o acompanhamento aconteçam em um único ambiente.</p>
+      <p>O Zarpi é a solução da CENTI para tornar a tramitação de processos administrativos mais simples, organizada e eficiente, eliminando esperas, retrabalhos e obstáculos que podem ser evitados no dia a dia da prefeitura.</p>
+      <p>Mais do que apenas digitalizar documentos, o Zarpi orienta cada processo pelo caminho adequado, deixando claro o que precisa ser feito, por quem, em qual etapa e dentro de qual prazo, permitindo que atividades sejam realizadas simultaneamente quando possível, que decisões sejam apoiadas por checklists, documentos e regras, e que toda a comunicação e o acompanhamento aconteçam em um único ambiente.</p>
       <p>O resultado é uma gestão ágil com menos processos parados, menos idas e vindas, mais previsibilidade, rastreabilidade e controle, dando aos gestores uma visão clara da operação e aos servidores mais segurança para executar suas responsabilidades.</p>
       <p>Porque ser ágil não significa apenas fazer mais rápido: significa fazer o processo avançar, sem interrupções e pelo caminho certo.</p>
+    </section>
+
+    <section id="etapa1-termos" class="sub">
+      <h3>Processo e Protocolo</h3>
+      <div class="definicao">
+        <p>O <b>processo</b> é o caminho; o <b>protocolo</b> é quem percorre o caminho.</p>
+      </div>
+
+      <div class="colunas-2">
+        <fieldset class="riscos">
+          <legend>Processo</legend>
+          <p>O <b>modelo</b>: como a prefeitura resolve um tipo de demanda — as etapas, quem responde por cada uma, os documentos, as regras e os prazos. É configurado uma vez e vale para todos os pedidos daquele tipo.</p>
+        </fieldset>
+        <fieldset class="riscos">
+          <legend>Protocolo</legend>
+          <p>O <b>caso</b>: um pedido concreto, de um interessado, que percorre esse modelo etapa por etapa até a conclusão. Cada pedido gera um protocolo novo.</p>
+        </fieldset>
+      </div>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th></th><th>Processo</th><th>Protocolo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>O que é</b></td><td>O modelo: como a prefeitura resolve um tipo de demanda</td><td>O caso: um pedido concreto que percorre esse modelo</td></tr>
+            <tr><td><b>Quantos</b></td><td>Um por tipo de demanda</td><td>Muitos, um para cada pedido</td></tr>
+            <tr><td><b>Contém</b></td><td>Etapas, responsáveis, documentos exigidos, checklists, regras e prazos</td><td>Número, interessado, data, documentos enviados, andamentos e situação atual</td></tr>
+            <tr><td><b>Quem cria</b></td><td>Consultor Técnico e Gestor / Líder Técnico</td><td>Servidor, ou o cidadão pelo Portal de Serviços</td></tr>
+            <tr><td><b>Onde</b></td><td><code>PO050</code> · Fluxo de Processos</td><td><code>PO051</code> · Tramitação de Protocolo</td></tr>
+            <tr><td><b>Quando muda</b></td><td>Quando a regra muda: gera uma nova versão do fluxo</td><td>A cada etapa concluída: ganha um novo andamento</td></tr>
+            <tr><td><b>Exemplo</b></td><td>“Isenção de IPTU”</td><td>“Protocolo 2292436 — isenção de IPTU de Maria Souza”</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Como se relacionam</h4>
+      <div class="fluxo-palavras">
+        <span class="palavra">CONFIGURAR O PROCESSO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">ABRIR O PROTOCOLO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">TRAMITAR AS ETAPAS</span>
+      </div>
+      <ul class="lista">
+        <li>O processo é configurado <b>uma vez</b>; um protocolo é aberto <b>a cada pedido</b> e percorre as etapas do processo.</li>
+        <li>Um processo publicado dá origem a <b>muitos protocolos</b>.</li>
+        <li>Cada protocolo <b>segue a versão do processo em que nasceu</b>: mudar o processo não altera os protocolos que já estão em andamento — o mesmo princípio de não sobrescrita da <a href="#etapa8-rastreabilidade">Rastreabilidade</a>.</li>
+      </ul>
+
+      <blockquote>
+        <p>Na prefeitura, “processo” costuma significar o calhamaço de papéis de um pedido, e “protocolo” o número de entrada. No Zarpi, os termos têm sentido fixo: <b>processo é o modelo, protocolo é o caso.</b> Usar sempre assim — em telas, treinamento e material comercial — evita a confusão mais comum na implantação.</p>
+      </blockquote>
+
+      <h4>Termos vizinhos</h4>
+      <ul class="lista">
+        <li><b>Fluxo:</b> o desenho visual do processo.</li>
+        <li><b>Versão:</b> um retrato do processo, primeiro em rascunho e depois publicado.</li>
+        <li><b>Etapa:</b> cada passo do processo.</li>
+        <li><b>Tramitação:</b> o protocolo avançando pelas etapas.</li>
+        <li><b>Andamento:</b> o registro de cada passo dado por um protocolo.</li>
+      </ul>
     </section>
 
     <section id="etapa1-problema" class="sub">
@@ -2177,6 +2254,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         <span class="palavra">ENTREGAR</span>
       </div>
       <p>Permitir que prefeituras organizem e acelerem a tramitação de processos administrativos, substituindo fluxos burocráticos, fragmentados e difíceis de acompanhar por uma jornada visual, estruturada e orientada, na qual cada servidor sabe o que precisa fazer, em qual etapa, com quais documentos e dentro de quais prazos. Dessa forma, a prefeitura reduz esperas, retrabalhos e encaminhamentos desnecessários, aumenta a previsibilidade e o controle sobre seus processos e proporciona uma gestão mais eficiente, transparente e moderna, com uma solução de implantação simples e acessível também para municípios de pequeno e médio porte.</p>
+      <p>Com os <a href="#etapa4-canais">canais externos</a>, quem não opera o sistema — cidadão, contribuinte e fornecedor — também acompanha o protocolo, envia documentos e <b>assina pelo próprio Zarpi</b>. Isso elimina as assinaturas feitas fora do sistema por falta de alternativa para quem não tem login e as idas à prefeitura só para saber onde o processo está.</p>
     </section>
 
     <section id="etapa1-comercializacao" class="sub">
@@ -2265,7 +2343,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa2-mercado" class="sub">
       <h3>Visão de mercado</h3>
-      <p>O Protocolo 3.0 está inserido no mercado de <b>GovTechs e soluções SaaS para digitalização da gestão pública</b>, especificamente no segmento de <b>protocolo, processos administrativos, tramitação eletrônica e workflows municipais</b>.</p>
+      <p>O Zarpi está inserido no mercado de <b>GovTechs e soluções SaaS para digitalização da gestão pública</b>, especificamente no segmento de <b>protocolo, processos administrativos, tramitação eletrônica e workflows municipais</b>.</p>
       <p>O mercado passa por uma evolução de sistemas que apenas digitalizam documentos para plataformas capazes de <b>orientar fluxos, controlar prazos, integrar departamentos, automatizar tarefas e oferecer rastreabilidade de ponta a ponta</b>.</p>
       <p>A oportunidade da Centi está em transformar o protocolo de um simples ponto de entrada documental em um <b>motor de tramitação inteligente</b>, conectando cidadão, servidor e gestão municipal em uma única jornada.</p>
 
@@ -2304,7 +2382,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
       <div class="verbete">
         <span class="logo"><img src="assets/img/logos/logo-1doc.png" alt="1Doc"></span>
-        <p>A <b>1Doc</b> é o principal benchmark direto do Protocolo 3.0, com mais de 900 organizações e entidades declaradas atualmente e presença nos 26 estados. A plataforma reúne protocolo, processo administrativo, ouvidoria, requerimentos, carta de serviços e outros canais em um único ecossistema.</p>
+        <p>A <b>1Doc</b> é o principal benchmark direto do Zarpi, com mais de 900 organizações e entidades declaradas atualmente e presença nos 26 estados. A plataforma reúne protocolo, processo administrativo, ouvidoria, requerimentos, carta de serviços e outros canais em um único ecossistema.</p>
       </div>
 
       <div class="verbete">
@@ -2339,7 +2417,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <div class="tabela-rolagem">
         <table>
           <thead>
-            <tr><th>Player</th><th>Posicionamento</th><th>Força competitiva</th><th>Ameaça ao Protocolo 3.0</th></tr>
+            <tr><th>Player</th><th>Posicionamento</th><th>Força competitiva</th><th>Ameaça ao Zarpi</th></tr>
           </thead>
           <tbody>
             <tr>
@@ -2470,7 +2548,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </ul>
       <p>A Aprova, por exemplo, já posiciona sua plataforma com IA para análise de documentos e automação de tarefas.</p>
       <p>A Thema trabalha com fluxos configuráveis, protocolo digital, acesso externo e assinaturas eletrônicas.</p>
-      <p>Esse movimento valida a direção estratégica do Protocolo 3.0: <b>competir não apenas como protocolo eletrônico, mas como plataforma de tramitação inteligente.</b></p>
+      <p>Esse movimento valida a direção estratégica do Zarpi: <b>competir não apenas como protocolo eletrônico, mas como plataforma de tramitação inteligente.</b></p>
     </section>
 
     <section id="etapa2-oportunidade" class="sub">
@@ -2488,7 +2566,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         </div>
       </div>
 
-      <p>O Protocolo 3.0 pode ocupar um espaço próprio ao combinar:</p>
+      <p>O Zarpi pode ocupar um espaço próprio ao combinar:</p>
       <div class="fluxo-palavras">
         <span class="palavra">SIMPLICIDADE</span><span class="seta-fluxo">+</span>
         <span class="palavra">WORKFLOW VISUAL</span><span class="seta-fluxo">+</span>
@@ -2501,7 +2579,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
       <h4>Posicionamento competitivo</h4>
       <blockquote>
-        <p>Enquanto sistemas tradicionais digitalizam documentos e grandes suites concentram múltiplas funções, o Protocolo 3.0 deve ser posicionado como uma plataforma especializada em fazer processos administrativos avançarem de forma simples, orientada e rastreável.</p>
+        <p>Enquanto sistemas tradicionais digitalizam documentos e grandes suites concentram múltiplas funções, o Zarpi deve ser posicionado como uma plataforma especializada em fazer processos administrativos avançarem de forma simples, orientada e rastreável.</p>
       </blockquote>
     </section>
 
@@ -2595,13 +2673,13 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa3-objetivo" class="sub">
       <h3>Objetivo da etapa</h3>
-      <p>Definir a direção estratégica do Protocolo 3.0, estabelecendo <b>o que o produto pretende ser, para quem será desenvolvido, como irá se diferenciar e em qual sequência suas capacidades serão construídas</b>.</p>
+      <p>Definir a direção estratégica do Zarpi, estabelecendo <b>o que o produto pretende ser, para quem será desenvolvido, como irá se diferenciar e em qual sequência suas capacidades serão construídas</b>.</p>
       <p>A estratégia parte das conclusões obtidas no Modelo de Negócios e na Inteligência de Mercado e serve como referência para Produto, Tecnologia, UX/UI, Comercial, Marketing e Customer Success.</p>
     </section>
 
     <section id="etapa3-visao" class="sub">
       <h3>Visão do Produto</h3>
-      <p>O Protocolo 3.0 será a plataforma da Centi especializada em <b>organizar, orientar e acelerar a tramitação de processos administrativos municipais</b>.</p>
+      <p>O Zarpi será a plataforma da Centi especializada em <b>organizar, orientar e acelerar a tramitação de processos administrativos municipais</b>.</p>
       <p>Mais do que digitalizar documentos ou substituir o protocolo físico, o produto deve funcionar como um <b>motor de execução dos processos</b>, indicando o caminho adequado, orientando cada responsável, controlando prazos e permitindo que atividades sejam executadas de forma integrada e simultânea quando possível.</p>
 
       <h4>Visão de futuro</h4>
@@ -2614,12 +2692,12 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa3-papel" class="sub">
       <h3>Papel estratégico no portfólio Centi</h3>
-      <p>O Protocolo 3.0 deve funcionar como uma <b>porta de entrada da Centi na operação administrativa dos municípios</b>.</p>
-      <p>Enquanto o SIAFIC concentra-se na gestão financeira, contábil e fiscal, o Protocolo 3.0 atua sobre o <b>fluxo operacional dos processos e documentos administrativos</b>.</p>
+      <p>O Zarpi deve funcionar como uma <b>porta de entrada da Centi na operação administrativa dos municípios</b>.</p>
+      <p>Enquanto o SIAFIC concentra-se na gestão financeira, contábil e fiscal, o Zarpi atua sobre o <b>fluxo operacional dos processos e documentos administrativos</b>.</p>
       <p>A estratégia permite criar uma relação complementar:</p>
 
       <div class="fluxo-palavras">
-        <span class="palavra">PROTOCOLO 3.0</span><span class="seta-fluxo">→</span>
+        <span class="palavra">ZARPI</span><span class="seta-fluxo">→</span>
         <span class="palavra">OPERAÇÃO ADMINISTRATIVA</span><span class="seta-fluxo">→</span>
         <span class="palavra">SIAFIC</span><span class="seta-fluxo">→</span>
         <span class="palavra">GESTÃO FINANCEIRA E FISCAL</span>
@@ -2638,10 +2716,10 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
       <h4>Público prioritário</h4>
       <p><b>Grandes prefeituras</b> que buscam modernizar e evoluir sua organização interna de tramitação de processos, substituindo fluxos fragmentados por uma operação <b>mais estruturada, rastreável, simples, integrada e escalável</b>.</p>
-      <p>Esse público tende a possuir maior maturidade administrativa e tecnológica, estrutura interna consolidada e capacidade para conduzir projetos de transformação dos processos municipais, tornando-se estratégico para a adoção do Protocolo 3.0 como uma plataforma de evolução da tramitação administrativa.</p>
+      <p>Esse público tende a possuir maior maturidade administrativa e tecnológica, estrutura interna consolidada e capacidade para conduzir projetos de transformação dos processos municipais, tornando-se estratégico para a adoção do Zarpi como uma plataforma de evolução da tramitação administrativa.</p>
 
       <h5>Oportunidade de entrada</h5>
-      <p><b>Pequenas e médias prefeituras</b> representam uma importante oportunidade de entrada e expansão do produto. A simplicidade de operação, a facilidade de implantação e um <b>ticket de entrada acessível</b> permitem que o Protocolo 3.0 se adapte a diferentes níveis de maturidade administrativa e tecnológica, democratizando o acesso à digitalização e à tramitação inteligente de processos.</p>
+      <p><b>Pequenas e médias prefeituras</b> representam uma importante oportunidade de entrada e expansão do produto. A simplicidade de operação, a facilidade de implantação e um <b>ticket de entrada acessível</b> permitem que o Zarpi se adapte a diferentes níveis de maturidade administrativa e tecnológica, democratizando o acesso à digitalização e à tramitação inteligente de processos.</p>
       <p><b>Estratégia:</b> grandes prefeituras como <b>público prioritário de posicionamento e transformação</b>; pequenas e médias prefeituras como <b>mercado de entrada, escala e expansão</b>.</p>
 
       <h4>Problema central</h4>
@@ -2651,7 +2729,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
       <h4>Promessa</h4>
       <blockquote>
-        <p>O Protocolo 3.0 mostra o caminho e faz o processo avançar.</p>
+        <p>O Zarpi mostra o caminho e faz o processo avançar.</p>
       </blockquote>
 
       <h4>Território competitivo</h4>
@@ -2717,7 +2795,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa3-diferenciais" class="sub">
       <h3>Diferenciais competitivos</h3>
-      <p>A estratégia competitiva do Protocolo 3.0 será baseada em cinco pilares:</p>
+      <p>A estratégia competitiva do Zarpi será baseada em cinco pilares:</p>
 
       <div class="cards-num">
         <div class="card">
@@ -2753,7 +2831,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <p>O MVP deve validar a hipótese central do produto:</p>
 
       <blockquote>
-        <p>“Uma prefeitura consegue configurar e executar processos administrativos digitais com mais clareza, controle e velocidade utilizando o Protocolo 3.0?”</p>
+        <p>“Uma prefeitura consegue configurar e executar processos administrativos digitais com mais clareza, controle e velocidade utilizando o Zarpi?”</p>
       </blockquote>
 
       <p>O MVP deve priorizar as capacidades essenciais para testar essa hipótese.</p>
@@ -2798,9 +2876,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           </thead>
           <tbody>
             <tr><td><b>MVP</b></td><td>Fazer o processo tramitar</td><td>Fluxos + etapas + responsáveis + documentos + checklist + regras + prazos</td></tr>
-            <tr><td><b>V1</b></td><td>Tornar a tramitação mais eficiente</td><td>Paralelismo + Regularidades + Apensar + notificações + indicadores</td></tr>
-            <tr><td><b>V2</b></td><td>Automatizar a operação e tornar o processo inteligente</td><td>ViCenti IA + Automações + recomendações + previsão de gargalos</td></tr>
-            <tr><td><b>V3</b></td><td>Expandir o ecossistema</td><td>Integrações + Análise documental + Conexões com módulos (Portal Social)</td></tr>
+            <tr><td><b>V1</b></td><td>Tornar a tramitação eficiente, inteligente e aberta a quem está fora da prefeitura</td><td>Paralelismo + Regularidades + Apensar + notificações + indicadores + ViCenti IA + automações + recomendações + previsão de gargalos + integrações + análise documental + conexões com módulos (Portal Social) + canais externos (Portal de Serviços, Portal de Assinaturas e Assinatura Digital de Documento(s))</td></tr>
           </tbody>
         </table>
       </div>
@@ -2844,17 +2920,28 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           <legend>Resultado</legend>
           <ul>
             <li>Satisfação dos servidores;</li>
-            <li>satisfação dos cidadãos;</li>
+            <li>satisfação dos cidadãos, medida por uma pesquisa curta no portal ao concluir o protocolo;</li>
             <li>taxa de renovação dos municípios;</li>
             <li>expansão de novos departamentos.</li>
           </ul>
         </fieldset>
       </div>
+
+      <fieldset class="riscos">
+        <legend>Canais externos (V1)</legend>
+        <ul>
+          <li>Adesão ao Portal de Serviços: cidadãos e empresas com acesso ativo;</li>
+          <li>protocolos acompanhados pelo portal, em vez de por telefone ou balcão;</li>
+          <li>regularidades enviadas pelo portal;</li>
+          <li>assinaturas feitas pelos canais externos e tempo entre o envio e a assinatura;</li>
+          <li>recusas de assinatura e documentos com o prazo vencido.</li>
+        </ul>
+      </fieldset>
     </section>
 
     <section id="etapa3-decisao" class="sub">
       <h3>Decisão estratégica</h3>
-      <p>A estratégia do Protocolo 3.0 é <b>não competir pela quantidade de funcionalidades</b>, mas pela capacidade de transformar processos administrativos complexos em fluxos simples, visuais e orientados.</p>
+      <p>A estratégia do Zarpi é <b>não competir pela quantidade de funcionalidades</b>, mas pela capacidade de transformar processos administrativos complexos em fluxos simples, visuais e orientados.</p>
 
       <blockquote>
         <p>O produto não deve apenas registrar onde o processo está. Deve ajudar a prefeitura a fazer o processo avançar.</p>
@@ -2925,9 +3012,9 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa4-objetivo" class="sub">
       <h3>Objetivo da etapa</h3>
-      <p><b>Transformar a visão estratégica do Protocolo 3.0 em um produto comercializável</b>, materializando suas principais regras, fluxos, perfis de usuário e experiências de utilização em uma primeira versão funcional — o MVP.</p>
+      <p><b>Transformar a visão estratégica do Zarpi em um produto comercializável</b>, materializando suas principais regras, fluxos, perfis de usuário e experiências de utilização em uma primeira versão funcional — o MVP.</p>
       <div class="nota">
-        <p>Esta etapa conecta a estratégia definida anteriormente à construção efetiva do produto, estabelecendo <b>como o Protocolo 3.0 será utilizado, por quem, em quais situações e quais capacidades serão necessárias para realizar sua proposta de valor</b>.</p>
+        <p>Esta etapa conecta a estratégia definida anteriormente à construção efetiva do produto, estabelecendo <b>como o Zarpi será utilizado, por quem, em quais situações e quais capacidades serão necessárias para realizar sua proposta de valor</b>.</p>
       </div>
     </section>
 
@@ -2956,7 +3043,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa4-estrutura" class="sub">
       <h3>Estrutura funcional do MVP</h3>
-      <p>O MVP do Protocolo 3.0 está organizado em <b>três grandes estágios operacionais</b>, que representam o ciclo fundamental de um processo administrativo dentro da plataforma:</p>
+      <p>O MVP do Zarpi está organizado em <b>três grandes estágios operacionais</b>, que representam o ciclo fundamental de um processo administrativo dentro da plataforma:</p>
 
       <div class="escada-evolucao larga">
         <div class="estagio">
@@ -3241,7 +3328,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         <span class="palavra">QUAIS INFORMAÇÕES SÃO NECESSÁRIAS</span><span class="seta-fluxo">→</span>
         <span class="palavra">O QUE ACONTECE DEPOIS</span>
       </div>
-      <p>Esse princípio é central para a proposta do Protocolo 3.0.</p>
+      <p>Esse princípio é central para a proposta do Zarpi.</p>
 
       <div class="objetivo">
         <svg class="setas" viewBox="0 0 100 64" aria-hidden="true">
@@ -3258,7 +3345,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa4-perfis" class="sub">
       <h3>Perfis de usuários</h3>
-      <p>O MVP foi estruturado considerando três principais tipos de usuários, com diferentes níveis de responsabilidade e conhecimento sobre o sistema.</p>
+      <p>O MVP foi estruturado considerando três principais tipos de usuários internos, com diferentes níveis de responsabilidade e conhecimento sobre o sistema. Com os <a href="#etapa4-canais">canais externos</a> da V1, entram também dois perfis externos, que não operam o ERP, mas participam dos protocolos.</p>
 
       <div class="tabela-rolagem">
         <table>
@@ -3281,6 +3368,16 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
               <td>Executa as atividades dos processos</td>
               <td>Criação e tramitação de protocolos</td>
             </tr>
+            <tr>
+              <td><b>Cidadão / Contribuinte</b> <span class="tag-externo">externo</span></td>
+              <td>Solicita serviços e acompanha os protocolos em que é interessado ou solicitante</td>
+              <td>Portal de Serviços: acompanhamento, fluxo e envio de regularidades</td>
+            </tr>
+            <tr>
+              <td><b>Signatário externo</b> <span class="tag-externo">externo</span></td>
+              <td>Assina os documentos dos protocolos de que é parte: fornecedor, contribuinte ou servidor sem acesso ao ERP</td>
+              <td>Portal de Assinaturas e Assinatura Digital de Documento(s)</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -3298,7 +3395,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </div>
 
       <h4>Papel</h4>
-      <p>O Consultor Técnico Centi é o <b>mentor da utilização do Protocolo 3.0 dentro da prefeitura</b>. É o profissional responsável por apoiar a construção inicial dos fluxos, orientar a prefeitura sobre as possibilidades do produto e estimular a utilização correta e completa da ferramenta.</p>
+      <p>O Consultor Técnico Centi é o <b>mentor da utilização do Zarpi dentro da prefeitura</b>. É o profissional responsável por apoiar a construção inicial dos fluxos, orientar a prefeitura sobre as possibilidades do produto e estimular a utilização correta e completa da ferramenta.</p>
 
       <h4>Responsabilidades</h4>
       <ul class="lista">
@@ -3323,7 +3420,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         </svg>
         <div>
           <h4>Objetivo</h4>
-          <p>Garantir que a prefeitura compreenda o potencial do Protocolo 3.0 e consiga transformar suas regras de negócio em processos digitais bem estruturados.</p>
+          <p>Garantir que a prefeitura compreenda o potencial do Zarpi e consiga transformar suas regras de negócio em processos digitais bem estruturados.</p>
         </div>
       </div>
     </section>
@@ -3380,7 +3477,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </div>
 
       <h4>Papel</h4>
-      <p>O Servidor Público é o <b>principal usuário operacional do Protocolo 3.0</b>. Seu foco não está na configuração do sistema, mas na execução das atividades necessárias para que os processos avancem.</p>
+      <p>O Servidor Público é o <b>principal usuário operacional do Zarpi</b>. Seu foco não está na configuração do sistema, mas na execução das atividades necessárias para que os processos avancem.</p>
 
       <h4>Responsabilidades</h4>
       <ul class="lista">
@@ -3483,7 +3580,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa4-telas" class="sub">
       <h3>Evolução das telas</h3>
-      <p>O MVP do Protocolo 3.0 representa também uma evolução da experiência atual do sistema Centi.</p>
+      <p>O MVP do Zarpi representa também uma evolução da experiência atual do sistema Centi.</p>
       <p>Algumas das funcionalidades atualmente distribuídas em telas legadas — como <code>PO002</code> e <code>PO011</code> — estão sendo reorganizadas em uma experiência mais integrada e orientada.</p>
       <p>A estratégia não consiste apenas em reproduzir as funcionalidades existentes em novas interfaces, mas em <b>reorganizar a experiência a partir da lógica do processo</b>.</p>
 
@@ -3518,6 +3615,125 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
       <p>Essa mudança representa uma evolução de UX e também de conceito de produto.</p>
       <p>O objetivo é reduzir a fragmentação da experiência atual e fazer com que o sistema reflita a lógica real da tramitação administrativa.</p>
+    </section>
+
+    <section id="etapa4-canais" class="sub">
+      <h3>Canais externos do Zarpi</h3>
+      <p>O Zarpi não termina na tela do servidor. Parte de quem participa de um protocolo — o cidadão que pediu o serviço, o contribuinte que precisa enviar uma regularidade, o fornecedor que assina um contrato — <b>não opera o ERP e não tem login nele</b>. Para essas pessoas, o Zarpi se abre em três canais externos, previstos para a <b>V1</b> do roadmap:</p>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Canal</th><th>Quem usa</th><th>Para quê</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Assinatura Digital de Documento(s)</b></td><td>Qualquer signatário, a partir de um link</td><td>Assinar ou recusar os documentos de um protocolo, sem cadastro</td></tr>
+            <tr><td><b>Portal de Assinaturas</b></td><td>Contribuinte, fornecedor e servidor público</td><td>Reunir as assinaturas pendentes e o histórico do que já foi assinado</td></tr>
+            <tr><td><b>Portal de Serviços</b></td><td>Cidadão e empresas do município</td><td>Acompanhar os protocolos, consultar o fluxo e enviar regularidades</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Assinatura Digital de Documento(s)</h4>
+      <fieldset class="tela">
+        <legend>
+          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <span class="ico">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+          </span>
+          Assinatura Digital de Documento(s)
+        </legend>
+
+        <div class="mini-tela" onclick="ampliarTela(this)">
+          <img src="assets/img/ass-doc-documento-protegido.png"
+               alt="Assinatura Digital de Documento(s): os documentos do protocolo 5264/2026 protegidos até a liberação, com os signatários e o passo a passo ao lado">
+          <span class="canto"></span>
+          <button class="lupa" title="Ampliar a tela" aria-label="Ampliar a tela">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
+          </button>
+        </div>
+      </fieldset>
+
+      <p>É a página que o signatário abre pelo link recebido. Os documentos ficam <b>protegidos até a liberação</b>: a pessoa informa CPF/CNPJ e e-mail, digita o código enviado por e-mail e só então lê os documentos e decide entre <b>assinar ou recusar</b>.</p>
+      <p>A página mostra o prazo para assinar e a <b>ordem dos signatários</b>: cada um assina na sua vez, e o protocolo segue a tramitação quando as assinaturas exigidas estiverem coletadas.</p>
+      <fieldset class="riscos acesso">
+        <legend>Acessar</legend>
+        <a class="botao" href="ass-doc.html" target="_blank" rel="noopener">Assinatura Digital de Documento(s)</a>
+      </fieldset>
+
+      <h4>Portal de Assinaturas</h4>
+      <fieldset class="tela">
+        <legend>
+          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <span class="ico">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M8 17c1.5-2 2.5-2 3 0s1.5 2 3 0"/></svg>
+          </span>
+          Portal de Assinaturas
+        </legend>
+
+        <div class="mini-tela" onclick="ampliarTela(this)">
+          <img src="assets/img/portal-ass-pendentes.png"
+               alt="Portal de Assinaturas: os documentos pendentes agrupados por protocolo, com a busca, o período e os botões de baixar e assinar em lote">
+          <span class="canto"></span>
+          <button class="lupa" title="Ampliar a tela" aria-label="Ampliar a tela">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
+          </button>
+        </div>
+      </fieldset>
+
+      <p>É a área logada de quem assina com frequência. O acesso é feito como <b>Contribuinte/Fornecedor</b> ou como <b>Servidor Público</b>. Os documentos pendentes aparecem <b>agrupados por protocolo</b>, podem ser baixados e assinados em lote, e os já assinados ficam no histórico de Documentos Assinados.</p>
+      <fieldset class="riscos acesso">
+        <legend>Acessar</legend>
+        <a class="botao" href="portal-ass.html" target="_blank" rel="noopener">Portal de Assinaturas</a>
+      </fieldset>
+
+      <h4>Portal de Serviços</h4>
+      <fieldset class="tela">
+        <legend>
+          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <span class="ico">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </span>
+          Portal de Serviços · Meus Protocolos
+        </legend>
+
+        <div class="mini-tela" onclick="ampliarTela(this)">
+          <img src="assets/img/portal-servicos-meus-protocolos.png"
+               alt="Portal de Serviços: Meus Protocolos, com os protocolos em aberto do cliente logado e as ações de ver, imprimir, regularidades e fluxo">
+          <span class="canto"></span>
+          <button class="lupa" title="Ampliar a tela" aria-label="Ampliar a tela">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
+          </button>
+        </div>
+      </fieldset>
+
+      <p>É o portal em que o cidadão e as empresas acessam os serviços digitais do município. No módulo Protocolo, <b>Meus Protocolos</b> lista os protocolos em aberto e arquivados de quem está logado. Cada protocolo abre com andamentos, documentos, movimentações, <b>regularidades</b>, <b>transparência</b> e interações.</p>
+      <fieldset class="tela">
+        <legend>
+          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <span class="ico">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </span>
+          Portal de Serviços · Fluxo do Processo
+        </legend>
+
+        <div class="mini-tela" onclick="ampliarTela(this)">
+          <img src="assets/img/portal-servicos-fluxo.png"
+               alt="Portal de Serviços: o fluxo do processo de compra direta, com a etapa concluída, a etapa em andamento e as etapas não iniciadas">
+          <span class="canto"></span>
+          <button class="lupa" title="Ampliar a tela" aria-label="Ampliar a tela">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
+          </button>
+        </div>
+      </fieldset>
+
+      <p>O ícone do fluxograma mostra ao cidadão <b>o mesmo fluxo visual</b> que o servidor tramita na <code>PO051</code>, com a etapa em que o processo está e as que ainda faltam. É a resposta direta ao Job-to-be-Done do cidadão: acompanhar o andamento sem precisar descobrir onde o processo está.</p>
+      <fieldset class="riscos acesso">
+        <legend>Acessar</legend>
+        <a class="botao" href="portal-servicos.html" target="_blank" rel="noopener">Portal de Serviços</a>
+      </fieldset>
+
+      <p>Os três canais trabalham sobre <b>o mesmo protocolo e o mesmo fluxo</b> da <code>PO051</code>: não são sistemas paralelos. O que o público externo vê é um recorte do processo, com as restrições de acesso definidas em <a href="#etapa8-lgpd">LGPD e Transparência</a>.</p>
     </section>
 
     <section id="etapa4-criterio" class="sub">
@@ -3573,7 +3789,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         <p>A conclusão desta etapa <b>não significa que o produto está validado em produção</b>. Ela representa a construção da primeira versão estruturada do produto, que deverá ser submetida à validação com usuários e posteriormente utilizada em um <b>projeto piloto real</b>.</p>
       </div>
 
-      <p>Ao final da Modelagem do Produto, a Centi deverá ter clareza sobre <b>como o Protocolo 3.0 funciona, quem utiliza cada parte da solução, quais responsabilidades cada perfil possui e como o processo percorre a plataforma desde sua configuração até sua conclusão</b>.</p>
+      <p>Ao final da Modelagem do Produto, a Centi deverá ter clareza sobre <b>como o Zarpi funciona, quem utiliza cada parte da solução, quais responsabilidades cada perfil possui e como o processo percorre a plataforma desde sua configuração até sua conclusão</b>.</p>
 
       <div class="objetivo">
         <svg class="setas" viewBox="0 0 100 64" aria-hidden="true">
@@ -3645,7 +3861,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa5-objetivo" class="sub">
       <h3>Objetivo da etapa</h3>
-      <p><b>Descrever a plataforma sobre a qual o Protocolo 3.0 será construído</b>, deixando claro em que capacidades já existentes o MVP se apoia e quais precisam ser criadas ou decididas.</p>
+      <p><b>Descrever a plataforma sobre a qual o Zarpi será construído</b>, deixando claro em que capacidades já existentes o MVP se apoia e quais precisam ser criadas ou decididas.</p>
       <div class="nota">
         <p>Esta etapa conecta a modelagem funcional à construção efetiva: cada capacidade prevista no MVP — configurar fluxos, criar protocolos, tramitar etapas, guardar documentos, notificar e acompanhar — precisa ter <b>um lugar definido dentro da arquitetura da Centi</b>.</p>
       </div>
@@ -3653,7 +3869,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa5-visao" class="sub">
       <h3>Visão geral da solução</h3>
-      <p>O Protocolo 3.0 nasce em uma plataforma já existente. Ele é um módulo do <b>ERP municipal da Centi</b>, e herda dele o banco, a camada de serviço, a geração de telas, os relatórios e o modelo de operação por município.</p>
+      <p>O Zarpi nasce em uma plataforma já existente. Ele é um módulo do <b>ERP municipal da Centi</b>, e herda dele o banco, a camada de serviço, a geração de telas, os relatórios e o modelo de operação por município.</p>
 
       <div class="definicao">
         <p>O CENTI é um ERP municipal multi-tenant, com ORM próprio baseado em anotações que dirigem banco, back-end e front-end, geração automática de DDL e de interface, e SQL Server como banco principal.</p>
@@ -3669,7 +3885,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         <li><b>multi-tenant</b>: cada tenant é um banco de dados separado.</li>
       </ul>
 
-      <p>Para o Protocolo 3.0, isso significa que o esforço da construção está menos na infraestrutura e mais em <b>modelar corretamente o fluxo, as etapas e as regras</b> — o resto da cadeia já existe e é compartilhado com os demais módulos do ERP.</p>
+      <p>Para o Zarpi, isso significa que o esforço da construção está menos na infraestrutura e mais em <b>modelar corretamente o fluxo, as etapas e as regras</b> — o resto da cadeia já existe e é compartilhado com os demais módulos do ERP.</p>
     </section>
 
     <section id="etapa5-stack" class="sub">
@@ -3710,7 +3926,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         <span class="palavra">UI</span>
       </div>
 
-      <p>É por isso que as entidades do Protocolo 3.0 — a <b>versão do fluxo</b>, as <b>etapas</b>, as <b>variáveis</b>, os <b>paralelismos</b>, os <b>remapeamentos</b>, e no protocolo os <b>andamentos</b>, <b>documentos</b>, <b>checklists</b> e <b>regras de saída</b> — devem ser tratadas como parte do mesmo modelo, e não como estruturas paralelas mantidas à mão.</p>
+      <p>É por isso que as entidades do Zarpi — a <b>versão do fluxo</b>, as <b>etapas</b>, as <b>variáveis</b>, os <b>paralelismos</b>, os <b>remapeamentos</b>, e no protocolo os <b>andamentos</b>, <b>documentos</b>, <b>checklists</b> e <b>regras de saída</b> — devem ser tratadas como parte do mesmo modelo, e não como estruturas paralelas mantidas à mão.</p>
 
       <div class="nota">
         <p>A geração automática de interface resolve bem o <b>formulário de cadastro</b>, como se vê na <code>PO051</code>. Já as telas que são a proposta de valor do produto — o fluxograma da <code>PO050</code> e a tramitação visual da <code>PO051</code> — <b>não são formulários</b>, e deverão ser construídas como telas próprias sobre a mesma API.</p>
@@ -3735,7 +3951,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         <div class="no fim">SQL SERVER</div>
       </div>
 
-      <p>O <b>Provider</b> é a camada de regra de negócio, e portanto o lugar natural do motor do Protocolo 3.0: é onde deverão viver a avaliação das <b>regras de saída</b>, a leitura das <b>variáveis</b>, a abertura dos <b>caminhos paralelos</b> e a decisão de qual é a <b>próxima etapa</b> de um protocolo.</p>
+      <p>O <b>Provider</b> é a camada de regra de negócio, e portanto o lugar natural do motor do Zarpi: é onde deverão viver a avaliação das <b>regras de saída</b>, a leitura das <b>variáveis</b>, a abertura dos <b>caminhos paralelos</b> e a decisão de qual é a <b>próxima etapa</b> de um protocolo.</p>
     </section>
 
     <section id="etapa5-dados" class="sub">
@@ -3771,7 +3987,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
     </section>
 
     <section id="etapa5-protocolo" class="sub">
-      <h3>O Protocolo 3.0 na plataforma</h3>
+      <h3>O Zarpi na plataforma</h3>
       <p>O quadro abaixo liga cada capacidade prevista no MVP à parte da arquitetura que a sustenta:</p>
 
       <div class="quadro">
@@ -3801,6 +4017,32 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           <p>Nenhuma dessas capacidades exige uma tecnologia nova: o MVP é viável dentro da arquitetura atual, e o que muda é <b>como o processo é modelado e apresentado</b>.</p>
         </div>
       </div>
+
+      <div class="quadro">
+        <h4>Capacidades dos canais externos (V1)</h4>
+        <div class="corpo">
+          <div class="tabela-rolagem">
+            <table>
+              <thead>
+                <tr>
+                  <th>Capacidade</th>
+                  <th>O que precisa ser criado ou decidido</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Autenticar o usuário externo</td><td>Cadastro e login dos portais, separados dos usuários do ERP, e o vínculo entre a pessoa logada e o interessado ou solicitante do protocolo</td></tr>
+                <tr><td>Liberar o documento por código</td><td>Envio do código por e-mail (pode reaproveitar o SMTP com fila), validade e número de tentativas</td></tr>
+                <tr><td>Motor de assinatura</td><td>Nível de assinatura por tipo de ato (Lei nº 14.063/2020), ordem dos signatários, prazo, recusa e registro no PDF; decidir entre solução própria e integração com um provedor</td></tr>
+                <tr><td>Expor o protocolo aos portais</td><td>API de leitura com o recorte definido pela classificação da informação (#8): andamentos, documentos e fluxo que o interessado pode ver</td></tr>
+                <tr><td>Receber regularidades</td><td>Envio de arquivos pelo portal para o armazenamento de documentos, com análise e aprovação pelo servidor</td></tr>
+                <tr><td>Registrar os acessos</td><td>Registro de cada leitura do protocolo por usuário e repartição, consultável pelo interessado</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p>Diferente do MVP, aqui há <b>decisões técnicas novas</b> — principalmente a identidade do usuário externo e o motor de assinatura —, que precisam ser tomadas antes da construção da V1.</p>
+        </div>
+      </div>
     </section>
 
     <section id="etapa5-entregaveis" class="sub">
@@ -3813,7 +4055,8 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         <li>estratégia de versionamento do fluxo no banco;</li>
         <li>definição do armazenamento e da retenção dos documentos;</li>
         <li>plano de indicadores e da carga para analytics;</li>
-        <li>pontos de integração com os demais módulos do ERP.</li>
+        <li>pontos de integração com os demais módulos do ERP;</li>
+        <li>decisões de identidade externa e do motor de assinatura para os canais externos (V1).</li>
       </ul>
 
       <div class="objetivo">
@@ -3824,7 +4067,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         </svg>
         <div>
           <h4>Resultado esperado</h4>
-          <p>Ter clareza de que o MVP do Protocolo 3.0 cabe na arquitetura atual da Centi, e de quais decisões técnicas precisam ser tomadas antes de começar a construção.</p>
+          <p>Ter clareza de que o MVP do Zarpi cabe na arquitetura atual da Centi, e de quais decisões técnicas precisam ser tomadas antes de começar a construção.</p>
         </div>
       </div>
     </section>
@@ -3880,7 +4123,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa6-objetivo" class="sub">
       <h3>Objetivo da etapa</h3>
-      <p>Transformar a complexidade administrativa em uma <b>experiência digital simples de entender, fácil de usar e de rápida execução</b>. Esta etapa define como o Protocolo 3.0 será percebido, compreendido e utilizado pelos diferentes perfis de usuários.</p>
+      <p>Transformar a complexidade administrativa em uma <b>experiência digital simples de entender, fácil de usar e de rápida execução</b>. Esta etapa define como o Zarpi será percebido, compreendido e utilizado pelos diferentes perfis de usuários.</p>
       <p>A estratégia de UX/UI não se limita à criação das interfaces do produto. Ela estabelece <b>como o sistema apresenta informações, orienta decisões, organiza tarefas e conduz o usuário ao longo da tramitação de um processo</b>.</p>
 
       <blockquote>
@@ -3892,7 +4135,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa6-ux" class="sub">
       <h3>Estratégia de UX</h3>
-      <p>A estratégia de UX do Protocolo 3.0 parte de uma mudança de paradigma:</p>
+      <p>A estratégia de UX do Zarpi parte de uma mudança de paradigma:</p>
 
       <div class="comparativo">
         <div class="col">
@@ -3950,7 +4193,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         <span class="palavra">EXECUTAR A TRAMITAÇÃO</span>
       </div>
 
-      <p>Sobre esses estágios, a experiência se divide em três camadas, cada uma com o seu público e o seu vocabulário:</p>
+      <p>Sobre esses estágios, a experiência se divide em quatro camadas, cada uma com o seu público e o seu vocabulário:</p>
 
       <h4>Camada de configuração</h4>
       <p>Destinada principalmente ao Consultor Técnico Centi e ao Gestor / Líder Técnico da Prefeitura.</p>
@@ -4027,12 +4270,36 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         </svg>
       </div>
 
+      <h4>Camada de atendimento externo</h4>
+      <p>Destinada ao cidadão, ao contribuinte e ao fornecedor, pelos <a href="#etapa4-canais">canais externos</a>. Mostra só o recorte do processo que interessa a quem está fora da prefeitura.</p>
+      <div class="radial">
+        <svg viewBox="0 0 720 313" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Cidadão e Fornecedor: SOLICITAR · ACOMPANHAR · CONSULTAR O FLUXO · REGULARIZAR · ASSINAR · DOCUMENTOS · NOTIFICAÇÕES">
+          <line class="liga" x1="360.0" y1="101.0" x2="360.0" y2="43.0"/>
+          <line class="liga" x1="404.3" y1="132.4" x2="532.5" y2="87.4"/>
+          <line class="liga" x1="406.8" y1="152.7" x2="548.8" y2="167.0"/>
+          <line class="liga" x1="394.7" y1="179.7" x2="462.1" y2="241.3"/>
+          <line class="liga" x1="325.3" y1="179.7" x2="257.9" y2="241.3"/>
+          <line class="liga" x1="313.2" y1="152.7" x2="146.7" y2="169.5"/>
+          <line class="liga" x1="315.7" y1="132.4" x2="187.5" y2="87.4"/>
+          <g><rect class="caixa" x="315.5" y="17.0" width="89.0" height="26.0" rx="8"/><text class="rot" x="360.0" y="30.5" text-anchor="middle" dominant-baseline="central">SOLICITAR</text><circle class="ordem" cx="315.5" cy="17.0" r="8.5"/><text class="ordem-n" x="315.5" y="17.5" text-anchor="middle" dominant-baseline="central">1</text></g>
+          <g><rect class="caixa" x="521.5" y="61.4" width="96.0" height="26.0" rx="8"/><text class="rot" x="569.5" y="74.9" text-anchor="middle" dominant-baseline="central">ACOMPANHAR</text><circle class="ordem" cx="521.5" cy="61.4" r="8.5"/><text class="ordem-n" x="521.5" y="61.9" text-anchor="middle" dominant-baseline="central">2</text></g>
+          <g><rect class="caixa" x="548.8" y="161.3" width="145.0" height="26.0" rx="8"/><text class="rot" x="621.3" y="174.8" text-anchor="middle" dominant-baseline="central">CONSULTAR O FLUXO</text><circle class="ordem" cx="548.8" cy="161.3" r="8.5"/><text class="ordem-n" x="548.8" y="161.8" text-anchor="middle" dominant-baseline="central">3</text></g>
+          <g><rect class="caixa" x="424.8" y="241.3" width="103.0" height="26.0" rx="8"/><text class="rot" x="476.3" y="254.8" text-anchor="middle" dominant-baseline="central">REGULARIZAR</text><circle class="ordem" cx="424.8" cy="241.3" r="8.5"/><text class="ordem-n" x="424.8" y="241.8" text-anchor="middle" dominant-baseline="central">4</text></g>
+          <g><rect class="caixa" x="206.2" y="241.3" width="75.0" height="26.0" rx="8"/><text class="rot" x="243.7" y="254.8" text-anchor="middle" dominant-baseline="central">ASSINAR</text><circle class="ordem" cx="206.2" cy="241.3" r="8.5"/><text class="ordem-n" x="206.2" y="241.8" text-anchor="middle" dominant-baseline="central">5</text></g>
+          <g><rect class="caixa" x="50.7" y="161.3" width="96.0" height="26.0" rx="8"/><text class="rot" x="98.7" y="174.8" text-anchor="middle" dominant-baseline="central">DOCUMENTOS</text><circle class="ordem" cx="50.7" cy="161.3" r="8.5"/><text class="ordem-n" x="50.7" y="161.8" text-anchor="middle" dominant-baseline="central">6</text></g>
+          <g><rect class="caixa" x="95.5" y="61.4" width="110.0" height="26.0" rx="8"/><text class="rot" x="150.5" y="74.9" text-anchor="middle" dominant-baseline="central">NOTIFICAÇÕES</text><circle class="ordem" cx="95.5" cy="61.4" r="8.5"/><text class="ordem-n" x="95.5" y="61.9" text-anchor="middle" dominant-baseline="central">7</text></g>
+          <circle class="centro" cx="360.0" cy="148.0" r="44.0"/>
+          <g transform="translate(360.0 148.0)"><g transform="translate(-13.1 -15.0) scale(0.0586)"><path class="ico" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z"/></g></g>
+          <text class="nome" x="360.0" y="214.0" text-anchor="middle">Cidadão e Fornecedor</text>
+        </svg>
+      </div>
+
       <p>Essa separação permite que cada perfil tenha acesso à complexidade necessária para a sua função, <b>sem expor desnecessariamente os demais usuários</b>.</p>
     </section>
 
     <section id="etapa6-jornadas" class="sub">
       <h3>Jornadas dos usuários</h3>
-      <p>A experiência deverá ser desenhada a partir das jornadas dos três perfis definidos na Modelagem do Produto.</p>
+      <p>A experiência deverá ser desenhada a partir das jornadas dos três perfis internos definidos na Modelagem do Produto.</p>
 
       <div class="raias">
         <div class="raia">
@@ -4087,11 +4354,49 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           </fieldset>
         </div>
       </div>
+
+      <h4>Perfis externos</h4>
+      <p>Os canais externos acrescentam as jornadas de quem participa do protocolo sem operar o sistema:</p>
+
+      <div class="raias externas">
+        <div class="raia">
+          <h4 class="cab">Cidadão / Contribuinte</h4>
+          <div class="passos">
+            <span class="passo">ACESSAR O PORTAL</span>
+            <span class="passo">SOLICITAR O SERVIÇO</span>
+            <span class="passo">ACOMPANHAR O PROTOCOLO</span>
+            <span class="passo">CONSULTAR O FLUXO</span>
+            <span class="passo">ENVIAR A REGULARIDADE</span>
+            <span class="passo">ASSINAR O DOCUMENTO</span>
+            <span class="passo">RECEBER A CONCLUSÃO</span>
+          </div>
+          <fieldset class="riscos">
+            <legend>Objetivo</legend>
+            <p>Resolver a demanda com a prefeitura <b>sem ir até ela</b> e sem precisar perguntar onde o processo está.</p>
+          </fieldset>
+        </div>
+        <div class="raia">
+          <h4 class="cab">Signatário externo</h4>
+          <div class="passos">
+            <span class="passo">RECEBER O LINK</span>
+            <span class="passo">CONFIRMAR CPF/CNPJ E E-MAIL</span>
+            <span class="passo">DIGITAR O CÓDIGO</span>
+            <span class="passo">LER O DOCUMENTO</span>
+            <span class="passo">ASSINAR OU RECUSAR</span>
+            <span class="passo">ACOMPANHAR OS DEMAIS SIGNATÁRIOS</span>
+            <span class="passo">CONSULTAR O HISTÓRICO</span>
+          </div>
+          <fieldset class="riscos">
+            <legend>Objetivo</legend>
+            <p>Assinar <b>na ordem certa e dentro do prazo</b>, com o registro no protocolo, sem precisar de login no ERP.</p>
+          </fieldset>
+        </div>
+      </div>
     </section>
 
     <section id="etapa6-fluxo" class="sub">
       <h3>O fluxo visual como elemento central</h3>
-      <p>O <b>fluxo visual</b> é um dos principais elementos de diferenciação da experiência do Protocolo 3.0. Ele transforma um processo administrativo — normalmente percebido como uma sequência abstrata de documentos e encaminhamentos — em uma <b>representação visual compreensível</b>.</p>
+      <p>O <b>fluxo visual</b> é um dos principais elementos de diferenciação da experiência do Zarpi. Ele transforma um processo administrativo — normalmente percebido como uma sequência abstrata de documentos e encaminhamentos — em uma <b>representação visual compreensível</b>.</p>
 
       <div class="quadro">
         <h4>O que o fluxo visual precisa responder de imediato</h4>
@@ -4184,12 +4489,12 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
     <section id="etapa6-prototipos" class="sub">
       <h3>Protótipo Funcional</h3>
       <p>O protótipo funcional transforma a arquitetura e as jornadas em <b>interfaces navegáveis antes da implementação definitiva</b>.</p>
-      <p>Seu valor está em antecipar decisões: em vez de discutir telas no papel, a equipe percorre o produto, testa os conceitos com usuários reais e descobre cedo o que não funciona — validando a lógica do fluxo, a linguagem das telas e a sequência das ações enquanto a mudança ainda é barata. Ele também dá a Produto, UX, Desenvolvimento e Comercial <b>uma mesma referência concreta</b> para discutir, e serve de material de demonstração da proposta do Protocolo 3.0 para a prefeitura.</p>
+      <p>Seu valor está em antecipar decisões: em vez de discutir telas no papel, a equipe percorre o produto, testa os conceitos com usuários reais e descobre cedo o que não funciona — validando a lógica do fluxo, a linguagem das telas e a sequência das ações enquanto a mudança ainda é barata. Ele também dá a Produto, UX, Desenvolvimento e Comercial <b>uma mesma referência concreta</b> para discutir, e serve de material de demonstração da proposta do Zarpi para a prefeitura.</p>
       <p>O protótipo deverá evoluir continuamente conforme as validações de UX e os resultados dos testes com usuários.</p>
 
       <fieldset class="riscos acesso">
         <legend>Acessar</legend>
-        <a class="botao" href="prototipo.html" target="_blank" rel="noopener">Protótipo Protocolo 3.0</a>
+        <a class="botao" href="prototipo.html" target="_blank" rel="noopener">Protótipo Zarpi</a>
       </fieldset>
     </section>
 
@@ -4216,7 +4521,21 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           <p><i>“Receba um protocolo, analise sua etapa e conclua a atividade.”</i></p>
           <p>Avalia a compreensão da etapa atual, a localização das informações, o entendimento do que deve ser feito, a clareza da conclusão e a compreensão do próximo passo.</p>
         </div>
+        <div class="card">
+          <span class="num">TESTE 04</span>
+          <h4>Acompanhamento</h4>
+          <p><i>“Encontre o seu protocolo no Portal de Serviços, descubra em qual etapa ele está e envie a regularidade pendente.”</i></p>
+          <p>Avalia a localização do protocolo, a leitura do fluxo por quem não conhece o processo, a clareza das pendências e a facilidade de envio dos documentos.</p>
+        </div>
+        <div class="card">
+          <span class="num">TESTE 05</span>
+          <h4>Assinatura</h4>
+          <p><i>“Abra o link recebido, libere os documentos e assine.”</i></p>
+          <p>Avalia a compreensão da liberação por código, a leitura do documento antes de assinar, a clareza da ordem dos signatários e a confirmação da assinatura.</p>
+        </div>
       </div>
+
+      <p>Os testes 04 e 05 devem ser feitos com <b>pessoas de fora da prefeitura</b> — munícipes e fornecedores. Elas não recebem capacitação e, por isso, são a prova mais dura de clareza da interface.</p>
 
       <h4>Critérios de avaliação</h4>
       <div class="tabela-rolagem">
@@ -4334,11 +4653,11 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa7-objetivo" class="sub">
       <h3>Objetivo da etapa</h3>
-      <p>Evoluir o <b>ViCenti</b>, atual inteligência artificial da Centi, para que ele deixe de atuar exclusivamente na “sondagem e triagem de atendimentos” e passe a ser uma <b>peça fundamental na operação do Protocolo 3.0</b>.</p>
+      <p>Evoluir o <b>ViCenti</b>, atual inteligência artificial da Centi, para que ele deixe de atuar exclusivamente na “sondagem e triagem de atendimentos” e passe a ser uma <b>peça fundamental na operação do Zarpi</b>.</p>
       <p>A proposta é incorporar o ViCenti à jornada de tramitação dos processos administrativos. Ao compreender o fluxo configurado, suas etapas, regras, documentos, responsáveis e prazos, o ViCenti poderá atuar de acordo com o contexto de cada protocolo, auxiliando servidores no esclarecimento de dúvidas, identificando pendências, antecipando gargalos, produzindo análises e, progressivamente, participe da execução de operações do processo.</p>
 
       <div class="definicao">
-        <p>O objetivo é fazer com que o Protocolo 3.0 não apenas digitalize e organize a tramitação, mas também utilize inteligência para <b>orientar, analisar, prever e auxiliar a execução dos processos</b>.</p>
+        <p>O objetivo é fazer com que o Zarpi não apenas digitalize e organize a tramitação, mas também utilize inteligência para <b>orientar, analisar, prever e auxiliar a execução dos processos</b>.</p>
       </div>
     </section>
 
@@ -4376,7 +4695,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa7-mcp" class="sub">
       <h3>MCP do ViCenti</h3>
-      <p>Criar um <b>MCP (Model Context Protocol) do ViCenti</b> específico para a integração com o Protocolo 3.0. O MCP funcionará como a ponte estruturada entre a inteligência e o sistema, dando acesso controlado aos dados, às regras e aos recursos necessários para compreender e auxiliar a tramitação.</p>
+      <p>Criar um <b>MCP (Model Context Protocol) do ViCenti</b> específico para a integração com o Zarpi. O MCP funcionará como a ponte estruturada entre a inteligência e o sistema, dando acesso controlado aos dados, às regras e aos recursos necessários para compreender e auxiliar a tramitação.</p>
 
       <div class="colunas-2">
         <fieldset class="riscos">
@@ -4415,7 +4734,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </div>
 
       <h4>ViCenti como agente operacional</h4>
-      <p>A visão de longo prazo é transformar o ViCenti em um <b>agente operacional do Protocolo 3.0</b>: ele não estará limitado a responder perguntas, mas poderá compreender uma solicitação, consultar o contexto do processo, analisar as regras e propor ou executar ações compatíveis com as suas permissões.</p>
+      <p>A visão de longo prazo é transformar o ViCenti em um <b>agente operacional do Zarpi</b>: ele não estará limitado a responder perguntas, mas poderá compreender uma solicitação, consultar o contexto do processo, analisar as regras e propor ou executar ações compatíveis com as suas permissões.</p>
 
       <blockquote>
         <p>ViCenti, analise este protocolo e me diga o que está impedindo a sua conclusão.</p>
@@ -4430,7 +4749,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <p>Aqui ele verifica se as condições necessárias foram atendidas e, caso autorizado, realiza a operação por meio do MCP — a passagem de <b>assistente de atendimento</b> para <b>agente de operação</b>.</p>
 
       <h4>Segurança, permissões e rastreabilidade</h4>
-      <p>A atuação do ViCenti deverá respeitar integralmente as regras de acesso, segurança e governança do Protocolo 3.0. O MCP deverá trabalhar com permissões capazes de determinar <b>o que o ViCenti pode consultar, recomendar ou executar</b> em cada contexto.</p>
+      <p>A atuação do ViCenti deverá respeitar integralmente as regras de acesso, segurança e governança do Zarpi. O MCP deverá trabalhar com permissões capazes de determinar <b>o que o ViCenti pode consultar, recomendar ou executar</b> em cada contexto.</p>
 
       <div class="colunas-2">
         <fieldset class="riscos">
@@ -4477,7 +4796,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa7-indicadores" class="sub">
       <h3>Indicadores e resumo inteligente</h3>
-      <p>O Protocolo 3.0 deverá transformar os dados produzidos durante a tramitação em inteligência gerencial. Além de apresentar os indicadores tradicionais, o ViCenti poderá interpretá-los e responder às perguntas de gestão:</p>
+      <p>O Zarpi deverá transformar os dados produzidos durante a tramitação em inteligência gerencial. Além de apresentar os indicadores tradicionais, o ViCenti poderá interpretá-los e responder às perguntas de gestão:</p>
 
       <fieldset class="riscos">
         <legend>Perguntas de gestão</legend>
@@ -4540,7 +4859,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         <div class="seta-baixo">↓</div>
         <div class="estagio">
           <span class="rotulo">NÍVEL 6 · AÇÃO</span>
-          <p>Por meio do MCP, o ViCenti passa a executar operações autorizadas dentro do Protocolo 3.0.</p>
+          <p>Por meio do MCP, o ViCenti passa a executar operações autorizadas dentro do Zarpi.</p>
         </div>
       </div>
 
@@ -4552,7 +4871,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         </svg>
         <div>
           <h4>Resultado esperado</h4>
-          <p>O ViCenti como camada de inteligência operacional do Protocolo 3.0 — a camada que transforma uma plataforma de tramitação de processos em uma plataforma inteligente de gestão e execução de processos administrativos.</p>
+          <p>O ViCenti como camada de inteligência operacional do Zarpi — a camada que transforma uma plataforma de tramitação de processos em uma plataforma inteligente de gestão e execução de processos administrativos.</p>
         </div>
       </div>
     </section>
@@ -4623,7 +4942,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa8-objetivo" class="sub">
       <h3>Objetivo da etapa</h3>
-      <p>Garantir que o Protocolo 3.0 seja concebido e desenvolvido em conformidade com a legislação aplicável à <b>Administração Pública Municipal</b>, incorporando requisitos jurídicos, controles, segurança, transparência e rastreabilidade à própria arquitetura do produto.</p>
+      <p>Garantir que o Zarpi seja concebido e desenvolvido em conformidade com a legislação aplicável à <b>Administração Pública Municipal</b>, incorporando requisitos jurídicos, controles, segurança, transparência e rastreabilidade à própria arquitetura do produto.</p>
       <p>A legalidade deve ser tratada como <b>requisito de produto</b>, transformando:</p>
 
       <div class="fluxo-palavras com-chave">
@@ -4682,7 +5001,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa8-marco" class="sub">
       <h3>Marco Legal Aplicável</h3>
-      <p>A operação do Protocolo 3.0 deve considerar diferentes níveis normativos. A legislação federal estabelece parâmetros gerais, enquanto Estados e Municípios podem possuir normas complementares específicas.</p>
+      <p>A operação do Zarpi deve considerar diferentes níveis normativos. A legislação federal estabelece parâmetros gerais, enquanto Estados e Municípios podem possuir normas complementares específicas.</p>
       <p>Entre os principais referenciais estão:</p>
 
       <div class="tabela-rolagem">
@@ -4697,7 +5016,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
             </tr>
             <tr>
               <td><b>Lei nº 14.133/2021</b></td>
-              <td>Regula toda contratação pública — inclusive a própria contratação do Protocolo 3.0 pelo município — e deve orientar qualquer fluxo de compras/licitação eventualmente tramitado dentro da plataforma.</td>
+              <td>Regula toda contratação pública — inclusive a própria contratação do Zarpi pelo município — e deve orientar qualquer fluxo de compras/licitação eventualmente tramitado dentro da plataforma.</td>
             </tr>
             <tr>
               <td><b>Lei nº 13.709/2018 (LGPD)</b></td>
@@ -4705,7 +5024,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
             </tr>
             <tr>
               <td><b>Lei Complementar nº 101/2000 (LRF), art. 48</b></td>
-              <td>Exige ampla divulgação, inclusive em meios eletrônicos de acesso público, da execução orçamentária e financeira — relevante sempre que um fluxo do Protocolo 3.0 tocar em despesa pública (ex.: etapa de autorização de empenho identificada na Modelagem do Produto).</td>
+              <td>Exige ampla divulgação, inclusive em meios eletrônicos de acesso público, da execução orçamentária e financeira — relevante sempre que um fluxo do Zarpi tocar em despesa pública (ex.: etapa de autorização de empenho identificada na Modelagem do Produto).</td>
             </tr>
             <tr>
               <td><b>Lei nº 4.320/1964</b></td>
@@ -4839,7 +5158,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa8-licitacoes" class="sub">
       <h3>Licitações e Contratações Públicas</h3>
-      <p>O Protocolo 3.0 deve considerar o ciclo completo das contratações públicas sob a <b>Lei nº 14.133/2021</b> em duas frentes: (a) como fluxo que pode ser tramitado dentro da plataforma por qualquer município-cliente, e (b) como processo pelo qual a própria Centi é contratada, a partir do TR de referência já em uso.</p>
+      <p>O Zarpi deve considerar o ciclo completo das contratações públicas sob a <b>Lei nº 14.133/2021</b> em duas frentes: (a) como fluxo que pode ser tramitado dentro da plataforma por qualquer município-cliente, e (b) como processo pelo qual a própria Centi é contratada, a partir do TR de referência já em uso.</p>
 
       <div class="colunas-2">
         <fieldset class="riscos">
@@ -4858,7 +5177,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </div>
 
       <h4>Diretriz de produto</h4>
-      <p>O sistema deve permitir que um fluxo de contratação pública seja modelado como qualquer outro fluxo do Protocolo 3.0:</p>
+      <p>O sistema deve permitir que um fluxo de contratação pública seja modelado como qualquer outro fluxo do Zarpi:</p>
 
       <div class="fluxo-palavras">
         <span class="palavra">DFD</span><span class="seta-fluxo">→</span>
@@ -4877,7 +5196,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <h4>Ponto de atenção — competitividade</h4>
 
       <div class="nota">
-        <p>A especificação de qualquer objeto tramitado (inclusive a do próprio Protocolo 3.0, como já ocorre no TR de referência) deve evitar requisitos desnecessários que possam <b>restringir indevidamente a competição</b>, direcionar a contratação ou favorecer fornecedor específico. Requisitos técnicos só se sustentam quando amparados em necessidade objetiva registrada no ETP — não em preferência de mercado.</p>
+        <p>A especificação de qualquer objeto tramitado (inclusive a do próprio Zarpi, como já ocorre no TR de referência) deve evitar requisitos desnecessários que possam <b>restringir indevidamente a competição</b>, direcionar a contratação ou favorecer fornecedor específico. Requisitos técnicos só se sustentam quando amparados em necessidade objetiva registrada no ETP — não em preferência de mercado.</p>
       </div>
     </section>
 
@@ -4924,7 +5243,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <h3>LGPD e Transparência</h3>
 
       <h4>LGPD</h4>
-      <p>O ponto de partida de qualquer análise de LGPD para o Protocolo 3.0 é a <b>definição correta dos papéis</b>, e ela é sempre a mesma nesse modelo de negócio SaaS/B2G:</p>
+      <p>O ponto de partida de qualquer análise de LGPD para o Zarpi é a <b>definição correta dos papéis</b>, e ela é sempre a mesma nesse modelo de negócio SaaS/B2G:</p>
 
       <div class="colunas-2 colunas-3">
         <fieldset class="riscos">
@@ -4946,7 +5265,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </blockquote>
 
       <h5>Base legal</h5>
-      <p>Para dados tratados pela Administração Pública, a base legal normalmente <b>não é o consentimento</b> — é o cumprimento de obrigação legal pelo controlador ou a execução de políticas públicas, previstas em lei ou regulamento (art. 7º e art. 23 da LGPD). O Protocolo 3.0 deve permitir, por tipo de fluxo, identificar qual é essa base.</p>
+      <p>Para dados tratados pela Administração Pública, a base legal normalmente <b>não é o consentimento</b> — é o cumprimento de obrigação legal pelo controlador ou a execução de políticas públicas, previstas em lei ou regulamento (art. 7º e art. 23 da LGPD). O Zarpi deve permitir, por tipo de fluxo, identificar qual é essa base.</p>
 
       <h5>Governança de dados no produto</h5>
       <ul class="lista">
@@ -4958,7 +5277,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
       <h4>Transparência e sigilo</h4>
       <p>A <b>LAI</b> estabelece que a publicidade é a regra; o sigilo é a exceção, e que a exceção precisa de fundamento (arts. 23 e 24 — graus de sigilo reservado, secreto e ultrassecreto, com prazos definidos; art. 31 — tratamento diferenciado para informação pessoal).</p>
-      <p>O Protocolo 3.0 deve permitir, em cada fluxo e em cada protocolo individual, distinguir:</p>
+      <p>O Zarpi deve permitir, em cada fluxo e em cada protocolo individual, distinguir:</p>
 
       <ul class="lista">
         <li><b>informação pública</b> (pode ir a portal de transparência);</li>
@@ -4968,6 +5287,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </ul>
 
       <p>Essa classificação é o que permite que <b>o mesmo motor de fluxos</b> sirva tanto a processos plenamente públicos (ex.: licitação) quanto a processos que exigem sigilo (ex.: processo disciplinar, denúncia de ouvidoria).</p>
+      <p>Ela também define o que os <a href="#etapa4-canais">canais externos</a> podem mostrar: o cidadão vê no Portal de Serviços o recorte do protocolo a que tem direito, e o registro de quem acessou o processo fica visível para ele (ver <a href="#etapa8-rastreabilidade">Transparência dos acessos</a>).</p>
     </section>
 
     <section id="etapa8-rastreabilidade" class="sub">
@@ -5004,8 +5324,33 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <h4>Auditoria</h4>
       <p>A solução deve possibilitar auditoria das operações relevantes: alterações cadastrais, tramitações, aprovações, decisões, assinaturas, alterações de documentos, mudanças de permissões e alterações de regras — todas persistidas de forma que <b>um terceiro (Controladoria, Tribunal de Contas) consiga reconstruir a operação</b> sem depender de explicação verbal do servidor responsável.</p>
 
+      <h4>Transparência dos acessos</h4>
+      <fieldset class="tela">
+        <legend>
+          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <span class="ico">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </span>
+          Portal de Serviços · Transparência
+        </legend>
+
+        <div class="mini-tela" onclick="ampliarTela(this)">
+          <img src="assets/img/portal-servicos-transparencia.png"
+               alt="Portal de Serviços: a aba Transparência do protocolo 116649/2026, com a data e a hora de cada acesso, o nome de quem abriu e a repartição">
+          <span class="canto"></span>
+          <button class="lupa" title="Ampliar a tela" aria-label="Ampliar a tela">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.2" y1="16.2" x2="21" y2="21"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
+          </button>
+        </div>
+      </fieldset>
+
+      <p>No Portal de Serviços, a aba <b>Transparência</b> do protocolo mostra ao interessado <b>quem abriu o seu processo, quando e de qual repartição</b>, do acesso mais recente ao mais antigo. É a rastreabilidade aplicada também à leitura, e não só à alteração.</p>
+      <p>Para o cidadão, é a prova de quem teve acesso aos seus dados, o que atende ao princípio da transparência da LGPD (art. 6º, VI). Para a prefeitura, é um desestímulo concreto ao acesso sem finalidade.</p>
+
       <h4>Assinatura eletrônica</h4>
-      <p>Nem todo ato praticado no Protocolo 3.0 exige o mesmo nível de assinatura. A <b>Lei nº 14.063/2020</b>, que trata do uso de assinaturas eletrônicas em interações com entes públicos, classifica as assinaturas por nível de risco (simples, avançada e qualificada), associando o nível exigido à natureza do ato. Recomenda-se que o produto trate isso como <b>parâmetro por tipo de decisão</b> — por exemplo, uma conclusão de etapa de baixo impacto pode aceitar autenticação simples do sistema, enquanto um ato que gere efeito financeiro ou afete direito de terceiro deve exigir assinatura de nível mais robusto.</p>
+      <p>Nem todo ato praticado no Zarpi exige o mesmo nível de assinatura. A <b>Lei nº 14.063/2020</b>, que trata do uso de assinaturas eletrônicas em interações com entes públicos, classifica as assinaturas por nível de risco (simples, avançada e qualificada), associando o nível exigido à natureza do ato. Recomenda-se que o produto trate isso como <b>parâmetro por tipo de decisão</b> — por exemplo, uma conclusão de etapa de baixo impacto pode aceitar autenticação simples do sistema, enquanto um ato que gere efeito financeiro ou afete direito de terceiro deve exigir assinatura de nível mais robusto.</p>
+
+      <p><b>Assinatura de quem não opera o sistema.</b> O risco apontado no Modelo de Negócios (#1) — assinaturas feitas fora do sistema por falta de alternativa para quem não tem login — é respondido pelos <a href="#etapa4-canais">canais externos</a>: a <b>Assinatura Digital de Documento(s)</b>, aberta por link e liberada só depois da confirmação de CPF/CNPJ, e-mail e código, e o <b>Portal de Assinaturas</b>, para quem assina com frequência. Nos dois, a assinatura fica registrada no próprio protocolo, com signatário, data e hora, e a ordem dos signatários é respeitada.</p>
 
       <blockquote>
         <p>Este ponto depende de regulamentação e prática já adotadas por cada município (nem todos padronizaram o mesmo nível de assinatura eletrônica) — recomenda-se validação pela Procuradoria de cada cliente antes de definir a exigência como regra fixa do produto.</p>
@@ -5014,7 +5359,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa8-parametrizacao" class="sub">
       <h3>Compliance por Parametrização</h3>
-      <p>O Protocolo 3.0 deve permitir que regras jurídicas sejam transformadas em configurações do sistema — e que essas configurações acompanhem a mudança da legislação <b>sem apagar o que já foi decidido no passado</b>.</p>
+      <p>O Zarpi deve permitir que regras jurídicas sejam transformadas em configurações do sistema — e que essas configurações acompanhem a mudança da legislação <b>sem apagar o que já foi decidido no passado</b>.</p>
 
       <h4>Elementos parametrizáveis</h4>
       <p>Documentos obrigatórios, campos, etapas, responsáveis, permissões, prazos, condições, aprovações, bloqueios, alertas, checklists e regras de encaminhamento.</p>
@@ -5613,7 +5958,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         <span class="selo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10a4.4 4.4 0 0 1 7.5-3.1 4.4 4.4 0 0 1 7.5 3.1c0 5.4-7.5 10-7.5 10Z"/></svg></span>
         <div>
           <span class="lbl">Sinais de aderência</span>
-          <h4>As dores que o Protocolo 3.0 resolve</h4>
+          <h4>As dores que o Zarpi resolve</h4>
         </div>
       </div>
 
@@ -5704,7 +6049,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa9-funil" class="sub">
       <h3>Arquitetura de funil por segmento</h3>
-      <p>Não existe um funil único para prefeituras. O Protocolo 3.0 opera com <b>dois funis de aquisição</b> e <b>um caminho de contratação</b> que pode atravessar ambos.</p>
+      <p>Não existe um funil único para prefeituras. O Zarpi opera com <b>dois funis de aquisição</b> e <b>um caminho de contratação</b> que pode atravessar ambos.</p>
 
       <div class="tabela-rolagem">
         <div class="funis">
@@ -5782,7 +6127,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         </svg>
         <div>
           <h4>Estratégia de Prospecção Automática</h4>
-          <p>Criar um software que lê todas as licitações vigentes no Brasil e nos envia alertas sobre aquelas que fazem “fit” com o Protocolo 3.0.</p>
+          <p>Criar um software que lê todas as licitações vigentes no Brasil e nos envia alertas sobre aquelas que fazem “fit” com o Zarpi.</p>
           <p><b>Ver exemplo:</b> Portal de Compras Públicas (<a href="https://lp.portaldecompraspublicas.com.br" target="_blank" rel="noopener noreferrer">lp.portaldecompraspublicas.com.br</a>).</p>
         </div>
       </div>
@@ -6122,7 +6467,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
     <section id="etapa9-demo" class="sub">
       <h3>Demonstração comercial</h3>
-      <p>A demonstração é a etapa em que a promessa do produto é testada. Ela não é um passeio por funcionalidades: é a <b>encenação de um processo real do município</b> dentro do Protocolo 3.0.</p>
+      <p>A demonstração é a etapa em que a promessa do produto é testada. Ela não é um passeio por funcionalidades: é a <b>encenação de um processo real do município</b> dentro do Zarpi.</p>
 
       <h4>Roteiro base</h4>
 
@@ -6133,7 +6478,8 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         <span class="palavra">04 · ABRIR O PROTOCOLO</span><span class="seta-fluxo">→</span>
         <span class="palavra">05 · TRAMITAR A ETAPA</span><span class="seta-fluxo">→</span>
         <span class="palavra">06 · ACOMPANHAR E ENCONTRAR O GARGALO</span><span class="seta-fluxo">→</span>
-        <span class="palavra">07 · PRÓXIMO PASSO</span>
+        <span class="palavra">07 · A VISÃO DO CIDADÃO</span><span class="seta-fluxo">→</span>
+        <span class="palavra">08 · PRÓXIMO PASSO</span>
       </div>
 
       <div class="tabela-rolagem">
@@ -6167,7 +6513,11 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
               <td>Que o gestor enxerga status, prazos, responsáveis e gargalos</td>
             </tr>
             <tr>
-              <td><span class="num-bloco">07</span><b>Próximo passo</b></td>
+              <td><span class="num-bloco">07</span><b>A visão do cidadão</b></td>
+              <td>Que o munícipe acompanha o próprio protocolo pelo Portal de Serviços — etapa atual, fluxo e regularidades — e assina sem ir à prefeitura</td>
+            </tr>
+            <tr>
+              <td><span class="num-bloco">08</span><b>Próximo passo</b></td>
               <td>Compromisso com data — nova reunião, prova de conceito, proposta ou piloto</td>
             </tr>
           </tbody>
@@ -6188,7 +6538,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           <tbody>
             <tr>
               <td><b>Prefeito</b></td>
-              <td>Modernização, desburocratização e efeito percebido pelo cidadão</td>
+              <td>Modernização, desburocratização e efeito percebido pelo cidadão — mostrado pelo munícipe acompanhando o próprio protocolo no Portal de Serviços</td>
               <td>Detalhe operacional e tela de configuração</td>
             </tr>
             <tr>
@@ -6261,6 +6611,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 const MENU = [
   { titulo: '#1 Modelo de Negócios',        itens: [
     { id: 'etapa1-descricao', txt: 'Descrição do Produto' },
+    { id: 'etapa1-termos',    txt: 'Processo e Protocolo' },
     { id: 'etapa1-problema',  txt: 'O Problema' },
     { id: 'etapa1-proposta',  txt: 'Proposta de Valor' },
     { id: 'etapa1-comercializacao', txt: 'Estratégia de Monetização' },
@@ -6294,6 +6645,7 @@ const MENU = [
     { id: 'etapa4-estagios',    txt: 'Estágios Operacionais' },
     { id: 'etapa4-perfis',      txt: 'Perfis de usuários' },
     { id: 'etapa4-telas',       txt: 'Evolução das telas' },
+    { id: 'etapa4-canais',      txt: 'Canais externos' },
     { id: 'etapa4-criterio',    txt: 'Validação do MVP' },
     { id: 'etapa4-entregaveis', txt: 'Entregáveis da etapa' },
   ] },
@@ -6304,7 +6656,7 @@ const MENU = [
     { id: 'etapa5-anotacoes',   txt: 'Anotações e geração automática' },
     { id: 'etapa5-servico',     txt: 'Camada de serviço' },
     { id: 'etapa5-dados',       txt: 'Multi-tenant e dados' },
-    { id: 'etapa5-protocolo',   txt: 'O Protocolo 3.0 na plataforma' },
+    { id: 'etapa5-protocolo',   txt: 'O Zarpi na plataforma' },
     { id: 'etapa5-entregaveis', txt: 'Entregáveis da etapa' },
   ] },
   { titulo: '#6 Design System e UX/UI',     itens: [
@@ -6435,7 +6787,8 @@ function rolarPara(alvo) {
   requestAnimationFrame(passo);
 }
 
-document.querySelectorAll('.sidebar a').forEach(a => {
+/* os links do menu e os links internos do texto rolam do mesmo jeito */
+document.querySelectorAll('.sidebar a, .pagina a[href^="#"]').forEach(a => {
   a.addEventListener('click', ev => {
     ev.preventDefault();
     const alvo = document.getElementById(a.getAttribute('href').slice(1));

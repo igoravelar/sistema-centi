@@ -1,4 +1,4 @@
-/* Painel do benchmark de preços do Protocolo 3.0.
+/* Painel do benchmark de preços do Zarpi.
    Lê BENCHMARK (assets/benchmark-dados.js) e monta as cinco abas.
    Todo texto explicativo vive em INFOS e só aparece na modal do botão (i),
    para que o painel mostre o dado e a leitura fique numa segunda camada. */
@@ -56,7 +56,7 @@ const INFOS = {
         embutem implantação puxam os extremos, por isso eles servem de alerta, não de parâmetro.</li>
       </ul>
       <h4>Por que os três não se comparam entre si</h4>
-      <p>Só a 1Doc tem o mesmo objeto do Protocolo 3.0. A Aprova vende licenciamento de obras e a
+      <p>Só a 1Doc tem o mesmo objeto do Zarpi. A Aprova vende licenciamento de obras e a
       Gove vende inteligência de dados e relacionamento com o cidadão. A mediana mais alta da Gove
       não significa que ela cobra mais pelo mesmo produto — significa que a prefeitura já aceita
       pagar aquele valor por software de gestão.</p>`,
@@ -153,7 +153,7 @@ const INFOS = {
       <p>As premissas que alimentam todo o cálculo de preço. Mudar um parâmetro aqui recalcula a
       tabela inteira.</p>
       <ul>
-        <li><b>Base de referência</b> — 1Doc, único fornecedor com o mesmo objeto do Protocolo 3.0.
+        <li><b>Base de referência</b> — 1Doc, único fornecedor com o mesmo objeto do Zarpi.
         Aprova e Gove entram como contexto de mercado, nunca como base.</li>
         <li><b>Prazo padrão de 12 meses</b> — padrão observado: 96 dos 114 contratos da 1Doc.</li>
         <li><b>Implantação a 25% da assinatura anual</b> — premissa provisória. Precisa ser
@@ -231,7 +231,7 @@ const INFOS = {
 /* A aba de contratos de cada fornecedor tem a mesma metodologia e uma ressalva
    própria sobre o que aquela base pode e não pode sustentar. */
 const RESSALVA = {
-  '1doc': `<p><b>Benchmark direto.</b> Objeto idêntico ao Protocolo 3.0: protocolo, tramitação de
+  '1doc': `<p><b>Benchmark direto.</b> Objeto idêntico ao Zarpi: protocolo, tramitação de
     processos administrativos e gestão documental. Esta é a única base que alimenta a proposta de
     preço da Centi.</p>
     <p>De 196 contratos localizados no PNCP, 114 são aderentes ao objeto. Em 5 a 6 deles a
@@ -239,14 +239,14 @@ const RESSALVA = {
     corrigirá a mediana para baixo.</p>`,
   aprova: `<p><b>Referência adjacente.</b> A Aprova atua predominantemente em licenciamento de
     obras, alvarás e aprovação de projetos. Serve como referência de teto do que a prefeitura paga
-    por software de processos, não como preço comparável ao Protocolo 3.0.</p>
+    por software de processos, não como preço comparável ao Zarpi.</p>
     <p>De 57 contratos localizados, 14 são aderentes. Amostra pequena: a mediana de cada faixa se
     move com um contrato só.</p>`,
   gove: `<p><b>Adjacente e não comparável no objeto.</b> A plataforma Gove é inteligência de dados,
     gestão tributária e relacionamento com o cidadão. <b>Nenhum</b> dos contratos analisados tem por
     objeto tramitação de processos administrativos ou protocolo eletrônico.</p>
     <p>Use esta base para saber quanto a prefeitura aceita pagar por software de gestão — nunca como
-    parâmetro de preço do Protocolo 3.0.</p>`,
+    parâmetro de preço do Zarpi.</p>`,
 };
 
 function infoMetodologia(chave) {
@@ -853,7 +853,7 @@ function abaCenti() {
   return `
     <h2>Proposta de preço Centi</h2>
     <p class="lead">Modelo paramétrico: o preço deriva de <b>uma única base de referência</b> — a
-      mediana da 1Doc, o único fornecedor com o mesmo objeto do Protocolo 3.0 — multiplicada pelo
+      mediana da 1Doc, o único fornecedor com o mesmo objeto do Zarpi — multiplicada pelo
       fator de posicionamento da faixa. Aprova e Gove entram como contexto de mercado, nunca como
       base de cálculo.</p>
     ${globais}
