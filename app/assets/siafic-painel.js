@@ -1,5 +1,5 @@
 /* Painel do benchmark de SIAFIC em Goiás.
-   Lê SIAFIC (assets/siafic-dados.js) e monta as quatro abas. Toda estatística
+   Lê SIAFIC (assets/siafic-dados.js) e monta as três abas. Toda estatística
    é calculada aqui, a partir das linhas de contrato, para o comparativo nunca
    divergir das abas de cada empresa. Texto explicativo vive em INFOS e só
    aparece na modal do botão (i). */
@@ -38,7 +38,7 @@ const pctTxt = (v) => dec1(v * 100) + '%';
 const vigente = (c) => c.fim >= HOJE;
 
 /* ── as empresas, na ordem pedida, e a Centi como referência ── */
-const EMPRESAS = ['megasoft', 'prodata', 'sigep'];
+const EMPRESAS = ['megasoft', 'prodata'];
 const TODAS = [...EMPRESAS, 'centi'];
 const FAIXAS = ['Até 20 mil', '20 a 100 mil', '100 a 500 mil', 'Acima de 500 mil'];
 const TIPOS = ['Prefeitura', 'Câmara', 'Autarquia/Fundação', 'Consórcio'];
@@ -47,7 +47,7 @@ const TIPOS = ['Prefeitura', 'Câmara', 'Autarquia/Fundação', 'Consórcio'];
 const TIPOS_GRAFICO = ['Prefeitura', 'Câmara', 'Autarquia/Fundação'];
 const COR = {
   megasoft: 'var(--c-megasoft)', prodata: 'var(--c-prodata)',
-  sigep: 'var(--c-sigep)', centi: 'var(--c-centi)',
+  centi: 'var(--c-centi)',
 };
 
 /* ── estatística ────────────────────────────────────────── */
@@ -165,16 +165,15 @@ const INFOS = {
       <h4>O que a distribuição revela</h4>
       <p>A <b>Megasoft</b> é capilaridade: a grande maioria dos contratos está em municípios de até
       20 mil habitantes. A <b>Prodata</b> é o oposto — praticamente nada abaixo de 20 mil, e é a
-      única com contratos acima de 500 mil. O <b>SIGEP</b> se divide entre as duas primeiras faixas.
-      As três disputam o mesmo produto em portes diferentes de município.</p>
+      única com contratos acima de 500 mil. As duas disputam o mesmo produto em portes diferentes
+      de município.</p>
       <h4>Onde a Centi está</h4>
-      <p>Os três contratos de prefeitura da Centi estão <b>todos</b> na faixa de 100 a 500 mil
-      habitantes, e o de câmara na faixa de 20 a 100 mil. Não há contrato abaixo de 20 mil
-      habitantes — que é justamente onde a Megasoft tem a maior parte da carteira.</p>
-      <p>Leia isso como <b>posicionamento observado, não como estratégia</b>: são quatro contratos,
-      e três deles vêm da base interna porque a busca do PNCP não os encontra. A distribuição da
-      Centi vai mudar de forma a cada instrumento novo lançado na base; a das outras três já reflete
-      uma amostra ampla.</p>
+      <p>A Centi tem contratos nas três primeiras faixas. Nos municípios de até 100 mil habitantes
+      ela disputa o terreno da Megasoft; os contratos de prefeitura de maior valor estão <b>todos</b>
+      na faixa de 100 a 500 mil, o porte da Prodata.</p>
+      <p>Leia isso como <b>posicionamento observado, não como estratégia</b>: parte da carteira da
+      Centi vem da base interna, porque a busca do PNCP não a encontra. A distribuição vai mudar de
+      forma a cada instrumento novo lançado na base.</p>
       <p>População: IBGE, Estimativas da População 2024, cruzada pelo código IBGE do município.</p>`,
   },
   prefeituras: {
@@ -192,18 +191,19 @@ const INFOS = {
   centi: {
     titulo: 'Referência interna Centi',
     corpo: `
-      <p>A Centi entra neste painel como <b>referência interna, não como concorrente</b>. São quatro
-      contratos de duas origens diferentes, e a diferença importa para ler os números.</p>
+      <p>A Centi entra neste painel como <b>referência interna, não como concorrente</b>. São 18
+      contratos de origens diferentes, e a diferença importa para ler os números.</p>
       <h4>De onde vem cada contrato</h4>
       <ul>
-        <li><b>Porangatu · câmara</b> — localizado no PNCP, como os contratos dos concorrentes.</li>
+        <li><b>15 contratos de prefeitura e câmara</b> — localizados no PNCP, como os contratos dos
+        concorrentes, com o CNPJ do fornecedor confirmado um a um.</li>
         <li><b>Trindade, Rio Verde e Itumbiara · prefeitura</b> — lidos dos instrumentos
         assinados, arquivados na base interna da Centi. <b>Nenhum</b> deles foi encontrado pela
         busca textual do portal.</li>
       </ul>
       <p>Isso confirma a ressalva do método: as buscas por 'SIAFIC' (764 resultados brutos) e por
       'CENTI' (mais de 3.000 somados) são dominadas por ruído, e a carteira real da Centi
-      <b>não é observável pelo PNCP</b>.</p>
+      <b>não é inteiramente observável pelo PNCP</b>.</p>
       <h4>Aditivo e o valor do ciclo</h4>
       <p>Em Rio Verde e Itumbiara o instrumento é <b>termo aditivo de prorrogação</b>. O que entra no
       painel é o <b>ciclo vigente de 12 meses</b> — valor mensal vezes os meses do aditivo — e não o
@@ -212,14 +212,14 @@ const INFOS = {
       motivo pelo qual a base do PNCP descarta aditivos.</p>
       <p>O <b>ticket mensal</b> — o número que este painel compara — é exato e diretamente comparável
       ao dos concorrentes. É a linha do valor global somado que tem naturezas diferentes entre a
-      Centi e as outras três.</p>
+      Centi e as outras duas.</p>
       <h4>Duas ressalvas de leitura</h4>
       <ul>
         <li>O contrato de <b>Trindade</b> é emergencial, de 3 meses, encerrado em 2022. Ele entra na
         contagem, mas não descreve preço de assinatura em regime normal.</li>
-        <li>Os três contratos de prefeitura estão <b>todos</b> em municípios de 100 a 500 mil
-        habitantes. Comparar a mediana de prefeitura da Centi com a dos concorrentes sem separar por
-        faixa de porte distorce — use o quadro por faixa.</li>
+        <li>A mediana de prefeitura da Centi junta municípios de porte muito diferente: até 100 mil
+        habitantes e de 100 a 500 mil. Comparar com os concorrentes sem separar por faixa de porte
+        distorce — use o quadro por faixa.</li>
       </ul>
       <h4>Recomendação que permanece</h4>
       <p>Para a Centi a fonte confiável é a base interna e o CRM. Esta seção cresce a cada
@@ -341,8 +341,8 @@ function panoramaHTML() {
     </div>
     <p class="leitura">A Prodata soma <b>mais valor contratado que a Megasoft com um nono dos
       contratos</b>: são carteiras de naturezas opostas dentro do mesmo produto. A Centi entra com
-      quatro contratos — três de prefeitura da base interna e um de câmara localizado no PNCP —, e
-      ainda assim é amostra, não a carteira completa.</p>
+      ${PERFIL.centi.n} contratos — três de prefeitura da base interna e os demais localizados no
+      PNCP —, e ainda assim é amostra, não a carteira completa.</p>
     <p class="leitura" style="border-top:0;padding-top:0;margin-top:8px"><b>Atenção ao valor global
       somado.</b> Para os concorrentes ele é a soma do prazo inteiro de cada contrato, como publicado
       no PNCP. Para a Centi, dois dos três contratos internos são termos aditivos de prorrogação, e
@@ -381,7 +381,6 @@ function tiposHTML() {
     <div class="legenda">
       <span class="l-megasoft"><i></i>Megasoft</span>
       <span class="l-prodata"><i></i>Prodata</span>
-      <span class="l-sigep"><i></i>SIGEP</span>
       <span class="l-centi"><i></i>Centi · referência interna</span>
     </div>
     <div class="grafico">${TIPOS_GRAFICO.map((t) => `
@@ -390,11 +389,12 @@ function tiposHTML() {
         ${TODAS.map((k) => serie(k, t)).join('')}
       </div>`).join('')}
     </div>
-    <p class="leitura">Em <b>prefeitura</b> a mediana vai de R$ 5,7 mil (SIGEP) a R$ 50,1 mil
-      (Centi) — mas <b>essa comparação direta engana</b>: os três contratos de prefeitura da Centi
-      estão todos em municípios de 100 a 500 mil habitantes, enquanto a Megasoft tem 70 dos seus 90
+    <p class="leitura">Em <b>prefeitura</b> a mediana vai de R$ 7,8 mil (Megasoft) a R$ 23,3 mil
+      (Prodata), com a Centi entre as duas, em R$ 20,3 mil — mas <b>essa comparação direta
+      engana</b>: a mediana da Centi junta contratos em municípios de até 100 mil habitantes com os
+      de 100 a 500 mil, de valor bem maior, enquanto a Megasoft tem 70 dos seus 90
       em municípios de até 20 mil. Para comparar preço, use o quadro por faixa de porte abaixo. Em
-      <b>câmara</b> os quatro ficam entre R$ 1,2 mil e R$ 2,0 mil: é o segmento onde o preço já está
+      <b>câmara</b> as três ficam entre R$ 1,3 mil e R$ 2,0 mil: é o segmento onde o preço já está
       padronizado no mercado. O consórcio público ficou fora do gráfico — há <b>um</b> contrato desse
       tipo na base inteira, da Megasoft, a R$ 5.294 por mês.</p>`;
   return quadro('Ticket por tipo de entidade', 'valor mensal mediano', 'tipos', corpo);
@@ -442,11 +442,11 @@ function faixasHTML() {
       carteira em municípios de até 20 mil habitantes — <b>${cont.megasoft[0]}</b> dos
       ${PERFIL.megasoft.n} contratos. A Prodata tem <b>um único</b> contrato nessa faixa e é a única
       presente acima de 500 mil. São dois posicionamentos opostos dentro do mesmo produto.</p>
-    <p class="leitura" style="border-top:0;padding-top:0;margin-top:8px">A Centi entra pela faixa de
-      <b>100 a 500 mil habitantes</b>: ${cont.centi[2]} dos ${PERFIL.centi.n} contratos estão lá, o
-      mesmo terreno da Prodata (${cont.prodata[2]} contratos). <b>Nenhum</b> contrato da Centi abaixo
-      de 20 mil habitantes — a faixa que sozinha responde por ${cont.megasoft[0]} dos contratos da
-      Megasoft. Hoje a Centi disputa o porte da Prodata, não o da Megasoft.</p>`;
+    <p class="leitura" style="border-top:0;padding-top:0;margin-top:8px">A Centi está nas três
+      primeiras faixas: <b>${cont.centi[0]}</b> contratos até 20 mil habitantes,
+      <b>${cont.centi[1]}</b> de 20 a 100 mil e <b>${cont.centi[2]}</b> de 100 a 500 mil. Nos
+      municípios menores ela disputa o terreno onde a Megasoft concentra a carteira; de 100 a 500 mil,
+      o porte da Prodata. Hoje a Centi disputa as duas frentes.</p>`;
   return quadro('Distribuição por faixa de porte', 'composição da carteira de cada empresa', 'faixas', corpo);
 }
 
@@ -481,9 +481,10 @@ function prefeiturasHTML() {
     </div>
     <p class="leitura">Na faixa de <b>100 a 500 mil habitantes</b>, onde estão os três contratos de
       prefeitura da Centi, a comparação fica direta: <b>R$ 50.127 contra R$ 43.800 da Prodata</b>,
-      com três contratos de cada lado. Megasoft e SIGEP não têm contrato de prefeitura nessa faixa —
-      e a Centi não tem nas duas primeiras, que são justamente onde a Megasoft concentra a
-      carteira.</p>
+      com três contratos de cada lado. A Megasoft não tem contrato de prefeitura nessa faixa. Nas
+      duas primeiras, a Centi tem <b>R$ 5.679</b> até 20 mil
+      habitantes, abaixo da Megasoft (R$ 8.225), e <b>R$ 12.558</b> de 20 a 100 mil, próximo da
+      Prodata (R$ 12.203) e acima da Megasoft (R$ 5.529).</p>
     <p class="leitura" style="border-top:0;padding-top:0;margin-top:8px">Valor mensal <b>mediano</b>
       de contratos de prefeitura. A célula vazia indica faixa em que aquela empresa não tem contrato
       de prefeitura nesta base — leia como faixa desocupada. Onde há 1 ou 2 contratos, o número é
@@ -499,6 +500,7 @@ function prefeiturasHTML() {
 function centiHTML() {
   const lista = [...base('centi')].sort((a, b) => b.mensal - a.mensal);
   const p = PERFIL.centi;
+  const nTipo = (t) => base('centi').filter((x) => x.tipo === t).length;
   const cam = {};
   EMPRESAS.forEach((k) => {
     cam[k] = mediana(base(k).filter((x) => x.tipo === 'Câmara').map((x) => x.mensal));
@@ -508,7 +510,7 @@ function centiHTML() {
   const corpo = `
     <div class="kpis">
       <div class="kpi"><span class="lbl">Contratos</span><span class="val">${p.n}</span>
-        <span class="obs">3 de prefeitura e 1 de câmara</span></div>
+        <span class="obs">${nTipo('Prefeitura')} de prefeitura e ${nTipo('Câmara')} de câmara</span></div>
       <div class="kpi"><span class="lbl">Vigentes hoje</span><span class="val">${p.vig}</span>
         <span class="obs">fim de vigência ainda não passou</span></div>
       <div class="kpi"><span class="lbl">Ticket mediano</span><span class="val">${moedaMes(p.med)}</span>
@@ -562,33 +564,35 @@ function centiHTML() {
             <td class="num">${pctTxt(camCenti / cam[k])}</td>
           </tr>`).join('')}
           <tr class="centi">
-            <td>Centi · Porangatu</td>
+            <td>Centi</td>
             <td class="num">${moeda(camCenti)}</td>
             <td class="num">100%</td>
           </tr>
         </tbody>
       </table>
     </div>
-    <p class="leitura">Em câmara a Centi está <b>dentro da faixa do mercado</b>: acima do SIGEP,
-      próxima da Megasoft e da Prodata. Em prefeitura a comparação está no quadro por faixa de
-      porte, onde os três contratos internos se encontram com a Prodata na mesma faixa de município.</p>
+    <p class="leitura">Em câmara a Centi está <b>dentro da faixa do mercado</b>, um pouco abaixo da
+      Megasoft e da Prodata, com oito câmaras na amostra. Em prefeitura a comparação está no quadro por faixa de porte, onde os três
+      contratos internos se encontram com a Prodata na mesma faixa de município.</p>
 
     <div class="nota alerta">
-      <p><b>Três destes quatro contratos não foram encontrados pela busca do PNCP.</b> Eles vêm dos
-      instrumentos assinados, arquivados na base interna da Centi. Só o contrato de Porangatu
-      apareceu na busca textual do portal — as buscas por “SIAFIC” e “CENTI” devolveram milhares de
-      resultados dominados por ruído e só esse teve o CNPJ da Centi confirmado no fornecedor.</p>
+      <p><b>Três destes contratos não foram encontrados pela busca do PNCP.</b> Eles vêm dos
+      instrumentos assinados, arquivados na base interna da Centi. Os outros 15 vieram da busca do
+      portal, com o CNPJ do fornecedor confirmado um a um — as buscas por “SIAFIC” e “CENTI”
+      devolveram milhares de resultados dominados por ruído.</p>
       <p>É a demonstração prática da ressalva do método: a carteira real da Centi <b>não é
-      observável pelo PNCP</b>. Esta seção cresce à medida que instrumentos da base interna forem
+      inteiramente observável pelo PNCP</b>. Esta seção cresce à medida que instrumentos da base interna forem
       lançados; ainda é amostra, não o total de clientes.</p>
     </div>`;
-  return quadro('Referência interna Centi', `${p.n} contratos · 3 da base interna, 1 do PNCP`, 'centi', corpo);
+  const internos = base('centi').filter((x) => x.fonte === 'interna').length;
+  return quadro('Referência interna Centi',
+    `${p.n} contratos · ${internos} da base interna, ${p.n - internos} do PNCP`, 'centi', corpo);
 }
 
 function abaComparativo() {
   return `
     <h2>Comparativo entre as empresas</h2>
-    <p class="lead">As quatro empresas que disputam o sistema completo de gestão pública municipal —
+    <p class="lead">As três empresas que disputam o sistema completo de gestão pública municipal —
       o SIAFIC — em Goiás, a partir de <b>${SIAFIC.meta.total} contratos</b> publicados no PNCP com o
       CNPJ do fornecedor confirmado um a um. Valores mensais: valor global do contrato dividido pelos
       meses de vigência.</p>
@@ -605,7 +609,7 @@ function abaComparativo() {
     ${centiHTML()}`;
 }
 
-/* ── abas 2, 3 e 4 · contratos de cada empresa ──────────── */
+/* ── abas 2 e 3 · contratos de cada empresa ──────────────── */
 const COLUNAS = [
   { id: 'orgao',  rot: 'Órgão contratante' },
   { id: 'mun',    rot: 'Município' },
@@ -765,7 +769,6 @@ const ABAS = [
   { id: 'comparativo', rot: 'Comparativo' },
   { id: 'megasoft',    rot: 'Megasoft' },
   { id: 'prodata',     rot: 'Prodata' },
-  { id: 'sigep',       rot: 'SIGEP' },
 ];
 
 function trocarAba(id) {

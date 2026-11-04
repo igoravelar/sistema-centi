@@ -7,6 +7,8 @@
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
 <link rel="stylesheet" href="assets/centi.css?v=21">
 <link rel="stylesheet" href="assets/fluxo.css?v=26">
+<link rel="stylesheet" href="assets/chat.css?v=22">
+<link rel="stylesheet" href="assets/conversas.css?v=1">
 <style>
   /* Pesquisa: filtros à esquerda, Últimas Buscas à direita, separados por
      uma linha vertical cinza */
@@ -184,8 +186,9 @@
 
 <div class="app"></div>
 
-<script src="assets/shell.js?v=18"></script>
+<script src="assets/shell.js?v=19"></script>
 <script src="assets/fluxo.js?v=13"></script>
+<script src="assets/conversas.js?v=1"></script>
 <script>
 /* ícones extras desta tela */
 Object.assign(ICO, {
@@ -350,7 +353,7 @@ let expandIptuVersao = false;   /* filhos do 1 - PUBLICADO */
 let expandIptuEtapas = false;   /* lista de etapas dentro de Etapas */
 
 function abrirFluxoIptu() {
-  fluxoSel = 'iptu'; iptuVista = 'fluxo';
+  fluxoSel = 'iptu'; iptuVista = 'fluxo'; conversaAberta = null;
   expandIptu = false; expandIptuVersao = false; expandIptuEtapas = false;
   irPara('cadastro');
 }
@@ -396,7 +399,7 @@ function salvarCadastro() {
 function verFluxo() { etapa = 'fluxo'; if (fluxoCriado) preenchido = true; render(); }
 
 /** O + da pasta Versões abre o formulário de nova versão. */
-function novaVersao() { etapa = 'versao'; preenchido = false; expandVersoes = true; render(); }
+function novaVersao() { conversaAberta = null; etapa = 'versao'; preenchido = false; expandVersoes = true; render(); }
 
 /* Expansão das pastas: seta para a direita = recolhida; para baixo = aberta */
 let expandVersoes = false;
@@ -411,7 +414,7 @@ function chevArv(aberto, toggle) {
 }
 
 /** O Novo reabre o cadastro do fluxo zerado. */
-function novoFluxo() { etapa = 'fluxo'; preenchido = false; fluxoCriado = false; modalEtapa = false; etapasFluxo = []; modalEditIdx = null; fluxoSel = null; irPara('cadastro'); }
+function novoFluxo() { conversaAberta = null; etapa = 'fluxo'; preenchido = false; fluxoCriado = false; modalEtapa = false; etapasFluxo = []; modalEditIdx = null; fluxoSel = null; irPara('cadastro'); }
 
 /* ------------------- telas do fluxo pronto (IPTU) ------------------- */
 
@@ -560,8 +563,8 @@ function cadastroIptuHTML() {
     </div>
 
     <div class="cad-corpo">
-      <div class="arvore scroll">${arvoreIptuHTML()}</div>
-      ${corpo}
+      ${colPastasHTML(arvoreIptuHTML())}
+      ${conversaAberta !== null ? conversaHTML() : corpo}
     </div>
   </div>`;
 }
@@ -1425,8 +1428,8 @@ function cadastroHTML() {
     </div>
 
     <div class="cad-corpo">
-      <div class="arvore scroll">${arvoreHTML()}</div>
-      ${corpo}
+      ${colPastasHTML(arvoreHTML(), fluxoCriado)}
+      ${conversaAberta !== null && fluxoCriado ? conversaHTML() : corpo}
     </div>
   </div>`;
 }
@@ -1460,12 +1463,13 @@ function render() {
      ${modalEtapa && vista === 'cadastro' ? modalEtapaHTML() : ''}</div>`);
 
   /* o canvas acompanha o fluxo aberto: reaplica zoom e enquadra */
-  if (vista === 'cadastro' &&
+  if (vista === 'cadastro' && conversaAberta === null &&
       ((fluxoSel === 'iptu' && iptuVista === 'etapas') ||
        (fluxoSel !== 'iptu' && etapa === 'etapas'))) {
     ativarArrastoCanvas();
     montarCanvasEtapas();
   }
+  ajustarConversa();
 }
 
 function irPara(id) { vista = id; render(); }
@@ -1492,6 +1496,7 @@ if (salvo) {
   expandIptuEtapas = salvo.expandIptuEtapas;
   expandVersoes = salvo.expandVersoes; expandVersao = salvo.expandVersao;
   etapasFluxo = salvo.etapasFluxo; mExp = salvo.mExp;
+  restaurarConversas(salvo.conversas);
 }
 
 render();
@@ -1504,7 +1509,7 @@ if (q && VTABS.some(v => v.id === q)) irPara(q);
 guardarEstadoAoSair('po050', () => ({
   vista, pesquisou, etapa, preenchido, fluxoCriado, fluxoSel, iptuVista,
   expandIptu, expandIptuVersao, expandIptuEtapas, expandVersoes, expandVersao,
-  etapasFluxo, mExp,
+  etapasFluxo, mExp, conversas: estadoConversas(),
 }));
 </script>
 </body>

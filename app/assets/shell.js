@@ -132,11 +132,16 @@ const ABAS = {
   fp296:     { cod: 'FP296', rotulo: 'Gestão Folha de Pagamento', href: 'fp296.html', fechavel: true },
 };
 
+/* Produto que o shell está vestindo. O ERP é o padrão; o Zarpi troca a marca,
+   os módulos do menu e guarda as abas à parte, para as telas de um não
+   aparecerem abertas no outro. Definido por montarShell. */
+let SHELL = { marca: { src: 'assets/img/marca-centi.png', alt: 'Centi' }, modulos: null, contexto: '' };
+
 function topbarHTML() {
   const icones = ['relogio', 'engrenagens', 'play', 'monitor', 'usuario', 'lupa', 'ajuda', 'power'];
   return `
   <header class="topbar">
-    <a href="index.html" title="Início"><img class="marca" src="assets/img/marca-centi.png" alt="Centi"></a>
+    <a href="index.html" title="Início"><img class="marca" src="${SHELL.marca.src}" alt="${SHELL.marca.alt}"></a>
     <div class="burger" title="${menuRecolhido() ? 'Expandir menu' : 'Recolher menu'}" onclick="alternarMenuLateral()"><i></i><i></i><i></i></div>
     <div class="grupos-ref">
       <div class="field-group">
@@ -220,7 +225,7 @@ function sidebarHTML() {
   const pagina = location.pathname.split('/').pop() || 'index.html';
   const aberto = moduloAberto();
   const subDaPagina = sub => (sub.paginas || [sub.href]).includes(pagina);
-  const itens = MODULOS.map(m => {
+  const itens = (SHELL.modulos || MODULOS).map(m => {
     const temPagina = m.subs && m.subs.some(subDaPagina);
     const linha = `
     <a class="mod${(m.paginas || []).includes(pagina) ? ' ativo' : ''}" href="${m.href || '#'}" title="${m.nome}"
@@ -258,13 +263,15 @@ function sidebarHTML() {
    entre telas não pode fechar as outras. Só o × tira uma aba da lista. */
 const CHAVE_ABAS = 'centi:abas';
 
+function chaveAbas() { return CHAVE_ABAS + (SHELL.contexto ? ':' + SHELL.contexto : ''); }
+
 function abasAbertas() {
-  try { return JSON.parse(sessionStorage.getItem(CHAVE_ABAS)) || []; }
+  try { return JSON.parse(sessionStorage.getItem(chaveAbas())) || []; }
   catch { return []; }
 }
 
 function guardarAbas(ids) {
-  try { sessionStorage.setItem(CHAVE_ABAS, JSON.stringify(ids)); }
+  try { sessionStorage.setItem(chaveAbas(), JSON.stringify(ids)); }
   catch { /* sessão indisponível: as abas valem só nesta página */ }
 }
 
@@ -373,8 +380,11 @@ function doctabsHTML(atual, abertas) {
  * lá; as demais são preservadas.
  *
  * @param {string} atual id da aba em foco ('home', 'protocolo', 'po002'...)
+ * @param {object} [produto] troca a marca (`marca`), os módulos do menu
+ *   (`modulos`) e separa as abas (`contexto`) — usado pelo Zarpi
  */
-function montarShell(atual) {
+function montarShell(atual, produto = {}) {
+  SHELL = { ...SHELL, ...produto };
   const abertas = abasAbertas();
   if (ABAS[atual] && ABAS[atual].fechavel && !abertas.includes(atual)) abertas.push(atual);
   guardarAbas(abertas);

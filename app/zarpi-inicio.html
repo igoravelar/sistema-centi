@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zarpi · Início</title>
+<link rel="icon" type="image/svg+xml" href="assets/img/zarpi/ico-favicon-zarpi.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/centi.css?v=21">
+<style>
+/* o Zarpi usa Open Sans no lugar do Verdana do ERP, em toda a tela (shell incluso) */
+html, body { font-family: "Open Sans", "Segoe UI", sans-serif; }
+
+/* ==========================================================================
+   Zarpi — Início: painel de protocolos para prefeito e secretários
+   Dados fictícios, gerados de forma fixa (mesma semente a cada abertura)
+   ========================================================================== */
+
+:root {
+  /* cores do painel (no :root porque a dica fica fora do .painel): séries validadas para daltonismo (verde x azul) e status
+     reservados para prazo — nunca usados como série */
+  --s-concluidos: #8BA81D;
+  --s-abertos:    #2A78D6;
+  --barra:        #8BA81D;
+  --ok:           #0CA30C;
+  --alerta:       #FAB219;
+  --critico:      #D03B3B;
+  --ok-txt:       #006300;
+  --grade:        #E6E8DF;
+  --eixo:         #C9CCBE;
+  --tinta:        #2F3122;
+  --tinta-2:      #5C5E52;
+  --tinta-3:      #8A8C80;
+}
+
+.painel {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 22px 26px 30px;
+  background: #EDEDED;
+  border: 1px solid var(--tab-bd);
+  border-radius: 5px;
+  color: var(--tinta-2);
+}
+
+/* ---------------------------- cabeçalho e filtros ---------------------------- */
+
+.painel-topo { display: flex; align-items: center; gap: 16px 24px; flex-wrap: wrap; margin-bottom: 16px; }
+.painel-topo h1 { margin: 0; font-size: 17px; color: var(--tinta); }
+.painel-topo .contexto { margin: 4px 0 0; font-size: 11px; color: var(--tinta-3); }
+.filtros { display: flex; gap: 10px; flex-wrap: wrap; margin-left: auto; }
+.filtros .field-group select {
+  min-width: 170px;
+  padding-right: 36px;
+  cursor: pointer;
+  background: #FFFFFF url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239DBB1D' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 11px center / 14px;
+}
+
+/* ----------------------------------- cards ----------------------------------- */
+
+.grade { display: grid; gap: 14px; margin-bottom: 14px; }
+/* as duas fileiras do meio usam a mesma grade de 3 colunas — o gráfico ocupa
+   duas —, para as bordas dos cards caírem na mesma vertical */
+.grade.dupla, .grade.tripla { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grade.dupla > :first-child { grid-column: span 2; }
+@media (max-width: 1100px) {
+  .grade.dupla, .grade.tripla { grid-template-columns: 1fr; }
+  .grade.dupla > :first-child { grid-column: auto; }
+}
+
+.bloco {
+  background: #FFFFFF;
+  border: 1px solid #DDE0D5;
+  border-radius: 8px;
+  padding: 16px 18px;
+  min-width: 0;
+}
+.bloco-topo { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; padding-right: 30px; }
+
+/* (i) no canto do card: abre a "tampa" verde com a explicação do que o card mostra */
+.bloco { position: relative; overflow: hidden; }
+.info {
+  position: absolute;
+  z-index: 2;
+  top: 15px;
+  right: 15px;
+  width: 17px;
+  height: 17px;
+  padding: 0;
+  /* mesmo aspecto do botão branco (Ver tabela): contorno verde, fundo branco, ícone verde */
+  border: 1px solid var(--btb-bd);
+  border-radius: 50%;
+  background: var(--btb-bg);
+  color: var(--btb-ico);
+  display: grid;
+  place-items: center;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.info:hover, .info:focus-visible { background: var(--btb-bg-h); border-color: var(--btb-bd-h); color: var(--btb-ico-h); }
+.info:focus-visible { outline: 2px solid #9DBB1D; outline-offset: 2px; }
+.info svg { display: block; width: 11px; height: 11px; }
+.tampa .fechar-info svg { display: block; width: 14px; height: 14px; }
+.kpi .info { top: 7px; right: 9px; width: 16px; height: 16px; }
+.kpi h4 { padding-right: 34px !important; }
+
+/* a tampa desce do topo; o texto só aparece quando ela termina de descer e,
+   ao fechar, some primeiro — a tampa sobe depois */
+.tampa {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  padding: 40px 18px 16px;
+  background: #698005;
+  color: #FFFFFF;
+  overflow: auto;
+  transform: translateY(-101%);
+  visibility: hidden;
+  transition: transform .35s cubic-bezier(.4, 0, .2, 1) .15s, visibility 0s linear .5s;
+}
+.tampa .texto, .tampa .fechar-info, .tampa .titulo-info { opacity: 0; transition: opacity .15s ease; }
+/* título em verde claro, na linha do X e alinhado à esquerda com o texto */
+.tampa .titulo-info {
+  position: absolute;
+  top: 12px;
+  left: 18px;
+  right: 44px;
+  line-height: 23px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #D4EC7A;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.kpi .tampa .titulo-info {
+  top: 4px;
+  left: 12px;
+  right: 34px;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .2px;
+}
+.tampa .texto p { margin: 0 0 8px; font-size: 12px; line-height: 1.5; }
+.tampa .texto p:last-child { margin-bottom: 0; }
+.kpi .tampa { padding: 30px 12px 10px; }
+.kpi .tampa .texto p { font-size: 11px; line-height: 1.45; }
+.tampa .fechar-info {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 23px;
+  height: 23px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #FFFFFF;
+  display: grid;
+  place-items: center;
+}
+.kpi .tampa .fechar-info { top: 4px; right: 5px; }
+.tampa .fechar-info:hover, .tampa .fechar-info:focus-visible { background: rgba(255, 255, 255, .18); outline: none; }
+.bloco.explicando .tampa { transform: none; visibility: visible; transition: transform .35s cubic-bezier(.4, 0, .2, 1), visibility 0s; }
+.bloco.explicando .tampa .texto,
+.bloco.explicando .tampa .titulo-info,
+.bloco.explicando .tampa .fechar-info { opacity: 1; transition: opacity .2s ease .3s; }
+@media (prefers-reduced-motion: reduce) {
+  .tampa, .bloco.explicando .tampa, .tampa .texto, .tampa .fechar-info, .tampa .titulo-info,
+  .bloco.explicando .tampa .texto, .bloco.explicando .tampa .fechar-info,
+  .bloco.explicando .tampa .titulo-info { transition: none; }
+}
+.bloco h2 { margin: 0; font-size: 13px; color: var(--tinta); }
+.bloco .subtitulo { margin: 3px 0 0; font-size: 11px; color: var(--tinta-3); }
+.bloco-topo .acao { margin-left: auto; margin-top: -4px; }
+
+.alternar-vista {
+  height: 24px;
+  padding: 0 10px;
+  font-size: 11px;
+  color: var(--btb-txt);
+  background: var(--btb-bg);
+  border: 1px solid var(--btb-bd);
+  border-radius: 4px;
+}
+.alternar-vista:hover { background: var(--btb-bg-h); border-color: var(--btb-bd-h); color: var(--btb-txt-h); }
+
+/* -------------------------------- indicadores -------------------------------- */
+
+.grade.kpis { grid-template-columns: minmax(260px, 2fr) repeat(5, minmax(150px, 1fr)); }
+@media (max-width: 1350px) { .grade.kpis { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); } }
+
+/* card de indicador no padrão da FP296: título em caixa alta numa faixa própria */
+.kpi { padding: 0; overflow: hidden; border-color: #E0E2D8; border-radius: 6px; }
+.kpi h4 {
+  margin: 0;
+  height: 31px;
+  padding: 0 14px;
+  line-height: 31px;
+  border-bottom: 1px solid #E0E2D8;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #747474;
+  text-transform: uppercase;
+  letter-spacing: .2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.kpi .corpo { display: flex; flex-direction: column; gap: 6px; padding: 12px 14px 14px; }
+.kpi .valor { font-size: 26px; font-weight: bold; color: var(--tinta); line-height: 1.1; }
+.kpi .valor small { font-size: 13px; font-weight: normal; color: var(--tinta-2); margin-left: 3px; }
+.kpi .rodape-kpi { font-size: 11px; color: var(--tinta-3); }
+.kpi .delta { font-weight: bold; }
+.kpi .delta.bom { color: var(--ok-txt); }
+.kpi .delta.ruim { color: var(--critico); }
+.kpi .status { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: var(--tinta-2); }
+.kpi .status svg { width: 14px; height: 14px; flex: none; }
+
+/* o número principal do painel: ocupa duas colunas e traz a meta */
+/* na fileira larga o destaque já ganha a coluna 2fr; na quebrada ocupa duas */
+@media (max-width: 1350px) { .kpi.destaque { grid-column: span 2; } }
+.kpi.destaque .valor { font-size: 48px; }
+.medidor { position: relative; height: 8px; margin-top: 4px; border-radius: 4px; background: #E8F0C6; }
+.medidor .cheio { position: absolute; inset: 0 auto 0 0; border-radius: 4px; background: var(--barra); }
+.medidor .meta { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--tinta); }
+.medidor-legenda { display: flex; justify-content: space-between; font-size: 11px; color: var(--tinta-3); }
+
+/* ---------------------------------- gráficos --------------------------------- */
+
+.legenda { display: flex; gap: 18px; flex-wrap: wrap; margin: -4px 0 8px; font-size: 11px; color: var(--tinta-2); }
+.legenda span { display: inline-flex; align-items: center; gap: 6px; }
+.legenda i { display: inline-block; width: 14px; height: 2px; border-radius: 1px; }
+.legenda b { color: var(--tinta); }
+
+.grafico { position: relative; }
+
+/* troca gráfico/tabela: a caixa anima a altura e cada vista entra e sai em fade */
+.vistas { overflow: hidden; transition: height .32s ease; }
+.vistas .vista { transition: opacity .18s ease; }
+@media (prefers-reduced-motion: reduce) { .vistas, .vistas .vista { transition: none; } }
+.grafico svg { display: block; width: 100%; overflow: visible; }
+.grafico svg:focus-visible { outline: 2px solid var(--g); outline-offset: 4px; border-radius: 4px; }
+.grafico text { font-family: "Open Sans", "Segoe UI", sans-serif; font-size: 10px; fill: var(--tinta-3); font-variant-numeric: tabular-nums; }
+
+/* barras horizontais: rótulo, valor em negrito alinhado à direita e a barra */
+.barras { display: flex; flex-direction: column; gap: 9px; }
+.barras .linha { display: grid; grid-template-columns: 160px 62px minmax(0, 1fr); align-items: center; gap: 10px; cursor: default; }
+.barras .nome { font-size: 11px; color: var(--tinta-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.barras .trilho { min-width: 0; }
+.barras .barra { display: block; height: 14px; border-radius: 0 4px 4px 0; background: var(--barra); transition: filter .12s; }
+.barras .num { font-size: 11px; font-weight: bold; color: var(--tinta); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* nos cards de barras, o título fica separado da lista por uma linha de ponta a ponta */
+.bloco-topo.com-linha { margin: 0 -18px 14px; padding: 0 48px 12px 18px; border-bottom: 1px solid var(--grade); }
+.barras .linha:hover .barra, .barras .linha:focus-visible .barra { filter: brightness(1.12); }
+.barras .linha:focus-visible { outline: 2px solid var(--g); outline-offset: 2px; border-radius: 3px; }
+
+/* situação de prazo: barra 100% empilhada com vão branco entre as partes */
+.empilhada { display: flex; gap: 2px; height: 22px; margin-bottom: 14px; }
+.empilhada .parte { display: grid; place-items: center; min-width: 4px; font-size: 11px; font-weight: bold; color: #FFFFFF; }
+.empilhada .parte:first-child { border-radius: 4px 0 0 4px; }
+.empilhada .parte:last-child { border-radius: 0 4px 4px 0; }
+.empilhada .parte.alerta { color: #0B0B0B; }
+.situacoes { display: flex; flex-direction: column; gap: 9px; margin: 0; padding: 0; list-style: none; }
+.situacoes li { display: grid; grid-template-columns: 16px 1fr auto auto; align-items: center; gap: 8px; font-size: 12px; color: var(--tinta-2); }
+.situacoes svg { width: 16px; height: 16px; }
+.situacoes .qtd { font-weight: bold; color: var(--tinta); font-variant-numeric: tabular-nums; text-align: right; }
+.situacoes .pct { width: 40px; text-align: right; color: var(--tinta-3); font-variant-numeric: tabular-nums; }
+.atrasos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--grade); }
+.atrasos div { font-size: 11px; color: var(--tinta-3); }
+.atrasos b { display: block; font-size: 18px; color: var(--tinta); }
+.nota-prazo { margin: 12px 0 0; font-size: 11px; color: var(--tinta-3); }
+
+/* tabelas (vencidos e a vista em tabela do gráfico de tendência) */
+.tabela { width: 100%; border-collapse: collapse; font-size: 11px; }
+.tabela th { text-align: left; font-weight: bold; color: var(--tinta-2); padding: 7px 8px; border-bottom: 1px solid var(--eixo); white-space: nowrap; }
+.tabela td { padding: 8px; border-bottom: 1px solid var(--grade); color: var(--tinta-2); }
+.tabela td.n, .tabela th.n { text-align: right; font-variant-numeric: tabular-nums; }
+.tabela tbody tr:hover td { background: #F7FAEB; }
+.tabela .proto { font-weight: bold; color: var(--tinta); white-space: nowrap; }
+.rolagem { overflow-x: auto; }
+.atraso { display: inline-flex; align-items: center; gap: 5px; font-weight: bold; color: var(--tinta); white-space: nowrap; }
+.atraso svg { width: 14px; height: 14px; }
+.vazio { padding: 18px 0; font-size: 12px; color: var(--tinta-3); text-align: center; }
+
+/* ---------------------------------- dica ---------------------------------- */
+
+.dica {
+  position: fixed;
+  z-index: 50;
+  pointer-events: none;
+  min-width: 130px;
+  padding: 8px 10px;
+  background: #FFFFFF;
+  border: 1px solid rgba(11, 11, 11, .12);
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .12);
+  font-size: 11px;
+  color: var(--tinta-2);
+}
+.dica .titulo-dica { margin-bottom: 7px; color: var(--tinta-3); }
+.dica .grade-dica { display: grid; grid-template-columns: auto 1fr; }
+.dica .grade-dica > * { padding: 4px 0; }
+.dica .grade-dica .dv { padding-right: 10px; border-right: 1px solid #DADDB1; text-align: right; color: var(--tinta); font-size: 12px; font-weight: bold; font-variant-numeric: tabular-nums; }
+.dica .grade-dica .dr { display: flex; align-items: center; gap: 7px; padding-left: 10px; }
+.dica .grade-dica .dr i { flex: none; width: 12px; height: 2px; border-radius: 1px; }
+/* linha horizontal entre uma linha de valor e a seguinte */
+.dica .grade-dica .sep { border-top: 1px solid #DADDB1; }
+/* a linha vertical vai só do topo do primeiro valor ao pé do último */
+.dica .grade-dica > :not(.sep) { padding-top: 0; }
+.dica .grade-dica > .fim { padding-bottom: 0; }
+</style>
+</head>
+<body>
+
+<div class="app"></div>
+
+<script src="assets/shell.js?v=19"></script>
+<script>
+/* ícones de status do prazo (Lucide: circle-check, clock, triangle-alert) */
+const ICO_STATUS = {
+  ok:      '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+  alerta:  '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  critico: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+};
+const icoStatus = (tipo, cor) =>
+  `<svg viewBox="0 0 24 24" fill="none" stroke="${cor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO_STATUS[tipo]}</svg>`;
+
+/* ============================== dados fictícios ============================== */
+
+/* gerador com semente: os números mudam com o filtro, mas não a cada abertura */
+function semente(n) {
+  return () => {
+    n |= 0; n = n + 0x6D2B79F5 | 0;
+    let t = Math.imul(n ^ n >>> 15, 1 | n);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+const rnd = semente(2026);
+
+/* 24 meses terminando em agosto/2026, o mês de referência da topbar */
+const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+const N_MESES = 24;
+const rotuloMes = i => {
+  let m = 7 - (N_MESES - 1 - i), ano = 2026;
+  while (m < 0) { m += 12; ano--; }
+  return `${MESES[m]}/${String(ano).slice(2)}`;
+};
+
+/* prazo = parte concluída dentro do prazo; perm = dias parados na repartição */
+const SECRETARIAS = [
+  { nome: 'Administração', prazo: .86, canal: [.38, .22, .40],
+    reps: [{ nome: 'Protocolo Geral', base: 70, perm: 2.1 }, { nome: 'Recursos Humanos', base: 46, perm: 6.8 }, { nome: 'Patrimônio', base: 14, perm: 5.2 }],
+    naturezas: [['Férias e licenças', 5], ['Aposentadoria', 2], ['Certidão de tempo de serviço', 3]],
+    etapas: ['Análise do RH', 'Cálculo de tempo de serviço', 'Assinatura do secretário'] },
+  { nome: 'Fazenda', prazo: .81, canal: [.62, .30, .08],
+    reps: [{ nome: 'Tributação', base: 84, perm: 7.4 }, { nome: 'Cadastro Imobiliário', base: 52, perm: 9.6 }, { nome: 'Fiscalização Tributária', base: 21, perm: 12.3 }],
+    naturezas: [['Isenção de IPTU', 6], ['Revisão de lançamento', 3], ['Certidão negativa de débitos', 7], ['ITBI', 3]],
+    etapas: ['Análise fiscal', 'Vistoria do imóvel', 'Parecer do auditor'] },
+  { nome: 'Obras e Urbanismo', prazo: .63, canal: [.44, .51, .05],
+    reps: [{ nome: 'Aprovação de Projetos', base: 41, perm: 18.7 }, { nome: 'Fiscalização de Obras', base: 26, perm: 14.2 }, { nome: 'Engenharia', base: 12, perm: 11.5 }],
+    naturezas: [['Alvará de construção', 5], ['Habite-se', 3], ['Certidão de uso do solo', 2]],
+    etapas: ['Análise do projeto', 'Vistoria técnica', 'Emissão do alvará'] },
+  { nome: 'Saúde', prazo: .74, canal: [.29, .48, .23],
+    reps: [{ nome: 'Vigilância Sanitária', base: 33, perm: 10.9 }, { nome: 'Regulação', base: 38, perm: 6.1 }, { nome: 'Atenção Básica', base: 18, perm: 4.4 }],
+    naturezas: [['Licença sanitária', 4], ['Ressarcimento de despesa', 1], ['Tratamento fora do domicílio', 2]],
+    etapas: ['Inspeção sanitária', 'Análise da regulação', 'Parecer técnico'] },
+  { nome: 'Educação', prazo: .88, canal: [.57, .33, .10],
+    reps: [{ nome: 'Gestão Escolar', base: 37, perm: 3.6 }, { nome: 'Transporte Escolar', base: 15, perm: 4.9 }],
+    naturezas: [['Vaga em creche', 4], ['Transferência escolar', 3], ['Transporte escolar', 2]],
+    etapas: ['Análise da secretaria escolar', 'Verificação de vaga', 'Homologação'] },
+  { nome: 'Meio Ambiente', prazo: .69, canal: [.48, .45, .07],
+    reps: [{ nome: 'Licenciamento Ambiental', base: 22, perm: 16.4 }, { nome: 'Fiscalização Ambiental', base: 17, perm: 9.8 }],
+    naturezas: [['Licença ambiental', 3], ['Poda ou supressão de árvore', 4]],
+    etapas: ['Vistoria ambiental', 'Parecer do técnico ambiental', 'Emissão da licença'] },
+  { nome: 'Assistência Social', prazo: .91, canal: [.21, .71, .08],
+    reps: [{ nome: 'CRAS', base: 29, perm: 2.8 }, { nome: 'Benefícios Eventuais', base: 24, perm: 3.3 }],
+    naturezas: [['Benefício eventual', 5], ['Cadastro em programa social', 3]],
+    etapas: ['Visita social', 'Parecer da assistente social', 'Liberação do benefício'] },
+  { nome: 'Procuradoria', prazo: .72, canal: [.05, .10, .85],
+    reps: [{ nome: 'Pareceres', base: 19, perm: 13.6 }, { nome: 'Contencioso', base: 8, perm: 21.2 }],
+    naturezas: [['Parecer jurídico', 4], ['Defesa administrativa', 1]],
+    etapas: ['Análise jurídica', 'Elaboração de parecer', 'Revisão do procurador'] },
+];
+const CANAIS = ['Portal de Serviços', 'Balcão', 'Interno'];
+
+/* série mensal e retrato de hoje de cada repartição */
+SECRETARIAS.forEach(sec => sec.reps.forEach(rep => {
+  rep.meses = Array.from({ length: N_MESES }, (_, i) => {
+    const estacao = 1 + .12 * Math.sin((i + 2) / 12 * 2 * Math.PI);
+    const crescimento = .86 + .18 * i / (N_MESES - 1);
+    const abertos = Math.round(rep.base * estacao * crescimento * (.85 + .3 * rnd()));
+    const concluidos = Math.round(abertos * (.86 + .18 * rnd()));
+    const taxa = Math.min(.98, sec.prazo - .04 + .07 * i / (N_MESES - 1) + (rnd() - .5) * .06);
+    return {
+      abertos, concluidos,
+      noPrazo: Math.round(concluidos * taxa),
+      dias: rep.perm * 2.4 * (.9 + .2 * rnd()) * (1.06 - .1 * i / (N_MESES - 1)),
+    };
+  });
+  rep.andamento = Math.round(rep.base * 1.7 * (.8 + .4 * rnd()));
+  const vencidos = Math.round(rep.andamento * (1 - sec.prazo) * (.7 + .5 * rnd()));
+  const v1 = Math.round(vencidos * .46), v2 = Math.round(vencidos * .34);
+  rep.atraso = [v1, v2, vencidos - v1 - v2];
+  rep.vencidos = vencidos;
+  rep.aVencer = Math.round(rep.andamento * .13 * (.7 + .6 * rnd()));
+  rep.interessado = Math.round(rep.andamento * .09 * (.6 + .8 * rnd()));
+  rep.permHoje = rep.perm * (.85 + .3 * rnd());
+}));
+
+/* protocolos vencidos: alguns por repartição, com dias de atraso coerentes com as faixas */
+const NOMES = ['Maria Souza', 'João Pereira', 'Construtora Horizonte Ltda', 'Ana Lúcia Ferreira', 'Carlos Henrique Dias',
+  'Agropecuária Rio Verde S/A', 'Luciana Barbosa', 'Paulo Roberto Lima', 'Supermercado Bom Preço', 'Fernanda Alves',
+  'Igreja Batista Central', 'Ricardo Mendes', 'Clínica Vida Plena', 'Tereza Cristina Rocha', 'Marcos Vinícius Prado'];
+const VENCIDOS = [];
+let numero = 2291804;
+SECRETARIAS.forEach((sec, si) => sec.reps.forEach(rep => {
+  const n = Math.min(rep.vencidos, 2 + Math.round(rnd() * 2));
+  for (let k = 0; k < n; k++) {
+    const faixa = k < rep.atraso[2] ? 2 : k < rep.atraso[2] + rep.atraso[1] ? 1 : 0;
+    const dias = faixa === 2 ? 31 + Math.round(rnd() * 70) : faixa === 1 ? 8 + Math.round(rnd() * 22) : 1 + Math.round(rnd() * 6);
+    numero += 17 + Math.round(rnd() * 400);
+    VENCIDOS.push({
+      sec: si, rep: rep.nome, dias, numero,
+      natureza: sec.naturezas[Math.floor(rnd() * sec.naturezas.length)][0],
+      interessado: NOMES[Math.floor(rnd() * NOMES.length)],
+      etapa: sec.etapas[Math.floor(rnd() * sec.etapas.length)],
+    });
+  }
+}));
+
+/* ================================ agregação ================================ */
+
+const soma = (lista, f) => lista.reduce((t, x) => t + f(x), 0);
+
+/** Recorte do painel: secretaria (índice ou null = todas) e período em meses. */
+function recorte(secIdx, periodo) {
+  const secs = secIdx === null ? SECRETARIAS : [SECRETARIAS[secIdx]];
+  const reps = secs.flatMap(s => s.reps);
+  const janela = (ini, fim) => {
+    const ms = reps.flatMap(r => r.meses.slice(ini, fim));
+    const concluidos = soma(ms, m => m.concluidos);
+    return {
+      abertos: soma(ms, m => m.abertos),
+      concluidos,
+      noPrazo: soma(ms, m => m.noPrazo),
+      dias: soma(ms, m => m.dias * m.concluidos) / concluidos,
+    };
+  };
+  const atual = janela(N_MESES - periodo, N_MESES);
+  const anterior = janela(N_MESES - 2 * periodo, N_MESES - periodo);
+
+  /* naturezas e canais: o volume aberto no período, dividido pelos pesos de cada secretaria */
+  const naturezas = [], canais = [0, 0, 0];
+  secs.forEach(s => {
+    const abertos = soma(s.reps, r => soma(r.meses.slice(N_MESES - periodo), m => m.abertos));
+    const pesos = soma(s.naturezas, n => n[1]);
+    s.naturezas.forEach(([nome, p]) => naturezas.push({ nome, valor: Math.round(abertos * p / pesos) }));
+    s.canal.forEach((c, i) => { canais[i] += abertos * c; });
+  });
+
+  return {
+    secs, reps, atual, anterior,
+    tendencia: Array.from({ length: 12 }, (_, k) => {
+      const i = N_MESES - 12 + k;
+      return { mes: rotuloMes(i), abertos: soma(reps, r => r.meses[i].abertos), concluidos: soma(reps, r => r.meses[i].concluidos) };
+    }),
+    andamento: soma(reps, r => r.andamento),
+    vencidos: soma(reps, r => r.vencidos),
+    aVencer: soma(reps, r => r.aVencer),
+    interessado: soma(reps, r => r.interessado),
+    atraso: [0, 1, 2].map(f => soma(reps, r => r.atraso[f])),
+    /* sem filtro, o ranking é por secretaria; com uma secretaria, desce às repartições */
+    permanencia: secIdx === null
+      ? SECRETARIAS.map(s => ({ nome: s.nome, valor: soma(s.reps, r => r.permHoje * r.andamento) / soma(s.reps, r => r.andamento), qtd: soma(s.reps, r => r.andamento) }))
+      : reps.map(r => ({ nome: r.nome, valor: r.permHoje, qtd: r.andamento })),
+    naturezas: naturezas.sort((a, b) => b.valor - a.valor).slice(0, 6),
+    canais: CANAIS.map((nome, i) => ({ nome, valor: Math.round(canais[i]) })),
+    lista: VENCIDOS.filter(v => secIdx === null || v.sec === secIdx).sort((a, b) => b.dias - a.dias).slice(0, 8),
+  };
+}
+
+/* ================================ formatação ================================ */
+
+const fmt = (n, casas = 0) => n.toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas });
+const pct = (a, b) => b ? a / b * 100 : 0;
+
+/** Variação contra o período anterior; `subirEBom` decide a cor. */
+function deltaHTML(atual, anterior, { subirEBom = true, pontos = false, sufixo = '' } = {}) {
+  const d = pontos ? atual - anterior : pct(atual - anterior, anterior);
+  if (Math.abs(d) < .05) return '<span class="delta">estável</span>';
+  const bom = (d > 0) === subirEBom;
+  const seta = d > 0 ? '▲' : '▼';
+  const txt = `${seta} ${fmt(Math.abs(d), 1)}${pontos ? ' p.p.' : '%'}${sufixo}`;
+  return `<span class="delta ${bom ? 'bom' : 'ruim'}">${txt}</span>`;
+}
+
+/* ================================ dica (tooltip) ================================ */
+
+const dica = document.createElement('div');
+dica.className = 'dica';
+dica.hidden = true;
+document.body.appendChild(dica);
+
+/** Mostra a dica perto de (x, y). As linhas usam textContent: nada de HTML vindo dos dados. */
+function mostrarDica(x, y, titulo, linhas) {
+  dica.replaceChildren();
+  const t = document.createElement('div');
+  t.className = 'titulo-dica';
+  t.textContent = titulo;
+  dica.appendChild(t);
+  const grade = document.createElement('div');
+  grade.className = 'grade-dica';
+  linhas.forEach((l, k) => {
+    const v = document.createElement('span');
+    const fim = k === linhas.length - 1 ? ' fim' : '';
+    v.className = 'dv' + (k ? ' sep' : '') + fim;
+    v.textContent = l.valor;
+    const r = document.createElement('span');
+    r.className = 'dr' + (k ? ' sep' : '') + fim;
+    if (l.cor) { const i = document.createElement('i'); i.style.background = l.cor; r.appendChild(i); }
+    r.appendChild(document.createTextNode(l.rotulo));
+    grade.append(v, r);
+  });
+  dica.appendChild(grade);
+  dica.hidden = false;
+  const r = dica.getBoundingClientRect();
+  const left = x + 14 + r.width > innerWidth ? x - r.width - 14 : x + 14;
+  dica.style.left = `${Math.max(8, left)}px`;
+  dica.style.top = `${Math.max(8, Math.min(y - r.height / 2, innerHeight - r.height - 8))}px`;
+}
+const esconderDica = () => { dica.hidden = true; };
+
+/* ================================ blocos ================================ */
+
+/* explicação de cada card, mostrada na tampa verde do (i) */
+const EXPLICA = {
+  prazo: ['Parte dos protocolos concluídos no período que terminou dentro do prazo.',
+          'O traço marca a meta de 85%. A variação é em pontos percentuais (p.p.): de 91,3% para 87% é queda de 4,3 p.p.'],
+  andamento: ['Protocolos ainda não concluídos hoje. Embaixo, os que esperam o interessado.'],
+  abertos: ['Protocolos que entraram no período. Subir é mais demanda para a equipe.'],
+  concluidos: ['Protocolos finalizados no período. Compare com Abertos para ver a fila.'],
+  vencidos: ['Protocolos em andamento já fora do prazo. Embaixo, os com mais de 30 dias.'],
+  media: ['Dias, em média, da abertura à conclusão dos protocolos do período.'],
+  tendencia: ['Quantos protocolos entraram (azul) e quantos foram concluídos (verde) em cada um dos últimos 12 meses.',
+              'Quando a linha azul fica acima da verde, a fila cresce naquele mês; o saldo aparece ao passar o mouse. A faixa clara marca o período escolhido no filtro.'],
+  situacao: ['Retrato de agora dos protocolos em andamento: dentro do prazo, vencendo nos próximos 7 dias (dá para agir antes do atraso) e já vencidos.',
+             'Embaixo, os vencidos separados pelo tempo de atraso. Os que aguardam o interessado não contam como atraso da prefeitura.'],
+  permanencia: ['Há quantos dias, em média, os protocolos em andamento estão parados onde se encontram hoje.',
+                'Os primeiros da lista são os gargalos. Ao filtrar uma secretaria, a lista desce para as repartições dela.'],
+  naturezas: ['Os tipos de pedido (naturezas) que mais deram entrada no período.',
+              'Mostra onde está a demanda e quais fluxos merecem atenção primeiro.'],
+  canais: ['Por onde os protocolos do período chegaram: Portal de Serviços (aberto pelo próprio cidadão, sem ir à prefeitura), Balcão de atendimento ou Interno, aberto por uma secretaria para outra.'],
+  criticos: ['Os protocolos com mais dias de atraso no recorte, com a etapa e o lugar onde estão parados agora.',
+             'É a lista para cobrar andamento.'],
+};
+
+/* título do card repetido no topo da tampa */
+const TITULO_INFO = {
+  prazo: 'Concluídos dentro do prazo', andamento: 'Em andamento', abertos: 'Abertos', concluidos: 'Concluídos',
+  vencidos: 'Vencidos', media: 'Média conclusão', tendencia: 'Abertos x concluídos por mês',
+  situacao: 'Situação de prazo hoje', permanencia: 'Onde os protocolos ficam parados',
+  naturezas: 'Naturezas mais demandadas', canais: 'Canal de entrada', criticos: 'Protocolos vencidos mais críticos',
+};
+
+const ICO_INFO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 11v7"/><path d="M12 6.5h.01"/></svg>';
+const ICO_FECHAR = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
+
+/** Botão (i) e a tampa com a explicação; entram como primeiros filhos do card. */
+function infoHTML(chave) {
+  return `
+      <button type="button" class="info" title="O que este card mostra" aria-expanded="false" onclick="abrirExplicacao(this)">${ICO_INFO}</button>
+      <div class="tampa" aria-hidden="true">
+        <span class="titulo-info">${TITULO_INFO[chave]}</span>
+        <button type="button" class="fechar-info" title="Fechar explicação" onclick="fecharExplicacao(this)">${ICO_FECHAR}</button>
+        <div class="texto">${EXPLICA[chave].map(t => `<p>${t}</p>`).join('')}</div>
+      </div>`;
+}
+
+function abrirExplicacao(botao) {
+  const card = botao.closest('.bloco');
+  card.classList.add('explicando');
+  botao.setAttribute('aria-expanded', 'true');
+  card.querySelector('.tampa').setAttribute('aria-hidden', 'false');
+  esconderDica();
+  setTimeout(() => card.querySelector('.fechar-info').focus({ preventScroll: true }), 50);
+}
+
+function fecharExplicacao(botao) {
+  const card = botao.closest('.bloco');
+  card.classList.remove('explicando');
+  const info = card.querySelector('.info');
+  info.setAttribute('aria-expanded', 'false');
+  card.querySelector('.tampa').setAttribute('aria-hidden', 'true');
+  info.focus({ preventScroll: true });
+}
+// Esc fecha a explicação aberta do card em foco
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  const aberto = document.activeElement && document.activeElement.closest('.bloco.explicando');
+  if (aberto) fecharExplicacao(aberto.querySelector('.fechar-info'));
+});
+
+function kpisHTML(d, periodo) {
+  const taxa = pct(d.atual.noPrazo, d.atual.concluidos);
+  const taxaAnt = pct(d.anterior.noPrazo, d.anterior.concluidos);
+  const META = 85;
+  const nomePeriodo = periodo === 1 ? 'julho' : `os ${periodo} meses anteriores`;
+  return `
+    <div class="bloco kpi destaque">
+      ${infoHTML('prazo')}
+      <h4 title="Concluídos dentro do prazo">Concluídos dentro do prazo</h4>
+      <div class="corpo">
+      <span class="valor">${fmt(taxa, 0)}%</span>
+      <div class="medidor" role="img" aria-label="${fmt(taxa, 0)}% concluídos no prazo; meta de ${META}%">
+        <span class="cheio" style="width:${taxa}%"></span>
+        <span class="meta" style="left:${META}%"></span>
+      </div>
+      <div class="medidor-legenda"><span>${deltaHTML(taxa, taxaAnt, { pontos: true })} contra ${nomePeriodo}</span><span>meta ${META}%</span></div>
+      </div>
+    </div>
+    <div class="bloco kpi">
+      ${infoHTML('andamento')}
+      <h4 title="Em andamento">Em andamento</h4>
+      <div class="corpo">
+      <span class="valor">${fmt(d.andamento)}</span>
+      <span class="rodape-kpi">${fmt(d.interessado)} aguardando o interessado</span>
+      </div>
+    </div>
+    <div class="bloco kpi">
+      ${infoHTML('abertos')}
+      <h4 title="Abertos">Abertos</h4>
+      <div class="corpo">
+      <span class="valor">${fmt(d.atual.abertos)}</span>
+      <span class="rodape-kpi">${deltaHTML(d.atual.abertos, d.anterior.abertos, { subirEBom: false })} contra ${nomePeriodo}</span>
+      </div>
+    </div>
+    <div class="bloco kpi">
+      ${infoHTML('concluidos')}
+      <h4 title="Concluídos">Concluídos</h4>
+      <div class="corpo">
+      <span class="valor">${fmt(d.atual.concluidos)}</span>
+      <span class="rodape-kpi">${deltaHTML(d.atual.concluidos, d.anterior.concluidos)} contra ${nomePeriodo}</span>
+      </div>
+    </div>
+    <div class="bloco kpi">
+      ${infoHTML('vencidos')}
+      <h4 title="Vencidos">Vencidos</h4>
+      <div class="corpo">
+      <span class="valor">${fmt(d.vencidos)}</span>
+      <span class="status">${icoStatus('critico', 'var(--critico)')} ${fmt(d.atraso[2])} há mais de 30 dias</span>
+      </div>
+    </div>
+    <div class="bloco kpi">
+      ${infoHTML('media')}
+      <h4 title="Média de conclusão">Média conclusão</h4>
+      <div class="corpo">
+      <span class="valor">${fmt(d.atual.dias, 1)}<small>dias</small></span>
+      <span class="rodape-kpi">${deltaHTML(d.atual.dias, d.anterior.dias, { subirEBom: false })} contra ${nomePeriodo}</span>
+      </div>
+    </div>`;
+}
+
+/* --------------------- tendência: abertos x concluídos (linhas) --------------------- */
+
+const SERIES = [
+  { chave: 'abertos', rotulo: 'Abertos', cor: 'var(--s-abertos)' },
+  { chave: 'concluidos', rotulo: 'Concluídos', cor: 'var(--s-concluidos)' },
+];
+
+function tendenciaBloco(d, periodo) {
+  const ultimo = d.tendencia[d.tendencia.length - 1];
+  return `
+    <div class="bloco">
+      ${infoHTML('tendencia')}
+      <div class="bloco-topo">
+        <div>
+          <h2>Abertos x concluídos por mês</h2>
+          <p class="subtitulo">Últimos 12 meses · a faixa clara marca o período do filtro</p>
+        </div>
+        <button class="alternar-vista acao" id="vistaTendencia" onclick="alternarVistaTendencia()">Ver tabela</button>
+      </div>
+      <div class="legenda">
+        ${SERIES.map(s => `<span><i style="background:${s.cor}"></i>${s.rotulo} <b>${fmt(ultimo[s.chave])}</b> em ${ultimo.mes}</span>`).join('')}
+      </div>
+      <div class="vistas" id="vistas">
+      <div class="grafico vista" id="tendencia" data-periodo="${periodo}"></div>
+      <div class="rolagem vista" id="tendenciaTabela" hidden>
+        <table class="tabela">
+          <thead><tr><th>Mês</th><th class="n">Abertos</th><th class="n">Concluídos</th><th class="n">Saldo</th></tr></thead>
+          <tbody>${d.tendencia.map(m => `<tr><td>${m.mes}</td><td class="n">${fmt(m.abertos)}</td><td class="n">${fmt(m.concluidos)}</td><td class="n">${m.abertos - m.concluidos > 0 ? '+' : ''}${fmt(m.abertos - m.concluidos)}</td></tr>`).join('')}</tbody>
+        </table>
+      </div>
+      </div>
+    </div>`;
+}
+
+/* Gráfico <-> tabela: a vista atual some em fade, o card cresce ou encolhe até a
+   altura da outra, e ela aparece em fade. Sem animação para quem pediu menos movimento. */
+const esperar = ms => new Promise(r => setTimeout(r, ms));
+let trocandoVista = false;
+
+async function alternarVistaTendencia() {
+  if (trocandoVista) return;
+  trocandoVista = true;
+  const caixa = document.getElementById('vistas');
+  const g = document.getElementById('tendencia');
+  const t = document.getElementById('tendenciaTabela');
+  const paraTabela = t.hidden;
+  const [sai, entra] = paraTabela ? [g, t] : [t, g];
+  const animar = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  esconderDica();
+  document.getElementById('vistaTendencia').textContent = paraTabela ? 'Ver gráfico' : 'Ver tabela';
+
+  if (animar) { sai.style.opacity = 0; await esperar(180); }
+  const de = caixa.offsetHeight;
+  caixa.style.height = de + 'px';
+  sai.hidden = true;
+  entra.style.opacity = 0;
+  entra.hidden = false;
+  if (!paraTabela) desenharTendencia();
+  const para = entra.offsetHeight;
+  if (animar) {
+    caixa.getBoundingClientRect();           // fixa a altura de partida antes de animar
+    caixa.style.height = para + 'px';
+    entra.style.opacity = 1;
+    await esperar(320);
+  } else {
+    entra.style.opacity = 1;
+  }
+  caixa.style.height = '';
+  sai.style.opacity = '';
+  trocandoVista = false;
+}
+
+/** Escala com 4 faixas e valores redondos entre o piso e o teto dos dados.
+    É gráfico de linhas: o eixo não precisa partir do zero, e partir dele
+    achataria a distância entre abertos e concluídos. */
+function escala(min, max) {
+  const amplitude = (max - min) || max;
+  const passo = [1, 2, 2.5, 5, 10].map(f => f * 10 ** Math.floor(Math.log10(amplitude / 4)))
+    .find(p => Math.ceil(max / p) * p - Math.floor(min / p) * p <= p * 4) || amplitude;
+  const piso = Math.floor(min / passo) * passo;
+  return { piso, teto: piso + passo * 4, marcas: [0, 1, 2, 3, 4].map(k => piso + k * passo) };
+}
+
+function desenharTendencia() {
+  const caixa = document.getElementById('tendencia');
+  if (!caixa || caixa.hidden) return;
+  const dados = ESTADO.dados.tendencia;
+  const periodo = Number(caixa.dataset.periodo);
+  const W = caixa.clientWidth, H = 230;
+  const m = { t: 10, r: 24, b: 26, l: 40 };
+  const w = W - m.l - m.r, h = H - m.t - m.b;
+  const valores = dados.flatMap(x => [x.abertos, x.concluidos]);
+  const { piso, teto, marcas } = escala(Math.min(...valores), Math.max(...valores));
+  const X = i => m.l + w * i / (dados.length - 1);
+  const Y = v => m.t + h - h * (v - piso) / (teto - piso);
+  const passoX = w / (dados.length - 1);
+
+  const grade = marcas.map(v => `
+    <line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="${v === piso ? 'var(--eixo)' : 'var(--grade)'}"/>
+    <text x="${m.l - 8}" y="${Y(v) + 3}" text-anchor="end">${fmt(v)}</text>`).join('');
+  const meses = dados.map((x, i) => `<text x="${X(i)}" y="${H - 8}" text-anchor="middle">${x.mes}</text>`).join('');
+  const faixaIni = Math.max(m.l, X(dados.length - periodo) - passoX / 2);
+  const faixa = `<rect x="${faixaIni}" y="${m.t}" width="${W - m.r - faixaIni}" height="${h}" fill="#F1F7DA"/>`;
+  const linhas = SERIES.map(s => `
+    <path d="${dados.map((x, i) => `${i ? 'L' : 'M'}${X(i)},${Y(x[s.chave])}`).join('')}" fill="none" stroke="${s.cor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${X(dados.length - 1)}" cy="${Y(dados[dados.length - 1][s.chave])}" r="4" fill="${s.cor}" stroke="#fff" stroke-width="2"/>`).join('');
+
+  caixa.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" height="${H}" tabindex="0" role="img"
+         aria-label="Protocolos abertos e concluídos por mês nos últimos 12 meses; use as setas para percorrer os meses">
+      ${faixa}${grade}${meses}${linhas}
+      <g class="mira" visibility="hidden">
+        <line y1="${m.t}" y2="${m.t + h}" stroke="var(--tinta-3)"/>
+        ${SERIES.map(s => `<circle r="4" fill="${s.cor}" stroke="#fff" stroke-width="2" data-s="${s.chave}"/>`).join('')}
+      </g>
+      <rect x="${m.l - passoX / 2}" y="0" width="${w + passoX}" height="${H}" fill="transparent" class="alvo"/>
+    </svg>`;
+
+  const svgEl = caixa.querySelector('svg');
+  const mira = svgEl.querySelector('.mira');
+  let atual = -1;
+  const marcar = (i, px, py) => {
+    atual = i;
+    const x = dados[i];
+    mira.setAttribute('visibility', 'visible');
+    mira.querySelector('line').setAttribute('x1', X(i));
+    mira.querySelector('line').setAttribute('x2', X(i));
+    SERIES.forEach(s => {
+      const c = mira.querySelector(`[data-s="${s.chave}"]`);
+      c.setAttribute('cx', X(i)); c.setAttribute('cy', Y(x[s.chave]));
+    });
+    const r = svgEl.getBoundingClientRect();
+    mostrarDica(px ?? r.left + X(i) * r.width / W, py ?? r.top + Y(x.abertos), x.mes,
+      [...SERIES.map(s => ({ cor: s.cor, valor: fmt(x[s.chave]), rotulo: s.rotulo })),
+       { valor: (x.abertos - x.concluidos > 0 ? '+' : '') + fmt(x.abertos - x.concluidos), rotulo: 'saldo na fila' }]);
+  };
+  const soltar = () => { mira.setAttribute('visibility', 'hidden'); esconderDica(); atual = -1; };
+  svgEl.addEventListener('pointermove', e => {
+    const r = svgEl.getBoundingClientRect();
+    const vx = (e.clientX - r.left) * W / r.width;
+    marcar(Math.max(0, Math.min(dados.length - 1, Math.round((vx - m.l) / passoX))), e.clientX, e.clientY);
+  });
+  svgEl.addEventListener('pointerleave', soltar);
+  svgEl.addEventListener('blur', soltar);
+  svgEl.addEventListener('keydown', e => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    const i = atual < 0 ? dados.length - 1 : atual + (e.key === 'ArrowRight' ? 1 : -1);
+    marcar(Math.max(0, Math.min(dados.length - 1, i)));
+  });
+}
+
+/* --------------------------- situação de prazo (hoje) --------------------------- */
+
+function prazoBloco(d) {
+  const noPrazo = d.andamento - d.vencidos - d.aVencer;
+  const partes = [
+    { tipo: 'ok', classe: 'ok', cor: 'var(--ok)', rotulo: 'No prazo', qtd: noPrazo },
+    { tipo: 'alerta', classe: 'alerta', cor: 'var(--alerta)', rotulo: 'Vencem em até 7 dias', qtd: d.aVencer },
+    { tipo: 'critico', classe: 'critico', cor: 'var(--critico)', rotulo: 'Vencidos', qtd: d.vencidos },
+  ];
+  return `
+    <div class="bloco">
+      ${infoHTML('situacao')}
+      <div class="bloco-topo"><div>
+        <h2>Situação de prazo hoje</h2>
+        <p class="subtitulo">${fmt(d.andamento)} protocolos em andamento</p>
+      </div></div>
+      <div class="empilhada" role="img" aria-label="${partes.map(p => `${p.rotulo}: ${p.qtd}`).join('; ')}">
+        ${partes.map(p => {
+          const v = pct(p.qtd, d.andamento);
+          return `<span class="parte ${p.classe}" style="flex:${p.qtd} 1 0;background:${p.cor}"
+                    data-dica="${p.rotulo}|${fmt(p.qtd)}|${fmt(v, 1)}% do total">${v >= 9 ? fmt(v, 0) + '%' : ''}</span>`;
+        }).join('')}
+      </div>
+      <ul class="situacoes">
+        ${partes.map(p => `<li>${icoStatus(p.tipo, p.cor)}<span>${p.rotulo}</span><span class="qtd">${fmt(p.qtd)}</span><span class="pct">${fmt(pct(p.qtd, d.andamento), 0)}%</span></li>`).join('')}
+      </ul>
+      <div class="atrasos">
+        <div><b>${fmt(d.atraso[0])}</b>vencidos há 1 a 7 dias</div>
+        <div><b>${fmt(d.atraso[1])}</b>há 8 a 30 dias</div>
+        <div><b>${fmt(d.atraso[2])}</b>há mais de 30 dias</div>
+      </div>
+      <p class="nota-prazo">${fmt(d.interessado)} protocolos estão parados aguardando o interessado (documento ou assinatura) e não contam como atraso da prefeitura.</p>
+    </div>`;
+}
+
+/* ----------------------------- barras horizontais ----------------------------- */
+
+function barrasHTML(itens, { unidade, casas = 0, dica }) {
+  const max = Math.max(...itens.map(i => i.valor));
+  return `<div class="barras">${itens.map(i => `
+    <div class="linha" tabindex="0" data-dica="${i.nome}|${fmt(i.valor, casas)} ${unidade}|${dica ? dica(i) : ''}">
+      <span class="nome" title="${i.nome}">${i.nome}</span>
+      <span class="num">${fmt(i.valor, casas)}${unidade ? ' ' + unidade : ''}</span>
+      <span class="trilho"><span class="barra" style="width:${i.valor / max * 100}%"></span></span>
+    </div>`).join('')}</div>`;
+}
+
+function permanenciaBloco(d, secIdx) {
+  const itens = [...d.permanencia].sort((a, b) => b.valor - a.valor);
+  return `
+    <div class="bloco">
+      ${infoHTML('permanencia')}
+      <div class="bloco-topo com-linha"><div>
+        <h2>Onde os protocolos ficam parados</h2>
+      </div></div>
+      ${barrasHTML(itens, { unidade: 'dias', casas: 1, dica: i => `${fmt(i.qtd)} em andamento` })}
+    </div>`;
+}
+
+function naturezasBloco(d) {
+  return `
+    <div class="bloco">
+      ${infoHTML('naturezas')}
+      <div class="bloco-topo com-linha"><div>
+        <h2>Naturezas mais demandadas</h2>
+      </div></div>
+      ${barrasHTML(d.naturezas, { unidade: '', dica: i => `${fmt(pct(i.valor, d.atual.abertos), 1)}% dos abertos` })}
+    </div>`;
+}
+
+function canaisBloco(d) {
+  const total = soma(d.canais, c => c.valor);
+  const itens = d.canais.map(c => ({ ...c, valor: pct(c.valor, total), qtd: c.valor }));
+  return `
+    <div class="bloco">
+      ${infoHTML('canais')}
+      <div class="bloco-topo com-linha"><div>
+        <h2>Canal de entrada</h2>
+      </div></div>
+      ${barrasHTML(itens, { unidade: '%', dica: i => `${fmt(i.qtd)} protocolos` })}
+      <p class="nota-prazo">Quanto maior a fatia do Portal de Serviços, menos idas do cidadão à prefeitura.</p>
+    </div>`;
+}
+
+function vencidosBloco(d) {
+  const linhas = d.lista.map(v => `
+    <tr>
+      <td class="proto">${fmt(v.numero).replace(/\./g, '')}/2026</td>
+      <td>${v.natureza}</td>
+      <td>${v.interessado}</td>
+      <td>${SECRETARIAS[v.sec].nome} · ${v.rep}</td>
+      <td>${v.etapa}</td>
+      <td class="n"><span class="atraso">${icoStatus('critico', 'var(--critico)')}${v.dias} dias</span></td>
+    </tr>`).join('');
+  return `
+    <div class="bloco">
+      ${infoHTML('criticos')}
+      <div class="bloco-topo"><div>
+        <h2>Protocolos vencidos mais críticos</h2>
+        <p class="subtitulo">Os ${d.lista.length} com mais dias de atraso no recorte</p>
+      </div></div>
+      ${d.lista.length ? `<div class="rolagem"><table class="tabela">
+        <thead><tr><th>Protocolo</th><th>Natureza</th><th>Interessado</th><th>Onde está</th><th>Etapa atual</th><th class="n">Atraso</th></tr></thead>
+        <tbody>${linhas}</tbody>
+      </table></div>` : '<p class="vazio">Nenhum protocolo vencido neste recorte.</p>'}
+    </div>`;
+}
+
+/* ================================ tela ================================ */
+
+ABAS.home = { ...ABAS.home, href: 'zarpi-inicio.html' };
+const main = montarShell('home', {
+  marca: { src: 'assets/img/zarpi/logo-zarpi.svg', alt: 'Zarpi' },
+  modulos: [
+    { nome: 'Protocolo', ico: 'protocolo' },
+    { nome: 'Gerais',    ico: 'gerais' },
+  ],
+  contexto: 'zarpi',
+});
+
+const ESTADO = { sec: null, periodo: 1, dados: null };
+
+main.insertAdjacentHTML('beforeend', `
+  <div class="tela">
+    <div class="painel" id="painel">
+      <div class="painel-topo">
+        <div>
+          <h1>Painel de Protocolos</h1>
+        </div>
+        <div class="filtros">
+          <div class="field-group">
+            <span class="lbl">Período</span>
+            <select id="fPeriodo" aria-label="Período">
+              <option value="1">Agosto 2026</option>
+              <option value="3">Últimos 3 meses</option>
+              <option value="12">Últimos 12 meses</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <span class="lbl">Secretaria</span>
+            <select id="fSecretaria" aria-label="Secretaria">
+              <option value="">Todas</option>
+              ${SECRETARIAS.map((s, i) => `<option value="${i}">${s.nome}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div id="conteudo"></div>
+    </div>
+  </div>`);
+
+function render() {
+  const d = ESTADO.dados = recorte(ESTADO.sec, ESTADO.periodo);
+  document.getElementById('conteudo').innerHTML = `
+    <div class="grade kpis">${kpisHTML(d, ESTADO.periodo)}</div>
+    <div class="grade dupla">${tendenciaBloco(d, ESTADO.periodo)}${prazoBloco(d)}</div>
+    <div class="grade tripla">${permanenciaBloco(d, ESTADO.sec)}${naturezasBloco(d)}${canaisBloco(d)}</div>
+    ${vencidosBloco(d)}`;
+  desenharTendencia();
+}
+
+document.getElementById('fPeriodo').addEventListener('change', e => { ESTADO.periodo = Number(e.target.value); render(); });
+document.getElementById('fSecretaria').addEventListener('change', e => { ESTADO.sec = e.target.value === '' ? null : Number(e.target.value); render(); });
+
+/* dica das barras e da barra empilhada: "título|valor|complemento" no data-dica */
+const conteudo = document.getElementById('conteudo');
+const dicaDe = (alvo, x, y) => {
+  const [titulo, valor, extra] = alvo.dataset.dica.split('|');
+  mostrarDica(x, y, titulo, [{ cor: alvo.classList.contains('parte') ? alvo.style.background : 'var(--barra)', valor, rotulo: extra }]);
+};
+conteudo.addEventListener('pointermove', e => {
+  const alvo = e.target.closest('[data-dica]');
+  if (alvo) dicaDe(alvo, e.clientX, e.clientY);
+  else if (!e.target.closest('#tendencia')) esconderDica();
+});
+conteudo.addEventListener('pointerleave', esconderDica);
+conteudo.addEventListener('focusin', e => {
+  const alvo = e.target.closest('[data-dica]');
+  if (!alvo) return;
+  const r = alvo.getBoundingClientRect();
+  dicaDe(alvo, r.right - 60, r.top + r.height / 2);
+});
+conteudo.addEventListener('focusout', esconderDica);
+document.getElementById('painel').addEventListener('scroll', esconderDica);
+
+new ResizeObserver(() => desenharTendencia()).observe(document.getElementById('painel'));
+render();
+</script>
+</body>
+</html>

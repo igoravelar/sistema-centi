@@ -29,6 +29,8 @@ python3 -m http.server 5173
 | `portal-servicos.html` | Portal de Serviços — login da Prefeitura com os serviços disponíveis | imagem de referência enviada pelo time |
 | `portal-servicos-home.html` | Portal de Serviços — página inicial (topo verde, menu lateral recolhível, rodapé) | imagem de referência enviada pelo time |
 | `portal-servicos-protocolos.html` | Portal de Serviços — Meus Protocolos (abas Em aberto / Arquivados, filtro, ordenação e paginação; modais do protocolo, regularidades e fluxo do processo) | imagens de referência enviadas pelo time |
+| `zarpi.html` | Zarpi — Login (usuário/senha com olho, Lembrar acesso, Esqueci minha senha, Entrar com Google); o box inclina em 3D conforme o mouse; qualquer usuário e senha preenchidos levam ao Início (campo vazio mostra o erro; `?erro=1` abre já com o erro) | `Zarpi.fig` — frames `01 Login1` (vazio) e `01 Login2` (preenchido) |
+| `zarpi-inicio.html` | Zarpi — Início: shell do ERP com a marca Zarpi e só Protocolo e Gerais no menu; a aba Início traz o Painel de Protocolos (indicadores, abertos x concluídos, situação de prazo, onde os protocolos param, naturezas, canal de entrada e vencidos mais críticos), com filtros de período e secretaria e dados fictícios | pedido do time, sobre a tela de Início do ERP |
 
 Caminhos de navegação:
 
@@ -52,7 +54,7 @@ Caminhos de navegação:
   ainda em construção). Estados por URL: `fp296.html?servidor=0&aba=ficha`
 - **po002 · Pesquisa** → clique numa linha de resultado leva ao Cadastro
 - **po002 · Cadastro** → botão `Guia do Fluxo` abre o `po011.html`
-- **po002 · Cadastro** → a seção `Conversas`, no pé da coluna de pastas, troca o formulário pelo chat interno do protocolo (estado vazio); clicar numa pasta volta ao formulário. Estado por URL: `po002.html?view=cadastro&painel=conversas`
+- **po002 · Cadastro** e **po050 · Cadastro** (fluxo já criado) → a seção `Conversas`, no pé da coluna de pastas, troca o lado direito pelo chat interno do registro aberto, como o chat interno do PO051: a conversa pública abre pelo título `Conversas`, e o `Novo Grupo` cria uma conversa privada, que entra listada embaixo do título; clicar numa pasta volta ao formulário. Código comum em `assets/conversas.js` e `.css`. Estado por URL: `po002.html?view=cadastro&painel=conversas`
 - **po011** abre **sem drawer**, com o fluxograma ocupando todo o modal. Clicar
   numa etapa faz o drawer entrar deslizando da direita e traz o card clicado
   para o centro da área que sobra; o `×` do drawer o fecha com o movimento

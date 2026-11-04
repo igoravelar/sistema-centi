@@ -521,6 +521,8 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 }
 
 .pagina .definicao p { margin: 0; }
+/* segundo parágrafo do box, separado do primeiro por uma linha verde clara */
+.pagina .definicao p + p { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--verde-linha); }
 
 /* fieldset de riscos: moldura verde clara com título em negrito */
 .pagina fieldset.riscos {
@@ -655,6 +657,13 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 .pagina ul.lista li { margin: 6px 0; }
 .pagina ul.lista li::marker { color: var(--verde); }
 
+/* glossário: cada termo num bloco só com contorno verde claro */
+.pagina .glossario { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; margin: 0 0 18px; }
+.pagina .glossario .termo { border: 1px solid var(--verde-linha); border-radius: 10px; padding: 14px 18px; }
+.pagina .glossario .termo p { margin: 0; }
+.pagina .glossario .termo-nome { position: relative; padding-left: 16px; margin-bottom: 6px !important; }
+.pagina .glossario .termo-nome::before { content: ''; position: absolute; left: 0; top: .6em; width: 6px; height: 6px; border-radius: 50%; background: var(--verde); }
+
 /* lista longa quebrada em colunas: itens curtos, para o rol não descer demais */
 .pagina ul.lista.multi { columns: 3; column-gap: 30px; }
 
@@ -762,6 +771,9 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
 /* a marca da Gove é branca: pede o roxo dela atrás para aparecer */
 .pagina .verbete .logo.gove { background: #430099; border-color: #430099; }
+
+/* a da Prodata também é branca: o azul do próprio site dela atrás */
+.pagina .verbete .logo.prodata { background: #152849; border-color: #152849; }
 
 .pagina .verbete p { margin: 0; }
 
@@ -1758,7 +1770,11 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
 /* marca de sim/não da matriz de responsabilidades */
 .pagina table .marca { font-weight: 700; }
-.pagina table .marca.sim { color: var(--verde); }
+.pagina table .marca.sim { color: var(--verde); display: inline-flex; vertical-align: middle; }
+/* circle-check-big do Lucide: o check grande, saindo do círculo, deixa o sim
+   evidente de longe ao lado do traço cinza do não */
+.pagina table .marca.sim svg { width: 26px; height: 26px; fill: none; stroke: currentColor;
+                               stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .pagina table .marca.nao { color: #C8C8C8; }
 
 /* cadeia de usuários: nó, seta e o que acontece entre um nó e o próximo */
@@ -2050,7 +2066,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
     <img src="assets/img/marca-centi.png" alt="Centi">
   </a>
   <h1>Documentação Zarpi</h1>
-  <div class="atualizado">Atualizado em: <span class="badge-data">29/10/2026</span></div>
+  <div class="atualizado">Atualizado em: <span class="badge-data">04/11/2026</span></div>
   <button class="bt-menu" id="bt-menu" onclick="alternarMenu()"
           aria-label="Abrir o menu" aria-expanded="false" aria-controls="sidebar">
     <svg class="ico-abrir" viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
@@ -2146,7 +2162,8 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
     <section id="etapa1-descricao" class="sub">
       <h3>Descrição do Produto</h3>
       <div class="definicao">
-        <p>É a plataforma da CENTI para a tramitação de processos administrativos municipais, que conduz cada processo por fluxos configuráveis e visuais, orientando os servidores em cada etapa e permitindo que diferentes departamentos trabalhem de forma integrada e simultânea, com controle de documentos, prazos e checklist para execução de cada etapa. Pelos seus canais externos, o cidadão, o contribuinte e o fornecedor também acompanham e assinam os protocolos sem precisar ir à prefeitura.</p>
+        <p><b>O Protocolo dentro de uma prefeitura controla a vida de um processo administrativo: quem pediu, sobre o que é, em que repartição ele está, quais documentos ele carrega, quem já o analisou e como terminou.</b></p>
+        <p>Já o Zarpi é a SaaS da Centi destinado processos administrativos municipais, que conduz cada processo por fluxos configuráveis e visuais, orientando os servidores em cada etapa e permitindo que diferentes departamentos trabalhem de forma integrada e simultânea, com controle de documentos, prazos e checklist para execução de cada etapa. Pelos seus canais externos, o cidadão, o contribuinte e o fornecedor também acompanham e assinam os protocolos sem precisar ir à prefeitura.</p>
       </div>
       <p>O Zarpi é a solução da CENTI para tornar a tramitação de processos administrativos mais simples, organizada e eficiente, eliminando esperas, retrabalhos e obstáculos que podem ser evitados no dia a dia da prefeitura.</p>
       <p>Mais do que apenas digitalizar documentos, o Zarpi orienta cada processo pelo caminho adequado, deixando claro o que precisa ser feito, por quem, em qual etapa e dentro de qual prazo, permitindo que atividades sejam realizadas simultaneamente quando possível, que decisões sejam apoiadas por checklists, documentos e regras, e que toda a comunicação e o acompanhamento aconteçam em um único ambiente.</p>
@@ -2178,7 +2195,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           </thead>
           <tbody>
             <tr><td><b>O que é</b></td><td>O modelo: como a prefeitura resolve um tipo de demanda</td><td>O caso: um pedido concreto que percorre esse modelo</td></tr>
-            <tr><td><b>Quantos</b></td><td>Um por tipo de demanda</td><td>Muitos, um para cada pedido</td></tr>
+            <tr><td><b>Quantos</b></td><td>Um por tipo de demanda (natureza)</td><td>Muitos, um para cada pedido</td></tr>
             <tr><td><b>Contém</b></td><td>Etapas, responsáveis, documentos exigidos, checklists, regras e prazos</td><td>Número, interessado, data, documentos enviados, andamentos e situação atual</td></tr>
             <tr><td><b>Quem cria</b></td><td>Consultor Técnico e Gestor / Líder Técnico</td><td>Servidor, ou o cidadão pelo Portal de Serviços</td></tr>
             <tr><td><b>Onde</b></td><td><code>PO050</code> · Fluxo de Processos</td><td><code>PO051</code> · Tramitação de Protocolo</td></tr>
@@ -2192,26 +2209,77 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <div class="fluxo-palavras">
         <span class="palavra">CONFIGURAR O PROCESSO</span><span class="seta-fluxo">→</span>
         <span class="palavra">ABRIR O PROTOCOLO</span><span class="seta-fluxo">→</span>
-        <span class="palavra">TRAMITAR AS ETAPAS</span>
+        <span class="palavra">TRAMITAR NAS ETAPAS</span>
       </div>
       <ul class="lista">
         <li>O processo é configurado <b>uma vez</b>; um protocolo é aberto <b>a cada pedido</b> e percorre as etapas do processo.</li>
         <li>Um processo publicado dá origem a <b>muitos protocolos</b>.</li>
-        <li>Cada protocolo <b>segue a versão do processo em que nasceu</b>: mudar o processo não altera os protocolos que já estão em andamento — o mesmo princípio de não sobrescrita da <a href="#etapa8-rastreabilidade">Rastreabilidade</a>.</li>
+        <li>Cada protocolo <b>segue a VERSÃO do processo em que nasceu</b>: mudar o processo não altera os protocolos que já estão em andamento ou que já foram tramitados. Isso resguarda o princípio da <a href="#etapa8-rastreabilidade">Rastreabilidade</a>.</li>
       </ul>
 
       <blockquote>
         <p>Na prefeitura, “processo” costuma significar o calhamaço de papéis de um pedido, e “protocolo” o número de entrada. No Zarpi, os termos têm sentido fixo: <b>processo é o modelo, protocolo é o caso.</b> Usar sempre assim — em telas, treinamento e material comercial — evita a confusão mais comum na implantação.</p>
       </blockquote>
 
-      <h4>Termos vizinhos</h4>
-      <ul class="lista">
-        <li><b>Fluxo:</b> o desenho visual do processo.</li>
-        <li><b>Versão:</b> um retrato do processo, primeiro em rascunho e depois publicado.</li>
-        <li><b>Etapa:</b> cada passo do processo.</li>
-        <li><b>Tramitação:</b> o protocolo avançando pelas etapas.</li>
-        <li><b>Andamento:</b> o registro de cada passo dado por um protocolo.</li>
-      </ul>
+      <h4>Glossário</h4>
+      <div class="glossario">
+        <div class="termo">
+          <p class="termo-nome"><b>Protocolo (processo):</b></p>
+          <p>O registro central. Tem número e ano, interessado, natureza, observação, documentos e um histórico de andamentos. É cadastrado e acompanhado na tela <code>PO002</code>.</p>
+        </div>
+        <div class="termo">
+          <p class="termo-nome"><b>Natureza:</b></p>
+          <p>O tipo de assunto do processo (alvará, requerimento, licença, aposentadoria…). Define se o processo é digital, quais documentos exige e, no Zarpi, qual fluxo ele segue. Cadastro na <code>PO001</code>.</p>
+        </div>
+        <div class="termo">
+          <p class="termo-nome"><b>Repartição e posse:</b></p>
+          <p>O processo está sempre em uma repartição, a “Repartição atual”. Só quem tem vínculo com essa repartição pode trabalhá-lo e enviá-lo adiante. Essa é a regra que organiza o módulo inteiro.</p>
+        </div>
+        <div class="termo">
+          <p class="termo-nome"><b>Remessa:</b></p>
+          <p>O ato de enviar o processo de uma repartição para outra. Toda remessa tem saída (<code>PO003</code>) e entrada (<code>PO004</code>); em processo digital a entrada é automática. Enquanto não é recebida, a remessa está “em trânsito” e pode ser cancelada (<code>PO005</code>).</p>
+        </div>
+        <div class="termo">
+          <p class="termo-nome"><b>Andamento:</b></p>
+          <p>Cada linha do histórico do processo: entrou em tal repartição em tal data, saiu em tal data, por quem. É a base de todos os relatórios de tempo por repartição.</p>
+        </div>
+        <div class="termo">
+          <p class="termo-nome"><b>Documento:</b></p>
+          <p>Arquivo anexado ao processo (PDF, em geral), com tipo, descrição, número e situação. Pode ser assinado eletronicamente, versionado, excluído com rastro (<code>PO022</code>) e gerado a partir de um modelo (<code>PO052</code>).</p>
+        </div>
+        <div class="termo">
+          <p class="termo-nome"><b>Regularidade:</b></p>
+          <p>O parecer formal da repartição sobre o processo: Aprovado, Reprovado ou Analisado, com observação, documento vinculado e, se quiser, certidão e despacho gerados na hora. Operação “Aprovar/Reprovar”, na tela do processo ou em lote (<code>PO024</code>).</p>
+        </div>
+        <div class="termo">
+          <p class="termo-nome"><b>Ateste do controle interno:</b></p>
+          <p>Marcação de que o controle interno conferiu o processo (Não atestado, Em análise, Atestado). Feita processo a processo ou em lote (<code>PO019</code>).</p>
+        </div>
+        <div class="termo">
+          <p class="termo-nome"><b>Arquivamento:</b></p>
+          <p>O fim físico do processo: ele recebe uma localização de arquivo e sai de circulação. Pode ser desarquivado (<code>PO009</code>).</p>
+        </div>
+        <div class="termo">
+          <p class="termo-nome"><b>Fluxo inteligente (Zarpi):</b></p>
+          <p>Camada opcional, ligada por parâmetro, em que a natureza ganha um desenho de etapas (<code>PO050</code>): quem faz o quê, em que ordem, com que prazo, documentos e checklist. O processo passa a ser tramitado pela <code>PO051</code>, que sabe a etapa atual, as pendências e o próximo destino. Nada do que já existia muda: remessa, andamento e relatórios continuam iguais.</p>
+        </div>
+        <div class="termo">
+          <p class="termo-nome"><b>Fluxo:</b></p>
+          <p>O desenho visual do processo.</p>
+        </div>
+        <div class="termo">
+          <p class="termo-nome"><b>Versão:</b></p>
+          <p>Um retrato do processo, primeiro em rascunho e depois publicado.</p>
+        </div>
+        <div class="termo">
+          <p class="termo-nome"><b>Etapa:</b></p>
+          <p>Cada passo do processo.</p>
+        </div>
+        <div class="termo">
+          <p class="termo-nome"><b>Tramitação:</b></p>
+          <p>O protocolo avançando pelas etapas.</p>
+        </div>
+      </div>
     </section>
 
     <section id="etapa1-problema" class="sub">
@@ -2222,7 +2290,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         <legend>Riscos para a prefeitura</legend>
         <ul>
           <li>Retrabalho e perda de tempo de servidor com processos parados ou sem visibilidade;</li>
-          <li>Atraso em decisões críticas — pagamentos, obras, licitações — por processos perdidos entre setores;</li>
+          <li>Atraso em decisões críticas, como pagamentos, obras e licitações, por processos perdidos entre as repartições;</li>
           <li>Exposição a glosas e questionamentos do Tribunal de Contas por falhas de rito descobertas tarde;</li>
           <li>Insegurança jurídica em assinaturas feitas fora do sistema, por falta de alternativa para quem não tem login;</li>
           <li>Perda de rastreabilidade: decisões e comunicações que não ficam registradas oficialmente;</li>
@@ -2233,7 +2301,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <fieldset class="riscos">
         <legend>Riscos para a Centi</legend>
         <ul>
-          <li>Insatisfação do cliente e risco de não renovação de contrato;</li>
+          <li>Prejuízos na experiência do cliente gerado por insatisfação com resultados, elevando risco de renovação de contrato;</li>
           <li>Casos de referência negativos, dificultando a venda para novos municípios;</li>
           <li>Mais chamados de suporte e maior custo operacional com problemas evitáveis;</li>
           <li>Associação indevida da marca Centi a falhas de compliance que são do processo, não do sistema;</li>
@@ -2254,7 +2322,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
         <span class="palavra">ENTREGAR</span>
       </div>
       <p>Permitir que prefeituras organizem e acelerem a tramitação de processos administrativos, substituindo fluxos burocráticos, fragmentados e difíceis de acompanhar por uma jornada visual, estruturada e orientada, na qual cada servidor sabe o que precisa fazer, em qual etapa, com quais documentos e dentro de quais prazos. Dessa forma, a prefeitura reduz esperas, retrabalhos e encaminhamentos desnecessários, aumenta a previsibilidade e o controle sobre seus processos e proporciona uma gestão mais eficiente, transparente e moderna, com uma solução de implantação simples e acessível também para municípios de pequeno e médio porte.</p>
-      <p>Com os <a href="#etapa4-canais">canais externos</a>, quem não opera o sistema — cidadão, contribuinte e fornecedor — também acompanha o protocolo, envia documentos e <b>assina pelo próprio Zarpi</b>. Isso elimina as assinaturas feitas fora do sistema por falta de alternativa para quem não tem login e as idas à prefeitura só para saber onde o processo está.</p>
+      <p>Com os <a href="#etapa4-canais">canais externos</a>, quem não opera o sistema — cidadão, contribuinte e fornecedor — também acompanha o protocolo, envia documentos e <b>assina pelo Portal de Assinaturas que está integrado ao Zarpi</b>. Isso elimina as assinaturas feitas fora do sistema por falta de alternativa para quem não tem login e as idas à prefeitura só para saber onde o processo está.</p>
     </section>
 
     <section id="etapa1-comercializacao" class="sub">
@@ -2363,7 +2431,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
             </tr>
             <tr>
               <td><b>Suites de gestão pública</b></td>
-              <td>Fiorilli, IPM, Betha, Elotech, Thema</td>
+              <td>Fiorilli, IPM, Betha, Elotech, Thema, Megasoft, Prodata</td>
               <td>Protocolo e processos integrados a um ecossistema maior de gestão municipal</td>
             </tr>
             <tr>
@@ -2406,6 +2474,16 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </div>
 
       <div class="verbete">
+        <span class="logo"><img src="assets/img/logos/logo-megasoft.png" alt="Megasoft"></span>
+        <p>A <b>Megasoft</b> declara mais de 495 clientes, atuação em 7 estados, mais de 23 mil usuários e 33 anos na gestão pública municipal. A suite MegaAdmWEB tem módulo de Protocolo e um Portal de Serviços para o cidadão. No <a href="benchmark-siafic.html#comparativo">benchmark dos SIAFICs</a>, é a maior carteira da amostra: 202 contratos no PNCP em 101 municípios de Goiás e Tocantins, 77% deles em municípios de até 20 mil habitantes, com ticket mediano de R$ 1.888/mês.</p>
+      </div>
+
+      <div class="verbete">
+        <span class="logo prodata"><img src="assets/img/logos/logo-prodata.png" alt="Prodata"></span>
+        <p>A <b>Prodata</b>, de Goiânia, atua desde 1986 com o SIG Prodata, ERP de 30 módulos integrados — entre eles Protocolo — e atuação consolidada em Goiás, Tocantins, São Paulo e Rio de Janeiro. Não divulga o número de clientes. No <a href="benchmark-siafic.html#comparativo">benchmark dos SIAFICs</a>, tem 23 contratos no PNCP em 16 municípios, concentrados acima de 20 mil habitantes, com ticket mediano de R$ 11.000/mês e o maior contrato da amostra, em Angra dos Reis/RJ.</p>
+      </div>
+
+      <div class="verbete">
         <span class="logo"><img src="assets/img/logos/logo-thema.png" alt="Thema"></span>
         <p>A <b>Thema</b> também possui uma solução específica de Processos Digitais, contemplando processo eletrônico, protocolo digital, gerenciamento de documentos, assinaturas e controle de fluxos.</p>
       </div>
@@ -2441,8 +2519,18 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
               <td><span class="nivel media-alta">Média/Alta</span></td>
             </tr>
             <tr>
+              <td><b>Megasoft</b></td><td>Suite de gestão municipal</td>
+              <td>Maior base em municípios pequenos de Goiás e Tocantins, com protocolo e portal de serviços na suite</td>
+              <td><span class="nivel media-alta">Média/Alta</span></td>
+            </tr>
+            <tr>
               <td><b>Gove</b></td><td>Relacionamento com o cidadão + dados + IA</td>
               <td>Atendimento digital e automação sobre o cadastro central</td>
+              <td><span class="nivel media">Média</span></td>
+            </tr>
+            <tr>
+              <td><b>Prodata</b></td><td>Suite de gestão municipal</td>
+              <td>Municípios de maior porte em Goiás, com protocolo integrado ao ERP</td>
               <td><span class="nivel media">Média</span></td>
             </tr>
             <tr>
@@ -2493,15 +2581,12 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
             <tr><td>Tecnologia</td><td>SaaS / Cloud</td></tr>
             <tr><td>Contratação</td><td>Venda direta quando aplicável + licitação</td></tr>
             <tr><td>Cobrança</td><td>Recorrente, normalmente mensal ou anual</td></tr>
-            <tr><td>Implantação</td><td>Parametrização + treinamento + migração quando necessária</td></tr>
+            <tr><td>Implantação</td><td>Migração + Parametrização dos Fluxos + Treinamento</td></tr>
             <tr><td>Expansão</td><td>Novos módulos, órgãos e entidades</td></tr>
             <tr><td>Venda</td><td>Consultiva, demonstração e proposta comercial</td></tr>
           </tbody>
         </table>
       </div>
-
-      <p>A 1Doc, por exemplo, apresenta planos estruturados por módulos e direciona a prefeitura para solicitação de orçamento. Seu plano inclui Protocolo Cidadão, enquanto planos superiores adicionam outros módulos.</p>
-      <p>A Aprova utiliza uma abordagem semelhante de venda consultiva, direcionando o município para demonstração e orçamento da plataforma.</p>
     </section>
 
     <section id="etapa2-estrutura" class="sub">
@@ -2519,6 +2604,8 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           <tbody>
             <tr><td>Fiorilli</td><td class="dir">1.344 cidades</td></tr>
             <tr><td>IPM</td><td class="dir">+850 órgãos públicos</td></tr>
+            <tr><td>Megasoft</td><td class="dir">+495 clientes em 7 estados</td></tr>
+            <tr><td>Prodata</td><td class="dir">Atuação em GO, TO, SP e RJ, sem número de clientes divulgado</td></tr>
             <tr><td>1Doc</td><td class="dir">+900 organizações e entidades</td></tr>
             <tr><td>Aprova</td><td class="dir">+130 cidades</td></tr>
             <tr><td>Gove</td><td class="dir">+100 cidades</td></tr>
@@ -2529,6 +2616,24 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </div>
 
       <p>Os números acima <b>não representam market share</b> e não são diretamente comparáveis, pois cada empresa utiliza uma métrica diferente. Servem apenas como indicador de escala e presença competitiva.</p>
+
+      <h4>Suites de gestão municipal em Goiás</h4>
+      <p>Para as suites que disputam o SIAFIC com a Centi em Goiás há uma base comum: os contratos publicados no PNCP, com o CNPJ do fornecedor confirmado um a um, do <a href="benchmark-siafic.html#comparativo">benchmark dos SIAFICs</a>. A Centi adquiriu a <b>SIGEP</b>, e a carteira dela já entra na linha da Centi.</p>
+
+      <div class="tabela-rolagem">
+        <table>
+          <thead>
+            <tr><th>Player</th><th>Divulgado no site</th><th class="dir">Contratos no PNCP</th><th class="dir">Municípios</th><th class="dir">Ticket mediano</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Megasoft</td><td>+495 clientes, 7 estados, +23 mil usuários</td><td class="dir">202</td><td class="dir">101 (GO e TO)</td><td class="dir">R$ 1.888/mês</td></tr>
+            <tr><td>Prodata</td><td>Desde 1986, 30 módulos, GO, TO, SP e RJ</td><td class="dir">23</td><td class="dir">16 (GO e RJ)</td><td class="dir">R$ 11.000/mês</td></tr>
+            <tr><td>Centi, com a SIGEP</td><td>—</td><td class="dir">15 + 3 da base interna</td><td class="dir">12 (GO)</td><td class="dir">R$ 2.841/mês</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>A contagem do PNCP é o <b>piso</b> da carteira de cada empresa, não o total de clientes: a busca só encontra contratos cujo objeto cita o nome da empresa ou do sistema. Para a Centi o desvio é maior, porque boa parte dos contratos próprios não aparece na busca do portal e vem da base interna.</p>
     </section>
 
     <section id="etapa2-tendencia" class="sub">
@@ -2601,16 +2706,6 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           </tbody>
         </table>
       </div>
-
-      <h4>Síntese estratégica</h4>
-      <div class="definicao">
-        <p>O mercado é competitivo, mas ainda existe espaço para uma solução especializada, simples e acessível, especialmente para municípios pequenos e médios. A vantagem da Centi não deve estar em possuir o maior número de módulos, mas em entregar uma experiência superior de tramitação: orientar, integrar, controlar e acelerar.</p>
-      </div>
-
-      <p><b>Diretriz:</b></p>
-      <blockquote>
-        <p>Não competir para ser o maior sistema da prefeitura. Competir para ser o sistema que melhor faz o processo andar.</p>
-      </blockquote>
     </section>
 
     <div class="ilustracao">
@@ -2731,16 +2826,6 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <blockquote>
         <p>O Zarpi mostra o caminho e faz o processo avançar.</p>
       </blockquote>
-
-      <h4>Território competitivo</h4>
-      <p>O produto deve ocupar o espaço entre:</p>
-      <div class="fluxo-palavras">
-        <span class="palavra">SIMPLICIDADE DE USO</span><span class="seta-fluxo">+</span>
-        <span class="palavra">ESPECIALIZAÇÃO EM PROCESSOS</span><span class="seta-fluxo">+</span>
-        <span class="palavra">ACESSIBILIDADE PARA MUNICÍPIOS MENORES</span><span class="seta-fluxo">+</span>
-        <span class="palavra">AUTOMAÇÃO PROGRESSIVA</span>
-      </div>
-      <p>A estratégia não é competir com grandes suites de gestão pública pela quantidade de módulos, mas pela <b>qualidade e simplicidade da tramitação</b>.</p>
     </section>
 
     <section id="etapa3-publicos" class="sub">
@@ -3546,29 +3631,29 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
               </thead>
               <tbody>
                 <tr><td>Criar / editar fluxo</td>
-                  <td class="centro"><span class="marca sim">✓</span></td>
-                  <td class="centro"><span class="marca sim">✓</span></td>
+                  <td class="centro"><span class="marca sim" title="Sim"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg></span></td>
+                  <td class="centro"><span class="marca sim" title="Sim"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg></span></td>
                   <td class="centro"><span class="marca nao">—</span></td></tr>
                 <tr><td>Criar protocolo</td>
                   <td class="centro"><span class="marca nao">—</span></td>
-                  <td class="centro"><span class="marca sim">✓</span></td>
-                  <td class="centro"><span class="marca sim">✓</span></td></tr>
+                  <td class="centro"><span class="marca sim" title="Sim"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg></span></td>
+                  <td class="centro"><span class="marca sim" title="Sim"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg></span></td></tr>
                 <tr><td>Tramitar protocolo</td>
                   <td class="centro"><span class="marca nao">—</span></td>
-                  <td class="centro"><span class="marca sim">✓</span></td>
-                  <td class="centro"><span class="marca sim">✓</span></td></tr>
+                  <td class="centro"><span class="marca sim" title="Sim"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg></span></td>
+                  <td class="centro"><span class="marca sim" title="Sim"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg></span></td></tr>
                 <tr><td>Configurar regras</td>
-                  <td class="centro"><span class="marca sim">✓</span></td>
-                  <td class="centro"><span class="marca sim">✓</span></td>
+                  <td class="centro"><span class="marca sim" title="Sim"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg></span></td>
+                  <td class="centro"><span class="marca sim" title="Sim"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg></span></td>
                   <td class="centro"><span class="marca nao">—</span></td></tr>
                 <tr><td>Definir checklist</td>
-                  <td class="centro"><span class="marca sim">✓</span></td>
-                  <td class="centro"><span class="marca sim">✓</span></td>
+                  <td class="centro"><span class="marca sim" title="Sim"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg></span></td>
+                  <td class="centro"><span class="marca sim" title="Sim"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg></span></td>
                   <td class="centro"><span class="marca nao">—</span></td></tr>
                 <tr><td>Executar checklist</td>
                   <td class="centro"><span class="marca nao">—</span></td>
-                  <td class="centro"><span class="marca sim">✓</span></td>
-                  <td class="centro"><span class="marca sim">✓</span></td></tr>
+                  <td class="centro"><span class="marca sim" title="Sim"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg></span></td>
+                  <td class="centro"><span class="marca sim" title="Sim"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg></span></td></tr>
               </tbody>
             </table>
           </div>
@@ -3765,28 +3850,6 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           <h4>Servidor Público</h4>
           <p>Consegue criar, executar e tramitar protocolos sem depender de conhecimento técnico sobre a configuração do sistema.</p>
         </div>
-      </div>
-    </section>
-
-    <section id="etapa4-entregaveis" class="sub">
-      <h3>Entregáveis da etapa</h3>
-      <p>Ao final desta etapa, deverão estar disponíveis:</p>
-      <ul class="lista">
-        <li><b>Modelo funcional do MVP</b>;</li>
-        <li>fluxos principais mapeados;</li>
-        <li>perfis e permissões definidos;</li>
-        <li>personas estruturadas;</li>
-        <li>regras de negócio iniciais;</li>
-        <li>etapas e responsabilidades definidas;</li>
-        <li>estrutura de documentos e checklists;</li>
-        <li>protótipos das principais telas;</li>
-        <li>relação entre telas atuais e novas experiências;</li>
-        <li>hipóteses a serem validadas com usuários;</li>
-        <li>critérios para evolução do MVP.</li>
-      </ul>
-
-      <div class="nota">
-        <p>A conclusão desta etapa <b>não significa que o produto está validado em produção</b>. Ela representa a construção da primeira versão estruturada do produto, que deverá ser submetida à validação com usuários e posteriormente utilizada em um <b>projeto piloto real</b>.</p>
       </div>
 
       <p>Ao final da Modelagem do Produto, a Centi deverá ter clareza sobre <b>como o Zarpi funciona, quem utiliza cada parte da solução, quais responsabilidades cada perfil possui e como o processo percorre a plataforma desde sua configuração até sua conclusão</b>.</p>
@@ -5089,7 +5152,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
           </thead>
           <tbody>
             <tr><td><b>Competência</b></td><td>Quem pode decidir?</td><td>Responsável + Departamento da etapa</td></tr>
-            <tr><td><b>Base legal</b></td><td>Qual norma autoriza ou determina?</td><td>Campo de fundamentação (a criar)</td></tr>
+            <tr><td><b>Base legal</b></td><td>Qual norma autoriza ou determina?</td><td>Campo de fundamentação (campo Lei)</td></tr>
             <tr><td><b>Requisitos</b></td><td>O que precisa ser apresentado?</td><td>Checklist</td></tr>
             <tr><td><b>Documentos</b></td><td>Quais documentos são necessários?</td><td>Documentos da etapa</td></tr>
             <tr><td><b>Prazo</b></td><td>Existe prazo legal ou regulamentar?</td><td>Prazos + alertas</td></tr>
@@ -5192,12 +5255,6 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </div>
 
       <p>A etapa de compras pode, inclusive, alimentar diretamente o <b>módulo financeiro do ERP Centi</b> para fins de dotação orçamentária e empenho — mantendo a rastreabilidade de ponta a ponta que é a proposta de valor central do produto.</p>
-
-      <h4>Ponto de atenção — competitividade</h4>
-
-      <div class="nota">
-        <p>A especificação de qualquer objeto tramitado (inclusive a do próprio Zarpi, como já ocorre no TR de referência) deve evitar requisitos desnecessários que possam <b>restringir indevidamente a competição</b>, direcionar a contratação ou favorecer fornecedor específico. Requisitos técnicos só se sustentam quando amparados em necessidade objetiva registrada no ETP — não em preferência de mercado.</p>
-      </div>
     </section>
 
     <section id="etapa8-tr" class="sub">
@@ -6647,7 +6704,6 @@ const MENU = [
     { id: 'etapa4-telas',       txt: 'Evolução das telas' },
     { id: 'etapa4-canais',      txt: 'Canais externos' },
     { id: 'etapa4-criterio',    txt: 'Validação do MVP' },
-    { id: 'etapa4-entregaveis', txt: 'Entregáveis da etapa' },
   ] },
   { titulo: '#5 Arquitetura Tecnológica',   itens: [
     { id: 'etapa5-objetivo',    txt: 'Objetivo da etapa' },

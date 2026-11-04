@@ -23,11 +23,10 @@
   --faixa-h:     36px;
   --abas-h:      50px;
 
-  /* cor de cada série nos comparativos: os três concorrentes na escala de
+  /* cor de cada série nos comparativos: os dois concorrentes na escala de
      verde da marca e a Centi no verde vivo, para o nosso dado saltar */
   --c-megasoft: #8BA81D;
   --c-prodata:  #5D6725;
-  --c-sigep:    #C3CE9A;
   --c-centi:    #C6E628;
 }
 
@@ -336,7 +335,6 @@ tr.total:hover td { background: #EFF8C8; }
 }
 
 .selo.prodata { border-left-color: var(--c-prodata); }
-.selo.sigep   { border-left-color: var(--c-sigep); }
 .selo.centi   { border-left-color: var(--c-centi); background: #FCFDF6; }
 
 .selo h4 {
@@ -477,12 +475,11 @@ tr.total:hover td { background: #EFF8C8; }
 
 .grafico .serie.s-megasoft .barra span.b { background: var(--c-megasoft); }
 .grafico .serie.s-prodata  .barra span.b { background: var(--c-prodata); }
-.grafico .serie.s-sigep    .barra span.b { background: var(--c-sigep); }
 .grafico .serie.s-centi    .barra span.b { background: var(--c-centi); }
 
 .grafico .serie.s-centi .nome { color: #3F440C; }
 
-/* a proposta da Centi entra destacada, separada dos três concorrentes */
+/* a proposta da Centi entra destacada, separada dos concorrentes */
 .grafico .serie.s-centi { padding-top: 7px; border-top: 1px dashed var(--verde-linha); }
 
 /* a chave de cores fecha com um filete, separada das barras */
@@ -506,7 +503,6 @@ tr.total:hover td { background: #EFF8C8; }
 
 .legenda .l-megasoft i { background: var(--c-megasoft); }
 .legenda .l-prodata i  { background: var(--c-prodata); }
-.legenda .l-sigep i    { background: var(--c-sigep); }
 .legenda .l-centi i    { background: var(--c-centi); }
 
 /* ── filtros das abas de contratos ──────────────────────── */
@@ -795,7 +791,7 @@ a.pncp svg {
 .legenda-faixas .f3 i { background: #A1BB3E; }
 .legenda-faixas .f4 i { background: #5D6725; }
 
-/* ── a linha da Centi nos comparativos: destacada, e separada dos três ── */
+/* ── a linha da Centi nos comparativos: destacada, e separada das outras ── */
 tr.centi td {
   background: #F5FCD9;
   border-top: 1px dashed var(--verde);
@@ -810,7 +806,7 @@ th.centi, td.centi-col { background: #FBFDF1; }
 table th.centi:last-child,
 table td.centi-col:last-child { padding-right: 12px; }
 
-/* os quatro contratos da Centi: cabem na largura da página, sem quebrar datas */
+/* os contratos da Centi: cabem na largura da página, sem quebrar datas */
 table.tab-centi th,
 table.tab-centi td { white-space: nowrap; }
 </style>
@@ -836,7 +832,7 @@ table.tab-centi td { white-space: nowrap; }
 </header>
 
 <div class="faixa">
-  <p>Sistemas completos de gestão pública municipal · as quatro empresas que disputam o SIAFIC em Goiás.</p>
+  <p>Sistemas completos de gestão pública municipal · as três empresas que disputam o SIAFIC em Goiás.</p>
 </div>
 
 <nav class="abas" id="abas" role="tablist" aria-label="Seções do painel"></nav>
@@ -845,7 +841,6 @@ table.tab-centi td { white-space: nowrap; }
   <section class="aba" id="aba-comparativo" role="tabpanel" aria-labelledby="bt-comparativo"></section>
   <section class="aba" id="aba-megasoft" role="tabpanel" aria-labelledby="bt-megasoft" hidden></section>
   <section class="aba" id="aba-prodata" role="tabpanel" aria-labelledby="bt-prodata" hidden></section>
-  <section class="aba" id="aba-sigep" role="tabpanel" aria-labelledby="bt-sigep" hidden></section>
 </main>
 
 <footer class="rodape">
