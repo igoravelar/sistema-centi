@@ -31,6 +31,7 @@ python3 -m http.server 5173
 | `portal-servicos-protocolos.html` | Portal de Serviços — Meus Protocolos (abas Em aberto / Arquivados, filtro, ordenação e paginação; modais do protocolo, regularidades e fluxo do processo) | imagens de referência enviadas pelo time |
 | `zarpi.html` | Zarpi — Login (usuário/senha com olho, Lembrar acesso, Esqueci minha senha, Entrar com Google); o box inclina em 3D conforme o mouse; qualquer usuário e senha preenchidos levam ao Início (campo vazio mostra o erro; `?erro=1` abre já com o erro) | `Zarpi.fig` — frames `01 Login1` (vazio) e `01 Login2` (preenchido) |
 | `zarpi-inicio.html` | Zarpi — Início: shell do ERP com a marca Zarpi e só Protocolo e Gerais no menu; a aba Início traz o Painel de Protocolos (indicadores, abertos x concluídos, situação de prazo, onde os protocolos param, naturezas, canal de entrada e vencidos mais críticos), com filtros de período e secretaria e dados fictícios | pedido do time, sobre a tela de Início do ERP |
+| `zarpi-protocolo.html` | Zarpi — menu do módulo Protocolo (sidebar → Protocolo): só as telas do Protocolo ligadas ao fluxo inteligente — Protocolo e Remessa (PO002, PO003, PO004, PO009, PO011), Fluxo Inteligente (PO050 a PO060, em ordem de código) e Configurações (PO001). PO050 e PO051 abrem as mesmas telas do ERP com `?app=zarpi`, que as veste de Zarpi (marca, menu, abas e Open Sans). A configuração do shell do Zarpi fica em `assets/zarpi.js` | `PROTOCOLO_guia-das-telas_analista.html` (guia das telas, nov/2026) |
 
 Caminhos de navegação:
 
@@ -42,7 +43,8 @@ Caminhos de navegação:
 - **portal-servicos** → `Entrar` abre o `portal-servicos-home.html`; o `Sair` (⋮ no topo) volta ao login
 - **portal-servicos-home** → menu lateral com os módulos abrindo seus itens (topo, menu e rodapé vêm de `assets/portal-servicos.js` e `.css`); `Protocolo › Meus Protocolos` abre o `portal-servicos-protocolos.html` e `Assinatura Documentos` abre o Portal de Assinaturas em nova aba
 - **portal-ass** → `Entrar` abre o `portal-ass-pendentes.html?acesso=contribuinte|servidor` (conforme a aba aberta); o botão de sair no topo volta ao login
-- **topbar → ícone da pessoa** abre o `ass-doc.html`; a marca da Centi no topo dele volta para a index
+- **topbar → ícone da engrenagem** abre o `ass-doc.html`; a marca da Centi no topo dele volta para a index
+- **topbar → ícone da pessoa** abre a modal de dados do usuário e preferências (contato, segurança, tema, destaque da fonte e telas predefinidas). O tema Claro/Escuro/Sistema e a fonte entram em prévia ao clicar; `Salvar` guarda no navegador e vale para todas as telas, `Cancelar` desfaz
 - **sidebar → Protocolo** abre o `protocolo.html`
 - **protocolo** → item `Protocolo PO002` abre o `po002.html`; `Tela Protocolo PO011` abre o `po011.html`
 - **sidebar → Folha de Pagamento → Gestão da Folha** abre o `gestao-folha.html`; o item
@@ -98,6 +100,7 @@ app/
     inicio.css          cards do Centi Cast da tela de Início
     menu.css            menu do módulo
     shell.js            topbar, sidebar, abas de documento e o dicionário de ícones
+    preferencias.js     modal do usuário e o tema escuro, derivado das próprias folhas de estilo
     img/                fotos dos episódios (ver abaixo)
 ```
 

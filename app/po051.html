@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Centi · PO051 - Tramitação de Protocolo</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
-<link rel="stylesheet" href="assets/centi.css?v=21">
+<link rel="stylesheet" href="assets/centi.css?v=22">
 <link rel="stylesheet" href="assets/fluxo.css?v=26">
 <link rel="stylesheet" href="assets/chat.css?v=22">
 <style>
@@ -400,7 +400,9 @@
 
 <div class="app"></div>
 
-<script src="assets/shell.js?v=19"></script>
+<script src="assets/shell.js?v=20"></script>
+<script src="assets/preferencias.js?v=1"></script>
+<script src="assets/zarpi.js?v=2"></script>
 <script src="assets/fluxo.js?v=13"></script>
 <script>
 /* As abas verticais são desta tela: trocam de vista aqui dentro, sem sair do
@@ -2227,7 +2229,7 @@ function irPara(id) {
   if (id === 'cadastro' && protAberto !== null) montarCanvasP();
 }
 
-const main = montarShell('po051');
+const main = montarShell('po051', produtoDaUrl());
 
 /* O que a tela era quando saímos para outra aba. As duas primeiras entram
    antes da montagem, para a grid já nascer pesquisada e com a linha marcada;

@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/centi.css?v=21">
+<link rel="stylesheet" href="assets/centi.css?v=22">
 <style>
 /* o Zarpi usa Open Sans no lugar do Verdana do ERP, em toda a tela (shell incluso) */
 html, body { font-family: "Open Sans", "Segoe UI", sans-serif; }
@@ -319,7 +319,9 @@ html, body { font-family: "Open Sans", "Segoe UI", sans-serif; }
 
 <div class="app"></div>
 
-<script src="assets/shell.js?v=19"></script>
+<script src="assets/shell.js?v=20"></script>
+<script src="assets/preferencias.js?v=1"></script>
+<script src="assets/zarpi.js?v=2"></script>
 <script>
 /* ícones de status do prazo (Lucide: circle-check, clock, triangle-alert) */
 const ICO_STATUS = {
@@ -928,15 +930,7 @@ function vencidosBloco(d) {
 
 /* ================================ tela ================================ */
 
-ABAS.home = { ...ABAS.home, href: 'zarpi-inicio.html' };
-const main = montarShell('home', {
-  marca: { src: 'assets/img/zarpi/logo-zarpi.svg', alt: 'Zarpi' },
-  modulos: [
-    { nome: 'Protocolo', ico: 'protocolo' },
-    { nome: 'Gerais',    ico: 'gerais' },
-  ],
-  contexto: 'zarpi',
-});
+const main = montarShell('home', vestirZarpi());
 
 const ESTADO = { sec: null, periodo: 1, dados: null };
 
