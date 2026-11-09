@@ -2057,6 +2057,254 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
   .lightbox { padding: 16px; }
 }
+/* ── Proposta de Lançamento (#9): infográfico da campanha ───────────────── */
+.lanc { margin: 26px 0 10px; }
+
+/* capa: o degradê da página de entrada, com os quatro números da campanha */
+.lanc-capa {
+  position: relative;
+  overflow: hidden;
+  padding: 30px 30px 26px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #5D6E12 0%, #8DA824 55%, #A9C23C 100%);
+  color: #FFFFFF;
+}
+.lanc-capa::after {
+  content: '';
+  position: absolute;
+  right: -70px; top: -70px;
+  width: 240px; height: 240px;
+  border-radius: 50%;
+  border: 34px solid rgba(255, 255, 255, .08);
+}
+.lanc-capa .selo {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: #F5A623;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.lanc-capa .chamada {
+  margin: 14px 0 4px;
+  font-size: 27px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.lanc-capa .apoio { margin: 0 0 22px; font-size: 13.5px; color: #F1F6DC; }
+.lanc-numeros {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.lanc-numeros div {
+  padding: 14px 12px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .14);
+  border: 1px solid rgba(255, 255, 255, .28);
+}
+.lanc-numeros b { display: block; font-size: 25px; font-weight: 800; line-height: 1.1; }
+.lanc-numeros span { display: block; margin-top: 4px; font-size: 11.5px; line-height: 1.4; color: #F1F6DC; }
+
+/* blocos QUEM · O QUÊ · COMO: a etiqueta vertical à esquerda agrupa os tópicos */
+.lanc-bloco {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 14px;
+  margin-top: 22px;
+}
+.lanc-bloco .etiqueta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #F1F4E7;
+  color: #5D6725;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+.lanc-cards { display: grid; gap: 12px; }
+.lanc-cards.c2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.lanc-cards.c3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.lanc-card {
+  position: relative;
+  padding: 16px 16px 14px;
+  border: 1px solid #E4E9D2;
+  border-radius: 14px;
+  background: #FFFFFF;
+  box-shadow: 0 2px 0 #E4E9D2;
+}
+.lanc-card .topo { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.lanc-card .num {
+  flex: 0 0 28px;
+  height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--verde);
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 800;
+}
+.lanc-card .ico { width: 22px; height: 22px; margin-left: auto; color: var(--verde); }
+.lanc-card h5 { margin: 0; font-size: 14px; font-weight: 700; color: var(--txt-strong); line-height: 1.3; }
+.lanc-card > h5 { margin-bottom: 6px; }
+.lanc-card p { margin: 0; font-size: 12.5px; line-height: 1.6; }
+.lanc-card .destaque { color: #5D6725; font-weight: 700; }
+
+/* as dez vagas da turma de lançamento */
+.lanc-vagas {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 6px;
+  margin: 12px 0 8px;
+}
+.lanc-vagas span {
+  aspect-ratio: 1;
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px dashed var(--verde);
+  border-radius: 8px;
+  background: #F8FBEC;
+  color: #7F9612;
+  font-size: 10.5px;
+  font-weight: 800;
+}
+
+/* preço: barra de R$ 3 mil nos três primeiros meses, depois o valor da faixa */
+.lanc-preco { display: flex; gap: 4px; margin: 12px 0 8px; }
+.lanc-preco span {
+  flex: 1;
+  padding: 7px 0;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+.lanc-preco .promo { background: #F5A623; color: #FFFFFF; }
+.lanc-preco .regular { flex: 2.4; background: #EEF0E8; color: #8A8A8A; }
+
+/* book de documentos: as folhas que a Centi entrega prontas */
+.lanc-book { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 8px; }
+.lanc-book span {
+  position: relative;
+  padding: 5px 10px 5px 22px;
+  border-radius: 6px;
+  background: #F1F4E7;
+  color: #5D6725;
+  font-size: 11px;
+  font-weight: 700;
+}
+.lanc-book span::before {
+  content: '';
+  position: absolute;
+  left: 8px; top: 50%;
+  width: 8px; height: 10px;
+  margin-top: -5px;
+  border: 1.5px solid #8DA824;
+  border-radius: 1.5px;
+}
+
+/* da demonstração ao primeiro protocolo */
+.lanc-jornada {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  margin: 30px 0 6px;
+  counter-reset: passo;
+}
+.lanc-jornada div {
+  position: relative;
+  padding: 0 4px;
+  text-align: center;
+}
+.lanc-jornada div::before {
+  counter-increment: passo;
+  content: counter(passo);
+  position: relative;
+  z-index: 1;
+  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px;
+  margin: 0 auto 8px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 3px solid var(--verde);
+  color: #5D6725;
+  font-size: 13px;
+  font-weight: 800;
+}
+.lanc-jornada div + div::after {
+  content: '';
+  position: absolute;
+  top: 16px; right: 50%;
+  width: 100%;
+  height: 3px;
+  background: var(--verde-linha);
+}
+.lanc-jornada div.dia::before { background: #F5A623; border-color: #F5A623; color: #FFFFFF; }
+.lanc-jornada b { display: block; font-size: 12px; color: var(--txt-strong); line-height: 1.35; }
+.lanc-jornada small { display: block; margin-top: 3px; font-size: 11px; line-height: 1.4; color: var(--txt-mute); }
+
+/* o dia da implantação, hora a hora */
+.lanc-dia {
+  margin: 14px 0 6px;
+  padding: 20px 22px;
+  border-radius: 16px;
+  background: #FFF8EA;
+  border: 1px solid #F6DDA8;
+}
+.lanc-dia .titulo { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+.lanc-dia .titulo b { font-size: 22px; font-weight: 800; color: #D98A0B; }
+.lanc-dia .titulo span { font-size: 13px; color: #8A6A2A; }
+.lanc-horas { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.lanc-horas div {
+  padding: 10px 10px 9px;
+  border-radius: 10px;
+  background: #FFFFFF;
+  border-top: 4px solid #F5A623;
+}
+.lanc-horas time { display: block; font-size: 15px; font-weight: 800; color: #D98A0B; }
+.lanc-horas b { display: block; margin: 2px 0 2px; font-size: 12px; color: var(--txt-strong); line-height: 1.35; }
+.lanc-horas small { display: block; font-size: 11px; line-height: 1.45; color: #7A7A7A; }
+.lanc-dia .rodape { margin: 12px 0 0; font-size: 12px; color: #8A6A2A; }
+
+/* por que o lançamento vem antes: o que ele devolve para o pipeline */
+.lanc-ordem {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin: 12px 0 8px;
+}
+.lanc-ordem div {
+  flex: 1;
+  padding: 12px 12px 10px;
+  border-radius: 12px;
+  background: #F4F4F6;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.lanc-ordem div.atual { background: var(--verde); color: #FFFFFF; }
+.lanc-ordem div.atual b { color: #FFFFFF; }
+.lanc-ordem b { display: block; margin-bottom: 2px; font-size: 13px; color: var(--txt-strong); }
+.lanc-ordem i { align-self: center; font-style: normal; font-weight: 800; color: var(--verde); }
+
+@media (max-width: 760px) {
+  .lanc-numeros { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lanc-cards.c2, .lanc-cards.c3 { grid-template-columns: 1fr; }
+  .lanc-vagas { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .lanc-jornada { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 18px; }
+  .lanc-jornada div:nth-child(4)::after { display: none; }
+  .lanc-horas { grid-template-columns: 1fr 1fr; }
+  .lanc-ordem { flex-direction: column; }
+  .lanc-ordem i { transform: rotate(90deg); }
+  .lanc-capa .chamada { font-size: 22px; }
+}
 </style>
 </head>
 <body>
@@ -2066,7 +2314,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
     <img src="assets/img/marca-centi.png" alt="Centi">
   </a>
   <h1>Documentação Zarpi</h1>
-  <div class="atualizado">Atualizado em: <span class="badge-data">05/11/2026</span></div>
+  <div class="atualizado">Atualizado em: <span class="badge-data">09/11/2026</span></div>
   <button class="bt-menu" id="bt-menu" onclick="alternarMenu()"
           aria-label="Abrir o menu" aria-expanded="false" aria-controls="sidebar">
     <svg class="ico-abrir" viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
@@ -3184,7 +3432,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
       <fieldset class="tela">
         <legend>
-          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <svg class="estrela" viewBox="0 0 576 512" aria-hidden="true"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
           <span class="ico">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="5" rx="1"/><rect x="2" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="6" height="5" rx="1"/><path d="M12 7v3"/><path d="M5 16v-2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v2"/></svg>
           </span>
@@ -3209,7 +3457,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
       <fieldset class="tela">
         <legend>
-          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <svg class="estrela" viewBox="0 0 576 512" aria-hidden="true"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
           <span class="ico">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="5" rx="1"/><rect x="2" y="16" width="6" height="5" rx="1"/><rect x="16" y="16" width="6" height="5" rx="1"/><path d="M12 7v3"/><path d="M5 16v-2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v2"/></svg>
           </span>
@@ -3285,7 +3533,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
       <fieldset class="tela">
         <legend>
-          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <svg class="estrela" viewBox="0 0 576 512" aria-hidden="true"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
           <span class="ico">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="8.5" width="7" height="7" rx="1.5"/><line x1="9" y1="12" x2="18" y2="12"/><polyline points="15.5,9.5 18,12 15.5,14.5"/></svg>
           </span>
@@ -3350,7 +3598,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
       <fieldset class="tela">
         <legend>
-          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <svg class="estrela" viewBox="0 0 576 512" aria-hidden="true"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
           <span class="ico">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="8.5" width="7" height="7" rx="1.5"/><line x1="9" y1="12" x2="18" y2="12"/><polyline points="15.5,9.5 18,12 15.5,14.5"/></svg>
           </span>
@@ -3375,7 +3623,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
 
       <fieldset class="tela">
         <legend>
-          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <svg class="estrela" viewBox="0 0 576 512" aria-hidden="true"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
           <span class="ico">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="8.5" width="7" height="7" rx="1.5"/><line x1="9" y1="12" x2="18" y2="12"/><polyline points="15.5,9.5 18,12 15.5,14.5"/></svg>
           </span>
@@ -3722,7 +3970,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <h4>Assinatura Digital de Documento(s)</h4>
       <fieldset class="tela">
         <legend>
-          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <svg class="estrela" viewBox="0 0 576 512" aria-hidden="true"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
           <span class="ico">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
           </span>
@@ -3749,7 +3997,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <h4>Portal de Assinaturas</h4>
       <fieldset class="tela">
         <legend>
-          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <svg class="estrela" viewBox="0 0 576 512" aria-hidden="true"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
           <span class="ico">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M8 17c1.5-2 2.5-2 3 0s1.5 2 3 0"/></svg>
           </span>
@@ -3775,7 +4023,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <h4>Portal de Serviços</h4>
       <fieldset class="tela">
         <legend>
-          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <svg class="estrela" viewBox="0 0 576 512" aria-hidden="true"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
           <span class="ico">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
           </span>
@@ -3795,7 +4043,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <p>É o portal em que o cidadão e as empresas acessam os serviços digitais do município. No módulo Protocolo, <b>Meus Protocolos</b> lista os protocolos em aberto e arquivados de quem está logado. Cada protocolo abre com andamentos, documentos, movimentações, <b>regularidades</b>, <b>transparência</b> e interações.</p>
       <fieldset class="tela">
         <legend>
-          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <svg class="estrela" viewBox="0 0 576 512" aria-hidden="true"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
           <span class="ico">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
           </span>
@@ -5384,7 +5632,7 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       <h4>Transparência dos acessos</h4>
       <fieldset class="tela">
         <legend>
-          <svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          <svg class="estrela" viewBox="0 0 576 512" aria-hidden="true"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
           <span class="ico">
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
           </span>
@@ -6628,6 +6876,144 @@ body.menu-aberto .bt-menu .ico-fechar { display: block; }
       </div>
     </section>
 
+    <section id="etapa9-lancamento" class="sub">
+      <h3>Proposta de Lançamento</h3>
+      <p>Antes de pôr em prática o ICP, o funil por segmento e o SLA entre as áreas, o Zarpi entra no mercado com uma <b>campanha promocional de lançamento</b>: uma turma fechada de dez prefeituras de porte Micro, contratadas por dispensa e implantadas em um dia. A campanha traz os primeiros clientes fora da base Centi, os primeiros casos de referência e os números reais de venda e de implantação que vão calibrar o resto do pipeline.</p>
+
+      <div class="lanc">
+        <div class="lanc-capa">
+          <span class="selo">Campanha de lançamento · Zarpi</span>
+          <p class="chamada">10 prefeituras. 1 dia para começar.</p>
+          <p class="apoio">Pacote completo, valor promocional e toda a documentação da contratação pronta.</p>
+          <div class="lanc-numeros">
+            <div><b>10</b><span>vagas para clientes novos, fora da base Centi</span></div>
+            <div><b>R$ 3 mil</b><span>valor promocional para municípios de até 10 mil habitantes</span></div>
+            <div><b>3 meses</b><span>de condição promocional no início do contrato</span></div>
+            <div><b>1 dia</b><span>da assinatura ao primeiro protocolo tramitado</span></div>
+          </div>
+        </div>
+
+        <div class="lanc-bloco">
+          <span class="etiqueta">QUEM</span>
+          <div class="lanc-cards c2">
+            <div class="lanc-card">
+              <div class="topo">
+                <span class="num">1</span>
+                <h5>10 clientes novos</h5>
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg>
+              </div>
+              <div class="lanc-vagas" aria-hidden="true">
+                <span>01</span><span>02</span><span>03</span><span>04</span><span>05</span><span>06</span><span>07</span><span>08</span><span>09</span><span>10</span>
+              </div>
+              <p>Só municípios que <span class="destaque">ainda não são clientes Centi</span>. A turma prova que o Zarpi se vende sozinho, sem o relacionamento do ERP, e abre logotipos novos.</p>
+            </div>
+            <div class="lanc-card">
+              <div class="topo">
+                <span class="num">2</span>
+                <h5>R$ 3 mil para prefeituras de até 10 mil habitantes</h5>
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.3c.6-.2 1.3-.3 2-.3 2.8 0 4 2 4 4.5"/></svg>
+              </div>
+              <p>O recorte é a faixa <a href="#etapa9-porte">Micro</a>: <span class="destaque">2.466 municípios, 44,3% do país</span>. É o perfil de implantação padronizada, em que o pacote fechado cabe sem adaptação. As 10 vagas saem desse universo.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lanc-bloco">
+          <span class="etiqueta">O QUÊ</span>
+          <div class="lanc-cards c3">
+            <div class="lanc-card">
+              <div class="topo">
+                <span class="num">3</span>
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8"/></svg>
+              </div>
+              <h5>Pacote completo, implantação diferenciada</h5>
+              <p>Zarpi inteiro, sem módulo de fora, com acompanhamento dedicado da equipe Centi na implantação e nas primeiras semanas de uso.</p>
+            </div>
+            <div class="lanc-card">
+              <div class="topo">
+                <span class="num">4</span>
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
+              </div>
+              <h5>Valor promocional nos 3 primeiros meses</h5>
+              <div class="lanc-preco" aria-hidden="true">
+                <span class="promo">M1</span><span class="promo">M2</span><span class="promo">M3</span><span class="regular">faixa Micro</span>
+              </div>
+              <p>Depois do 3º mês, o contrato passa ao valor da faixa no <a href="#etapa9-preco">modelo de precificação</a>.</p>
+            </div>
+            <div class="lanc-card">
+              <div class="topo">
+                <span class="num">5</span>
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>
+              </div>
+              <h5>Book completo de documentos</h5>
+              <div class="lanc-book">
+                <span>DFD</span><span>ETP</span><span>TR</span><span>Pesquisa de preços</span><span>Justificativa</span><span>Proposta</span><span>Minuta</span>
+              </div>
+              <p>Modelos prontos para a prefeitura revisar e assinar. Base no <a href="#etapa8-tr">Termo de Referência</a>.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="lanc-bloco">
+          <span class="etiqueta">COMO</span>
+          <div class="lanc-cards c2">
+            <div class="lanc-card">
+              <div class="topo">
+                <span class="num">6</span>
+                <h5>Negociação por dispensa</h5>
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M5 7h14M5 7l-3 7a3.5 3.5 0 0 0 6 0L5 7zM19 7l-3 7a3.5 3.5 0 0 0 6 0l-3-7zM8 21h8"/></svg>
+              </div>
+              <p>Contratação direta por valor, pela <span class="destaque">Lei 14.133/2021, art. 75, II</span>. O valor do contrato no ano (meses promocionais mais os meses no valor da faixa) precisa caber no limite de dispensa vigente, que é atualizado todo ano por decreto. A proposta já sai conferida com esse limite.</p>
+            </div>
+            <div class="lanc-card">
+              <div class="topo">
+                <span class="num">7</span>
+                <h5>Implantação em 1 dia</h5>
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>
+              </div>
+              <p>O dia D é curto porque a preparação vem antes: os dados do diagnóstico já chegam parametrizados e os fluxos saem da <span class="destaque">biblioteca de fluxos</span>, prontos para o porte Micro.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h4 class="afastado">Da demonstração ao primeiro protocolo</h4>
+
+      <div class="lanc-jornada">
+        <div><b>Demonstração</b><small>roteiro base da etapa anterior</small></div>
+        <div><b>Book entregue</b><small>DFD, ETP, TR e demais</small></div>
+        <div><b>Dispensa</b><small>aviso e justificativa publicados</small></div>
+        <div><b>Contrato assinado</b><small>começa o 1º mês promocional</small></div>
+        <div class="dia"><b>Implantação</b><small>1 dia</small></div>
+        <div><b>1º protocolo</b><small>tramitado no mesmo dia</small></div>
+      </div>
+
+      <div class="lanc-dia">
+        <div class="titulo"><b>O dia da implantação</b><span>uma equipe Centi, um dia na prefeitura</span></div>
+        <div class="lanc-horas">
+          <div><time>08h</time><b>Abertura</b><small>Kick-off com o prefeito e os secretários</small></div>
+          <div><time>09h</time><b>Parametrização</b><small>Órgão, setores, usuários e naturezas</small></div>
+          <div><time>11h</time><b>Fluxos no ar</b><small>Importados da biblioteca e ajustados</small></div>
+          <div><time>14h</time><b>Treinamento</b><small>Servidores tramitam o próprio processo</small></div>
+          <div><time>17h</time><b>1º protocolo</b><small>Aberto pelo cidadão no Portal de Serviços</small></div>
+        </div>
+        <p class="rodape">Depois do dia D, o acompanhamento dedicado segue pelos três meses promocionais.</p>
+      </div>
+
+      <h4 class="afastado">Por que o lançamento vem antes</h4>
+      <p>As dez implantações devolvem o que o pipeline precisa para ser calibrado com dados reais, e não com estimativas: ciclo de venda, objeções, tempo de implantação e casos de referência para a prospecção.</p>
+
+      <div class="lanc-ordem">
+        <div class="atual"><b>Lançamento</b>10 prefeituras Micro, por dispensa</div>
+        <i aria-hidden="true">→</i>
+        <div><b>ICP</b>critérios ajustados pelo que fechou</div>
+        <i aria-hidden="true">→</i>
+        <div><b>Funil</b>etapas e prazos medidos na turma</div>
+        <i aria-hidden="true">→</i>
+        <div><b>SLA</b>metas entre áreas com base real</div>
+      </div>
+    </section>
+
     <section id="etapa10">
       <h2>#10 Validação (piloto)</h2>
       <p class="lead">Plano de validação com clientes piloto e critérios de sucesso.</p>
@@ -6757,6 +7143,7 @@ const MENU = [
     { id: 'etapa9-preco',    txt: 'Modelo de precificação' },
     { id: 'etapa9-contratacao', txt: 'Contratação pública aplicada ao pipeline' },
     { id: 'etapa9-demo',     txt: 'Demonstração comercial' },
+    { id: 'etapa9-lancamento', txt: 'Proposta de Lançamento' },
   ] },
   { titulo: '#10 Validação (piloto)',       itens: [{ id: 'etapa10', txt: 'Visão geral' }] },
   { titulo: '#11 CSI & CSM',                itens: [{ id: 'etapa11', txt: 'Visão geral' }] },

@@ -879,3 +879,35 @@ html[data-fonte="negrito"] .pref, html[data-fonte="negrito"] .pref * { font-weig
 html[data-tema="escuro"] .pref-chave i::after { background: #D6D6D6; }
 html[data-tema="escuro"] .pref-chave input:checked + i { background: #56661F; }
 html[data-tema="escuro"] .pref-chave input:checked + i::after { background: var(--g); }
+
+/* ============================ confirmação ============================
+   Pergunta de sim ou não, como a do Logoff do Zarpi (zarpi.js). */
+
+.confirma-fundo {
+  position: fixed; inset: 0; z-index: 1100;
+  display: grid; place-items: center; padding: 24px;
+  background: rgba(0, 0, 0, .25);
+}
+.confirma {
+  width: min(440px, 100%);
+  background: #FFFFFF;
+  border-radius: 10px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .25);
+  color: #333333;
+}
+.confirma header { display: flex; align-items: center; gap: 12px; padding: 16px 24px; border-bottom: 1px solid #E2E2E2; }
+.confirma-ico {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: grid; place-items: center; background: #E6ECE2;
+}
+.confirma-ico svg { width: 22px; height: 22px; fill: #487A39; stroke: #FFFFFF; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.confirma-ico svg circle { stroke: none; }
+.confirma h2 { margin: 0; font-size: 18px; font-weight: bold; color: #487A39; }
+.confirma p { margin: 0; padding: 22px 24px; font-size: 14px; border-bottom: 1px solid #E2E2E2; }
+.confirma footer { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px 24px; }
+.confirma footer button { height: 36px; border-radius: 4px; font-size: 14px; }
+.confirma-sim { background: #869B40; border: 1px solid #869B40; color: #FFFFFF; }
+.confirma-sim:hover { background: var(--btp-bg-h); border-color: var(--btp-bd-h); color: var(--btp-txt-h); }
+.confirma-sim:focus-visible { outline: 2px solid #2E6FD6; outline-offset: 1px; }
+.confirma-nao { background: #FFFFFF; border: 1px solid #A9ACB2; color: #4A5260; }
+.confirma-nao:hover { background: var(--g-soft-bg); border-color: var(--g); color: var(--g-dark); }

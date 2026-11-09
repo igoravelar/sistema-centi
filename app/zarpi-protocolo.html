@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zarpi · Protocolo</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/zarpi/ico-favicon-zarpi.svg">
-<link rel="stylesheet" href="assets/centi.css?v=22">
-<link rel="stylesheet" href="assets/menu.css?v=3">
+<link rel="stylesheet" href="assets/centi.css?v=23">
+<link rel="stylesheet" href="assets/menu.css?v=4">
 </head>
 <body>
 
 <div class="app"></div>
 
-<script src="assets/shell.js?v=20"></script>
+<script src="assets/shell.js?v=22"></script>
 <script src="assets/preferencias.js?v=1"></script>
-<script src="assets/zarpi.js?v=2"></script>
+<script src="assets/zarpi.js?v=3"></script>
 <script>
 /* ícones extras usados só nesta tela */
 Object.assign(ICO, {
@@ -40,7 +40,8 @@ const CAST = [
 /* Só as telas do módulo Protocolo do ERP que o Zarpi usa: as do fluxo
    inteligente e as do dia a dia que o fluxo conduz (o processo, a remessa
    com destino previsto, a caixa da repartição, o arquivamento no Fim) e a
-   natureza, que diz qual fluxo o processo segue. Fonte: "Guia do Protocolo",
+   natureza, que diz qual fluxo o processo segue, além dos parâmetros gerais
+   do módulo (numeração, sigiloso, portal), que valem também para o Zarpi. Fonte: "Guia do Protocolo",
    guia das telas para o analista, novembro de 2026. */
 const MODULOS_MENU = [
   {
@@ -70,7 +71,8 @@ const MODULOS_MENU = [
   {
     classe: 'configuracoes', titulo: 'Configurações', ico: 'ajustes',
     itens: [
-      { txt: 'Natureza', cod: 'PO001', ico: 'natureza' },
+      { txt: 'Configuração protocolo', cod: 'PO023', ico: 'ajustes' },
+      { txt: 'Natureza',               cod: 'PO001', ico: 'natureza' },
     ],
   },
 ];
@@ -84,7 +86,7 @@ function itemHTML(it) {
     <div class="menu-item" data-busca="${(it.txt + ' ' + it.cod).toLowerCase()}"${alvo}>
       ${tag}
       <span class="menu-item-favorite${it.fav ? ' ativo' : ''}"
-            onclick="event.stopPropagation();this.classList.toggle('ativo')">★</span>
+            onclick="event.stopPropagation();this.classList.toggle('ativo')">${ESTRELA}</span>
       <span class="menu-item-icon">${svg(it.ico)}</span>
       <span class="menu-item-text">${it.txt}</span>
       <span class="menu-item-code">${it.cod}</span>

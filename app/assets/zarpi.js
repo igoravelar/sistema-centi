@@ -30,7 +30,41 @@ function vestirZarpi() {
   }
   document.head.insertAdjacentHTML('beforeend',
     '<style>html, body { font-family: "Open Sans", "Segoe UI", sans-serif; }</style>');
+  document.addEventListener('click', e => { if (e.target.closest('[data-acao="sair"]')) confirmarSaida(); });
   return ZARPI;
+}
+
+/* ------------------------------ sair ------------------------------
+   O botão de desligar da topbar pergunta antes e, no Sim, volta ao login.
+   Só no Zarpi: o protótipo do ERP não tem tela de login. */
+
+function confirmarSaida() {
+  let m = document.getElementById('sairFundo');
+  if (!m) {
+    document.body.insertAdjacentHTML('beforeend', `
+      <div class="confirma-fundo" id="sairFundo" hidden>
+        <div class="confirma" role="alertdialog" aria-modal="true" aria-labelledby="sairTitulo" aria-describedby="sairTexto">
+          <header>
+            <span class="confirma-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="7.5,12.5 10.5,15.5 16.5,9"/></svg></span>
+            <h2 id="sairTitulo">Confirmação</h2>
+          </header>
+          <p id="sairTexto">Deseja efetuar Logoff?</p>
+          <footer>
+            <button type="button" class="confirma-sim" onclick="location.href='zarpi.html'">Sim</button>
+            <button type="button" class="confirma-nao" onclick="fecharSaida()">Não</button>
+          </footer>
+        </div>
+      </div>`);
+    m = document.getElementById('sairFundo');
+    m.addEventListener('mousedown', e => { if (e.target === m) fecharSaida(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !m.hidden) fecharSaida(); });
+  }
+  m.hidden = false;
+  m.querySelector('.confirma-sim').focus();
+}
+
+function fecharSaida() {
+  document.getElementById('sairFundo').hidden = true;
 }
 
 /** Nas telas que o Zarpi divide com o ERP: o Zarpi quando a URL pede, senão o ERP. */

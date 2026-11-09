@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Centi · Módulo Protocolo</title>
 <link rel="icon" type="image/svg+xml" href="assets/img/ico-favicon-centi-prototipo.svg">
-<link rel="stylesheet" href="assets/centi.css?v=22">
-<link rel="stylesheet" href="assets/menu.css?v=3">
+<link rel="stylesheet" href="assets/centi.css?v=23">
+<link rel="stylesheet" href="assets/menu.css?v=4">
 </head>
 <body>
 
 <div class="app"></div>
 
-<script src="assets/shell.js?v=20"></script>
+<script src="assets/shell.js?v=22"></script>
 <script src="assets/preferencias.js?v=1"></script>
 <script>
 /* ícones extras usados só nesta tela */
@@ -119,7 +119,7 @@ function itemHTML(it) {
     <div class="menu-item" data-busca="${(it.txt + ' ' + it.cod).toLowerCase()}"${alvo}>
       ${tag}
       <span class="menu-item-favorite${it.fav ? ' ativo' : ''}"
-            onclick="event.stopPropagation();this.classList.toggle('ativo')">★</span>
+            onclick="event.stopPropagation();this.classList.toggle('ativo')">${ESTRELA}</span>
       <span class="menu-item-icon">${svg(it.ico)}</span>
       <span class="menu-item-text">${it.txt}</span>
       <span class="menu-item-code">${it.cod}</span>

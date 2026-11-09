@@ -175,7 +175,8 @@
 .menu-item:last-child { margin-bottom: 0; }
 .menu-item:hover { background: #F5F7F2; border-color: var(--g); transform: translateX(4px); }
 
-.menu-item-favorite { color: #B7BCC2; font-size: 15px; line-height: 1; }
+.menu-item-favorite { color: #B7BCC2; display: inline-flex; line-height: 1; }
+.menu-item-favorite svg { width: 16px; height: 16px; display: block; }
 .menu-item-favorite:hover { color: #F5A623; transform: scale(1.15); }
 .menu-item-favorite.ativo { color: #F5A623; }
 

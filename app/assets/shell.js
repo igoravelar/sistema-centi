@@ -48,7 +48,8 @@ const ICO = {
   borracha: '<path d="M4 16 12 8l6 6-5 5H7z"/><line x1="4" y1="21" x2="20" y2="21"/>',
   seta: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/>',
   voltar: '<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12,19 5,12 12,5"/>',
-  estrela: '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>',
+  /* estrela do Font Awesome (star, regular), de pontas arredondadas, encaixada no quadro 24x24 */
+  estrela: '<svg width="24" height="24" viewBox="0 0 576 512"><path stroke="none" fill="currentColor" d="M287.9 0c9.2 0 17.6 5.2 21.6 13.5l68.6 141.3 153.2 22.6c9 1.3 16.5 7.6 19.3 16.3s.5 18.1-5.9 24.5L433.6 328.4l26.2 155.6c1.5 9-2.2 18.1-9.7 23.5s-17.3 6-25.3 1.7l-137-73.2L151 509.1c-8.1 4.3-17.9 3.7-25.3-1.7s-11.2-14.5-9.7-23.5l26.2-155.6L31.1 218.2c-6.5-6.4-8.7-15.9-5.9-24.5s10.3-14.9 19.3-16.3l153.2-22.6L266.3 13.5C270.4 5.2 278.7 0 287.9 0zm0 79L235.4 187.2c-3.5 7.1-10.2 12.1-18.1 13.3L99 217.9 184.9 303c5.5 5.5 8.1 13.3 6.8 21L171.4 443.7l105.2-56.2c7.1-3.8 15.6-3.8 22.6 0l105.2 56.2L384.2 324.1c-1.3-7.7 1.2-15.5 6.8-21l85.9-85.1L358.6 200.5c-7.8-1.2-14.6-6.1-18.1-13.3L287.9 79z"/></svg>',
   prancheta: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="13" y2="14"/>',
   executar: '<polygon points="6,4 20,12 6,20"/>',
   martelo: '<g transform="rotate(45 12 12)"><rect x="9" y="2.5" width="6" height="5" rx="1"/><line x1="12" y1="7.5" x2="12" y2="19"/></g>',
@@ -72,6 +73,9 @@ const ICO = {
 const CHEVRON_MENU = `<svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.69297 0.305085C9.28877 -0.101695 8.63065 -0.101695 8.22645 0.305085L4.99806 3.51298L1.76966 0.305085C1.36546 -0.0965458 0.707345 -0.0965458 0.303147 0.305085C-0.10105 0.706715 -0.10105 1.36065 0.303147 1.76228L4.26739 5.6962C4.46949 5.89702 4.73377 6 5.00324 6C5.2727 6 5.53699 5.89702 5.73909 5.6962L9.69297 1.76228C10.1023 1.36065 10.1023 0.706715 9.69297 0.305085Z" fill="currentColor"/></svg>`;
 
 /** <svg> a partir de um path do dicionário ICO */
+/* estrela cheia do Font Awesome (star, solid), usada no favoritar do menu dos módulos */
+const ESTRELA = '<svg viewBox="0 0 576 512" fill="currentColor" aria-hidden="true"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>';
+
 function svg(nome, extra = '') {
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
     stroke-linecap="round" stroke-linejoin="round" ${extra}>${ICO[nome] || ''}</svg>`;
@@ -171,6 +175,8 @@ function topbarHTML() {
       ? `<button title="Portal de Assinaturas" onclick="location.href='portal-ass.html'">${svg(i)}</button>`
       : i === 'monitor'
       ? `<button title="Portal de Serviços" onclick="location.href='portal-servicos.html'">${svg(i)}</button>`
+      : i === 'power'
+      ? `<button title="Sair" data-acao="sair">${svg(i)}</button>`
       : `<button title="${i}">${svg(i)}</button>`).join('')}</div>
   </header>`;
 }
