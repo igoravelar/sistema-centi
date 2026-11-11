@@ -617,6 +617,57 @@ th.ord .seta { color: var(--verde); font-size: 10px; }
   stroke-linecap: round; stroke-linejoin: round;
 }
 
+/* contratos do mesmo órgão e data: a linha do grupo soma os valores e abre como
+   accordion; os contratos de dentro vêm recuados, presos ao filete verde */
+.tab-contratos .abre-grupo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tab-contratos .abre-grupo svg {
+  flex: 0 0 14px;
+  width: 14px; height: 14px;
+  fill: none; stroke: #6D8415; stroke-width: 2.4;
+  stroke-linecap: round; stroke-linejoin: round;
+  transition: transform .15s ease;
+}
+
+.tab-contratos .abre-grupo[aria-expanded="true"] svg { transform: rotate(90deg); }
+
+.tab-contratos .abre-grupo .qtd {
+  flex: 0 0 auto;
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--verde);
+  color: #FFFFFF;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.tab-contratos .abre-grupo .nomes { min-width: 0; }
+
+.tab-contratos tr.agrupado td { background: #F8FAEF; }
+.tab-contratos tr.agrupado:hover td { background: #F3F7E4; }
+.tab-contratos tr.agrupado.aberto td { border-bottom-color: #E4EBC8; }
+
+.tab-contratos tr.filho td { background: #FCFDF8; }
+.tab-contratos tr.filho td:first-child {
+  padding-left: 34px;
+  box-shadow: inset 3px 0 0 var(--verde-linha);
+}
+.tab-contratos tr.filho:not(.ultimo) td { border-bottom-color: #EEF2DE; }
+
 /* ── caixas de recado ───────────────────────────────────── */
 .nota {
   margin: 0 0 20px;
@@ -805,7 +856,8 @@ th.ord .seta { color: var(--verde); font-size: 10px; }
   </div>
 </div>
 
-<script src="assets/benchmark-dados.js"></script>
-<script src="assets/benchmark-painel.js"></script>
+<script src="assets/benchmark-dados.js?v=2"></script>
+<script src="assets/contratos-grupos.js?v=2"></script>
+<script src="assets/benchmark-painel.js?v=2"></script>
 </body>
 </html>

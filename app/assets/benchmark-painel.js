@@ -608,7 +608,7 @@ function opcoes(chave, campo, rotulo) {
 function abaContratos(chave) {
   const e = BENCHMARK.empresas[chave];
   const base = BENCHMARK.contratos[chave];
-  estado[chave] = { campo: 'mensal', dir: -1, f: {}, busca: '' };
+  estado[chave] = { campo: 'mensal', dir: -1, f: {}, busca: '', abertos: new Set() };
 
   const kpis = [
     ['Contratos aderentes', inteiro(e.total.n), `de ${e.localizados} localizados no PNCP`],
@@ -634,6 +634,7 @@ function abaContratos(chave) {
     </div>
     ${quadro(`Contratos aderentes ao objeto`, `${base.length} registros`, `metodologia:${chave}`, `
       <div class="filtros" id="filtros-${chave}">
+        ${opcoes(chave, 'uf', 'UF')}
         ${opcoes(chave, 'faixa', 'Faixa populacional')}
         ${opcoes(chave, 'tipo', 'Tipo de entidade')}
         ${opcoes(chave, 'mod', 'Modalidade')}
@@ -691,11 +692,12 @@ function pintarContratos(chave) {
       (c.mun + ' ' + c.orgao + ' ' + c.uf).toLowerCase().includes(st.busca));
   }
 
-  linhas.sort((a, b) => {
+  const comparar = (a, b) => {
     const x = a[st.campo], y = b[st.campo];
     if (typeof x === 'number' && typeof y === 'number') return (x - y) * st.dir;
     return String(x).localeCompare(String(y), 'pt-BR') * st.dir;
-  });
+  };
+  const itens = agruparContratos(linhas, comparar);
 
   document.getElementById(`cab-${chave}`).innerHTML = COLUNAS.map((col) => {
     if (col.fixo) return `<th>${col.rot}</th>`;
@@ -704,11 +706,9 @@ function pintarContratos(chave) {
       title="Ordenar por ${col.rot}">${col.rot} ${seta}</th>`;
   }).join('');
 
-  document.getElementById(`corpo-${chave}`).innerHTML = linhas.map((c) => `
-    <tr>
-      <td>
-        <span class="orgao" title="${esc(c.orgao)}">${esc(c.orgao)}</span>
-        <span class="obj" title="${esc(c.objeto)}">${esc(c.objeto)}</span></td>
+  const linha = (c, classe, aberto) => `
+    <tr class="${classe}">
+      ${celulaOrgao(chave, c, aberto)}
       <td>${esc(c.mun)} · ${c.uf}</td>
       <td class="num"><b>${moeda(c.mensal)}</b></td>
       <td class="num">${moeda(c.global)}</td>
@@ -718,14 +718,16 @@ function pintarContratos(chave) {
       <td class="num">${data(c.ini)} – ${data(c.fim)}</td>
       <td><span class="pastilha ${c.sit === 'Vigente' ? 'ok' : 'fria'}">${c.sit}</span></td>
       <td class="num">${moeda2(c.hab)}</td>
-      <td><a class="pncp" href="${esc(c.link)}" target="_blank" rel="noopener">abrir
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6"/><line x1="20" y1="4" x2="11" y2="13"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></td>
-    </tr>`).join('') || `<tr><td colspan="${COLUNAS.length}" class="vazio">
+      <td>${c.filhos ? '' : `<a class="pncp" href="${esc(c.link)}" target="_blank" rel="noopener">abrir
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6"/><line x1="20" y1="4" x2="11" y2="13"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>`}</td>
+    </tr>`;
+
+  document.getElementById(`corpo-${chave}`).innerHTML = corpoAgrupado(chave, itens, linha)
+    || `<tr><td colspan="${COLUNAS.length}" class="vazio">
       Nenhum contrato atende aos filtros escolhidos.</td></tr>`;
 
-  const total = BENCHMARK.contratos[chave].length;
   document.getElementById(`contagem-${chave}`).innerHTML =
-    `Exibindo <b>${linhas.length}</b> de <b>${total}</b> contratos.`;
+    contagemAgrupada(itens, linhas.length, BENCHMARK.contratos[chave].length);
 }
 
 /* ── aba 5 · proposta de preço ──────────────────────────── */
